@@ -1,0 +1,16 @@
+// ==UserScript==
+// @name         Vape V4
+// @namespace    http://7granddadpgn.github.io
+// @version      2025-4-14
+// @description  Hacks for Miniblox (haha Vector)
+// @author       SevenGrandDad, Emmaa
+// @match        https://miniblox.io/*
+// @match        https://miniblox.org/*
+// @match        https://miniblox.online/*
+// @match        https://bloxbattles.io/*
+// @icon         https://miniblox.io/favicon.png
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        unsafeWindow
+// @require      https://raw.githubusercontent.com/he557/va_for_miniblox/refs/heads/main/vav4inject.js
+// @run-at       document-start
