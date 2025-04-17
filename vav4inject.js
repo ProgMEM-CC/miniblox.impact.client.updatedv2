@@ -1,11 +1,8 @@
-/**
- * @type {Record<string | RegExp, string>}
- */
 let replacements = {};
 let dumpedVarNames = {};
 const storeName = "a" + crypto.randomUUID().replaceAll("-", "").substring(16);
 const vapeName = crypto.randomUUID().replaceAll("-", "").substring(16);
-const VERSION = "1.1.2";
+const VERSION = "1.0.0";
 
 // ANTICHEAT HOOK
 function replaceAndCopyFunction(oldFunc, newFunc) {
@@ -30,12 +27,6 @@ Object.getOwnPropertyDescriptors = replaceAndCopyFunction(Object.getOwnPropertyD
 	return list;
 });
 
-/**
- *
- * @param {string} replacement
- * @param {string} code
- * @param {boolean} replace
- */
 function addModification(replacement, code, replace) {
 	replacements[replacement] = [code, replace];
 }
@@ -44,10 +35,6 @@ function addDump(replacement, code) {
 	dumpedVarNames[replacement] = code;
 }
 
-/**
- *
- * @param {string} text
- */
 function modifyCode(text) {
 	let modifiedText = text;
 	for(const [name, regex] of Object.entries(dumpedVarNames)) {
@@ -149,18 +136,13 @@ function modifyCode(text) {
 		I(this, "vapeTexture");
 		I(this, "v4Texture");
 	`);
-	/**
-	 * @param {string} url
-	 * @returns
-	 */
-	const corsMoment = url => {
-		return new URL(`https://corsproxy.io/?url=${url}`).href;
+
 	}
 	addModification('skinManager.loadTextures(),', ',this.loadVape(),');
 	addModification('async loadSpritesheet(){', `
 		async loadVape() {
-			this.vapeTexture = await this.loader.loadAsync("${corsMoment("https://codeberg.org/RealPacket/VapeForMiniblox/raw/branch/main/assets/logo.png")}");
-			this.v4Texture = await this.loader.loadAsync("${corsMoment("https://codeberg.org/RealPacket/VapeForMiniblox/raw/branch/main/assets/logov4.png")}");
+			this.vapeTexture = await this.loader.loadAsync("https://raw.githubusercontent.com/he557/va_for_miniblox/refs/heads/main/logo.png")}");
+			this.v4Texture = await this.loader.loadAsync("https://raw.githubusercontent.com/he557/va_for_miniblox/refs/heads/main/logov4.png")}");
 		}
 		async loadSpritesheet(){
 	`, true);
@@ -1079,7 +1061,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			new Module("AutoQueue", function() {});
 			new Module("AutoVote", function() {});
 			const chatdisabler = new Module("ChatDisabler", function() {});
-			chatdisablermsg = chatdisabler.addoption("Message", String, "youtube.com/c/7GrandDadVape");
+			chatdisablermsg = chatdisabler.addoption("Message", String, "Vector Suc\\ks");
 			new Module("FilterBypass", function() {});
 
 			const survival = new Module("SurvivalMode", function(callback) {
