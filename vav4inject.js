@@ -159,8 +159,8 @@ function modifyCode(text) {
 	addModification('skinManager.loadTextures(),', ',this.loadVape(),');
 	addModification('async loadSpritesheet(){', `
 		async loadVape() {
-			this.vapeTexture = await this.loader.loadAsync("${corsMoment("https://raw.githubusercontent.com/he557/va_for_miniblox/refs/heads/main/logo.png")}");
-			this.v4Texture = await this.loader.loadAsync("${corsMoment("https://raw.githubusercontent.com/he557/va_for_miniblox/refs/heads/main/logov4.png")}");
+			this.vapeTexture = await this.loader.loadAsync("${corsMoment("https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/logo.png")}");
+			this.v4Texture = await this.loader.loadAsync("${corsMoment("https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/logov4.png")}");
 		}
 		async loadSpritesheet(){
 	`, true);
