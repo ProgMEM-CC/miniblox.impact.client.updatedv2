@@ -1,1 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Impact v4 for MiniBlox</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #00ffcc;
+      --background: #0f0f0f;
+      --surface: rgba(20, 20, 20, 0.7);
+      --text: #e0e0e0;
+      --accent: #00c853;
+    }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--background);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+      animation: fadeInBody 1s ease-in-out;
+    }
+
+    .glass {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 3rem;
+      max-width: 600px;
+      text-align: center;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(0, 255, 204, 0.2);
+      border: 1px solid rgba(0, 255, 204, 0.2);
+      animation: scaleIn 1.2s ease;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: #ccc;
+      margin-bottom: 2rem;
+    }
+
+    .download-btn {
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      color: white;
+      background-color: var(--accent);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 0 12px var(--accent);
+      transition: all 0.3s ease;
+    }
+
+    .download-btn:hover {
+      background-color: #00a844;
+      transform: scale(1.05);
+    }
+
+    .dropdown {
+      margin-top: 2rem;
+      background: var(--surface);
+      padding: 1rem 2rem;
+      border-radius: 15px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 255, 204, 0.1);
+      box-shadow: 0 6px 24px rgba(0, 255, 204, 0.15);
+      text-align: left;
+      max-width: 600px;
+      width: 100%;
+      font-size: 0.95rem;
+      transition: max-height 0.4s ease;
+    }
+
+    summary {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: var(--primary);
+      cursor: pointer;
+      margin-bottom: 0.5rem;
+    }
+
+    pre {
+      background: rgba(255,255,255,0.05);
+      padding: 1rem;
+      border-radius: 10px;
+      overflow-x: auto;
+      font-size: 0.85rem;
+    }
+
+    footer {
+      margin-top: 3rem;
+      font-size: 0.9rem;
+      color: #777;
+      text-align: center;
+    }
+
+    @keyframes fadeInBody {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: radial-gradient(circle, #00ffcc33 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: -1;
+      animation: animateBG 30s linear infinite;
+      opacity: 0.05;
+    }
+
+    @keyframes animateBG {
+      0% { background-position: 0 0; }
+      100% { background-position: 1000px 1000px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="glass">
+    <h1>Impact v4 for MiniBlox</h1>
+    <p>The ultimate MiniBlox hacked client. Built for stealth, speed, and total domination. Fully dark-mode optimized with a modern UI and high performance.</p>
+    <p>Impact v4 is powered by plain JavaScript — no frameworks, just raw code and creativity. It leverages custom APIs and runtime hooks to implement advanced client modifications in real time.</p>
+    <a href="" class="download-btn">Download Now</a>
+  </div>
+
+  <details class="dropdown">
+    <summary>How JavaScript Enables Client-Side Hacking</summary>
+    <p>
+      Impact v4 uses JavaScript to directly intercept and alter game packets at runtime. This is done through a system of hooks and modifications, where JavaScript functions inject new logic into game code dynamically.
+    </p>
+    <p>
+      For example, the following snippet modifies the behavior of <code>CPacketEntityVelocity</code> to reduce knockback:
+    </p>
+    <pre><code>addModification('"CPacketEntityVelocity",h=>{const p=m.world.entitiesDump.get(h.id);', `
+  if (player && h.id == player.id && enabledModules["Velocity"]) {
+    if (velocityhori[1] == 0 && velocityvert[1] == 0) return;
+    h.motion = new Vector3$1($.motion.x * velocityhori[1], h.motion.y * velocityvert[1], h.motion.z * velocityhori[1]);
+  }
+`);</code></pre>
+
+    <p>Another example disables sprint interruption using the <code>KeepSprint</code> module:</p>
+    <pre><code>addModification('g&gt;0&amp;&amp;(h.addVelocity(...),this.motion.x*=.6,this.motion.z*=.6)', `
+  if (g &gt; 0) {
+    h.addVelocity(...);
+    if (this != player || !enabledModules["KeepSprint"]) {
+      this.motion.x *= .6;
+      this.motion.z *= .6;
+      this.setSprinting(false);
+    }
+  }
+`, true);</code></pre>
+
+    <p>
+      This method allows for modular control over client behavior (like <code>Velocity</code>, <code>NoSlowdown</code>, <code>KillAura</code>, <code>Step</code>, <code>WTap</code>), making the client fast, lightweight, and easy to extend — all with plain JavaScript.
+    </p>
+  </details>
+
+  <footer>
+    <p>Not affiliated with MiniBlox or Mojang. Use responsibly.</p>
+  </footer>
+</body>
+</html>
