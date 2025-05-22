@@ -77,6 +77,38 @@
       transform: scale(1.05);
     }
 
+    .dropdown {
+      margin-top: 2rem;
+      background: var(--surface);
+      padding: 1rem 2rem;
+      border-radius: 15px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 255, 204, 0.1);
+      box-shadow: 0 6px 24px rgba(0, 255, 204, 0.15);
+      text-align: left;
+      max-width: 600px;
+      width: 100%;
+      font-size: 0.95rem;
+      transition: max-height 0.4s ease;
+    }
+
+    summary {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: var(--primary);
+      cursor: pointer;
+      margin-bottom: 0.5rem;
+    }
+
+    pre {
+      background: rgba(255,255,255,0.05);
+      padding: 1rem;
+      border-radius: 10px;
+      overflow-x: auto;
+      font-size: 0.85rem;
+    }
+
     footer {
       margin-top: 3rem;
       font-size: 0.9rem;
@@ -94,7 +126,6 @@
       to { opacity: 1; transform: scale(1); }
     }
 
-    /* Cool particles background */
     body::before {
       content: "";
       position: fixed;
@@ -117,8 +148,41 @@
   <div class="glass">
     <h1>Impact v4 for MiniBlox</h1>
     <p>The ultimate MiniBlox hacked client. Built for stealth, speed, and total domination. Fully dark-mode optimized with a modern UI and high performance.</p>
+    <p>Impact v4 is powered by plain JavaScript — no frameworks, just raw code and creativity. It leverages custom APIs and runtime hooks to implement advanced client modifications in real time.</p>
     <a href="#" class="download-btn">Download Now</a>
   </div>
+
+  <details class="dropdown">
+    <summary>How JavaScript Enables Client-Side Hacking</summary>
+    <p>
+      Impact v4 uses JavaScript to directly intercept and alter game packets at runtime. This is done through a system of hooks and modifications, where JavaScript functions inject new logic into game code dynamically.
+    </p>
+    <p>
+      For example, the following snippet modifies the behavior of <code>CPacketEntityVelocity</code> to reduce knockback:
+    </p>
+    <pre><code>addModification('"CPacketEntityVelocity",h=>{const p=m.world.entitiesDump.get(h.id);', `
+  if (player && h.id == player.id && enabledModules["Velocity"]) {
+    if (velocityhori[1] == 0 && velocityvert[1] == 0) return;
+    h.motion = new Vector3$1($.motion.x * velocityhori[1], h.motion.y * velocityvert[1], h.motion.z * velocityhori[1]);
+  }
+`);</code></pre>
+
+    <p>Another example disables sprint interruption using the <code>KeepSprint</code> module:</p>
+    <pre><code>addModification('g&gt;0&amp;&amp;(h.addVelocity(...),this.motion.x*=.6,this.motion.z*=.6)', `
+  if (g &gt; 0) {
+    h.addVelocity(...);
+    if (this != player || !enabledModules["KeepSprint"]) {
+      this.motion.x *= .6;
+      this.motion.z *= .6;
+      this.setSprinting(false);
+    }
+  }
+`, true);</code></pre>
+
+    <p>
+      This method allows for modular control over client behavior (like <code>Velocity</code>, <code>NoSlowdown</code>, <code>KillAura</code>, <code>Step</code>, <code>WTap</code>), making the client fast, lightweight, and easy to extend — all with plain JavaScript.
+    </p>
+  </details>
 
   <footer>
     <p>Not affiliated with MiniBlox or Mojang. Use responsibly.</p>
