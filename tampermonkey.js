@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Impact For Miniblox
 // @namespace    he557, ProgMEM-CC
-// @version      2025-04-13
+// @version      1.1.2
 // @description  Hacks for Miniblox (haha vector) Lol
 // @author       7GrandDad, Emmaa, ProgMEM-CC
 // @match        https://miniblox.io/*
