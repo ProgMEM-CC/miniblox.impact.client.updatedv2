@@ -87,11 +87,18 @@ jobs:
       - name: Format commit log section
         id: commitlog_section
         run: |
-          if [ "${{ github.event.inputs.has_commitlog }}" = "true" ]; then
-            echo "text=## This Week's Commits%0A---%0A${{ steps.fc.outputs.commits }}" >> $GITHUB_OUTPUT
+          if [ "${{ github.events.inputs.has_commitlog }}" = "true" ]; then
+            {
+              echo "text<<EOF"
+              echo "## This Week's Commits"
+              echo "---"
+              echo "${{ steps.fc.outputs.commits }}"
+              echo "EOF"
+            } >> $GITHUB_OUTPUT
           else
             echo "text=" >> $GITHUB_OUTPUT
           fi
+
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
