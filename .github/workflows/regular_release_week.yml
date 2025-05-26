@@ -8,6 +8,13 @@ on:
         description: "Enter a custom description for the release"
         required: false
         default: "Weekly release"
+      custom_ver:
+        description: "Enter a custom version tag"
+        required: false
+      custom_name: 
+        description: "Enter a custom release name"
+        required: false
+      
 
 permissions:
   contents: write
@@ -68,8 +75,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: weekly-${{ steps.dates.outputs.today }}-time-${{ steps.dates.outputs.now }}
-          name: weekly-${{ steps.dates.outputs.today }} at time [${{ steps.dates.outputs.now }}]
+          tag_name: ${{ github.event.inputs.custom_ver != '' && github.event.inputs.custom_ver || format('weekly-{0}-time-{1}', steps.dates.outputs.today, steps.dates.outputs.now) }}
+          name: ${{ github.event.inputs.custom_name != '' && github.event.inputs.custom_name || format('weekly-{0}', steps.dates.outputs.today) }}
           body: |
             ${{ github.event.inputs.desc }}
             ---
