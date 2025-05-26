@@ -1,0 +1,111 @@
+name: Weekly Release
+
+on:
+  schedule:
+    - cron: '0 0 * * 1' # Runs at 00:00 UTC every Monday
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  models: read
+
+jobs:
+  weekly-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up date variables
+        id: dates
+        run: |
+          TODAY=$(date -u +"%Y-%m-%d")
+          LAST_WEEK=$(date -u -d "last monday -7 days" +"%Y-%m-%d")
+          echo "today=$TODAY" >> $GITHUB_OUTPUT
+          echo "lastweek=$LAST_WEEK" >> $GITHUB_OUTPUT
+
+      - name: Get commits from past week
+        id: commits
+        run: |
+          git fetch --prune --unshallow || true
+          COMMITS=$(git log --since="${{ steps.dates.outputs.lastweek }}T00:00:00Z" --until="${{ steps.dates.outputs.today }}T00:00:00Z" --pretty=format:"%h %s" --no-merges)
+          echo "$COMMITS"
+          echo "commits<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMITS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: minify js to paste in console
+        uses: jossydevers/minify-js@v1
+        with:
+          directory: 'vav4inject.js' 
+          output: 'minify/paste.js' 
+      - name: Generate summary with GitHub Model
+        id: ai-summary
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          COMMITS="${{ steps.commits.outputs.commits }}"
+          if [ -z "$COMMITS" ]; then
+            echo "summary=No commits this week." >> $GITHUB_OUTPUT
+          else
+            SUMMARY_PAYLOAD=$(jq -n \
+              --arg txt "$COMMITS" \
+              '{
+                "messages": [
+                  {
+                    "role": "system",
+                    "content": "You are an assistant that summarizes git commit messages for weekly release notes."
+                  },
+                  {
+                    "role": "user",
+                    "content": "Summarize the following commit messages as a changelog for a release:\n" + $txt
+                  }
+                ],
+                "model": "github/gpt-4"
+              }'
+            )
+            SUMMARY_RESPONSE=$(curl -s "https://models.github.ai/inference/chat/completions" \
+              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -d "$SUMMARY_PAYLOAD")
+            SUMMARY=$(echo "$SUMMARY_RESPONSE" | jq -r '.choices[0].message.content // "Model returned no summary."')
+            echo "summary<<EOF" >> $GITHUB_OUTPUT
+            echo "$SUMMARY" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+
+      # --- SECTION TO SPECIFY FILES FOR ARTIFACTS AND RELEASE ASSETS ---
+      # Edit the files below, one per line, to include in both artifacts and release assets.
+      - name: Write release file list
+        id: release_file_list
+        run: |
+          cat <<EOF > release_files.txt
+          tampermonkey.js
+          minify/paste.js
+          vav4inject.js
+          EOF
+
+
+      - name: Set release files variable
+        id: release_files
+        run: |
+          RELEASE_FILES=$(cat release_files.txt | grep -v '^#' | grep -v '^\s*$' | xargs)
+          echo "files=$RELEASE_FILES" >> $GITHUB_OUTPUT
+
+      - name: Upload as GitHub Artifact
+        if: steps.release_files.outputs.files != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: weekly-release-assets
+          path: ${{ steps.release_files.outputs.files }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: weekly-${{ steps.dates.outputs.today }}
+          name: weekly-${{ steps.dates.outputs.today }}
+          body: |
+            ${{ steps.ai-summary.outputs.summary }}
+          files: ${{ steps.release_files.outputs.files }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
