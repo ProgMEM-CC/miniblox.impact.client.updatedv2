@@ -1,5 +1,3 @@
-name: Weekly Release
-
 on:
   schedule:
     - cron: '0 0 * * 1' # Runs at 00:00 UTC every Monday
@@ -20,8 +18,10 @@ jobs:
         id: dates
         run: |
           TODAY=$(date -u +"%Y-%m-%d")
+          NOW=$(date -u +"%H:%M:%S")
           LAST_WEEK=$(date -u -d "last monday -7 days" +"%Y-%m-%d")
           echo "today=$TODAY" >> $GITHUB_OUTPUT
+          echo "now=$NOW" >> $GITHUB_OUTPUT
           echo "lastweek=$LAST_WEEK" >> $GITHUB_OUTPUT
 
       - name: Get commits from past week
@@ -39,6 +39,7 @@ jobs:
         with:
           directory: 'vav4inject.js' 
           output: 'minify/paste.js' 
+
       - name: Generate summary with GitHub Model
         id: ai-summary
         env:
@@ -85,12 +86,20 @@ jobs:
           vav4inject.js
           EOF
 
-
       - name: Set release files variable
         id: release_files
         run: |
           RELEASE_FILES=$(cat release_files.txt | grep -v '^#' | grep -v '^\s*$' | xargs)
           echo "files=$RELEASE_FILES" >> $GITHUB_OUTPUT
+
+      - name: Read minified JS for pasting
+        id: paste_js
+        run: |
+          # Read the entire content of minify/paste.js and escape backticks for Markdown code block safety
+          PASTE_CONTENT=$(cat minify/paste.js | sed 's/`/\\`/g')
+          echo "content<<EOF" >> $GITHUB_OUTPUT
+          echo "$PASTE_CONTENT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Upload as GitHub Artifact
         if: steps.release_files.outputs.files != ''
@@ -102,10 +111,16 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: weekly-${{ steps.dates.outputs.today }}
-          name: weekly-${{ steps.dates.outputs.today }}
+          tag_name: weekly-${{ steps.dates.outputs.today }}-${{ steps.dates.outputs.now }}
+          name: weekly-${{ steps.dates.outputs.today }} [${{ steps.dates.outputs.now }}]
           body: |
             ${{ steps.ai-summary.outputs.summary }}
+
+            ---
+            ## Paste in Console (minified)
+            ```
+            ${{ steps.paste_js.outputs.content }}
+            ```
           files: ${{ steps.release_files.outputs.files }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
