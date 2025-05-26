@@ -3,6 +3,11 @@ on:
   schedule:
     - cron: '0 0 * * 1' # Runs at 00:00 UTC every Monday
   workflow_dispatch:
+    inputs:
+      desc:
+        description: "Enter a custom description for the release"
+        required: false
+        default: "Weekly release"
 
 permissions:
   contents: write
@@ -41,42 +46,6 @@ jobs:
           directory: 'vav4inject.js' 
           output: 'minify/' 
 
-      - name: Generate summary with GitHub Model
-        id: ai-summary
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          COMMITS="${{ steps.commits.outputs.commits }}"
-          if [ -z "$COMMITS" ]; then
-            echo "summary=No commits this week." >> $GITHUB_OUTPUT
-          else
-            SUMMARY_PAYLOAD=$(jq -n \
-              --arg txt "$COMMITS" \
-              '{
-                "messages": [
-                  {
-                    "role": "system",
-                    "content": "You are an assistant that summarizes git commit messages for weekly release notes."
-                  },
-                  {
-                    "role": "user",
-                    "content": ("Summarize the following commit messages as a changelog for a release:\n" + $txt)
-                  }
-                ],
-                "model": "github/gpt-4"
-              }'
-            )
-            SUMMARY_RESPONSE=$(curl -s "https://models.github.ai/inference/chat/completions" \
-              -H "Content-Type: application/json" \
-              -H "Authorization: Bearer $GITHUB_TOKEN" \
-              -d "$SUMMARY_PAYLOAD")
-            SUMMARY=$(echo "$SUMMARY_RESPONSE" | jq -r '.choices[0].message.content // "Model returned no summary."')
-            echo "summary<<EOF" >> $GITHUB_OUTPUT
-            echo "$SUMMARY" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-          fi
-
-
       - name: Read minified JS for pasting
         id: paste_js
         run: |
@@ -102,8 +71,7 @@ jobs:
           tag_name: weekly-${{ steps.dates.outputs.today }}-time-${{ steps.dates.outputs.now }}
           name: weekly-${{ steps.dates.outputs.today }} at time [${{ steps.dates.outputs.now }}]
           body: |
-            ${{ steps.ai-summary.outputs.summary }}
-
+            ${{ github.event.inputs.desc }}
             ---
             ## Paste in Console (minified)
             ```
