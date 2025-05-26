@@ -60,7 +60,7 @@ jobs:
                   },
                   {
                     "role": "user",
-                    "content": "Summarize the following commit messages as a changelog for a release:\n" + $txt
+                    "content": ("Summarize the following commit messages as a changelog for a release:\n" + $txt)
                   }
                 ],
                 "model": "github/gpt-4"
