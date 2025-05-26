@@ -18,6 +18,7 @@ on:
         description: "Week Commit Log?"
         required: true
         default: "true"
+        type: "boolean"
 
 permissions:
   contents: write
@@ -61,8 +62,6 @@ jobs:
         uses: devatherock/minify-js@v3.1.0
         with:
           output: 'minify/' 
-          inclusions: |-
-            vav4inject.js
 
       - name: Read minified JS for pasting
         id: paste_js
