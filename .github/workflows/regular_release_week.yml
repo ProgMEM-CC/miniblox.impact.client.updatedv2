@@ -39,7 +39,7 @@ jobs:
         uses: jossydevers/minify-js@v1.0.0
         with:
           directory: 'vav4inject.js' 
-          output: 'minify/paste.js' 
+          output: 'minify/' 
 
       - name: Generate summary with GitHub Model
         id: ai-summary
@@ -76,28 +76,12 @@ jobs:
             echo "EOF" >> $GITHUB_OUTPUT
           fi
 
-      # --- SECTION TO SPECIFY FILES FOR ARTIFACTS AND RELEASE ASSETS ---
-      # Edit the files below, one per line, to include in both artifacts and release assets.
-      - name: Write release file list
-        id: release_file_list
-        run: |
-          cat <<EOF > release_files.txt
-          tampermonkey.js
-          minify/paste.js
-          vav4inject.js
-          EOF
-
-      - name: Set release files variable
-        id: release_files
-        run: |
-          RELEASE_FILES=$(cat release_files.txt | grep -v '^#' | grep -v '^\s*$' | xargs)
-          echo "files=$RELEASE_FILES" >> $GITHUB_OUTPUT
 
       - name: Read minified JS for pasting
         id: paste_js
         run: |
           # Read the entire content of minify/paste.js and escape backticks for Markdown code block safety
-          PASTE_CONTENT=$(cat minify/paste.js | sed 's/`/\\`/g')
+          PASTE_CONTENT=$(cat minify/vav4inject.min.js | sed 's/`/\\`/g')
           echo "content<<EOF" >> $GITHUB_OUTPUT
           echo "$PASTE_CONTENT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -107,7 +91,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: weekly-release-assets
-          path: ${{ steps.release_files.outputs.files }}
+          path: |
+            minify/vav4inject.min.js
+            tampermonkey.js
+            vav4inject.js
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -122,6 +109,9 @@ jobs:
             ```
             ${{ steps.paste_js.outputs.content }}
             ```
-          files: ${{ steps.release_files.outputs.files }}
+          files: |
+            minify/vav4inject.min.js
+            tampermonkey.js
+            vav4inject.js
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
