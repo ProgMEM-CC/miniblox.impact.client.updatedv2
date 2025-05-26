@@ -46,6 +46,13 @@ jobs:
           echo "commits<<EOF" >> $GITHUB_OUTPUT
           echo "$COMMITS" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+      - name: Format commits as blockquote
+        id: fc
+        run: |
+          FORMATTED=$(echo "${{ steps.commits.outputs.commits }}" | sed 's/^/> /')
+          echo "commits<<EOF" >> $GITHUB_OUTPUT
+          echo "$FORMATTED" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: minify js to paste in console
         uses: devatherock/minify-js@v3.1.0
@@ -82,7 +89,7 @@ jobs:
             ---
             ##Commits
             ---
-            ${{ steps.commits.outputs.commits }}
+            ${{ steps.fc.outputs.commits }}
             ---
             ## Paste in Console (minified)
             ```
