@@ -14,7 +14,10 @@ on:
       custom_name: 
         description: "Enter a custom release name"
         required: false
-      
+      has_commitlog:
+        description: "Week Commit Log?"
+        required: true
+        default: "true"
 
 permissions:
   contents: write
@@ -82,6 +85,14 @@ jobs:
             minify/vav4inject.min.js
             tampermonkey.js
             vav4inject.js
+      - name: Format commit log section
+        id: commitlog_section
+        run: |
+          if [ "${{ steps.has_commitlog.outputs.value }}" = "true" ]; then
+            echo "text=## This Week's Commits%0A---%0A${{ steps.fc.outputs.commits }}" >> $GITHUB_OUTPUT
+          else
+            echo "text=" >> $GITHUB_OUTPUT
+          fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -91,9 +102,7 @@ jobs:
           body: |
             ${{ github.event.inputs.desc }}
             ---
-            ##Commits
-            ---
-            ${{ steps.fc.outputs.commits }}
+            ${{ steps.commitlog_section.outputs.text }}
             ---
             ## Paste in Console (minified)
             ```
