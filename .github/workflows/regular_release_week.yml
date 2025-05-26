@@ -69,7 +69,11 @@ jobs:
           echo "content<<EOF" >> $GITHUB_OUTPUT
           echo "$PASTE_CONTENT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-
+      - name: currentVersion appender
+        id: currentver
+        run: |
+          VERSION=$(cat VERSIONFILE)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Upload as GitHub Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -82,8 +86,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.event.inputs.custom_ver != '' && github.event.inputs.custom_ver || format('weekly-{0}-time-{1}', steps.dates.outputs.today, steps.dates.outputs.now) }}
-          name: ${{ github.event.inputs.custom_name != '' && github.event.inputs.custom_name || format('weekly-{0}', steps.dates.outputs.today) }}
+          tag_name: ${{ github.event.inputs.custom_ver != '' && github.event.inputs.custom_ver || format('{0}-weekly-{1}-time-{2}',steps.currentver.outputs.version, steps.dates.outputs.today, steps.dates.outputs.now) }}
+          name: ${{ github.event.inputs.custom_name != '' && github.event.inputs.custom_name || format('{0}-weekly-{1}',steps.currentver.outputs.version,steps.dates.outputs.today) }}
           body: |
             ${{ github.event.inputs.desc }}
             ---
