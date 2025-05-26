@@ -48,9 +48,8 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: minify js to paste in console
-        uses: jossydevers/minify-js@v1.0.0
+        uses: nizarmah/auto-minify@v3
         with:
-          directory: 'vav4inject.js' 
           output: 'minify/' 
 
       - name: Read minified JS for pasting
