@@ -64,7 +64,6 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Upload as GitHub Artifact
-        if: steps.release_files.outputs.files != ''
         uses: actions/upload-artifact@v4
         with:
           name: weekly-release-assets
@@ -80,6 +79,10 @@ jobs:
           name: ${{ github.event.inputs.custom_name != '' && github.event.inputs.custom_name || format('weekly-{0}', steps.dates.outputs.today) }}
           body: |
             ${{ github.event.inputs.desc }}
+            ---
+            ##Commits
+            ---
+            ${{ steps.commits.outputs.commits }}
             ---
             ## Paste in Console (minified)
             ```
