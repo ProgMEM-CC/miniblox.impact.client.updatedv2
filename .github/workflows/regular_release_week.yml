@@ -17,8 +17,8 @@ on:
       has_commitlog:
         description: "Week Commit Log?"
         required: true
-        default: "true"
-        type: "boolean"
+        default: true
+        type: boolean
 
 permissions:
   contents: write
