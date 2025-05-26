@@ -87,7 +87,8 @@ jobs:
       - name: Format commit log section
         id: commitlog_section
         run: |
-          if [ "${{ github.events.inputs.has_commitlog }}" = "true" ]; then
+          HAS_LOG="${{ github.event.inputs.has_commitlog }}"
+          if [ "$HAS_LOG" = "true" ];then
             {
               echo "text<<EOF"
               echo "## This Week's Commits"
