@@ -19,7 +19,7 @@ jobs:
         id: dates
         run: |
           TODAY=$(date -u +"%Y-%m-%d")
-          NOW=$(date -u +"%H:%M:%S")
+          NOW=$(date -u +"time-%H.%M.%S")
           LAST_WEEK=$(date -u -d "last monday -7 days" +"%Y-%m-%d")
           echo "today=$TODAY" >> $GITHUB_OUTPUT
           echo "now=$NOW" >> $GITHUB_OUTPUT
