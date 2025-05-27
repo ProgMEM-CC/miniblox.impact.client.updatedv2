@@ -1089,83 +1089,101 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 			});
 
-			// ✅ AutoDrop Module (Smart Cleanup)
-new Module("AutoDrop", function(callback) {
+			new Module("AutoDrop", function(callback) {
 	if (callback) {
 		let dropVisuals = [];
+
 		tickLoop["AutoDrop"] = function() {
 			dropVisuals = [];
+
 			if (!player.openContainer || player.openContainer !== player.inventoryContainer) return;
 
 			const slots = player.inventoryContainer.inventorySlots;
-			const equipped = player.inventory.armorInventory;
-
-			let hasAxe = false;
-			let hasGapple = false;
 			let keptFood = false;
 			let bestSwordStrength = 0;
+			let bestSwordSlot = -1;
 
+			// Track best armor per type: 0 = boots, 1 = leggings, 2 = chest, 3 = helmet
+			const bestArmor = [null, null, null, null];
+			const bestArmorStrength = [0, 0, 0, 0];
+
+			// First pass: find best sword and best armor
 			for (let i = 0; i < 36; i++) {
 				const slot = slots[i];
 				if (!slot || !slot.getHasStack()) continue;
+
 				const stack = slot.getStack();
 				const item = stack.getItem();
+				const name = stack.getDisplayName().toLowerCase();
 
-				if (item instanceof ItemAxe) hasAxe = true;
-				if (item instanceof ItemAppleGold) hasGapple = true;
-				if (item instanceof ItemFood && !hasGapple && !keptFood) {
-					keptFood = true;
-					continue; // keep first bit of food
+				// SWORD
+				if (item instanceof ItemSword && (name.includes("diamond") || name.includes("iron"))) {
+					const str = getItemStrength(stack);
+					if (str > bestSwordStrength) {
+						bestSwordStrength = str;
+						bestSwordSlot = i;
+					}
 				}
 
-				if (item instanceof ItemSword) {
+				// ARMOR
+				if (item instanceof ItemArmor && (name.includes("diamond") || name.includes("iron"))) {
+					const type = item.armorType; // 0 boots, 1 leggings, 2 chestplate, 3 helmet
 					const str = getItemStrength(stack);
-					if (str > bestSwordStrength) bestSwordStrength = str;
+					if (str > bestArmorStrength[type]) {
+						bestArmorStrength[type] = str;
+						bestArmor[type] = i;
+					}
 				}
 			}
 
+			// Second pass: drop all unnecessary items
 			for (let i = 0; i < 36; i++) {
 				const slot = slots[i];
 				if (!slot || !slot.getHasStack()) continue;
+
 				const stack = slot.getStack();
 				const item = stack.getItem();
+				const name = stack.getDisplayName().toLowerCase();
 
-				if (item instanceof ItemSword) {
-					if (hasAxe || getItemStrength(stack) < bestSwordStrength) {
-						dropSlot(i);
-						dropVisuals.push(i);
-						continue;
-					}
-				}
+				// KEEP best sword
+				if (i === bestSwordSlot) continue;
 
+				// KEEP best armor
 				if (item instanceof ItemArmor) {
-					const material = item.material;
 					const type = item.armorType;
-					const equippedArmor = equipped[3 - type];
-					const equippedStr = equippedArmor ? getItemStrength(equippedArmor) : 0;
-					const thisStr = getItemStrength(stack);
-					if (thisStr <= equippedStr || material.name !== "diamond") {
-						dropSlot(i);
-						dropVisuals.push(i);
-						continue;
-					}
-				}
-
-				if (item instanceof ItemFood) {
-					if (hasGapple || keptFood) {
-						dropSlot(i);
-						dropVisuals.push(i);
-						continue;
-					} else {
-						keptFood = true; // keep one non-gapple food
-						continue;
-					}
-				}
-
-				if (!(item instanceof ItemSword || item instanceof ItemAxe || item instanceof ItemArmor || item instanceof ItemAppleGold || item instanceof ItemFood)) {
+					if (i === bestArmor[type]) continue;
 					dropSlot(i);
 					dropVisuals.push(i);
+					continue;
 				}
+
+				// KEEP one food
+				if (item instanceof ItemFood) {
+					if (!keptFood) {
+						keptFood = true;
+						continue;
+					}
+					dropSlot(i);
+					dropVisuals.push(i);
+					continue;
+				}
+
+				// KEEP blocks if stackSize >= 15
+				if (item instanceof ItemBlock) {
+					if (stack.stackSize >= 15) continue;
+					dropSlot(i);
+					dropVisuals.push(i);
+					continue;
+				}
+
+				// KEEP iron/diamond axe/pickaxe
+				if ((item instanceof ItemAxe || name.includes("pickaxe")) && (name.includes("diamond") || name.includes("iron"))) {
+					continue;
+				}
+
+				// DROP everything else
+				dropSlot(i);
+				dropVisuals.push(i);
 			}
 		};
 
@@ -1192,8 +1210,11 @@ function getItemStrength(stack) {
 	let base = 1;
 	const item = stack.getItem();
 
-	if (item instanceof ItemSword || item instanceof ItemAxe) base += item.attackDamage;
-	else if (item instanceof ItemArmor) base += item.damageReduceAmountDump;
+	if (item instanceof ItemSword || item instanceof ItemAxe) {
+		base += item.attackDamage || 0;
+	} else if (item instanceof ItemArmor) {
+		base += item.damageReduceAmountDump || 0;
+	}
 
 	const enchants = stack.getEnchantmentTagList();
 	if (enchants) {
@@ -1204,6 +1225,7 @@ function getItemStrength(stack) {
 	}
 	return base;
 }
+
 
 			globalThis.${storeName}.modules = modules;
 			globalThis.${storeName}.profile = "default";
