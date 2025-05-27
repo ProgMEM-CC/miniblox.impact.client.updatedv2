@@ -1089,6 +1089,122 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 			});
 
+			// ✅ AutoDrop Module (Smart Cleanup)
+new Module("AutoDrop", function(callback) {
+	if (callback) {
+		let dropVisuals = [];
+		tickLoop["AutoDrop"] = function() {
+			dropVisuals = [];
+			if (!player.openContainer || player.openContainer !== player.inventoryContainer) return;
+
+			const slots = player.inventoryContainer.inventorySlots;
+			const equipped = player.inventory.armorInventory;
+
+			let hasAxe = false;
+			let hasGapple = false;
+			let keptFood = false;
+			let bestSwordStrength = 0;
+
+			for (let i = 0; i < 36; i++) {
+				const slot = slots[i];
+				if (!slot || !slot.getHasStack()) continue;
+				const stack = slot.getStack();
+				const item = stack.getItem();
+
+				if (item instanceof ItemAxe) hasAxe = true;
+				if (item instanceof ItemAppleGold) hasGapple = true;
+				if (item instanceof ItemFood && !hasGapple && !keptFood) {
+					keptFood = true;
+					continue; // keep first bit of food
+				}
+
+				if (item instanceof ItemSword) {
+					const str = getItemStrength(stack);
+					if (str > bestSwordStrength) bestSwordStrength = str;
+				}
+			}
+
+			for (let i = 0; i < 36; i++) {
+				const slot = slots[i];
+				if (!slot || !slot.getHasStack()) continue;
+				const stack = slot.getStack();
+				const item = stack.getItem();
+
+				if (item instanceof ItemSword) {
+					if (hasAxe || getItemStrength(stack) < bestSwordStrength) {
+						dropSlot(i);
+						dropVisuals.push(i);
+						continue;
+					}
+				}
+
+				if (item instanceof ItemArmor) {
+					const material = item.material;
+					const type = item.armorType;
+					const equippedArmor = equipped[3 - type];
+					const equippedStr = equippedArmor ? getItemStrength(equippedArmor) : 0;
+					const thisStr = getItemStrength(stack);
+					if (thisStr <= equippedStr || material.name !== "diamond") {
+						dropSlot(i);
+						dropVisuals.push(i);
+						continue;
+					}
+				}
+
+				if (item instanceof ItemFood) {
+					if (hasGapple || keptFood) {
+						dropSlot(i);
+						dropVisuals.push(i);
+						continue;
+					} else {
+						keptFood = true; // keep one non-gapple food
+						continue;
+					}
+				}
+
+				if (!(item instanceof ItemSword || item instanceof ItemAxe || item instanceof ItemArmor || item instanceof ItemAppleGold || item instanceof ItemFood)) {
+					dropSlot(i);
+					dropVisuals.push(i);
+				}
+			}
+		};
+
+		hud3D.add("AutoDropOverlay", () => {
+			for (const slot of dropVisuals) {
+				const x = (slot % 9) * 20 + 10;
+				const y = Math.floor(slot / 9) * 20 + 60;
+				drawImage("spritesheet.png", 32, 32, 16, 16, x, y, 16, 16, "rgba(255,0,0,0.6)");
+			}
+		});
+	} else {
+		delete tickLoop["AutoDrop"];
+		hud3D.remove("AutoDropOverlay");
+	}
+});
+
+function dropSlot(index) {
+	playerControllerDump.windowClickDump(player.openContainer.windowId, index, 0, 0, player);
+	playerControllerDump.windowClickDump(player.openContainer.windowId, -999, 0, 0, player);
+}
+
+function getItemStrength(stack) {
+	if (!stack) return 0;
+	let base = 1;
+	const item = stack.getItem();
+
+	if (item instanceof ItemSword || item instanceof ItemAxe) base += item.attackDamage;
+	else if (item instanceof ItemArmor) base += item.damageReduceAmountDump;
+
+	const enchants = stack.getEnchantmentTagList();
+	if (enchants) {
+		for (const ench of enchants) {
+			if (ench.id === Enchantments.sharpness.effectId) base += ench.lvl * 1.25;
+			else if (ench.id === Enchantments.protection.effectId) base += ench.lvl * 1.2;
+		}
+	}
+	return base;
+}
+
 			globalThis.${storeName}.modules = modules;
 			globalThis.${storeName}.profile = "default";
 		})();
