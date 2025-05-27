@@ -105,7 +105,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           prerelease: true
-          tag_name: ${{ github.event.inputs.custom_ver != '' && github.event.inputs.custom_ver || format('{0}-daily-{1}-time-{2}',steps.currentver.outputs.version, steps.dates.outputs.today, steps.dates.outputs.now) }}
+          tag_name: ${{ github.event.inputs.custom_ver != '' && github.event.inputs.custom_ver || format('{0}-{1}-time-{2}-daily',steps.currentver.outputs.version, steps.dates.outputs.today, steps.dates.outputs.now) }}
           name: ${{ github.event.inputs.custom_name != '' && github.event.inputs.custom_name || format('{0}-daily-{1}',steps.currentver.outputs.version,steps.dates.outputs.today) }}
           body: |
             ${{ github.event.inputs.desc }}
