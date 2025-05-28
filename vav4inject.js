@@ -1089,25 +1089,22 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 			});
 
-			new Module("AutoDrop", function(callback) {
+			function dropSlot(index) {
+	playerControllerDump.windowClickDump(player.openContainer.windowId, index, 0, 0, player);
+	playerControllerDump.windowClickDump(player.openContainer.windowId, -999, 0, 0, player);
+}
+
+const AutoDrop = new Module("AutoDrop", function(callback) {
 	if (callback) {
 		let dropVisuals = [];
+		const keptTypes = new Set();
 
 		tickLoop["AutoDrop"] = function() {
 			dropVisuals = [];
-
 			if (!player.openContainer || player.openContainer !== player.inventoryContainer) return;
 
 			const slots = player.inventoryContainer.inventorySlots;
-			let keptFood = false;
-			let bestSwordStrength = 0;
-			let bestSwordSlot = -1;
 
-			// Track best armor per type: 0 = boots, 1 = leggings, 2 = chest, 3 = helmet
-			const bestArmor = [null, null, null, null];
-			const bestArmorStrength = [0, 0, 0, 0];
-
-			// First pass: find best sword and best armor
 			for (let i = 0; i < 36; i++) {
 				const slot = slots[i];
 				if (!slot || !slot.getHasStack()) continue;
@@ -1116,75 +1113,36 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				const item = stack.getItem();
 				const name = stack.getDisplayName().toLowerCase();
 
-				// SWORD
-				if (item instanceof ItemSword && (name.includes("diamond") || name.includes("iron"))) {
-					const str = getItemStrength(stack);
-					if (str > bestSwordStrength) {
-						bestSwordStrength = str;
-						bestSwordSlot = i;
-					}
-				}
+				const typeKey = item.constructor.name + (item instanceof ItemArmor ? "_" + item.armorType : "");
 
-				// ARMOR
-				if (item instanceof ItemArmor && (name.includes("diamond") || name.includes("iron"))) {
-					const type = item.armorType; // 0 boots, 1 leggings, 2 chestplate, 3 helmet
-					const str = getItemStrength(stack);
-					if (str > bestArmorStrength[type]) {
-						bestArmorStrength[type] = str;
-						bestArmor[type] = i;
-					}
-				}
-			}
+				// Keep special items
+				if (
+					name.includes("gapple") ||
+					name.includes("golden apple") ||
+					name.includes("ender pearl") ||
+					name.includes("fire charge")
+				) continue;
 
-			// Second pass: drop all unnecessary items
-			for (let i = 0; i < 36; i++) {
-				const slot = slots[i];
-				if (!slot || !slot.getHasStack()) continue;
-
-				const stack = slot.getStack();
-				const item = stack.getItem();
-				const name = stack.getDisplayName().toLowerCase();
-
-				// KEEP best sword
-				if (i === bestSwordSlot) continue;
-
-				// KEEP best armor
-				if (item instanceof ItemArmor) {
-					const type = item.armorType;
-					if (i === bestArmor[type]) continue;
-					dropSlot(i);
-					dropVisuals.push(i);
-					continue;
-				}
-
-				// KEEP one food
-				if (item instanceof ItemFood) {
-					if (!keptFood) {
-						keptFood = true;
-						continue;
-					}
-					dropSlot(i);
-					dropVisuals.push(i);
-					continue;
-				}
-
-				// KEEP blocks if stackSize >= 15
+				// Block logic — drop if stack < 5
 				if (item instanceof ItemBlock) {
-					if (stack.stackSize >= 15) continue;
+					if (stack.stackSize >= 5) continue; // keep good stacks
 					dropSlot(i);
 					dropVisuals.push(i);
 					continue;
 				}
 
-				// KEEP iron/diamond axe/pickaxe
-				if ((item instanceof ItemAxe || name.includes("pickaxe")) && (name.includes("diamond") || name.includes("iron"))) {
+				// First of a type is kept
+				if (!keptTypes.has(typeKey)) {
+					keptTypes.add(typeKey);
 					continue;
 				}
 
-				// DROP everything else
+				// Duplicate non-block → drop
 				dropSlot(i);
 				dropVisuals.push(i);
 			}
+
+			keptTypes.clear();
 		};
 
 		hud3D.add("AutoDropOverlay", () => {
@@ -1200,31 +1158,6 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	}
 });
 
-function dropSlot(index) {
-	playerControllerDump.windowClickDump(player.openContainer.windowId, index, 0, 0, player);
-	playerControllerDump.windowClickDump(player.openContainer.windowId, -999, 0, 0, player);
-}
-
-function getItemStrength(stack) {
-	if (!stack) return 0;
-	let base = 1;
-	const item = stack.getItem();
-
-	if (item instanceof ItemSword || item instanceof ItemAxe) {
-		base += item.attackDamage || 0;
-	} else if (item instanceof ItemArmor) {
-		base += item.damageReduceAmountDump || 0;
-	}
-
-	const enchants = stack.getEnchantmentTagList();
-	if (enchants) {
-		for (const ench of enchants) {
-			if (ench.id === Enchantments.sharpness.effectId) base += ench.lvl * 1.25;
-			else if (ench.id === Enchantments.protection.effectId) base += ench.lvl * 1.2;
-		}
-	}
-	return base;
-}
 
 
 			globalThis.${storeName}.modules = modules;
