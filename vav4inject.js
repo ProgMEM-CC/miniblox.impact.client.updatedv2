@@ -1089,6 +1089,77 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 			});
 
+			function dropSlot(index) {
+	playerControllerDump.windowClickDump(player.openContainer.windowId, index, 0, 0, player);
+	playerControllerDump.windowClickDump(player.openContainer.windowId, -999, 0, 0, player);
+}
+
+const AutoDrop = new Module("AutoDrop", function(callback) {
+	if (callback) {
+		let dropVisuals = [];
+		const keptTypes = new Set();
+
+		tickLoop["AutoDrop"] = function() {
+			dropVisuals = [];
+			if (!player.openContainer || player.openContainer !== player.inventoryContainer) return;
+
+			const slots = player.inventoryContainer.inventorySlots;
+
+			for (let i = 0; i < 36; i++) {
+				const slot = slots[i];
+				if (!slot || !slot.getHasStack()) continue;
+
+				const stack = slot.getStack();
+				const item = stack.getItem();
+				const name = stack.getDisplayName().toLowerCase();
+
+				const typeKey = item.constructor.name + (item instanceof ItemArmor ? "_" + item.armorType : "");
+
+				// Keep special items
+				if (
+					name.includes("gapple") ||
+					name.includes("golden apple") ||
+					name.includes("ender pearl") ||
+					name.includes("fire charge")
+				) continue;
+
+				// Block logic — drop if stack < 5
+				if (item instanceof ItemBlock) {
+					if (stack.stackSize >= 5) continue; // keep good stacks
+					dropSlot(i);
+					dropVisuals.push(i);
+					continue;
+				}
+
+				// First of a type is kept
+				if (!keptTypes.has(typeKey)) {
+					keptTypes.add(typeKey);
+					continue;
+				}
+
+				// Duplicate non-block → drop
+				dropSlot(i);
+				dropVisuals.push(i);
+			}
+
+			keptTypes.clear();
+		};
+
+		hud3D.add("AutoDropOverlay", () => {
+			for (const slot of dropVisuals) {
+				const x = (slot % 9) * 20 + 10;
+				const y = Math.floor(slot / 9) * 20 + 60;
+				drawImage("spritesheet.png", 32, 32, 16, 16, x, y, 16, 16, "rgba(255,0,0,0.6)");
+			}
+		});
+	} else {
+		delete tickLoop["AutoDrop"];
+		hud3D.remove("AutoDropOverlay");
+	}
+});
+
+
+
 			globalThis.${storeName}.modules = modules;
 			globalThis.${storeName}.profile = "default";
 		})();

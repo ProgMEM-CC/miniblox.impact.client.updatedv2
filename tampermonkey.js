@@ -7,7 +7,6 @@
 // @match        https://miniblox.io/*
 // @match        https://miniblox.org/*
 // @match        https://miniblox.online/*
-// @match        https://bloxbattles.io/*
 // @icon         https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/favicon.png
 // @grant        GM_getValue
 // @grant        GM_setValue
