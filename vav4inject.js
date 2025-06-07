@@ -1080,7 +1080,10 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			new Module("AutoVote", function() {});
 			const chatdisabler = new Module("ChatDisabler", function() {});
 			chatdisablermsg = chatdisabler.addoption("Message", String, "youtube.com/c/7GrandDadVape");
-			new Module("FilterBypasfunction dropSlot(index) {
+			new Module("FilterBypass", function() {});
+   
+    
+    function dropSlot(index) {
     playerControllerDump.windowClickDump(player.openContainer.windowId, index, 0, 0, player);
     playerControllerDump.windowClickDump(player.openContainer.windowId, -999, 0, 0, player);
 }
@@ -1172,7 +1175,7 @@ const AutoDrop = new Module("AutoDrop", function(callback) {
         delete tickLoop["AutoDrop"];
         hud3D.remove("AutoDropOverlay");
     }
-});s", function() {});
+});
 
 			const survival = new Module("SurvivalMode", function(callback) {
 				if (callback) {
