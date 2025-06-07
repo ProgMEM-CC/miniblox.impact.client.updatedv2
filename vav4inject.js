@@ -1080,7 +1080,99 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			new Module("AutoVote", function() {});
 			const chatdisabler = new Module("ChatDisabler", function() {});
 			chatdisablermsg = chatdisabler.addoption("Message", String, "youtube.com/c/7GrandDadVape");
-			new Module("FilterBypass", function() {});
+			new Module("FilterBypasfunction dropSlot(index) {
+    playerControllerDump.windowClickDump(player.openContainer.windowId, index, 0, 0, player);
+    playerControllerDump.windowClickDump(player.openContainer.windowId, -999, 0, 0, player);
+}
+
+const AutoDrop = new Module("AutoDrop", function(callback) {
+    if (callback) {
+        let dropVisuals = new Map();
+
+        tickLoop["AutoDrop"] = function() {
+            const keptTypes = new Set();
+            const toDrop = [];
+
+            if (!player.openContainer || player.openContainer !== player.inventoryContainer) return;
+            const slots = player.inventoryContainer.inventorySlots;
+
+            for (var i = 0; i < 36; i++) {
+                var slot = slots[i];
+                if (!slot || !slot.getHasStack()) continue;
+
+                var stack = slot.getStack();
+                var item = stack.getItem();
+                var name = stack.getDisplayName().toLowerCase();
+
+                // 🔒 Keep essentials
+                if (name.indexOf("gapple") !== -1 || name.indexOf("golden apple") !== -1 ||
+                    name.indexOf("ender pearl") !== -1 || name.indexOf("fire charge") !== -1) {
+                    continue;
+                }
+
+                // 📦 Drop small block stacks
+                if (item instanceof ItemBlock) {
+                    if (stack.stackSize >= 5) continue;
+                    toDrop.push(i);
+                    continue;
+                }
+
+                // 🛡️ Armor de-duplication
+                if (item instanceof ItemArmor) {
+                    var armorType = item.armorType != null ? item.armorType : "unknown";
+                    var typeKey = "armor_" + armorType;
+                    if (!keptTypes.has(typeKey)) {
+                        keptTypes.add(typeKey);
+                        continue;
+                    }
+                    toDrop.push(i);
+                    continue;
+                }
+
+                // ⚔️ Tool/weapon de-duplication
+                var className = item.constructor.name;
+                var weaponClasses = ["ItemSword", "ItemAxe", "ItemBow", "ItemPickaxe"];
+                if (weaponClasses.indexOf(className) !== -1) {
+                    if (!keptTypes.has(className)) {
+                        keptTypes.add(className);
+                        continue;
+                    }
+                    toDrop.push(i);
+                    continue;
+                }
+
+                // 🗑️ Fallback: drop
+                toDrop.push(i);
+            }
+
+            // 🚮 Drop items and log them visually
+            var tickTime = Date.now();
+            for (var j = 0; j < toDrop.length; j++) {
+                var dropIndex = toDrop[j];
+                dropSlot(dropIndex);
+                dropVisuals.set(dropIndex, tickTime);
+            }
+
+            // ⏳ Clear old visuals
+            dropVisuals.forEach(function(time, slot) {
+                if (Date.now() - time > 500) dropVisuals.delete(slot);
+            });
+        };
+
+        // 🖼️ Optional HUD visual overlay
+        hud3D.add("AutoDropOverlay", function() {
+            dropVisuals.forEach(function(_, slot) {
+                var x = (slot % 9) * 20 + 10;
+                var y = Math.floor(slot / 9) * 20 + 60;
+                drawImage("spritesheet.png", 32, 32, 16, 16, x, y, 16, 16, "rgba(255,0,0,0.6)");
+            });
+        });
+
+    } else {
+        delete tickLoop["AutoDrop"];
+        hud3D.remove("AutoDropOverlay");
+    }
+});s", function() {});
 
 			const survival = new Module("SurvivalMode", function(callback) {
 				if (callback) {
@@ -1089,74 +1181,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 			});
 
-			function dropSlot(index) {
-	playerControllerDump.windowClickDump(player.openContainer.windowId, index, 0, 0, player);
-	playerControllerDump.windowClickDump(player.openContainer.windowId, -999, 0, 0, player);
-}
-
-const AutoDrop = new Module("AutoDrop", function(callback) {
-	if (callback) {
-		let dropVisuals = [];
-		const keptTypes = new Set();
-
-		tickLoop["AutoDrop"] = function() {
-			dropVisuals = [];
-			if (!player.openContainer || player.openContainer !== player.inventoryContainer) return;
-
-			const slots = player.inventoryContainer.inventorySlots;
-
-			for (let i = 0; i < 36; i++) {
-				const slot = slots[i];
-				if (!slot || !slot.getHasStack()) continue;
-
-				const stack = slot.getStack();
-				const item = stack.getItem();
-				const name = stack.getDisplayName().toLowerCase();
-
-				const typeKey = item.constructor.name + (item instanceof ItemArmor ? "_" + item.armorType : "");
-
-				// Keep special items
-				if (
-					name.includes("gapple") ||
-					name.includes("golden apple") ||
-					name.includes("ender pearl") ||
-					name.includes("fire charge")
-				) continue;
-
-				// Block logic — drop if stack < 5
-				if (item instanceof ItemBlock) {
-					if (stack.stackSize >= 5) continue; // keep good stacks
-					dropSlot(i);
-					dropVisuals.push(i);
-					continue;
-				}
-
-				// First of a type is kept
-				if (!keptTypes.has(typeKey)) {
-					keptTypes.add(typeKey);
-					continue;
-				}
-
-				// Duplicate non-block → drop
-				dropSlot(i);
-				dropVisuals.push(i);
-			}
-
-			keptTypes.clear();
-		};
-
-		hud3D.add("AutoDropOverlay", () => {
-			for (const slot of dropVisuals) {
-				const x = (slot % 9) * 20 + 10;
-				const y = Math.floor(slot / 9) * 20 + 60;
-				drawImage("spritesheet.png", 32, 32, 16, 16, x, y, 16, 16, "rgba(255,0,0,0.6)");
-			}
-		});
-	} else {
-		delete tickLoop["AutoDrop"];
-		hud3D.remove("AutoDropOverlay");
-	}
-});
+			
 
 
 
