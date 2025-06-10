@@ -1,10 +1,2 @@
-version: 2
-updates:
-  - package-ecosystem: "npm"
-    directory: "/" # Adjust this if your package.json is in a subdirectory
-    schedule:
-      interval: "weekly" # Options: "daily", "weekly", "monthly"
-    open-pull-requests-limit: 5 # Optional: limit the number of active PRs
-    rebase-strategy: "auto" # Optional: "auto", "lazy", or "eager"
 
   
