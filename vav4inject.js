@@ -5,7 +5,7 @@ let replacements = {};
 let dumpedVarNames = {};
 const storeName = "a" + crypto.randomUUID().replaceAll("-", "").substring(16);
 const vapeName = crypto.randomUUID().replaceAll("-", "").substring(16);
-const VERSION = "1.1.2";
+const VERSION = "1.1.5";
 
 // ANTICHEAT HOOK
 function replaceAndCopyFunction(oldFunc, newFunc) {
@@ -1081,14 +1081,256 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			const chatdisabler = new Module("ChatDisabler", function() {});
 			chatdisablermsg = chatdisabler.addoption("Message", String, "youtube.com/c/7GrandDadVape");
 			new Module("FilterBypass", function() {});
+   
+    
+    const AutoDrop = new Module("AutoDrop", function (callback) {
+    if (!callback) {
+        delete tickLoop["AutoDrop"];
+        hud3D.remove("AutoDropOverlay");
+        return;
+    }
 
-			const survival = new Module("SurvivalMode", function(callback) {
-				if (callback) {
-					if (player) player.setGamemode(GameMode.fromId("survival"));
-					survival.toggle();
-				}
-			});
+    let dropVisuals = new Map();
+    let dropTypeMap = new Map();
+    const bestArmor = {};
+    let lastRun = 0;
 
+    const weaponClasses = new Set(["ItemSword", "ItemAxe", "ItemBow", "ItemPickaxe"]);
+    const essentialsKeywords = ["gapple", "golden apple", "ender pearl", "fire charge"];
+
+    const armorMaterialPriority = ["leather", "chain", "iron", "diamond"];
+    const customArmorKeepList = ["god helmet", "legend boots"];
+
+    function getArmorScore(stack) {
+        const item = stack.getItem();
+        const material = item.getArmorMaterial?.()?.toLowerCase?.() || "unknown";
+        const materialIndex = armorMaterialPriority.indexOf(material);
+        const materialScore = materialIndex === -1 ? -999 : materialIndex * 1000;
+
+        const durabilityScore = stack.getMaxDamage() - stack.getItemDamage();
+        return materialScore + durabilityScore;
+    }
+
+    tickLoop["AutoDrop"] = function () {
+        const now = Date.now();
+        if (now - lastRun < 100) return;
+        lastRun = now;
+
+        const keptTypes = new Set();
+        const toDrop = [];
+
+        if (!player.openContainer || player.openContainer !== player.inventoryContainer) return;
+        const slots = player.inventoryContainer.inventorySlots;
+        if (!slots || slots.length < 36) return;
+
+        Object.keys(bestArmor).forEach(k => delete bestArmor[k]);
+
+        [5, 6, 7, 8].forEach(i => {
+            const slot = slots[i];
+            if (!slot?.getHasStack()) return;
+            const stack = slot.getStack();
+            if (!(stack.getItem() instanceof ItemArmor)) return;
+            const armorType = stack.getItem().armorType ?? "unknown";
+            bestArmor["armor_" + armorType] = { stack, index: i };
+        });
+
+        for (let i = 0; i < 36; i++) {
+            const slot = slots[i];
+            if (!slot?.getHasStack()) continue;
+
+            const stack = slot.getStack();
+            const item = stack.getItem();
+            const name = stack.getDisplayName().toLowerCase();
+
+            if (essentialsKeywords.some(k => name.includes(k))) continue;
+            if (customArmorKeepList.some(k => name.includes(k))) continue;
+
+            if (item instanceof ItemBlock) {
+                if (stack.stackSize < 5) {
+                    toDrop.push(i);
+                    dropTypeMap.set(i, "block");
+                }
+                continue;
+            }
+
+            if (item instanceof ItemArmor) {
+                const armorType = item.armorType ?? "unknown";
+                const key = "armor_" + armorType;
+                const score = getArmorScore(stack);
+                const existing = bestArmor[key];
+                const existingScore = existing ? getArmorScore(existing.stack) : -1;
+
+                if (!existing || score > existingScore) {
+                    if (existing && existing.index !== i) {
+                        toDrop.push(existing.index);
+                        dropTypeMap.set(existing.index, "worse_armor");
+                    }
+                    bestArmor[key] = { stack, index: i };
+                } else {
+                    toDrop.push(i);
+                    dropTypeMap.set(i, "armor_dupe");
+                }
+                continue;
+            }
+
+            const className = item.constructor.name;
+            if (weaponClasses.has(className)) {
+                if (!keptTypes.has(className)) {
+                    keptTypes.add(className);
+                } else {
+                    toDrop.push(i);
+                    dropTypeMap.set(i, "weapon_dupe");
+                }
+                continue;
+            }
+
+            toDrop.push(i);
+            dropTypeMap.set(i, "junk");
+        }
+
+        toDrop.forEach(slot => {
+            dropSlot(slot);
+            dropVisuals.set(slot, now);
+        });
+
+        if (now % 1000 < 100) {
+            dropVisuals.forEach((time, slot) => {
+                if (now - time > 500) dropVisuals.delete(slot);
+            });
+        }
+    };
+
+    hud3D.add("AutoDropOverlay", function () {
+        dropVisuals.forEach((_, slot) => {
+            const x = (slot % 9) * 20 + 10;
+            const y = Math.floor(slot / 9) * 20 + 60;
+            const type = dropTypeMap.get(slot) || "junk";
+
+            let color = "rgba(255,0,0,0.6)";
+            if (type === "block") color = "rgba(128,128,128,0.6)";
+            else if (type === "armor_dupe") color = "rgba(255,255,0,0.6)";
+            else if (type === "worse_armor") color = "rgba(255,165,0,0.6)";
+            else if (type === "weapon_dupe") color = "rgba(0,255,255,0.6)";
+
+            drawImage("spritesheet.png", 32, 32, 16, 16, x, y, 16, 16, color);
+        });
+    });
+});
+
+function dropSlot(index) {
+    playerControllerDump.windowClickDump(player.openContainer.windowId, index, 0, 0, player);
+    playerControllerDump.windowClickDump(player.openContainer.windowId, -999, 0, 0, player);
+}
+
+                        // Place this with your other module definitions inside the main function
+
+let funnyMessages = [
+    // Classic Miniblox-style funny & savage messages
+    "Sent back to the lobby—don't trip on the way out!",
+    "Was that your best? Miniblox says no.",
+    "You dropped faster than my WiFi.",
+    "Did you forget to equip skill today?",
+    "That was a tutorial death, right?",
+    "Tip: Dodging is allowed.",
+    "Respawn and try again (maybe with both hands).",
+    "Out-clicked, out-played, outta here.",
+    "Next time, bring a helmet. And armor. And hope.",
+    "Imagine losing in Miniblox... tragic.",
+    "Your blocks? My blocks now.",
+    "Are you sure you're not an NPC?",
+    "Pro tip: The void is not a shortcut.",
+    "Is your keyboard upside down?",
+    "That scoreboard doesn't lie.",
+    "Miniblox called—wants its win streak back.",
+    "Did you lag, or just freeze from fear?",
+    "Was that a speedrun to the void?",
+    "GG! (It was mostly me though.)",
+    "You just got Minibloxed!",
+    // Extra savage Miniblox lines
+    "Don't blame the ping, blame the skill.",
+    "You make AFK players look cracked.",
+    "If you were any slower, you'd be a block.",
+    "That was less of a fight, more of a donation.",
+    "Did you forget which game you're playing?",
+    "Keyboard check. Mouse check. Skill... missing.",
+    "If losing was an achievement, you'd be top of the leaderboard.",
+    "You respawn more than you blink.",
+    "Hope you enjoy the respawn timer.",
+    "Maybe try winning... just once?",
+    "Did you just speedrun getting eliminated?",
+    "Miniblox tip: Winning is allowed.",
+    "You just made the highlight reel—of fails.",
+    "The only thing lower than your HP was your chance to win.",
+    "If you see this, you lost the 50/50. Badly.",
+    "That performance was sponsored by gravity.",
+    "Your only kill streak is in the practice lobby.",
+    "You bring a whole new meaning to 'easy win.'",
+    "That was faster than a Miniblox queue skip.",
+    "You just gave me free stats.",
+    // Legacy funny/mean lines
+    "Did you drop your keyboard? Because your plays are a mess.",
+    "I’ve seen bots with better aim.",
+    "Are you playing with your monitor off?",
+    "You just got outplayed by someone eating snacks IRL.",
+    "Did your mouse disconnect?",
+    "If you’re reading this, you just lost a 1v1.",
+    "Not even lag could save you.",
+    "Skill issue detected. Please reinstall.",
+    "Your respawn button must be tired.",
+    "You fight like a Miniblox villager.",
+    "Maybe try using both hands next time.",
+    "Spectator mode looks good on you.",
+    "I hope you brought a map, because you’re lost.",
+    "Knocked out like my WiFi on a stormy day.",
+    "That combo was sponsored by gravity.",
+    "I’d say GG, but that wasn’t even close.",
+    "Do you need a tutorial?",
+    "Blink if you need help.",
+    "You just got styled on.",
+    "Don’t worry, practice makes... well, you tried."
+];
+
+const AutoFunnyChat = new Module("AutoFunnyChat", function(callback) {
+    if (!callback) {
+        delete tickLoop["AutoFunnyChat"];
+        if (window.__autoFunnyKillMsgListener) {
+            ClientSocket.off && ClientSocket.off("CPacketMessage", window.__autoFunnyKillMsgListener);
+            window.__autoFunnyKillMsgListener = undefined;
+        }
+        return;
+    }
+    // Periodic random funny message
+    let lastSent = 0;
+    tickLoop["AutoFunnyChat"] = function() {
+        if (Date.now() - lastSent > 40000) { // Sends every 40 seconds
+            const msg = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
+            ClientSocket.sendPacket(new SPacketMessage({text: msg}));
+            lastSent = Date.now();
+        }
+    };
+
+    // Also send on kill events (Miniblox chat detection)
+    if (!window.__autoFunnyKillMsgListener) {
+        window.__autoFunnyKillMsgListener = function(h) {
+            if (
+                h.text &&
+                (
+                    h.text.includes("You eliminated") ||
+                    h.text.includes("You knocked out") ||
+                    h.text.includes("You sent") ||
+                    (h.text.includes("eliminated by") && h.text.includes(player.name)) ||
+                    h.text.includes(player.name + " eliminated")
+                )
+            ) {
+                const msg = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
+                setTimeout(function() {
+                    ClientSocket.sendPacket(new SPacketMessage({text: msg}));
+                }, 500 + Math.random() * 1000); // slight delay for realism
+            }
+        };
+        ClientSocket.on("CPacketMessage", window.__autoFunnyKillMsgListener);
+    }
+});
 			globalThis.${storeName}.modules = modules;
 			globalThis.${storeName}.profile = "default";
 		})();
