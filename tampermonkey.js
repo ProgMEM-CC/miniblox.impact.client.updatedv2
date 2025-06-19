@@ -3,7 +3,7 @@
 // @namespace    he557, ProgMEM-CC
 // @version      1.1.5
 // @description  Hacks for Miniblox (haha vector) Lol
-// @author       7GrandDad, Emmaa, ProgMEM-CC, (ee6-lang/Coldmc33)
+// @author       7GrandDad, Emmaa, ProgMEM-CC, ModuleMaster64
 // @match        https://miniblox.io/*
 // @match        https://miniblox.org/*
 // @match        https://miniblox.online/*
