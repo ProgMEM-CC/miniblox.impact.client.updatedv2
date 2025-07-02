@@ -5,7 +5,7 @@ let replacements = {};
 let dumpedVarNames = {};
 const storeName = "a" + crypto.randomUUID().replaceAll("-", "").substring(16);
 const vapeName = crypto.randomUUID().replaceAll("-", "").substring(16);
-const VERSION = "1.1.2";
+const VERSION = "1.1.5";
 
 // ANTICHEAT HOOK
 function replaceAndCopyFunction(oldFunc, newFunc) {
@@ -1081,14 +1081,256 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			const chatdisabler = new Module("ChatDisabler", function() {});
 			chatdisablermsg = chatdisabler.addoption("Message", String, "youtube.com/c/7GrandDadVape");
 			new Module("FilterBypass", function() {});
+   
+    
+    const AutoDrop = new Module("AutoDrop", function (callback) {
+    if (!callback) {
+        delete tickLoop["AutoDrop"];
+        hud3D.remove("AutoDropOverlay");
+        return;
+    }
 
-			const survival = new Module("SurvivalMode", function(callback) {
-				if (callback) {
-					if (player) player.setGamemode(GameMode.fromId("survival"));
-					survival.toggle();
-				}
-			});
+    let dropVisuals = new Map();
+    let dropTypeMap = new Map();
+    const bestArmor = {};
+    let lastRun = 0;
 
+    const weaponClasses = new Set(["ItemSword", "ItemAxe", "ItemBow", "ItemPickaxe"]);
+    const essentialsKeywords = ["gapple", "golden apple", "ender pearl", "fire charge"];
+
+    const armorMaterialPriority = ["leather", "chain", "iron", "diamond"];
+    const customArmorKeepList = ["god helmet", "legend boots"];
+
+    function getArmorScore(stack) {
+        const item = stack.getItem();
+        const material = item.getArmorMaterial?.()?.toLowerCase?.() || "unknown";
+        const materialIndex = armorMaterialPriority.indexOf(material);
+        const materialScore = materialIndex === -1 ? -999 : materialIndex * 1000;
+
+        const durabilityScore = stack.getMaxDamage() - stack.getItemDamage();
+        return materialScore + durabilityScore;
+    }
+
+    tickLoop["AutoDrop"] = function () {
+        const now = Date.now();
+        if (now - lastRun < 100) return;
+        lastRun = now;
+
+        const keptTypes = new Set();
+        const toDrop = [];
+
+        if (!player.openContainer || player.openContainer !== player.inventoryContainer) return;
+        const slots = player.inventoryContainer.inventorySlots;
+        if (!slots || slots.length < 36) return;
+
+        Object.keys(bestArmor).forEach(k => delete bestArmor[k]);
+
+        [5, 6, 7, 8].forEach(i => {
+            const slot = slots[i];
+            if (!slot?.getHasStack()) return;
+            const stack = slot.getStack();
+            if (!(stack.getItem() instanceof ItemArmor)) return;
+            const armorType = stack.getItem().armorType ?? "unknown";
+            bestArmor["armor_" + armorType] = { stack, index: i };
+        });
+
+        for (let i = 0; i < 36; i++) {
+            const slot = slots[i];
+            if (!slot?.getHasStack()) continue;
+
+            const stack = slot.getStack();
+            const item = stack.getItem();
+            const name = stack.getDisplayName().toLowerCase();
+
+            if (essentialsKeywords.some(k => name.includes(k))) continue;
+            if (customArmorKeepList.some(k => name.includes(k))) continue;
+
+            if (item instanceof ItemBlock) {
+                if (stack.stackSize < 5) {
+                    toDrop.push(i);
+                    dropTypeMap.set(i, "block");
+                }
+                continue;
+            }
+
+            if (item instanceof ItemArmor) {
+                const armorType = item.armorType ?? "unknown";
+                const key = "armor_" + armorType;
+                const score = getArmorScore(stack);
+                const existing = bestArmor[key];
+                const existingScore = existing ? getArmorScore(existing.stack) : -1;
+
+                if (!existing || score > existingScore) {
+                    if (existing && existing.index !== i) {
+                        toDrop.push(existing.index);
+                        dropTypeMap.set(existing.index, "worse_armor");
+                    }
+                    bestArmor[key] = { stack, index: i };
+                } else {
+                    toDrop.push(i);
+                    dropTypeMap.set(i, "armor_dupe");
+                }
+                continue;
+            }
+
+            const className = item.constructor.name;
+            if (weaponClasses.has(className)) {
+                if (!keptTypes.has(className)) {
+                    keptTypes.add(className);
+                } else {
+                    toDrop.push(i);
+                    dropTypeMap.set(i, "weapon_dupe");
+                }
+                continue;
+            }
+
+            toDrop.push(i);
+            dropTypeMap.set(i, "junk");
+        }
+
+        toDrop.forEach(slot => {
+            dropSlot(slot);
+            dropVisuals.set(slot, now);
+        });
+
+        if (now % 1000 < 100) {
+            dropVisuals.forEach((time, slot) => {
+                if (now - time > 500) dropVisuals.delete(slot);
+            });
+        }
+    };
+
+    hud3D.add("AutoDropOverlay", function () {
+        dropVisuals.forEach((_, slot) => {
+            const x = (slot % 9) * 20 + 10;
+            const y = Math.floor(slot / 9) * 20 + 60;
+            const type = dropTypeMap.get(slot) || "junk";
+
+            let color = "rgba(255,0,0,0.6)";
+            if (type === "block") color = "rgba(128,128,128,0.6)";
+            else if (type === "armor_dupe") color = "rgba(255,255,0,0.6)";
+            else if (type === "worse_armor") color = "rgba(255,165,0,0.6)";
+            else if (type === "weapon_dupe") color = "rgba(0,255,255,0.6)";
+
+            drawImage("spritesheet.png", 32, 32, 16, 16, x, y, 16, 16, color);
+        });
+    });
+});
+
+function dropSlot(index) {
+    playerControllerDump.windowClickDump(player.openContainer.windowId, index, 0, 0, player);
+    playerControllerDump.windowClickDump(player.openContainer.windowId, -999, 0, 0, player);
+}
+
+                        // Place this with your other module definitions inside the main function
+
+let funnyMessages = [
+    // Classic Miniblox-style funny & savage messages
+    "Sent back to the lobby—don't trip on the way out!",
+    "Was that your best? Miniblox says no.",
+    "You dropped faster than my WiFi.",
+    "Did you forget to equip skill today?",
+    "That was a tutorial death, right?",
+    "Tip: Dodging is allowed.",
+    "Respawn and try again (maybe with both hands).",
+    "Out-clicked, out-played, outta here.",
+    "Next time, bring a helmet. And armor. And hope.",
+    "Imagine losing in Miniblox... tragic.",
+    "Your blocks? My blocks now.",
+    "Are you sure you're not an NPC?",
+    "Pro tip: The void is not a shortcut.",
+    "Is your keyboard upside down?",
+    "That scoreboard doesn't lie.",
+    "Miniblox called—wants its win streak back.",
+    "Did you lag, or just freeze from fear?",
+    "Was that a speedrun to the void?",
+    "GG! (It was mostly me though.)",
+    "You just got Minibloxed!",
+    // Extra savage Miniblox lines
+    "Don't blame the ping, blame the skill.",
+    "You make AFK players look cracked.",
+    "If you were any slower, you'd be a block.",
+    "That was less of a fight, more of a donation.",
+    "Did you forget which game you're playing?",
+    "Keyboard check. Mouse check. Skill... missing.",
+    "If losing was an achievement, you'd be top of the leaderboard.",
+    "You respawn more than you blink.",
+    "Hope you enjoy the respawn timer.",
+    "Maybe try winning... just once?",
+    "Did you just speedrun getting eliminated?",
+    "Miniblox tip: Winning is allowed.",
+    "You just made the highlight reel—of fails.",
+    "The only thing lower than your HP was your chance to win.",
+    "If you see this, you lost the 50/50. Badly.",
+    "That performance was sponsored by gravity.",
+    "Your only kill streak is in the practice lobby.",
+    "You bring a whole new meaning to 'easy win.'",
+    "That was faster than a Miniblox queue skip.",
+    "You just gave me free stats.",
+    // Legacy funny/mean lines
+    "Did you drop your keyboard? Because your plays are a mess.",
+    "I’ve seen bots with better aim.",
+    "Are you playing with your monitor off?",
+    "You just got outplayed by someone eating snacks IRL.",
+    "Did your mouse disconnect?",
+    "If you’re reading this, you just lost a 1v1.",
+    "Not even lag could save you.",
+    "Skill issue detected. Please reinstall.",
+    "Your respawn button must be tired.",
+    "You fight like a Miniblox villager.",
+    "Maybe try using both hands next time.",
+    "Spectator mode looks good on you.",
+    "I hope you brought a map, because you’re lost.",
+    "Knocked out like my WiFi on a stormy day.",
+    "That combo was sponsored by gravity.",
+    "I’d say GG, but that wasn’t even close.",
+    "Do you need a tutorial?",
+    "Blink if you need help.",
+    "You just got styled on.",
+    "Don’t worry, practice makes... well, you tried."
+];
+
+const AutoFunnyChat = new Module("AutoFunnyChat", function(callback) {
+    if (!callback) {
+        delete tickLoop["AutoFunnyChat"];
+        if (window.__autoFunnyKillMsgListener) {
+            ClientSocket.off && ClientSocket.off("CPacketMessage", window.__autoFunnyKillMsgListener);
+            window.__autoFunnyKillMsgListener = undefined;
+        }
+        return;
+    }
+    // Periodic random funny message
+    let lastSent = 0;
+    tickLoop["AutoFunnyChat"] = function() {
+        if (Date.now() - lastSent > 40000) { // Sends every 40 seconds
+            const msg = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
+            ClientSocket.sendPacket(new SPacketMessage({text: msg}));
+            lastSent = Date.now();
+        }
+    };
+
+    // Also send on kill events (Miniblox chat detection)
+    if (!window.__autoFunnyKillMsgListener) {
+        window.__autoFunnyKillMsgListener = function(h) {
+            if (
+                h.text &&
+                (
+                    h.text.includes("You eliminated") ||
+                    h.text.includes("You knocked out") ||
+                    h.text.includes("You sent") ||
+                    (h.text.includes("eliminated by") && h.text.includes(player.name)) ||
+                    h.text.includes(player.name + " eliminated")
+                )
+            ) {
+                const msg = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
+                setTimeout(function() {
+                    ClientSocket.sendPacket(new SPacketMessage({text: msg}));
+                }, 500 + Math.random() * 1000); // slight delay for realism
+            }
+        };
+        ClientSocket.on("CPacketMessage", window.__autoFunnyKillMsgListener);
+    }
+});
 			globalThis.${storeName}.modules = modules;
 			globalThis.${storeName}.profile = "default";
 		})();
@@ -1200,4 +1442,402 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	else {
 		execute(publicUrl);
 	}
+})();
+(async function() {
+  // Load Minecraft font
+  const fontLink = document.createElement("link");
+  fontLink.href = "https://fonts.cdnfonts.com/css/minecraft-4";
+  fontLink.rel = "stylesheet";
+  document.head.appendChild(fontLink);
+
+  // Wait for modules
+  await new Promise(resolve => {
+    const loop = setInterval(() => {
+      if (unsafeWindow.globalThis[storeName]?.modules) {
+        clearInterval(loop);
+        resolve();
+      }
+    }, 10);
+  });
+
+  // Inject GUI
+  injectGUI(unsafeWindow.globalThis[storeName]);
+
+  async function injectGUI(store) {
+    const moduleCategories = {
+      Combat: ["aura", "reach", "velocity", "crit", "hit", "attack"],
+      Movement: ["fly", "speed", "step", "bhop", "sprint"],
+      Render: ["esp", "tracer", "fullbright", "nametag"],
+      Misc: ["autogg", "scaffold", "spammer", "inv", "chest", "timer"]
+    };
+    const categoryIcons = { Combat: "⚔️", Movement: "🏃", Render: "👁️", Misc: "🧰" };
+
+    // Styles including rainbow header & live slider labels
+    const style = document.createElement("style");
+    style.textContent = `
+      @keyframes rainbowText { 0% { background-position: 0% } 100% { background-position: 100% } }
+      #clickGUI { position: fixed; top:100px; left:100px; width:360px; max-height:80vh;
+        overflow-y:auto; background:rgba(15,15,15,0.95); color:white; font-family:monospace;
+        border:2px solid lime; padding:12px; border-radius:8px; z-index:999999; display:none; }
+      #clickGUI h2 { text-align:center; font-size:24px; font-weight:bold;
+        background:linear-gradient(270deg, red, orange, yellow, green, blue, indigo, violet);
+        background-size:1400% 1400%; -webkit-background-clip:text; color:transparent;
+        animation:rainbowText 6s linear infinite; cursor:move; }
+      .module { margin-bottom:10px; padding-bottom:6px; border-bottom:1px dashed #444; }
+      .toggle-btn { float:right; background:lime; color:black; border:none;
+        padding:2px 6px; border-radius:4px; cursor:pointer; font-weight:bold; }
+      .option-line { margin:4px 0; font-size:13px; position:relative; }
+      input[type="range"] { width:calc(100% - 40px); vertical-align:middle; }
+      input[type="text"] { width:100%; font-size:12px; }
+      .live-label { position:absolute; right:0; top:2px; font-size:12px; color:lime; }
+      #guiControls { margin-top:12px; text-align:center; }
+      button.control { background:black; color:lime; border:1px solid lime;
+        padding:5px 8px; margin:2px; cursor:pointer; font-family:monospace; border-radius:4px; }
+    `;
+    document.head.appendChild(style);
+
+    // Notification container
+    const notifWrap = document.createElement("div");
+    notifWrap.style = `
+      position: fixed;
+      bottom: 40px;
+      right: 30px;
+      z-index: 1000000;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      pointer-events: none;
+    `;
+    document.body.appendChild(notifWrap);
+
+    function showNotif(text) {
+  const notif = document.createElement("div");
+  notif.textContent = text;
+  notif.style = `
+    background: rgba(20,20,20,0.96);
+    color: lime;
+    font-family: monospace;
+    font-size: 16px;
+    margin-top: 8px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 2px solid lime;
+    box-shadow: 0 2px 12px #000a;
+    opacity: 1;
+    transition: opacity 0.4s, transform 0.5s cubic-bezier(.23,1.29,.56,1.01);
+    transform: translateX(120%);
+    pointer-events: none;
+  `;
+  notifWrap.appendChild(notif);
+
+  // Start slide-in after appending
+  setTimeout(() => { notif.style.transform = "translateX(0)"; }, 10);
+
+  setTimeout(() => { notif.style.opacity = 0; notif.style.transform = "translateX(120%)"; }, 4800);
+  setTimeout(() => { notif.remove(); }, 5200);
+}
+
+    // Build GUI
+    const gui = document.createElement("div");
+    gui.id = "clickGUI";
+    gui.innerHTML = `<h2 id="clickHeader">Massive GUI</h2>`;
+    document.body.appendChild(gui);
+
+    // Enable dragging
+    let dragging = false, offsetX = 0, offsetY = 0;
+    const header = gui.querySelector("#clickHeader");
+    header.onmousedown = e => {
+      dragging = true;
+      offsetX = e.clientX - gui.offsetLeft;
+      offsetY = e.clientY - gui.offsetTop;
+    };
+    document.onmouseup = () => (dragging = false);
+    document.onmousemove = e => {
+      if (dragging) {
+        gui.style.left = `${e.clientX - offsetX}px`;
+        gui.style.top = `${e.clientY - offsetY}px`;
+      }
+    };
+
+    // Prevent context menu
+    gui.oncontextmenu = e => e.preventDefault();
+
+    // Tabs & search bar
+    const tabWrap = document.createElement("div");
+    tabWrap.style = "display:flex; gap:6px; margin-bottom:10px; justify-content:center;";
+    gui.appendChild(tabWrap);
+
+    const searchBar = document.createElement("input");
+    searchBar.type = "text";
+    searchBar.placeholder = "🔍 Search modules...";
+    searchBar.style = `
+      width:calc(100% - 20px); margin:0 auto 10px; display:block;
+      padding:5px 8px; border:1px solid lime; background:black; color:lime; font-family:monospace;
+    `;
+    gui.appendChild(searchBar);
+
+    const tabModules = {};
+    let currentTab = "Combat";
+    for (const tabName of Object.keys(moduleCategories)) {
+      const btn = document.createElement("button");
+      btn.className = "control";
+      btn.textContent = tabName;
+      btn.onclick = () => switchTab(tabName);
+      tabWrap.appendChild(btn);
+      tabModules[tabName] = [];
+    }
+
+    // Create modules
+    Object.entries(store.modules).forEach(([name, mod]) => {
+      const box = document.createElement("div");
+      box.className = "module";
+
+      // Choose icon
+      let icon = "❓";
+      for (const [cat, keys] of Object.entries(moduleCategories)) {
+        if (keys.some(k => name.toLowerCase().includes(k))) {
+          icon = categoryIcons[cat] || icon;
+          break;
+        }
+      }
+
+      const toggle = document.createElement("button");
+      toggle.className = "toggle-btn";
+      toggle.textContent = mod.enabled ? "ON" : "OFF";
+      toggle.onclick = () => {
+        mod.toggle();
+        toggle.textContent = mod.enabled ? "ON" : "OFF";
+        showNotif(`${name} module has been toggled ${mod.enabled ? "ON" : "OFF"}`);
+      };
+
+      box.innerHTML = `<b>${icon} ${name}</b>`;
+      box.appendChild(toggle);
+
+      if (mod.options) {
+        Object.values(mod.options).forEach(opt => {
+          const [type, val, label] = opt;
+          const line = document.createElement("div");
+          line.className = "option-line";
+          line.innerText = label + ": ";
+
+          if (type === Boolean) {
+            const cb = document.createElement("input");
+            cb.type = "checkbox";
+            cb.checked = val;
+            cb.onchange = () => (opt[1] = cb.checked);
+            line.appendChild(cb);
+          } else if (type === Number) {
+            const slider = document.createElement("input");
+            slider.type = "range";
+            slider.min = 0;
+            slider.max = 10;
+            slider.step = 0.1;
+            slider.value = val;
+
+            const liveLabel = document.createElement("span");
+            liveLabel.className = "live-label";
+            liveLabel.textContent = val;
+
+            slider.oninput = () => {
+              opt[1] = parseFloat(slider.value);
+              liveLabel.textContent = slider.value;
+            };
+
+            line.appendChild(slider);
+            line.appendChild(liveLabel);
+          } else if (type === String) {
+            const input = document.createElement("input");
+            input.type = "text";
+            input.value = val;
+            input.onchange = () => (opt[1] = input.value);
+            line.appendChild(input);
+          }
+          box.appendChild(line);
+        });
+      }
+
+      const bindLine = document.createElement("div");
+      bindLine.className = "option-line";
+      bindLine.innerHTML = `Bind: <input type="text" style="width:60px" value="${mod.bind}">`;
+      bindLine.querySelector("input").onchange = e => mod.setbind(e.target.value);
+      box.appendChild(bindLine);
+
+      let cat = "Misc";
+      for (const [k, keys] of Object.entries(moduleCategories)) {
+        if (keys.some(x => name.toLowerCase().includes(x))) {
+          cat = k;
+          break;
+        }
+      }
+      tabModules[cat].push(box);
+      box.style.display = cat === currentTab ? "block" : "none";
+      gui.appendChild(box);
+    });
+
+    function switchTab(tab) {
+      currentTab = tab;
+      const q = searchBar.value.toLowerCase();
+      Object.entries(tabModules).forEach(([cat, boxes]) => {
+        boxes.forEach(b => {
+          const nm = b.querySelector("b").textContent.toLowerCase();
+          b.style.display = cat === tab && (nm.includes(q) || q.split("").every(ch => nm.includes(ch)))
+            ? "block" : "none";
+        });
+      });
+    }
+    searchBar.addEventListener("input", () => switchTab(currentTab));
+
+    // Control buttons, themes & profiles
+    const ctrl = document.createElement("div");
+    ctrl.id = "guiControls";
+    gui.appendChild(ctrl);
+
+    const themes = ["dark", "minecraft", "neon", "glass", "frame", "sunset", "ocean", "chrome", "terminal"];
+    let themeIndex = themes.indexOf(await GM_getValue("guiTheme", "dark"));
+
+    const themeBtn = document.createElement("button");
+    themeBtn.className = "control";
+    themeBtn.textContent = "Toggle Theme";
+    themeBtn.onclick = () => {
+      themeIndex = (themeIndex + 1) % themes.length;
+      GM_setValue("guiTheme", themes[themeIndex]);
+      applyTheme(themes[themeIndex]);
+    };
+    ctrl.appendChild(themeBtn);
+
+    const profileInput = document.createElement("input");
+    profileInput.className = "control";
+    profileInput.placeholder = "Profile";
+    ctrl.appendChild(profileInput);
+
+    const switchBtn = document.createElement("button");
+    switchBtn.className = "control";
+    switchBtn.textContent = "Switch Profile";
+    switchBtn.onclick = () => {
+      const nv = profileInput.value.trim();
+      if (nv) store.loadVapeConfig(nv);
+    };
+    ctrl.appendChild(switchBtn);
+
+    const exportBtn = document.createElement("button");
+    exportBtn.className = "control";
+    exportBtn.textContent = "Export";
+    exportBtn.onclick = () => {
+      const prof = store.profile;
+      const cfg = GM_getValue("vapeConfig" + prof, "{}");
+      navigator.clipboard.writeText(cfg).then(() => alert("✅ Exported"));
+    };
+    ctrl.appendChild(exportBtn);
+
+    const importBtn = document.createElement("button");
+    importBtn.className = "control";
+    importBtn.textContent = "Import";
+    importBtn.onclick = async () => {
+      const prof = store.profile;
+      const txt = await navigator.clipboard.readText();
+      if (txt) {
+        await GM_setValue("vapeConfig" + prof, txt);
+        await store.loadVapeConfig(prof);
+        alert("✅ Imported");
+      } else {
+        alert("❌ Clipboard empty");
+      }
+    };
+    ctrl.appendChild(importBtn);
+
+    const saveBtn = document.createElement("button");
+    saveBtn.className = "control";
+    saveBtn.textContent = "Save";
+    saveBtn.onclick = () => store.saveVapeConfig();
+    ctrl.appendChild(saveBtn);
+
+    const loadBtn = document.createElement("button");
+    loadBtn.className = "control";
+    loadBtn.textContent = "Load";
+    loadBtn.onclick = () => store.loadVapeConfig();
+    ctrl.appendChild(loadBtn);
+
+    applyTheme(themes[themeIndex]);
+
+    // Theme application logic
+    function applyTheme(m) {
+      const root = document.getElementById("clickGUI");
+      const buttons = root.querySelectorAll("button");
+      // Reset styles
+      root.style.backdropFilter = root.style.background = root.style.border = root.style.color = "";
+      buttons.forEach(b => b.style.background = b.style.color = b.style.border = "");
+
+      const setBtn = (bg, clr, border) => buttons.forEach(b => { b.style.background = bg; b.style.color = clr; b.style.border = border; });
+
+      switch (m) {
+        case "dark":
+          root.style.background = "rgba(15,15,15,0.95)";
+          root.style.color = "#fff";
+          root.style.border = "2px solid lime";
+          setBtn("black", "lime", "1px solid lime");
+          break;
+        case "minecraft":
+          root.style.background = 'url("https://cdn.jsdelivr.net/gh/InventivetalentDev/minecraft-assets/assets/minecraft/textures/block/stone.png") repeat';
+          root.style.backgroundSize = "64px 64px";
+          root.style.imageRendering = "pixelated";
+          root.style.color = "#0f0";
+          root.style.fontFamily = '"Minecraft", monospace';
+          root.style.border = "3px double #0f0";
+          setBtn("#1a1a1a", "#0f0", "1px solid #0f0");
+          break;
+        case "neon":
+          root.style.background = "#000";
+          root.style.color = "#0ff";
+          root.style.border = "2px solid #0ff";
+          setBtn("#111", "#0ff", "1px solid #0ff");
+          break;
+        case "glass":
+          root.style.background = "rgba(255,255,255,0.08)";
+          root.style.color = "#fff";
+          root.style.backdropFilter = "blur(10px)";
+          root.style.border = "1px solid rgba(255,255,255,0.2)";
+          setBtn("rgba(255,255,255,0.15)", "#fff", "1px solid rgba(255,255,255,0.3)");
+          break;
+        case "frame":
+          root.style.background = "#ddd";
+          root.style.color = "#111";
+          root.style.border = "2px solid #444";
+          setBtn("#eee", "#111", "1px solid #888");
+          break;
+        case "sunset":
+          root.style.background = "linear-gradient(135deg,#ff5f6d,#ffc371)";
+          root.style.color = "#fff";
+          root.style.border = "2px solid #ffb347";
+          setBtn("#ff7e5f", "#fff", "1px solid #fff");
+          break;
+        case "ocean":
+          root.style.background = "linear-gradient(135deg,#2b5876,#4e4376)";
+          root.style.color = "#ccf";
+          root.style.border = "2px solid #88f";
+          setBtn("#334", "#ccf", "1px solid #ccf");
+          break;
+        case "chrome":
+          root.style.background = "#dfe4ea";
+          root.style.color = "#2f3542";
+          root.style.border = "2px solid #57606f";
+          setBtn("#f1f2f6", "#2f3542", "1px solid #57606f");
+          break;
+        case "terminal":
+          root.style.background = "#000";
+          root.style.color = "#0f0";
+          root.style.border = "2px solid #0f0";
+          setBtn("#000", "#0f0", "1px solid #0f0");
+          break;
+      }
+    }
+
+    // Toggle visibility with Backslash
+    let visible = false;
+    document.addEventListener("keydown", e => {
+      if (e.code === "Backslash") {
+        visible = !visible;
+        gui.style.display = visible ? "block" : "none";
+      }
+    });
+  }
 })();
