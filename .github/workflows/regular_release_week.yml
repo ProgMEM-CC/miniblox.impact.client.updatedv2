@@ -82,7 +82,7 @@ jobs:
           name: weekly-release-assets
           path: |
             minify/vav4inject.min.js
-            tampermonkey.js
+            tampermonkey.user.js
             vav4inject.js
       - name: Format commit log section
         id: commitlog_section
@@ -111,7 +111,7 @@ jobs:
             ---
             ${{ steps.commitlog_section.outputs.text }}
             ---
-            ## Paste in Console (minified)
+            ## Paste in Console (minified) (currently not working, trying to fix)
             ```
             ${{ steps.paste_js.outputs.content }}
             ```
