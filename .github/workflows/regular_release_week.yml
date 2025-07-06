@@ -1,0 +1,123 @@
+name: Dispatch Release 
+on:
+  schedule:
+    - cron: '0 0 * * 1' # Runs at 00:00 UTC every Monday
+  workflow_dispatch:
+    inputs:
+      desc:
+        description: "Enter a custom description for the release"
+        required: false
+        default: "Weekly release"
+      custom_ver:
+        description: "Enter a custom version tag"
+        required: false
+      custom_name: 
+        description: "Enter a custom release name"
+        required: false
+      has_commitlog:
+        description: "Week Commit Log?"
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+  models: read
+
+jobs:
+  weekly-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up date variables
+        id: dates
+        run: |
+          TODAY=$(date -u +"%Y-%m-%d")
+          NOW=$(date -u +"%H.%M.%S")
+          LAST_WEEK=$(date -u -d "last monday -7 days" +"%Y-%m-%d")
+          echo "today=$TODAY" >> $GITHUB_OUTPUT
+          echo "now=$NOW" >> $GITHUB_OUTPUT
+          echo "lastweek=$LAST_WEEK" >> $GITHUB_OUTPUT
+
+      - name: Get commits from past week
+        id: commits
+        run: |
+          git fetch --prune --unshallow || true
+          COMMITS=$(git log --since="${{ steps.dates.outputs.lastweek }}T00:00:00Z" --until="${{ steps.dates.outputs.today }}T00:00:00Z" --pretty=format:"%h %s" --no-merges)
+          echo "$COMMITS"
+          echo "commits<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMITS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      - name: Format commits as blockquote
+        id: fc
+        run: |
+          FORMATTED=$(echo "${{ steps.commits.outputs.commits }}" | sed 's/^/> /')
+          echo "commits<<EOF" >> $GITHUB_OUTPUT
+          echo "$FORMATTED" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: minify js to paste in console
+        uses: devatherock/minify-js@v3.1.0
+        with:
+          output: 'minify/' 
+
+      - name: Read minified JS for pasting
+        id: paste_js
+        run: |
+          # Read the entire content of minify/paste.js and escape backticks for Markdown code block safety
+          PASTE_CONTENT=$(cat minify/vav4inject.min.js | sed 's/`/\\`/g')
+          echo "content<<EOF" >> $GITHUB_OUTPUT
+          echo "$PASTE_CONTENT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      - name: currentVersion appender
+        id: currentver
+        run: |
+          VERSION=$(cat VERSIONFILE)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      - name: Upload as GitHub Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: weekly-release-assets
+          path: |
+            minify/vav4inject.min.js
+            tampermonkey.js
+            vav4inject.js
+      - name: Format commit log section
+        id: commitlog_section
+        run: |
+          HAS_LOG="${{ github.event.inputs.has_commitlog }}"
+          if [ "$HAS_LOG" = "true" ];then
+            {
+              echo "text<<EOF"
+              echo "## This Week's Commits"
+              echo "---"
+              echo "${{ steps.fc.outputs.commits }}"
+              echo "EOF"
+            } >> $GITHUB_OUTPUT
+          else
+            echo "text=" >> $GITHUB_OUTPUT
+          fi
+
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.custom_ver != '' && github.event.inputs.custom_ver || format('{0}-{1}-time-{2}-weekly',steps.currentver.outputs.version, steps.dates.outputs.today, steps.dates.outputs.now) }}
+          name: ${{ github.event.inputs.custom_name != '' && github.event.inputs.custom_name || format('{0}-weekly-{1}',steps.currentver.outputs.version,steps.dates.outputs.today) }}
+          body: |
+            ${{ github.event.inputs.desc }}
+            ---
+            ${{ steps.commitlog_section.outputs.text }}
+            ---
+            ## Paste in Console (minified)
+            ```
+            ${{ steps.paste_js.outputs.content }}
+            ```
+          files: |
+            minify/vav4inject.min.js
+            tampermonkey.js
+            vav4inject.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
