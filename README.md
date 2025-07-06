@@ -6,8 +6,11 @@ The ultimate MiniBlox hacked client. Built for stealth, speed, and total dominat
 # Changelog
 
 Removed Fly (It was patched)
+
 .toggle all (does not work, will be fixed)
+
 Added better Scaffold bypass.
+
 Added basic ClickGUI (still some bugs) currently bound to key "\"
 
 # Installation
