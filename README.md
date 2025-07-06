@@ -1,11 +1,26 @@
+# Impact Client v4 for MiniBlox
 
+The ultimate MiniBlox hacked client. Built for stealth, speed, and total domination. Fully dark-mode optimized with a modern UI and high performance.
+
+
+# Changelog
 
 Removed Fly (It was patched)
 .toggle all (does not work, will be fixed)
+Added better Scaffold bypass.
+Added basic ClickGUI (still some bugs) currently bound to key "\"
 
+# Installation
 
-Info about index.html : Goto website.md
+Copy tampermonkey.user.js and paste into your preferred userscript manager.
 
-**DO NOT ADD UNSTABLE FEATURES TO THIS BRANCH. USE THE beta BRANCH INSTEAD**
+# Gallery
 
-REMEMBER TO CHANGE VERSIONFILE
+![Hacks On!](./.github/images/client.png)
+
+# Dev Notes
+
+- Info about index.html : Goto website.md
+- **When updating the version of the script, remember to update VERSIONFILE**
+- **DO NOT EVER PUBLISH UNSTABLE CHANGES TO THE "main" BRANCH. PUBLISH IT TO "beta" INSTEAD**
+
