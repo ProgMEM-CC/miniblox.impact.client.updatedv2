@@ -1,4 +1,4 @@
-This is the beta section of where i will put code (for modules that i have updated myself) out without harming the main branches. If you put anything in BETA i will test it and give you feedback!
+This is the beta section of where i will put code (for modules that i have updated myself) out without harming the main branches. If you put anything in BETA i will test it and give you feedback! 
 
 all to be said for now 🤑 this is a great client fr!
 
@@ -33,3 +33,5 @@ Ensured long-term survival of the client
 🧱 We All Built:
 A custom, intelligent, evasive Miniblox.io client —
 built from scratch, patched through war, and still flying today. 🚀
+
+Who Maintains This BETA folder - Me! (ModuleMaster64)
