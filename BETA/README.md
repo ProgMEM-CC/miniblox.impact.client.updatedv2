@@ -33,6 +33,6 @@ Rebooted the project as Impact V4
 Ported legacy modules, rewrote broken systems
 Ensured long-term survival of the client
 
-🧱 You All Built:
+🧱 We All Built:
 A custom, intelligent, evasive Miniblox.io client —
 built from scratch, patched through war, and still flying today. 🚀
