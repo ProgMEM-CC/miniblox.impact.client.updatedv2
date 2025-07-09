@@ -21,6 +21,7 @@ Kept the project alive with constant contributions
 Developed the Click GUI
 Known for bypass ideas and rock-solid module integration
 Brought innovation + stability in equal measure
+Making many more modules to bypass an custom anticheat of Vector's
 
 🛡️ he557 – Silent Bypass Operator
 Delivered stealthy bypasses that kept up with AC updates
