@@ -22,7 +22,7 @@ Copy tampermonkey.user.js and paste into your preferred userscript manager.
 ![Hacks On!](./.github/images/client.png)
 
 ON MENU with new toggled notfication that pops up
-![image](https://github.com/user-attachments/assets/f817effa-56b4-458e-8157-6058baacf97c)
+![image](https://github.com/user-attachments/assets/5580f818-10a4-488d-959e-6d2a3410f8a5)
 
 
 # Dev Notes
