@@ -5,7 +5,7 @@ The ultimate MiniBlox hacked client. Built for stealth, speed, and total dominat
 
 # Changelog
 
-Removed Fly (It was patched)
+Removed Fly (It was patched due to anticheat.)
 
 .toggle all (does not work, will be fixed)
 
