@@ -11,7 +11,7 @@ Removed Fly (It was patched due to anticheat.)
 
 Added better Scaffold bypass.
 
-Added basic ClickGUI (still some bugs) currently bound to key "\"
+Added basic ClickGUI (still some bugs) currently bound to key "\\"
 
 # Installation
 
