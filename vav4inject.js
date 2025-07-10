@@ -1705,20 +1705,6 @@ const AutoFunnyChat = new Module("AutoFunnyChat", function(callback) {
     };
     ctrl.appendChild(themeBtn);
 
-    const profileInput = document.createElement("input");
-    profileInput.className = "control";
-    profileInput.placeholder = "Profile";
-    ctrl.appendChild(profileInput);
-
-    const switchBtn = document.createElement("button");
-    switchBtn.className = "control";
-    switchBtn.textContent = "Switch Profile";
-    switchBtn.onclick = () => {
-      const nv = profileInput.value.trim();
-      if (nv) store.loadVapeConfig(nv);
-    };
-    ctrl.appendChild(switchBtn);
-
     const exportBtn = document.createElement("button");
     exportBtn.className = "control";
     exportBtn.textContent = "Export";
