@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Impact For Miniblox
 // @namespace    he557, ProgMEM-CC
-// @version      1.1.8
+// @version      1.2
 // @description  The ultimate MiniBlox hacked client. Built for stealth, speed, and total domination. Fully dark-mode optimized with a modern UI and high performance.
 // @author       7GrandDad, ProgMEM-CC, ModuleMaster64, he557, RealPacket/DataM0del (codeberg/Github names)
 // @match        https://miniblox.io/*
