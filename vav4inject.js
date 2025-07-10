@@ -1540,7 +1540,7 @@ const AutoFunnyChat = new Module("AutoFunnyChat", function(callback) {
     // Build GUI
     const gui = document.createElement("div");
     gui.id = "clickGUI";
-    gui.innerHTML = `<h2 id="clickHeader">Massive GUI</h2>`;
+    gui.innerHTML = `<h2 id="clickHeader">Impact ClickGUI</h2>`;
     document.body.appendChild(gui);
 
     // Enable dragging
