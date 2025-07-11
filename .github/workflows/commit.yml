@@ -1,4 +1,4 @@
-name: Commit with AI
+name: AutoBugFixer (in beta)
 
 on:
   workflow_dispatch:
@@ -7,6 +7,10 @@ on:
         description: 'Number of commits to make'
         required: true
         default: '1'
+      comitter_name:
+        description: 'Comitter Name'
+        required: true
+        default: 'ImpactMiniblox Dev Team'
 
 jobs:
   random-commit-job:
@@ -16,7 +20,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Read random commit message and commit
+    - name: Read commit message and commit
       id: random_commit
       run: |
         # Number of commits to create
@@ -35,7 +39,7 @@ jobs:
           echo "Creating commit $i with message: '$RANDOM_COMMIT'"
 
           # Configure Git
-          git config user.name "bufixer-account"
+          git config user.name ${{ github.event.inputs.comitter_name }}
           git config user.email "github-actions@github.com"
 
           # Check if there are changes (if no changes, do an empty commit)
