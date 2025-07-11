@@ -2,6 +2,9 @@
 
 The ultimate MiniBlox hacked client. Built for stealth, speed, and total domination. Fully dark-mode optimized with a modern UI and high performance.
 
+# EULA
+
+BEFORE USING, Read EULA.md
 
 # Changelog
 
