@@ -42,7 +42,7 @@ jobs:
           echo "Creating commit $i with message: '$RANDOM_COMMIT'"
 
           # Configure Git
-          git config user.name ${{ github.event.inputs.comitter_name }}
+          git config user.name "${{ github.event.inputs.comitter_name }}"
           git config user.email "github-actions@github.com"
 
           # Check if there are changes (if no changes, do an empty commit)
