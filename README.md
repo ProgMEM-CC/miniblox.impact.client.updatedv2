@@ -35,5 +35,5 @@ In Game!
 
 - Info about index.html : Goto website.md
 - **When updating the version of the script, remember to update VERSIONFILE**
-- **DO NOT EVER PUBLISH UNSTABLE CHANGES TO THE "main" BRANCH. PUBLISH IT TO "beta" INSTEAD**
+- **DO NOT EVER PUBLISH UNSTABLE CHANGES TO THE "/" (ROOT) FOLDER. PUBLISH IT TO "beta" FOLDER**
 
