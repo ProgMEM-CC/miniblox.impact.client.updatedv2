@@ -1,0 +1,53 @@
+name: Commit with AI
+
+on:
+  workflow_dispatch:
+    inputs:
+      num_commits:
+        description: 'Number of commits to make'
+        required: true
+        default: '1'
+
+jobs:
+  random-commit-job:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Read random commit message and commit
+      id: random_commit
+      run: |
+        # Number of commits to create
+        NUM_COMMITS=${{ github.event.inputs.num_commits }}
+        
+        # Check if /commits file exists
+        if [[ ! -f ./commits ]]; then
+          echo "Error: /commits file not found! Please make sure it's present in the repo."
+          exit 1
+        fi
+
+        # Create the requested number of commits
+        for i in $(seq 1 $NUM_COMMITS); do
+          # Get a random commit message from the /commits file
+          RANDOM_COMMIT=$(shuf -n 1 ./commits)
+          echo "Creating commit $i with message: '$RANDOM_COMMIT'"
+
+          # Configure Git
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          # Check if there are changes (if no changes, do an empty commit)
+          if [[ $(git status --porcelain) ]]; then
+            git add .
+            git commit -m "$RANDOM_COMMIT"
+            echo "Committed changes with message: $RANDOM_COMMIT"
+          else
+            git commit --allow-empty -m "$RANDOM_COMMIT"
+            echo "No changes detected, creating an empty commit with message: $RANDOM_COMMIT"
+          fi
+          
+          # Push the commit
+          git push origin HEAD
+        done
