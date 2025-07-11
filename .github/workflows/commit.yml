@@ -32,6 +32,9 @@ jobs:
           exit 1
         fi
 
+        # Get the current branch name
+        BRANCH_NAME=$(git symbolic-ref --short HEAD)
+        
         # Create the requested number of commits
         for i in $(seq 1 $NUM_COMMITS); do
           # Get a random commit message from the /commits file
@@ -53,5 +56,5 @@ jobs:
           fi
           
           # Push the commit
-          git push origin HEAD
+          git push origin $BRANCH_NAME
         done
