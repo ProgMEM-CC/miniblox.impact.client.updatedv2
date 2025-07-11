@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>404 - Page Not Found</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ff006e;
+      --background: #0f0f0f;
+      --surface: rgba(20, 20, 20, 0.7);
+      --text: #e0e0e0;
+      --accent: #ff006e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--background);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      animation: fadeInBody 1s ease-in-out;
+    }
+
+    .glass {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 3rem;
+      max-width: 600px;
+      text-align: center;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(255, 0, 110, 0.2);
+      border: 1px solid rgba(255, 0, 110, 0.2);
+      animation: scaleIn 1.2s ease;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+
+    p {
+      font-size: 1.2rem;
+      color: #ccc;
+      margin-bottom: 2rem;
+    }
+
+    .home-btn {
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      color: white;
+      background-color: var(--accent);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 0 12px var(--accent);
+      transition: all 0.3s ease;
+    }
+
+    .home-btn:hover {
+      background-color: #e60056;
+      transform: scale(1.05);
+    }
+
+    footer {
+      margin-top: 3rem;
+      font-size: 0.9rem;
+      color: #777;
+      text-align: center;
+    }
+
+    @keyframes fadeInBody {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: radial-gradient(circle, #ff006e33 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: -1;
+      animation: animateBG 30s linear infinite;
+      opacity: 0.05;
+    }
+
+    @keyframes animateBG {
+      0% { background-position: 0 0; }
+      100% { background-position: 1000px 1000px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="glass">
+    <h1>404 - Page Not Found</h1>
+    <p>Oops! The page you're looking for does not exist. You may have followed a broken link or entered the URL incorrectly.</p>
+    <a href="/" class="home-btn">Go Back Home</a>
+  </div>
+
+  <footer>
+    <p>Not affiliated with any specific organization. Use responsibly.</p>
+  </footer>
+</body>
+</html>
