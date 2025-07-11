@@ -18,9 +18,16 @@
 // @downloadURL    https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/main/tampermonkey.user.js
 // @license      AGPL-3.0-only
 // 
+// =========================================== EULA ==========================================================
+//  Before using, read https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/EULA.md
+//
+//
+//
+//
 // ============================================== The Dev Team ===============================================
 //  ProgMEM-CC (github.com/ProgMEM-CC)
 //  ModuleMaster64 (github.com/ModuleMaster64)
+//  DataM0del (github.com/datam0del)
 //
 //
 //  Pls, we may need more devs
