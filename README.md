@@ -28,7 +28,7 @@ ON MENU with new toggled notfication that pops up
 ![image](https://github.com/user-attachments/assets/5580f818-10a4-488d-959e-6d2a3410f8a5)
 
 In Game!
-![image[(https://github.com/user-attachments/assets/02dbf119-4c99-47f2-af53-6348e50e48be)
+![image](https://github.com/user-attachments/assets/02dbf119-4c99-47f2-af53-6348e50e48be)
 
 
 # Dev Notes
