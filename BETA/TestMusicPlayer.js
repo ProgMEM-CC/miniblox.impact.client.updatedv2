@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Miniblox MusicBar Rainbow GUI (YouTube)
+// @name         Miniblox MusicBar Rainbow GUI (CG5 Full Playlist)
 // @namespace    https://github.com/ModuleMaster64
-// @version      2.0
-// @description  Adds a draggable YouTube music player to Miniblox.io with rainbow GUI styling and track switcher
+// @version      4.0
+// @description  Adds a draggable YouTube playlist music player to Miniblox.io with rainbow GUI styling
 // @author       ModuleMaster64
 // @match        *://miniblox.io/*
 // @grant        none
@@ -26,30 +26,8 @@
       box-shadow: 0 0 12px rgba(0,0,0,0.4);
       overflow: hidden;
       cursor: move;
-      display: flex;
-      flex-direction: column;
     }
-    #musicControls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 5px 10px;
-      background: rgba(0,0,0,0.2);
-      color: white;
-      font-family: sans-serif;
-      font-size: 14px;
-    }
-    #musicControls select, #musicControls input {
-      background: rgba(255,255,255,0.2);
-      border: none;
-      color: white;
-      padding: 4px;
-      border-radius: 6px;
-    }
-    #musicFrame {
-      flex-grow: 1;
-    }
-    #musicFrame iframe {
+    #musicBar iframe {
       width: 100%;
       height: 100%;
       border: none;
@@ -57,37 +35,17 @@
   `;
   document.head.appendChild(style);
 
-  // 🎵 Track list
-  const tracks = {
-    "Good To Be Alive": "GYtBoxGB6Wo",
-    "Sleep Well": "TbWV7gCPiYc"
-  };
-
-  // 🎮 Create music bar
+  // 🎵 Embed CG5's full original songs playlist
   const musicBar = document.createElement("div");
   musicBar.id = "musicBar";
   musicBar.innerHTML = `
-    <div id="musicControls">
-      <label>🎶 Track:</label>
-      <select id="trackSelector">
-        ${Object.keys(tracks).map(title => `<option value="${tracks[title]}">${title}</option>`).join("")}
-      </select>
-      <label>🔊 Volume:</label>
-      <input type="range" id="volumeSlider" min="0" max="100" value="100">
-    </div>
-    <div id="musicFrame">
-      <iframe id="ytPlayer" src="https://www.youtube.com/embed/${tracks["Good To Be Alive"]}?autoplay=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-    </div>
+    <iframe
+      src="https://www.youtube.com/embed/videoseries?list=PLDN9cM3mgdchOJapJ8k3smJG64icIVMGr&autoplay=1"
+      allow="autoplay; encrypted-media"
+      allowfullscreen
+    ></iframe>
   `;
   document.body.appendChild(musicBar);
-
-  // 🔁 Track switching
-  const selector = document.getElementById("trackSelector");
-  const player = document.getElementById("ytPlayer");
-  selector.addEventListener("change", () => {
-    const videoId = selector.value;
-    player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-  });
 
   // 🖱️ Dragging logic
   let isDragging = false, offsetX = 0, offsetY = 0;
