@@ -88,10 +88,10 @@ There is **no path to re-licensing** once terminated.
 ---
 
 ## Source and Author
-- **Source:** [https://github.com/yourusername/yourrepo](https://github.com/yourusername/yourrepo)  
-- **Author:** [Your Name or Alias]  
+- **Source:** [https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2)  
+- **Author:** [ProgMEM-CC]  
 - **License:** AGPL-3.0 only, with Additional Terms under Section 7  
-- **Effective Date:** [YYYY-MM-DD]
+- **Effective Date:** [2025-07-11]
 
 ---
 
