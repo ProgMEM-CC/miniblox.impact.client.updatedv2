@@ -22,7 +22,7 @@ Copy tampermonkey.user.js and paste into your preferred userscript manager.
 
 # Gallery
 Hacks On!
-![Hacks On!](./.github/images/client.png)
+![Hacks On! (old photo)](./.github/images/client.png)
 
 ON MENU with new toggled notfication that pops up
 ![image](https://github.com/user-attachments/assets/5580f818-10a4-488d-959e-6d2a3410f8a5)
