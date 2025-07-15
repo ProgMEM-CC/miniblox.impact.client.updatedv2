@@ -38,4 +38,4 @@ Ensured long-term survival of the client
 A custom, intelligent, evasive Miniblox.io client —
 built from scratch, patched through war, and still flying today. 🚀
 
-Who (Somewhat) Maintains This BETA folder - Me! (ModuleMaster64)
+Who (Somewhat) Maintains This BETA folder - Me! (ModuleMaster64). I'll keep updating when i have time
