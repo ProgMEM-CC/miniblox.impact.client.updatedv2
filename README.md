@@ -20,6 +20,10 @@ Added basic ClickGUI (still some bugs) currently bound to key "\\"
 
 Copy tampermonkey.user.js and paste into your preferred userscript manager.
 
+# Discord
+
+Join us on Discord [here](https://discord.gg/PwpGemYhJx)!
+
 # Gallery
 Hacks On!
 ![Hacks On! (old photo)](./.github/images/client.png)
