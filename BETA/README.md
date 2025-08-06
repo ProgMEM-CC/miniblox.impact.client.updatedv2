@@ -9,7 +9,7 @@ all to be said for now 🤑 this is a great client fr!
 (Smth that i created lmao ⬇️)
 
 🛠️ The Legacy of the Impact/Vape Miniblox.io Client!
-7GrandDad – The Original Bypasser
+7GrandDad – The OG Bypasser
 Created the first Vape V4 for Miniblox.io
 Discovered early weaknesses in the anticheat
 Built the foundation of modern client bypasses
@@ -19,11 +19,11 @@ Took over Vape V4’s codebase
 Rewrote core systems, improved anti-detection layers
 Kept the project alive with constant contributions
 
-🎛️ ModuleM64 – UX Wizard & Core Contributor
+🎛️ ModuleM64 – UX Wizard & The Core Contributor
 Developed the Click GUI
 Known for bypass ideas and rock-solid module integration
 Brought innovation + stability in equal measure
-Making many more modules to bypass an custom anticheat of Vector's
+Making many more modules to bypass an custom anticheat of Vector's!
 
 🛡️ he557 – Silent Bypass Operator
 Delivered stealthy bypasses that kept up with AC updates
@@ -33,9 +33,10 @@ Quiet but consistent powerhouse in client evolution
 Rebooted the project as Impact V4
 Ported legacy modules, rewrote broken systems
 Ensured long-term survival of the client
+Created a webpage for the injection.js!
 
 🧱 We All Built:
 A custom, intelligent, evasive Miniblox.io client —
-built from scratch, patched through war, and still flying today. 🚀
+built from scratch, patched through war, and still powering on today. 🚀
 
-Who (Somewhat) Maintains This BETA folder - Me! (ModuleMaster64). I'll keep updating when i have time
+Who (Somewhat) Maintains This BETA folder - Me! (M0duleMaster64). I'll keep updating when i have time
