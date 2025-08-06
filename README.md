@@ -1,6 +1,6 @@
 # Impact Client v4 for MiniBlox
 
-The ultimate MiniBlox hacked client. Built for stealth, speed, and total domination. Fully dark-mode optimized with a modern UI and high performance.
+The ultimate MiniBlox hacked client! Built for stealth, speed, and total domination. Fully dark-mode optimized with a modern UI and high performance.
 
 # EULA
 
@@ -8,17 +8,17 @@ BEFORE USING, Read EULA.md
 
 # Changelog
 
-Removed Fly (It was patched due to the custom anticheat which could be old versus due to lagbacks. And Vector used a simulation/prediction ac.)
+Removed Fly Module (It was patched due to the custom anticheat which could be old versus due to lagbacks. And Vector used a simulation/prediction ac.)
 
-.toggle all (does not work, will be fixed)
+.toggle all command (does not work, will be fixed)
 
-Added better Scaffold bypass by using a multi block scaffold (instead of just one inv space. It uses multiple. I might add a video showing this.)
+Added better Scaffold bypass (module) by using a multi block scaffold (instead of just one inv space. It uses multiple. I might add a video showing this.)
 
-Added basic ClickGUI (still some bugs) currently bound to key "\\" (Our Job is to make the GUI better than the basic!)
+Added a basic ClickGUI (still some bugs) currently bound to key "\\" (Our Job is to make the GUI better than the basic!)
 
 # Installation
 
-Copy tampermonkey.user.js and paste into your preferred userscript manager.
+Copy tampermonkey.user.js and paste into your preferred userscript manager. (Tampermonkey, Greasemonkey, Violentmonkey etc)
 
 (M0duleMaster64's comment - Or use the main.js and manually put in the injection.js after the main)
 
