@@ -8,21 +8,23 @@ BEFORE USING, Read EULA.md
 
 # Changelog
 
-Removed Fly (It was patched due to anticheat.)
+Removed Fly (It was patched due to the custom anticheat which could be old versus due to lagbacks. And Vector used a simulation/prediction ac.)
 
 .toggle all (does not work, will be fixed)
 
-Added better Scaffold bypass.
+Added better Scaffold bypass by using a multi block scaffold (instead of just one inv space. It uses multiple. I might add a video showing this.)
 
-Added basic ClickGUI (still some bugs) currently bound to key "\\"
+Added basic ClickGUI (still some bugs) currently bound to key "\\" (Our Job is to make the GUI better than the basic!)
 
 # Installation
 
 Copy tampermonkey.user.js and paste into your preferred userscript manager.
 
+(M0duleMaster64's comment - Or use the main.js and manually put in the injection.js after the main)
+
 # Discord
 
-Join us on Discord [here](https://discord.gg/PwpGemYhJx)!
+Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 
 # Gallery
 Hacks On!
