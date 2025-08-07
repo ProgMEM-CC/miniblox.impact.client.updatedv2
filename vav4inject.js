@@ -757,6 +757,61 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 				return new Vector3$1(0, 0, 0);
 			}
+
+			// Fly
+			let flyvalue, flyvert, flybypass;
+			const fly = new Module("Fly", function(callback) {
+				if (callback) {
+					let ticks = 0;
+					tickLoop["Fly"] = function() {
+						ticks++;
+						const dir = getMoveDirection(flyvalue[1]);
+						player.motion.x = dir.x;
+						player.motion.z = dir.z;
+						player.motion.y = keyPressedDump("space") ? flyvert[1] : (keyPressedDump("shift") ? -flyvert[1] : 0);
+					};
+				}
+				else {
+					delete tickLoop["Fly"];
+					if (player) {
+						player.motion.x = Math.max(Math.min(player.motion.x, 0.3), -0.3);
+						player.motion.z = Math.max(Math.min(player.motion.z, 0.3), -0.3);
+					}
+				}
+			});
+			flybypass = fly.addoption("Bypass", Boolean, true);
+			flyvalue = fly.addoption("Speed", Number, 2);
+			flyvert = fly.addoption("Vertical", Number, 0.7);
+
+			// InfiniteFly
+			let infiniteFlyVert;
+			const infiniteFly = new Module("InfiniteFly", function(callback) {
+				if (callback) {
+					let ticks = 0;
+					tickLoop["InfiniteFly"] = function() {
+						ticks++;
+						const dir = getMoveDirection(0.2);
+						player.motion.x = dir.x;
+						player.motion.z = dir.z;
+						const goUp = keyPressedDump("space");
+						const goDown = keyPressedDump("shift");
+						if (goUp || goDown) {
+							player.motion.y = goUp ? infiniteFlyVert[1] : -infiniteFlyVert[1];
+						} else {
+							player.motion.y = 0;
+						}
+					};
+				}
+				else {
+					delete tickLoop["InfiniteFly"];
+					if (player) {
+						player.motion.x = Math.max(Math.min(player.motion.x, 0.3), -0.3);
+						player.motion.z = Math.max(Math.min(player.motion.z, 0.3), -0.3);
+					}
+				}
+			});
+			infiniteFlyVert = infiniteFly.addoption("Vertical", Number, 0.3);
+
 			new Module("InvWalk", function() {});
 			new Module("KeepSprint", function() {});
 			new Module("NoSlowdown", function() {});
