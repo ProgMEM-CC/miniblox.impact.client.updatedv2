@@ -26,7 +26,13 @@ Copy tampermonkey.user.js and paste into your preferred userscript manager. (Tam
 
 Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 
+# Notes to M0duleMaster64
+
+I re added fly bc it can be still useful at times, and i think tokeniser.js is ready for use
+
+
 # Gallery
+
 Hacks On!
 ![Hacks On! (old photo)](./.github/images/client.png)
 
