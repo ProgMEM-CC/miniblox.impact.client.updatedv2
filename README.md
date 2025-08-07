@@ -8,7 +8,7 @@ BEFORE USING, Read EULA.md
 
 # Changelog
 
-Removed Fly Module (It was patched due to the custom anticheat which could be old versus due to lagbacks. And Vector used a simulation/prediction ac.)
+Re added fly, some of my testers still want it (including me)
 
 .toggle all command (does not work, will be fixed)
 
