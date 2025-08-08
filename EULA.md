@@ -94,6 +94,6 @@ There is **no path to re-licensing** once terminated.
 - **Effective Date:** [2025-07-11]
 
 ---
-
+> [!Important]
 > This software is Free Software: you may redistribute and/or modify it under the terms of the AGPL v3.0 **with the additional terms above**.  
 > This software comes with **no warranty**. Use at your own risk.
