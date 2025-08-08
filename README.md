@@ -51,3 +51,7 @@ In Game!
 - **When updating the version of the script, remember to update VERSIONFILE**
 - **DO NOT EVER PUBLISH UNSTABLE CHANGES TO THE "/" (ROOT) FOLDER. PUBLISH IT TO "beta" FOLDER**
 
+- M0duleM64 added this (hello from M0duleM64)
+
+- ![MinibloxClient Stats](https://gitmystat.vercel.app/repo?theme=dino&username=progmem-cc&repo=miniblox.impact.client.updatedv2)
+
