@@ -3,7 +3,6 @@ Add "InvWalk" module to allow walking while the inventory screen is open
 Add "KeepSprint" feature to prevent sprint interruption during high-speed movement
 Add "Velocity" module for modifying entity velocity, including both horizontal and vertical components
 Add AJAX-based form submissions to improve page interactivity and speed
-Add FAQ section to `README.md` to address common user questions
 Add InfiniteFly module to allow seamless flight in all directions
 Add KeepSprint feature to maintain sprint state even after movement interruptions
 Add `CHANGELOG.md` to track changes made in each release
