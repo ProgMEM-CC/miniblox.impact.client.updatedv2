@@ -44,6 +44,10 @@ ON MENU with new toggled notfication that pops up
 In Game!
 ![image](https://github.com/user-attachments/assets/02dbf119-4c99-47f2-af53-6348e50e48be)
 
+Gonna add a video here showcasing the client!
+
+**console.log("Coming soon...")**
+
 
 # Dev Notes
 
