@@ -60,7 +60,7 @@ Gonna add a video here showcasing the client!
 ![MinibloxClient Stats](https://gitmystat.vercel.app/repo?theme=dino&username=progmem-cc&repo=miniblox.impact.client.updatedv2)
 
 
-## 🎧 LISTEN TO M0DULEMASTER64's (ONE OF THE DEV's) MUSIC ON SPOTIFY!
+## 🎧 LISTEN TO M0DULEMASTER64's (ONE OF THE DEV's) MUSIC ON SPOTIFY! (You will have to manually refresh if i change music)
 
 [![spotify-github-profile](https://spotify-github-profile.kittinanx.com/api/view?uid=31ts5yr6rawtr4vebnzoiwmazkka&cover_image=true&theme=default&show_offline=false&background_color=000000&interchange=true&bar_color=ffffff&bar_color_cover=false)](https://spotify-github-profile.kittinanx.com/api/view?uid=31ts5yr6rawtr4vebnzoiwmazkka&redirect=true)
 
