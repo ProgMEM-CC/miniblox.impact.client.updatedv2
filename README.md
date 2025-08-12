@@ -1,4 +1,4 @@
-# Impact Client v4 for MiniBlox
+# [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=2500&pause=1000&color=E5F700&width=435&lines=Impact+Client+v4+for+MiniBlox!)](https://git.io/typing-svg)
 
 The ultimate MiniBlox hacked client! Built for stealth, speed, and total domination. Fully dark-mode optimized with a modern UI and high performance.
 
