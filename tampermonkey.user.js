@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Impact For Miniblox
-// @namespace    he557, ProgMEM-CC, ModuleM64
-// @version      1.4.3
+// @namespace    he557, ProgMEM-CC, ModuleM64, he557, 7GrandDad, BlueDragon7327, DataM0del/RealPacket
+// @version      1.4.4
 // @description  The ultimate MiniBlox hacked client. Built for stealth, speed, and total domination. Fully dark-mode optimized with a modern UI and high performance.
-// @author       7GrandDad, ProgMEM-CC, ModuleMaster64, he557, RealPacket/DataM0del (codeberg/Github names)
+// @author       7GrandDad, ProgMEM-CC, ModuleMaster64, he557, RealPacket/DataM0del (Codeberg/Github names), BlueDragon7327
 // @match        https://miniblox.io/*
 // @match        https://miniblox.org/*
 // @match        https://miniblox.online/*
@@ -23,11 +23,11 @@
 //
 //
 //
-//
 // ============================================== The Dev Team ===============================================
 //  ProgMEM-CC (github.com/ProgMEM-CC)
 //  ModuleMaster64 (github.com/ModuleMaster64)
 //  DataM0del (github.com/datam0del)
+//  BlueDragon7327 (github.com/BlueDragon7327) (**NEW DEV**)
 //
 //
 //  Pls, we may need more devs!
@@ -38,8 +38,8 @@
 //    he557, adding bypasses and and pushing through, making the client work
 //    ProgMEM-CC, the upgrader and reviver of the client as Impact V4 for miniblox
 //    @ModuleMaster64, the one who never fails to amaze, and also the creator of the ClickGUI and improving/adding modules!
-//    RealPacket (codeberg, https://codeberg.org/RealPacket), for the inspiration of reviving the hacks
-//
+//    RealPacket, (codeberg, https://codeberg.org/RealPacket), for the inspiration of reviving the hacks
+//    BlueDragon7327,
 //
 //
 //
