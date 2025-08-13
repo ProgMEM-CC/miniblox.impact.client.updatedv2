@@ -12,9 +12,9 @@ Re added fly, some of my testers still want it (including me)
 
 .toggle all command (does not work, will be fixed)
 
-Added better Scaffold bypass (module) by using a multi block scaffold (instead of just one inv space. It uses multiple. I might add a video showing this.)
+Added better Scaffold bypass (module) by using a multi block scaffold (instead of just one inv space. It uses multiple inv slots from 1 - 9!)
 
-Added a basic ClickGUI (still some bugs) currently bound to key "\\" (Our Job is to make the GUI better than the basic!)
+Added a basic ClickGUI (still some bugs) currently bound to key "\\" (Backslash - javasrcipt) (Our Job is to make the GUI better than the basic!)
 
 # Installation
 
@@ -30,10 +30,10 @@ Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 
 I re added fly bc it can be still useful at times, and i think tokeniser.js is ready for use
 
-(M0duleMaster64's reply - Oh ok got it!)
+(M0duleMaster64's reply - alr)
 
 
-# Gallery
+# Gallery of Impact Client!
 
 Hacks On!
 ![Hacks On! (old photo)](./.github/images/client.png)
@@ -52,7 +52,7 @@ Gonna add a video here showcasing the client!
 # Dev Notes
 
 - Info about index.html : Goto website.md
-- **When updating the version of the script, remember to update VERSIONFILE**
+- **When updating the version of the script, remember to update VERSIONFILE, tampermonkey.js and injection.js**
 - **DO NOT EVER PUBLISH UNSTABLE CHANGES TO THE "/" (ROOT) FOLDER. PUBLISH IT TO "beta" FOLDER**
 
 - M0duleM64 added this (hello from M0duleM64)
