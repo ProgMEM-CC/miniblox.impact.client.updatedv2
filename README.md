@@ -14,7 +14,7 @@ Re added fly, some of my testers still want it (including me)
 
 Added better Scaffold bypass (module) by using a multi block scaffold (instead of just one inv space. It uses multiple inv slots from 1 - 9!)
 
-Added a basic ClickGUI (still some bugs) currently bound to key "\\" (Backslash - javasrcipt) (Our Job is to make the GUI better than the basic!)
+Added a basic ClickGUI (still some bugs) currently bound to key "\\" (or Backslash in javascript terms) (if u put \\ the clickgui will not work pls note)
 
 # Installation
 
@@ -22,16 +22,15 @@ Copy tampermonkey.user.js and paste into your preferred userscript manager. (Tam
 
 (M0duleMaster64's comment - Or use the main.js and manually put in the injection.js after the main)
 
-# Discord
+## Join the Discord here
 
 Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 
 # Notes to M0duleMaster64
 
-I re added fly bc it can be still useful at times, and i think tokeniser.js is ready for use
+(I re-added fly bc it can be still useful at times, and i think tokeniser.js is ready for use)
 
 (M0duleMaster64's reply - alr)
-
 
 # Gallery of Impact Client!
 
@@ -44,14 +43,13 @@ ON MENU with new toggled notfication that pops up
 In Game!
 ![image](https://github.com/user-attachments/assets/02dbf119-4c99-47f2-af53-6348e50e48be)
 
-Gonna add a video here showcasing the client!
+Gonna add a video here showcasing this client!
 
 **console.log("Coming soon...")**
 
-
 # Dev Notes
 
-- Info about index.html : Goto website.md
+- Info about index.html : Goto website.md file.
 - **When updating the version of the script, remember to update VERSIONFILE, tampermonkey.js and injection.js**
 - **DO NOT EVER PUBLISH UNSTABLE CHANGES TO THE "/" (ROOT) FOLDER. PUBLISH IT TO "beta" FOLDER**
 
@@ -63,4 +61,12 @@ Gonna add a video here showcasing the client!
 ## 🎧 LISTEN TO M0DULEMASTER64's (ONE OF THE DEV's) MUSIC ON SPOTIFY! (You will have to manually refresh if i change music)
 
 [![spotify-github-profile](https://spotify-github-profile.kittinanx.com/api/view?uid=31ts5yr6rawtr4vebnzoiwmazkka&cover_image=true&theme=default&show_offline=false&background_color=000000&interchange=true&bar_color=ffffff&bar_color_cover=false)](https://spotify-github-profile.kittinanx.com/api/view?uid=31ts5yr6rawtr4vebnzoiwmazkka&redirect=true)
+
+
+## Jobs to carry out (Here for now)
+
+- Make more modules!
+- Improve ClickGUI
+- Add a video showcasing the client (ModuleMaster64's job)
+- reopimize modules
 
