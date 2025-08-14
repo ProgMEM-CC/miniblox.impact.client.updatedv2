@@ -14,7 +14,7 @@ Re added fly, some of my testers still want it (including me)
 
 Added better Scaffold bypass (module) by using a multi block scaffold (instead of just one inv space. It uses multiple inv slots from 1 - 9!)
 
-Added a basic ClickGUI (still some bugs) currently bound to key "\\" (or Backslash in javascript terms) (if u put \\ the clickgui will not work pls note)
+Added a basic ClickGUI (still some bugs) currently bound to key "\\" (or Backslash in javascript terms) (if u put \\ in the e.code === **\\** bit it will not work pls note)
 
 # Installation
 
