@@ -14,6 +14,14 @@ jobs:
           actions: check-keyword
           token: ${{ secrets.GITHUB_TOKEN }}
           keywords-labels: |
-            bug: error, crash, broken, doesn't work
-            feature: add, support, implement, enhancement
-            question: how, what, why, help, usage
+            bug: error, crash, broken, doesn't work, issue
+            documentation: docs, documentation, readme, guide
+            duplicate: duplicate, already exists, same issue
+            enhancement: feature request, improvement, enhancement
+            Features: added feature, new functionality
+            good first issue: beginner, easy, newcomer, first time
+            help wanted: help, assistance, support needed
+            Helper: helper, automation, bot, script
+            invalid: invalid, not working, incorrect, false
+            Questions: question, what, why, how, clarification
+            wontfix: won’t fix, not fixing, won’t resolve
