@@ -1,0 +1,19 @@
+name: Auto Label Issues
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  label-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto Label by Keyword
+        uses: actions-cool/issues-helper@v3.6.2
+        with:
+          actions: check-keyword
+          token: ${{ secrets.GITHUB_TOKEN }}
+          keywords-labels: |
+            bug: error, crash, broken, doesn't work
+            feature: add, support, implement, enhancement
+            question: how, what, why, help, usage
