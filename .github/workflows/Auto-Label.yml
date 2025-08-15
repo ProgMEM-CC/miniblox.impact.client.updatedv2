@@ -5,23 +5,37 @@ on:
     types: [opened]
 
 jobs:
-  label-issues:
+  label-by-keyword:
     runs-on: ubuntu-latest
     steps:
-      - name: Auto Label by Keyword
-        uses: actions-cool/issues-helper@v3.6.2
+      - name: Label issues based on keywords
+        uses: actions/github-script@v6
         with:
-          actions: check-keyword
-          token: ${{ secrets.GITHUB_TOKEN }}
-          keywords-labels: |
-            bug: error, crash, broken, doesn't work, issue
-            documentation: docs, documentation, readme, guide
-            duplicate: duplicate, already exists, same issue
-            enhancement: feature request, improvement, enhancement
-            Features: added feature, new functionality
-            good first issue: beginner, easy, newcomer, first time
-            help wanted: help, assistance, support needed
-            Helper: helper, automation, bot, script
-            invalid: invalid, not working, incorrect, false
-            Questions: question, what, why, how, clarification
-            wontfix: won’t fix, not fixing, won’t resolve
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+            const title = issue.title.toLowerCase();
+            const body = issue.body.toLowerCase();
+            const labels = [];
+
+            if (title.includes('error') || body.includes('error') || body.includes('crash')) {
+              labels.push('bug');
+            }
+            if (title.includes('feature') || body.includes('enhancement')) {
+              labels.push('enhancement');
+            }
+            if (title.includes('docs') || body.includes('documentation')) {
+              labels.push('documentation');
+            }
+            if (title.includes('question') || body.includes('how') || body.includes('why')) {
+              labels.push('Questions');
+            }
+
+            if (labels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: labels
+              });
+            }
