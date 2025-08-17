@@ -65,4 +65,4 @@ Gonna add a video here showcasing this client!
 - Improve ClickGUI
 - Add a video showcasing the client (ModuleMaster64's job)
 - reopimize modules
-- PLEASE NO SPOTIFY. Thanks!
+- PLEASE NO SPOTIFY. Thanks! (oh ok 🕘 - MM64)
