@@ -6,7 +6,6 @@ Add AJAX-based form submissions to improve page interactivity and speed
 Add InfiniteFly module to allow seamless flight in all directions
 Add KeepSprint feature to maintain sprint state even after movement interruptions
 Add `CHANGELOG.md` to track changes made in each release
-Add `CONTRIBUTING.md` to the repository with guidelines for new contributors
 Add ability to sort search results by price, rating, or other filters
 Add ability to toggle auto-jump feature within the Speed module for better control
 Add additional details to `README.md` about contributing to the documentation
