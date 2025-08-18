@@ -66,3 +66,12 @@ Gonna add a video here showcasing this client!
 - Add a video showcasing the client (ModuleMaster64's job)
 - reopimize modules
 - PLEASE NO SPOTIFY. Thanks! (oh ok 🕘 - MM64)
+
+  ## Goals (May not be added)
+  
+- ForceOP Module (MM64 and ProgMEM's Job, forceop like means u can ban the owner in a server :D) (May not be added/ may not work)
+- Nuker
+- Force Creative / Inventory Modification
+- Command Block modification (in survival)
+- Working FLY / Airjump
+- Disabler
