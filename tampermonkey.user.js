@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Impact For Miniblox
-// @namespace    he557, ProgMEM-CC, ModuleM64, he557, 7GrandDad, BlueDragon7327, DataM0del/RealPacket, ekusos22
+// @namespace    ProgMEM-CC, ModuleM64, he557, 7GrandDad, BlueDragon7327, DataM0del/RealPacket, ekusos22
 // @version      1.4.4
 // @description  The ultimate MiniBlox hacked client. Built for stealth, speed, and total domination. Fully dark-mode optimized with a modern UI and high performance.
 // @author       7GrandDad, ProgMEM-CC, ModuleMaster64, he557, RealPacket/DataM0del (Codeberg/Github names), BlueDragon7327
