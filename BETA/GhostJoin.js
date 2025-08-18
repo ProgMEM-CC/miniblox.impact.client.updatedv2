@@ -2,51 +2,42 @@ var GhostJoin = new Module("GhostJoin", function(callback) {
     if (!callback) {
         delete tickLoop["GhostJoin"];
         if (window.__ghostJoinLoop) {
-            clearInterval(window.__ghostJoinLoop);
+            clearTimeout(window.__ghostJoinLoop);
             window.__ghostJoinLoop = undefined;
         }
         return;
     }
 
     var fakeNames = [
-        "Vector",         // Owner
-        "Tester",         // Admin
-        "KanusMaximus",   // Admin
-        "Qhyun",          // Admin
-        "Notch", "Dream", "Steve", "Herobrine" // Classic filler
+        "Vector", "Tester", "KanusMaximus", "Qhyun",
+        "Notch", "Dream", "Steve", "Herobrine"
     ];
     var lastGhost = null;
 
-    if (window.__ghostJoinLoop) {
-        clearInterval(window.__ghostJoinLoop);
+    function getRandomDelay(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    window.__ghostJoinLoop = setInterval(function() {
+    function spawnGhost() {
         var name = fakeNames[Math.floor(Math.random() * fakeNames.length)];
         lastGhost = name;
+        var joinText = "[Ghost] " + name + " joined the game";
 
-        game.chat.addChat({
-            text: name + " joined the game",
-            color: "yellow"
-        });
+        // Inject ghost message directly
+        ClientSocket.sendPacket(new SPacketMessage({ text: joinText }));
+        game.chat.addChat({ text: joinText, color: "yellow", extra: [] });
 
-        ClientSocket.sendPacket(new SPacketMessage({
-            text: name + " joined the game"
-        }));
-    }, 60000); // Every 60 seconds
+        window.__ghostJoinLoop = setTimeout(function() {
+            if (lastGhost) {
+                var leaveText = "[Ghost] " + lastGhost + " left the game";
+                ClientSocket.sendPacket(new SPacketMessage({ text: leaveText }));
+                game.chat.addChat({ text: leaveText, color: "yellow", extra: [] });
+                lastGhost = null;
+            }
 
-    tickLoop["GhostJoin"] = function() {
-        if (lastGhost) {
-            game.chat.addChat({
-                text: lastGhost + " left the game",
-                color: "yellow"
-            });
+            window.__ghostJoinLoop = setTimeout(spawnGhost, getRandomDelay(5000, 15000));
+        }, getRandomDelay(5000, 15000));
+    }
 
-            ClientSocket.sendPacket(new SPacketMessage({
-                text: lastGhost + " left the game"
-            }));
-
-            lastGhost = null;
-        }
-    };
+    spawnGhost();
 });
