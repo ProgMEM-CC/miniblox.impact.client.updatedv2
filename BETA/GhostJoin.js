@@ -10,7 +10,7 @@ var GhostJoin = new Module("GhostJoin", function(callback) {
 
     var fakeNames = [
         "Vector", "Tester", "KanusMaximus", "Qhyun",
-        "Notch", "Dream", "Steve", "Herobrine"
+        "Notch", "Dream", "Steve", "Herobrine"         // 4 Minecraft devs v 4 Miniblox devs LOL
     ];
     var lastGhost = null;
 
