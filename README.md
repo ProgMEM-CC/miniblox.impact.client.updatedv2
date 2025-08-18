@@ -50,7 +50,7 @@ Gonna add a video here showcasing this client!
 # Dev Notes
 
 - Info about index.html : Goto website.md file.
-- **When updating the version of the script, remember to update VERSIONFILE, tampermonkey.js and injection.js**
+- **When updating the version of the script, remember to update VERSIONFILE, tampermonkey.js and injection.js and greasyfork.user.js (for greasyfork who hates github raw)**
 - **DO NOT EVER PUBLISH UNSTABLE CHANGES TO THE "/" (ROOT) FOLDER. PUBLISH IT TO "beta" FOLDER**
 
 - M0duleM64 added this (hello from M0duleM64)
@@ -66,6 +66,7 @@ Gonna add a video here showcasing this client!
 - Add a video showcasing the client (ModuleMaster64's job)
 - reopimize modules
 - PLEASE NO SPOTIFY. Thanks! (oh ok 🕘 - MM64)
+  
 
   ## Goals (May not be added)
   
