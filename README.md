@@ -10,11 +10,11 @@ BEFORE USING, Read EULA.md
 
 Re added fly, some of my testers still want it (including me)
 
-.toggle all command (does not work, will be fixed)
+.toggle all command (does not work, will be fixed soon)
 
 Added better Scaffold bypass (module) by using a multi block scaffold (instead of just one inv space. It uses multiple inv slots from 1 - 9!)
 
-Added a basic ClickGUI (still some bugs) currently bound to key "\\" (or Backslash in javascript terms) (if u put \\ in the e.code === **\\** bit it will not work pls note)
+Added a basic ClickGUI (still some bugs) currently bound to key "\\" (or Backslash in javascript terms)
 
 # Installation
 
@@ -50,7 +50,9 @@ Gonna add a video here showcasing this client!
 # Dev Notes
 
 - Info about index.html : Goto website.md file.
+
 - **When updating the version of the script, remember to update VERSIONFILE, tampermonkey.js and injection.js**
+
 - **DO NOT EVER PUBLISH UNSTABLE CHANGES TO THE "/" (ROOT) FOLDER. PUBLISH IT TO "beta" FOLDER**
 
 - M0duleM64 added this (hello from M0duleM64)
@@ -61,18 +63,22 @@ Gonna add a video here showcasing this client!
 
 ## Jobs to carry out (Here for now)
 
-- Make more modules!
-- Improve ClickGUI
-- Add a video showcasing the client (ModuleMaster64's job)
-- reopimize modules
-- PLEASE NO SPOTIFY. Thanks! (oh ok 🕘 - MM64)
-  
+- Make/reoptimize more modules!
 
+- Improve ClickGUI
+
+- Add a video showcasing the client (ModuleMaster64's job)
+  
   ## Goals (May not be added)
   
 - ForceOP Module (MM64 and ProgMEM's Job, forceop like means u can ban the owner in a server :D) (May not be added/ may not work)
-- Nuker
-- Force Creative / Inventory Modification
-- Command Block modification (in survival)
-- Working FLY / Airjump
+
+- Nuker (I dont think this will work - MM64.)
+
+- Force Creative / Inventory Modification (like thrax client - was made by 7GrandDad i think)
+
+- Command Block modification (in survival mode. Again could be possible - MM64)
+
+- Working FLY / Airjump (this can be possible if RealPacket does the reset to the desync. this is also for nofall. see this https://codeberg.org/RealPacket/VapeForMiniblox/pulls/7
+
 - Disabler
