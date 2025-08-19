@@ -53,7 +53,7 @@ Gonna add a video here showcasing this client!
 
 - **When updating the version of the script, remember to update VERSIONFILE, tampermonkey.js and injection.js**
 
-- **DO NOT EVER PUBLISH UNSTABLE CHANGES TO THE "/" (ROOT) FOLDER. PUBLISH IT TO "beta" FOLDER**
+- **DO NOT EVER PUBLISH UNSTABLE CHANGES TO THE "/" (ROOT) FOLDER. PUBLISH IT TO "beta" FOLDER INSTEAD PLS**
 
 - M0duleM64 added this (hello from M0duleM64)
 
