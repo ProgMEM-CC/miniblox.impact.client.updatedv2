@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Impact For Miniblox
 // @namespace    ProgMEM-CC, ModuleM64, he557, 7GrandDad, BlueDragon7327, DataM0del/RealPacket, ekusos22
-// @version      1.4.4
+// @version      1.5
 // @description  The ultimate MiniBlox hacked client. Built for stealth, speed, and total domination. Fully dark-mode optimized with a modern UI and high performance.
 // @author       7GrandDad, ProgMEM-CC, ModuleMaster64, he557, RealPacket/DataM0del (Codeberg/Github names), BlueDragon7327
 // @match        https://miniblox.io/*
@@ -40,9 +40,8 @@
 //    ProgMEM-CC, the upgrader and reviver of the client as Impact V4 for miniblox
 //    @ModuleMaster64, the one who never fails to amaze, and also the creator of the ClickGUI and improving/adding modules!
 //    RealPacket, (codeberg, https://codeberg.org/RealPacket), for the inspiration of reviving the hacks
-//    BlueDragon7327,
+//    BlueDragon7327, Module Researcher and solver!
 //    Ekusos22, Bug reporter!
-//
 //
 //
 // ==================================== Extra Credits To =====================================================
@@ -64,8 +63,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>,
 // or see the project page of Impact V4 for miniblox.
-//
-//
 //
 // ==/UserScript==
 
