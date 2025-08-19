@@ -1192,143 +1192,140 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 			new Module("FilterBypass", function() {});
    
     
-    const AutoDrop = new Module("AutoDrop", function (callback) {
+    const InvCleaner = new Module("InvCleaner", function (callback) {
     if (!callback) {
-        delete tickLoop["AutoDrop"];
-        hud3D.remove("AutoDropOverlay");
+        delete tickLoop["InvCleaner"];
         return;
     }
 
-    let dropVisuals = new Map();
-    let dropTypeMap = new Map();
-    const bestArmor = {};
-    let lastRun = 0;
-
+    const armorPriority = ["leather", "chain", "iron", "diamond"];
     const weaponClasses = new Set(["ItemSword", "ItemAxe", "ItemBow", "ItemPickaxe"]);
-    const essentialsKeywords = ["gapple", "golden apple", "ender pearl", "fire charge"];
-
-    const armorMaterialPriority = ["leather", "chain", "iron", "diamond"];
-    const customArmorKeepList = ["god helmet", "legend boots"];
+    const essentials = ["gapple", "golden apple", "ender pearl", "fire charge"];
+    const customKeep = ["god helmet", "legend boots"];
+    const bestArmor = {};
+    const bestItems = {};
+    let lastRun = 0;
 
     function getArmorScore(stack) {
         const item = stack.getItem();
-        const material = item.getArmorMaterial?.()?.toLowerCase?.() || "unknown";
-        const materialIndex = armorMaterialPriority.indexOf(material);
-        const materialScore = materialIndex === -1 ? -999 : materialIndex * 1000;
-
-        const durabilityScore = stack.getMaxDamage() - stack.getItemDamage();
-        return materialScore + durabilityScore;
+        const material = item.getArmorMaterial?.()?.toLowerCase?.() ?? "unknown";
+        const priority = armorPriority.indexOf(material);
+        const durability = stack.getMaxDamage() - stack.getItemDamage();
+        return (priority === -1 ? -999 : priority * 1000) + durability;
     }
 
-    tickLoop["AutoDrop"] = function () {
+    function getMaterialScore(name) {
+        name = name.toLowerCase();
+        if (name.includes("diamond")) return 4;
+        if (name.includes("iron")) return 3;
+        if (name.includes("chain")) return 2;
+        if (name.includes("wood")) return 1;
+        return 0;
+    }
+
+    function getScore(stack, item) {
+        const damage = item.getDamageVsEntity?.() ?? 0;
+        const enchants = stack.getEnchantmentTagList()?.length ?? 0;
+        const material = getMaterialScore(stack.getDisplayName());
+        return damage + enchants * 1.5 + material * 0.5;
+    }
+
+    function isSameItem(a, b) {
+        if (!a || !b) return false;
+        const nameA = a.stack.getDisplayName()?.toLowerCase();
+        const nameB = b.stack.getDisplayName()?.toLowerCase();
+        const enchA = a.stack.getEnchantmentTagList()?.toString();
+        const enchB = b.stack.getEnchantmentTagList()?.toString();
+        return nameA === nameB && enchA === enchB;
+    }
+
+    function shouldKeep(stack) {
+        const name = stack.getDisplayName().toLowerCase();
+        return essentials.some(k => name.includes(k)) || customKeep.some(k => name.includes(k));
+    }
+
+    tickLoop["InvCleaner"] = function () {
         const now = Date.now();
-        if (now - lastRun < 100) return;
+        if (now - lastRun < 45) return;
         lastRun = now;
 
-        const keptTypes = new Set();
-        const toDrop = [];
-
-        if (!player.openContainer || player.openContainer !== player.inventoryContainer) return;
-        const slots = player.inventoryContainer.inventorySlots;
-        if (!slots || slots.length < 36) return;
+        const slots = player?.inventoryContainer?.inventorySlots;
+        if (!player.openContainer || player.openContainer !== player.inventoryContainer || !slots || slots.length < 36) return;
 
         Object.keys(bestArmor).forEach(k => delete bestArmor[k]);
+        Object.keys(bestItems).forEach(k => delete bestItems[k]);
 
+        const toDrop = [];
+
+        // Preload equipped armor
         [5, 6, 7, 8].forEach(i => {
-            const slot = slots[i];
-            if (!slot?.getHasStack()) return;
-            const stack = slot.getStack();
-            if (!(stack.getItem() instanceof ItemArmor)) return;
-            const armorType = stack.getItem().armorType ?? "unknown";
-            bestArmor["armor_" + armorType] = { stack, index: i };
+            const stack = slots[i]?.getStack();
+            if (stack?.getItem() instanceof ItemArmor) {
+                const armorType = stack.getItem().armorType ?? "unknown";
+                bestArmor["armor_" + armorType] = { stack, index: i };
+            }
         });
 
         for (let i = 0; i < 36; i++) {
-            const slot = slots[i];
-            if (!slot?.getHasStack()) continue;
+            const stack = slots[i]?.getStack();
+            if (!stack) continue;
 
-            const stack = slot.getStack();
             const item = stack.getItem();
-            const name = stack.getDisplayName().toLowerCase();
+            const className = item.constructor.name;
 
-            if (essentialsKeywords.some(k => name.includes(k))) continue;
-            if (customArmorKeepList.some(k => name.includes(k))) continue;
+            if (shouldKeep(stack)) continue;
 
             if (item instanceof ItemBlock) {
-                if (stack.stackSize < 5) {
-                    toDrop.push(i);
-                    dropTypeMap.set(i, "block");
-                }
+                if (stack.stackSize < 5) toDrop.push(i);
                 continue;
             }
 
             if (item instanceof ItemArmor) {
-                const armorType = item.armorType ?? "unknown";
-                const key = "armor_" + armorType;
-                const score = getArmorScore(stack);
-                const existing = bestArmor[key];
-                const existingScore = existing ? getArmorScore(existing.stack) : -1;
+    const armorType = item.armorType ?? "unknown";
+    const key = "armor_" + armorType;
+    const score = getArmorScore(stack);
+    const existing = bestArmor[key];
 
-                if (!existing || score > existingScore) {
-                    if (existing && existing.index !== i) {
-                        toDrop.push(existing.index);
-                        dropTypeMap.set(existing.index, "worse_armor");
-                    }
-                    bestArmor[key] = { stack, index: i };
-                } else {
-                    toDrop.push(i);
-                    dropTypeMap.set(i, "armor_dupe");
-                }
-                continue;
-            }
+    if (!existing) {
+        bestArmor[key] = { stack, index: i, score };
+    } else {
+        const existingScore = existing.score;
+        if (score > existingScore) {
+            toDrop.push(existing.index);
+            bestArmor[key] = { stack, index: i, score };
+        } else {
+            toDrop.push(i); // drop lower-score armor
+        }
+    }
+    continue;
+}
 
-            const className = item.constructor.name;
             if (weaponClasses.has(className)) {
-                if (!keptTypes.has(className)) {
-                    keptTypes.add(className);
+                const score = getScore(stack, item);
+                const existing = bestItems[className];
+
+                if (!existing || score > existing.score) {
+                    if (existing && existing.index !== i) toDrop.push(existing.index);
+                    bestItems[className] = { stack, score, index: i };
+                } else if (existing && isSameItem(bestItems[className], { stack })) {
+                    toDrop.push(i); // Drop exact duplicate
                 } else {
                     toDrop.push(i);
-                    dropTypeMap.set(i, "weapon_dupe");
                 }
                 continue;
             }
 
             toDrop.push(i);
-            dropTypeMap.set(i, "junk");
         }
 
-        toDrop.forEach(slot => {
-            dropSlot(slot);
-            dropVisuals.set(slot, now);
-        });
-
-        if (now % 1000 < 100) {
-            dropVisuals.forEach((time, slot) => {
-                if (now - time > 500) dropVisuals.delete(slot);
-            });
-        }
+        toDrop.forEach(dropSlot);
     };
-
-    hud3D.add("AutoDropOverlay", function () {
-        dropVisuals.forEach((_, slot) => {
-            const x = (slot % 9) * 20 + 10;
-            const y = Math.floor(slot / 9) * 20 + 60;
-            const type = dropTypeMap.get(slot) || "junk";
-
-            let color = "rgba(255,0,0,0.6)";
-            if (type === "block") color = "rgba(128,128,128,0.6)";
-            else if (type === "armor_dupe") color = "rgba(255,255,0,0.6)";
-            else if (type === "worse_armor") color = "rgba(255,165,0,0.6)";
-            else if (type === "weapon_dupe") color = "rgba(0,255,255,0.6)";
-
-            drawImage("spritesheet.png", 32, 32, 16, 16, x, y, 16, 16, color);
-        });
-    });
 });
 
 function dropSlot(index) {
-    playerControllerDump.windowClickDump(player.openContainer.windowId, index, 0, 0, player);
-    playerControllerDump.windowClickDump(player.openContainer.windowId, -999, 0, 0, player);
+    const windowId = player.openContainer.windowId;
+    playerControllerDump.windowClickDump(windowId, index, 0, 0, player);
+    playerControllerDump.windowClickDump(windowId, -999, 0, 0, player); // drop outside
 }
 
                         // Place this with your other module definitions inside the main function
