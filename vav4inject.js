@@ -1580,47 +1580,83 @@ const jesus = new Module("Jesus", function(callback) {
 		execute(publicUrl);
 	}
 })();
-(async function() {
-  // Load Minecraft font
-  const fontLink = document.createElement("link");
-  fontLink.href = "https://fonts.cdnfonts.com/css/minecraft-4";
-  fontLink.rel = "stylesheet";
-  document.head.appendChild(fontLink);
 
-  // Wait for modules
-  await new Promise(resolve => {
-    const loop = setInterval(() => {
-      if (unsafeWindow.globalThis[storeName]?.modules) {
-        clearInterval(loop);
-        resolve();
-      }
-    }, 10);
-  });
+(async function () {
+  try {
+    // Load Minecraft font
+    const fontLink = document.createElement("link");
+    fontLink.href = "https://fonts.cdnfonts.com/css/minecraft-4";
+    fontLink.rel = "stylesheet";
+    document.head.appendChild(fontLink);
 
-  // Inject GUI
-  injectGUI(unsafeWindow.globalThis[storeName]);
+    // Wait for store
+    await new Promise((resolve) => {
+      const loop = setInterval(() => {
+        if (unsafeWindow?.globalThis?.[storeName]?.modules) {
+          clearInterval(loop);
+          resolve();
+        }
+      }, 20);
+    });
+
+    injectGUI(unsafeWindow.globalThis[storeName]);
+  } catch (err) {
+    console.error("[ClickGUI] Init failed:", err);
+  }
 
   async function injectGUI(store) {
     const moduleCategories = {
       Combat: ["aura", "reach", "velocity", "crit", "hit", "attack"],
       Movement: ["fly", "speed", "step", "bhop", "sprint"],
       Render: ["esp", "tracer", "fullbright", "nametag"],
-      Misc: ["autogg", "scaffold", "spammer", "inv", "chest", "timer"]
+      Misc: ["autogg", "scaffold", "spammer", "inv", "chest", "timer"],
     };
-    const categoryIcons = { Combat: "⚔️", Movement: "🏃", Render: "👁️", Misc: "🧰" };
+    const categoryIcons = {
+      Combat: "⚔️",
+      Movement: "🏃",
+      Render: "👁️",
+      Misc: "🧰",
+    };
 
-    // Styles including rainbow header & live slider labels
+    // Core Styles + Animations
     const style = document.createElement("style");
     style.textContent = `
       @keyframes rainbowText { 0% { background-position: 0% } 100% { background-position: 100% } }
-      #clickGUI { position: fixed; top:100px; left:100px; width:360px; max-height:80vh;
-        overflow-y:auto; background:rgba(15,15,15,0.95); color:white; font-family:monospace;
-        border:2px solid lime; padding:12px; border-radius:8px; z-index:999999; display:none; }
-      #clickGUI h2 { text-align:center; font-size:24px; font-weight:bold;
+      @keyframes guiEnter {
+        0% { opacity: 0; transform: scale(0.8); }
+        100% { opacity: 1; transform: scale(1); }
+      }
+      @keyframes guiExit {
+        0% { opacity: 1; transform: scale(1); }
+        100% { opacity: 0; transform: scale(0.8); }
+      }
+      @keyframes fadeSlideIn {
+        0% { opacity: 0; transform: translateY(10px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+      #clickGUI {
+        position: fixed; top:0; left:0; width:100vw; height:100vh;
+        overflow-y: auto; background: rgba(15,15,15,0.95); color: white;
+        font-family: monospace; border: 2px solid lime; padding: 20px;
+        border-radius: 8px; z-index: 999999; display: none;
+      }
+      #clickGUI.showing {
+        animation: guiEnter 0.5s cubic-bezier(.17,.67,.83,.67) forwards;
+      }
+      #clickGUI.hiding {
+        animation: guiExit 0.4s cubic-bezier(.83,.03,.17,1) forwards;
+      }
+      #clickGUI h2 {
+        text-align:center; font-size:24px; font-weight:bold;
         background:linear-gradient(270deg, red, orange, yellow, green, blue, indigo, violet);
         background-size:1400% 1400%; -webkit-background-clip:text; color:transparent;
-        animation:rainbowText 6s linear infinite; cursor:move; }
-      .module { margin-bottom:10px; padding-bottom:6px; border-bottom:1px dashed #444; }
+        animation:rainbowText 6s linear infinite; cursor:move;
+      }
+      .module {
+        margin-bottom:10px; padding-bottom:6px; border-bottom:1px dashed #444;
+        opacity: 0; transform: translateY(10px);
+        animation: fadeSlideIn 0.4s forwards;
+      }
       .toggle-btn { float:right; background:lime; color:black; border:none;
         padding:2px 6px; border-radius:4px; cursor:pointer; font-weight:bold; }
       .option-line { margin:4px 0; font-size:13px; position:relative; }
@@ -1633,73 +1669,55 @@ const jesus = new Module("Jesus", function(callback) {
     `;
     document.head.appendChild(style);
 
-    // Notification container
+    // Notifications
     const notifWrap = document.createElement("div");
-    notifWrap.style = `
-      position: fixed;
-      bottom: 40px;
-      right: 30px;
-      z-index: 1000000;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      pointer-events: none;
-    `;
+    Object.assign(notifWrap.style, {
+      position: "fixed",
+      bottom: "40px",
+      right: "30px",
+      zIndex: "1000000",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "flex-end",
+      pointerEvents: "none",
+    });
     document.body.appendChild(notifWrap);
 
-    function showNotif(text) {
-  const notif = document.createElement("div");
-  notif.textContent = text;
-  notif.style = `
-    background: rgba(20,20,20,0.96);
-    color: lime;
-    font-family: monospace;
-    font-size: 16px;
-    margin-top: 8px;
-    padding: 10px 18px;
-    border-radius: 8px;
-    border: 2px solid lime;
-    box-shadow: 0 2px 12px #000a;
-    opacity: 1;
-    transition: opacity 0.4s, transform 0.5s cubic-bezier(.23,1.29,.56,1.01);
-    transform: translateX(120%);
-    pointer-events: none;
-  `;
-  notifWrap.appendChild(notif);
+    function showNotif(text, duration = 4000) {
+      const notif = document.createElement("div");
+      notif.textContent = text;
+      Object.assign(notif.style, {
+        background: "rgba(20,20,20,0.96)",
+        color: "lime",
+        fontFamily: "monospace",
+        fontSize: "16px",
+        marginTop: "8px",
+        padding: "10px 18px",
+        borderRadius: "8px",
+        border: "2px solid lime",
+        boxShadow: "0 2px 12px #000a",
+        opacity: "1",
+        transition: "opacity 0.4s, transform 0.5s cubic-bezier(.23,1.29,.56,1.01)",
+        transform: "translateX(120%)",
+        pointerEvents: "none",
+      });
+      notifWrap.appendChild(notif);
 
-  // Start slide-in after appending
-  setTimeout(() => { notif.style.transform = "translateX(0)"; }, 10);
+      setTimeout(() => (notif.style.transform = "translateX(0)"), 20);
+      setTimeout(() => {
+        notif.style.opacity = "0";
+        notif.style.transform = "translateX(120%)";
+      }, duration);
+      setTimeout(() => notif.remove(), duration + 400);
+    }
 
-  setTimeout(() => { notif.style.opacity = 0; notif.style.transform = "translateX(120%)"; }, 4800);
-  setTimeout(() => { notif.remove(); }, 5200);
-}
-
-    // Build GUI
+    // GUI
     const gui = document.createElement("div");
     gui.id = "clickGUI";
-    gui.innerHTML = `<h2 id="clickHeader">Impact ClickGUI</h2>`;
+    gui.innerHTML = `<h2 id="clickHeader">Massive GUI</h2>`;
     document.body.appendChild(gui);
 
-    // Enable dragging
-    let dragging = false, offsetX = 0, offsetY = 0;
-    const header = gui.querySelector("#clickHeader");
-    header.onmousedown = e => {
-      dragging = true;
-      offsetX = e.clientX - gui.offsetLeft;
-      offsetY = e.clientY - gui.offsetTop;
-    };
-    document.onmouseup = () => (dragging = false);
-    document.onmousemove = e => {
-      if (dragging) {
-        gui.style.left = `${e.clientX - offsetX}px`;
-        gui.style.top = `${e.clientY - offsetY}px`;
-      }
-    };
-
-    // Prevent context menu
-    gui.oncontextmenu = e => e.preventDefault();
-
-    // Tabs & search bar
+    // Tabs & Search
     const tabWrap = document.createElement("div");
     tabWrap.style = "display:flex; gap:6px; margin-bottom:10px; justify-content:center;";
     gui.appendChild(tabWrap);
@@ -1707,10 +1725,8 @@ const jesus = new Module("Jesus", function(callback) {
     const searchBar = document.createElement("input");
     searchBar.type = "text";
     searchBar.placeholder = "🔍 Search modules...";
-    searchBar.style = `
-      width:calc(100% - 20px); margin:0 auto 10px; display:block;
-      padding:5px 8px; border:1px solid lime; background:black; color:lime; font-family:monospace;
-    `;
+    searchBar.style =
+      "width:calc(100% - 20px); margin:0 auto 10px; display:block; padding:5px 8px; border:1px solid lime; background:black; color:lime; font-family:monospace;";
     gui.appendChild(searchBar);
 
     const tabModules = {};
@@ -1724,16 +1740,18 @@ const jesus = new Module("Jesus", function(callback) {
       tabModules[tabName] = [];
     }
 
-    // Create modules
+    // Modules
     Object.entries(store.modules).forEach(([name, mod]) => {
       const box = document.createElement("div");
       box.className = "module";
 
-      // Choose icon
+      // Category
+      let cat = "Misc";
       let icon = "❓";
-      for (const [cat, keys] of Object.entries(moduleCategories)) {
-        if (keys.some(k => name.toLowerCase().includes(k))) {
-          icon = categoryIcons[cat] || icon;
+      for (const [k, keys] of Object.entries(moduleCategories)) {
+        if (keys.some((x) => name.toLowerCase().includes(x))) {
+          cat = k;
+          icon = categoryIcons[k];
           break;
         }
       }
@@ -1744,18 +1762,19 @@ const jesus = new Module("Jesus", function(callback) {
       toggle.onclick = () => {
         mod.toggle();
         toggle.textContent = mod.enabled ? "ON" : "OFF";
-        showNotif(`${name} module has been toggled ${mod.enabled ? "ON" : "OFF"}`);
+        showNotif(`${name} ${mod.enabled ? "enabled ✅" : "disabled ❌"}`);
       };
 
       box.innerHTML = `<b>${icon} ${name}</b>`;
       box.appendChild(toggle);
 
+      // Options
       if (mod.options) {
-        Object.values(mod.options).forEach(opt => {
+        Object.values(mod.options).forEach((opt) => {
           const [type, val, label] = opt;
           const line = document.createElement("div");
           line.className = "option-line";
-          line.innerText = label + ": ";
+          line.textContent = label + ": ";
 
           if (type === Boolean) {
             const cb = document.createElement("input");
@@ -1766,9 +1785,10 @@ const jesus = new Module("Jesus", function(callback) {
           } else if (type === Number) {
             const slider = document.createElement("input");
             slider.type = "range";
-            slider.min = 0;
-            slider.max = 10;
-            slider.step = 0.1;
+            const [min, max, step] = opt.range ?? [0, 10, 0.1];
+            slider.min = min;
+            slider.max = max;
+            slider.step = step;
             slider.value = val;
 
             const liveLabel = document.createElement("span");
@@ -1793,19 +1813,17 @@ const jesus = new Module("Jesus", function(callback) {
         });
       }
 
+      // Keybind
       const bindLine = document.createElement("div");
       bindLine.className = "option-line";
       bindLine.innerHTML = `Bind: <input type="text" style="width:60px" value="${mod.bind}">`;
-      bindLine.querySelector("input").onchange = e => mod.setbind(e.target.value);
+      const bindInput = bindLine.querySelector("input");
+      bindInput.onchange = (e) => {
+        mod.setbind(e.target.value);
+        showNotif(`${name} bind set to: ${e.target.value}`);
+      };
       box.appendChild(bindLine);
 
-      let cat = "Misc";
-      for (const [k, keys] of Object.entries(moduleCategories)) {
-        if (keys.some(x => name.toLowerCase().includes(x))) {
-          cat = k;
-          break;
-        }
-      }
       tabModules[cat].push(box);
       box.style.display = cat === currentTab ? "block" : "none";
       gui.appendChild(box);
@@ -1815,16 +1833,20 @@ const jesus = new Module("Jesus", function(callback) {
       currentTab = tab;
       const q = searchBar.value.toLowerCase();
       Object.entries(tabModules).forEach(([cat, boxes]) => {
-        boxes.forEach(b => {
+        boxes.forEach((b, i) => {
           const nm = b.querySelector("b").textContent.toLowerCase();
-          b.style.display = cat === tab && (nm.includes(q) || q.split("").every(ch => nm.includes(ch)))
-            ? "block" : "none";
+          if (cat === tab && (!q || nm.includes(q))) {
+            b.style.display = "block";
+            b.style.animationDelay = `${i * 0.05}s`; // stagger entrance
+          } else {
+            b.style.display = "none";
+          }
         });
       });
     }
     searchBar.addEventListener("input", () => switchTab(currentTab));
 
-    // Control buttons, themes & profiles
+    // Theme logic stays same as last version...
     const ctrl = document.createElement("div");
     ctrl.id = "guiControls";
     gui.appendChild(ctrl);
@@ -1842,124 +1864,91 @@ const jesus = new Module("Jesus", function(callback) {
     };
     ctrl.appendChild(themeBtn);
 
-    const exportBtn = document.createElement("button");
-    exportBtn.className = "control";
-    exportBtn.textContent = "Export";
-    exportBtn.onclick = () => {
-      const prof = store.profile;
-      const cfg = GM_getValue("vapeConfig" + prof, "{}");
-      navigator.clipboard.writeText(cfg).then(() => alert("✅ Exported"));
-    };
-    ctrl.appendChild(exportBtn);
-
-    const importBtn = document.createElement("button");
-    importBtn.className = "control";
-    importBtn.textContent = "Import";
-    importBtn.onclick = async () => {
-      const prof = store.profile;
-      const txt = await navigator.clipboard.readText();
-      if (txt) {
-        await GM_setValue("vapeConfig" + prof, txt);
-        await store.loadVapeConfig(prof);
-        alert("✅ Imported");
-      } else {
-        alert("❌ Clipboard empty");
-      }
-    };
-    ctrl.appendChild(importBtn);
-
-    const saveBtn = document.createElement("button");
-    saveBtn.className = "control";
-    saveBtn.textContent = "Save";
-    saveBtn.onclick = () => store.saveVapeConfig();
-    ctrl.appendChild(saveBtn);
-
-    const loadBtn = document.createElement("button");
-    loadBtn.className = "control";
-    loadBtn.textContent = "Load";
-    loadBtn.onclick = () => store.loadVapeConfig();
-    ctrl.appendChild(loadBtn);
-
-    applyTheme(themes[themeIndex]);
-
-    // Theme application logic
     function applyTheme(m) {
       const root = document.getElementById("clickGUI");
       const buttons = root.querySelectorAll("button");
-      // Reset styles
-      root.style.backdropFilter = root.style.background = root.style.border = root.style.color = "";
-      buttons.forEach(b => b.style.background = b.style.color = b.style.border = "");
+      const wasVisible = root.style.display === "block";
 
-      const setBtn = (bg, clr, border) => buttons.forEach(b => { b.style.background = bg; b.style.color = clr; b.style.border = border; });
+      root.style.background = "";
+      root.style.color = "";
+      root.style.border = "";
+      root.style.fontFamily = "";
+      root.style.backdropFilter = "";
+      root.style.imageRendering = "";
+
+      buttons.forEach((b) => {
+        b.style.background = "";
+        b.style.color = "";
+        b.style.border = "";
+      });
+
+      const setBtn = (bg, clr, border) =>
+        buttons.forEach((b) => {
+          b.style.background = bg;
+          b.style.color = clr;
+          b.style.border = border;
+        });
 
       switch (m) {
         case "dark":
           root.style.background = "rgba(15,15,15,0.95)";
-          root.style.color = "#fff";
-          root.style.border = "2px solid lime";
-          setBtn("black", "lime", "1px solid lime");
-          break;
+          root.style.color = "#fff"; root.style.border = "2px solid lime";
+          setBtn("black", "lime", "1px solid lime"); break;
         case "minecraft":
-          root.style.background = 'url("https://cdn.jsdelivr.net/gh/InventivetalentDev/minecraft-assets/assets/minecraft/textures/block/stone.png") repeat';
-          root.style.backgroundSize = "64px 64px";
-          root.style.imageRendering = "pixelated";
-          root.style.color = "#0f0";
-          root.style.fontFamily = '"Minecraft", monospace';
+          root.style.background =
+            'url("https://cdn.jsdelivr.net/gh/InventivetalentDev/minecraft-assets/assets/minecraft/textures/block/stone.png") repeat';
+          root.style.backgroundSize = "64px 64px"; root.style.imageRendering = "pixelated";
+          root.style.color = "#0f0"; root.style.fontFamily = '"Minecraft", monospace';
           root.style.border = "3px double #0f0";
-          setBtn("#1a1a1a", "#0f0", "1px solid #0f0");
-          break;
+          setBtn("#1a1a1a", "#0f0", "1px solid #0f0"); break;
         case "neon":
-          root.style.background = "#000";
-          root.style.color = "#0ff";
-          root.style.border = "2px solid #0ff";
-          setBtn("#111", "#0ff", "1px solid #0ff");
-          break;
+          root.style.background = "#000"; root.style.color = "#0ff"; root.style.border = "2px solid #0ff";
+          setBtn("#111", "#0ff", "1px solid #0ff"); break;
         case "glass":
           root.style.background = "rgba(255,255,255,0.08)";
-          root.style.color = "#fff";
-          root.style.backdropFilter = "blur(10px)";
+          root.style.color = "#fff"; root.style.backdropFilter = "blur(10px)";
           root.style.border = "1px solid rgba(255,255,255,0.2)";
-          setBtn("rgba(255,255,255,0.15)", "#fff", "1px solid rgba(255,255,255,0.3)");
-          break;
+          setBtn("rgba(255,255,255,0.15)", "#fff", "1px solid rgba(255,255,255,0.3)"); break;
         case "frame":
-          root.style.background = "#ddd";
-          root.style.color = "#111";
-          root.style.border = "2px solid #444";
-          setBtn("#eee", "#111", "1px solid #888");
-          break;
+          root.style.background = "#ddd"; root.style.color = "#111"; root.style.border = "2px solid #444";
+          setBtn("#eee", "#111", "1px solid #888"); break;
         case "sunset":
           root.style.background = "linear-gradient(135deg,#ff5f6d,#ffc371)";
-          root.style.color = "#fff";
-          root.style.border = "2px solid #ffb347";
-          setBtn("#ff7e5f", "#fff", "1px solid #fff");
-          break;
+          root.style.color = "#fff"; root.style.border = "2px solid #ffb347";
+          setBtn("#ff7e5f", "#fff", "1px solid #fff"); break;
         case "ocean":
           root.style.background = "linear-gradient(135deg,#2b5876,#4e4376)";
-          root.style.color = "#ccf";
-          root.style.border = "2px solid #88f";
-          setBtn("#334", "#ccf", "1px solid #ccf");
-          break;
+          root.style.color = "#ccf"; root.style.border = "2px solid #88f";
+          setBtn("#334", "#ccf", "1px solid #ccf"); break;
         case "chrome":
-          root.style.background = "#dfe4ea";
-          root.style.color = "#2f3542";
-          root.style.border = "2px solid #57606f";
-          setBtn("#f1f2f6", "#2f3542", "1px solid #57606f");
-          break;
+          root.style.background = "#dfe4ea"; root.style.color = "#2f3542"; root.style.border = "2px solid #57606f";
+          setBtn("#f1f2f6", "#2f3542", "1px solid #57606f"); break;
         case "terminal":
-          root.style.background = "#000";
-          root.style.color = "#0f0";
-          root.style.border = "2px solid #0f0";
-          setBtn("#000", "#0f0", "1px solid #0f0");
-          break;
+          root.style.background = "#000"; root.style.color = "#0f0"; root.style.border = "2px solid #0f0";
+          setBtn("#000", "#0f0", "1px solid #0f0"); break;
       }
-    }
 
-    // Toggle visibility with Backslash
+      if (wasVisible) root.style.display = "block";
+    }
+    applyTheme(themes[themeIndex]);
+
+    // Toggle with Backslash + Exit animation
     let visible = false;
-    document.addEventListener("keydown", e => {
+    document.addEventListener("keydown", (e) => {
       if (e.code === "Backslash") {
-        visible = !visible;
-        gui.style.display = visible ? "block" : "none";
+        if (!visible) {
+          gui.style.display = "block";
+          gui.classList.remove("hiding");
+          gui.classList.add("showing");
+          visible = true;
+        } else {
+          gui.classList.remove("showing");
+          gui.classList.add("hiding");
+          gui.addEventListener("animationend", () => {
+            if (gui.classList.contains("hiding")) gui.style.display = "none";
+          }, { once: true });
+          visible = false;
+        }
       }
     });
   }
