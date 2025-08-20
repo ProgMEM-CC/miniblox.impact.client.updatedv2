@@ -34,7 +34,7 @@ Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 
 # Gallery of Impact Client!
 
-Hacks On!
+Hacks On! (OLD)
 ![Hacks On! (old photo)](./.github/images/client.png)
 
 ON MENU with new toggled notfication that pops up
