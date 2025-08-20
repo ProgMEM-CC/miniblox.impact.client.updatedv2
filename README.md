@@ -65,8 +65,6 @@ Gonna add a video here showcasing this client!
 
 - Make/reoptimize more modules!
 
-- Improve ClickGUI
-
 - Add a video showcasing the client (ModuleMaster64's job)
   
   ## Goals (May not be added)
