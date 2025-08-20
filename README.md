@@ -61,7 +61,7 @@ Gonna add a video here showcasing this client!
 
 
 
-## Jobs to carry out (Here for now) (gonna add a project kanban like my codeberg - MM64)
+## Jobs to carry out (Here for now)
 
 - Make/reoptimize more modules!
 
