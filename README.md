@@ -55,13 +55,10 @@ Gonna add a video here showcasing this client!
 
 - **DO NOT EVER PUBLISH UNSTABLE CHANGES TO THE "/" (ROOT) FOLDER. PUBLISH IT TO "beta" FOLDER INSTEAD PLS**
 
-- M0duleM64 added this (hello from M0duleM64)
-
 ![MinibloxClient Stats](https://gitmystat.vercel.app/repo?theme=dino&username=progmem-cc&repo=miniblox.impact.client.updatedv2)
 
 
-
-## Jobs to carry out (Here for now)
+ ## Jobs to carry out (Here for now)
 
 - Make/reoptimize more modules!
 
@@ -75,8 +72,8 @@ Gonna add a video here showcasing this client!
 
 - Force Creative / Inventory Modification (like thrax client - was made by 7GrandDad i think)
 
-- Command Block modification (in survival mode. Again could be possible - MM64)
+- Command Block modification (in survival mode. Again this could be possible - MM64)
 
 - Working FLY / Airjump (this can be possible if RealPacket does the reset to the desync. this is also for nofall. see this https://codeberg.org/RealPacket/VapeForMiniblox/pulls/7
 
-- Disabler
+- Disabler for movement etc
