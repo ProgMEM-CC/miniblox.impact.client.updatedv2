@@ -16,6 +16,8 @@ Added better Scaffold bypass (module) by using a multi block scaffold (instead o
 
 Added better Click GUI with animations and themes with console.logs incase of an error. next i will add a localstorage save/load if possible. (and other cool css stuff)
 
+Making Click GUI based off of LB (LiquidBounce) (shout out to devs of LB)
+
 # Installation
 
 Copy tampermonkey.user.js and paste into your preferred userscript manager. (Tampermonkey, Greasemonkey, Violentmonkey etc)
