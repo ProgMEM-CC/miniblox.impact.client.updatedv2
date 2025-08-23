@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Impact For Miniblox
-// @namespace    ProgMEM-CC, ModuleM64, he557, 7GrandDad, BlueDragon7327, DataM0del/RealPacket, ekusos22
+// @namespace    ProgMEM-CC, ModuleM64, he557, 7GrandDad, BlueDragon7327, DataM0del/RealPacket, ekusos22, whoppps
 // @version      2
 // @description  The ultimate MiniBlox hacked client. Built for stealth, speed, and total domination. Fully dark-mode optimized with a modern UI and high performance.
 // @author       7GrandDad, ProgMEM-CC, ModuleMaster64, he557, RealPacket/DataM0del (Codeberg/Github names), BlueDragon7327
@@ -21,19 +21,17 @@
 // =========================================== EULA ==========================================================
 //  Before using, read https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/EULA.md
 //
-//
-//
 // ============================================== The Dev Team ===============================================
 //  ProgMEM-CC (github.com/ProgMEM-CC)
 //  ModuleMaster64 (github.com/ModuleMaster64)
 //  DataM0del (github.com/datam0del)
 //  BlueDragon7327 (github.com/BlueDragon7327) (**NEW DEV**)
 //  Ekusos22 (github.com/ekusos22) (**ANOTHER NEW DEV**) 
+//  whoppps (github.com/whoppps) (Brand New Dev!)
 //
 //
 //  Pls, we may need more devs!
 //  
-//
 // =============================================== Credits To ================================================
 //    7GrandDad, the OG Creator of the Vape v4 hacked client  for miniblox
 //    he557, adding bypasses and and pushing through, making the client work
@@ -42,6 +40,7 @@
 //    RealPacket, (codeberg, https://codeberg.org/RealPacket), for the inspiration of reviving the hacks
 //    BlueDragon7327, Module Researcher and solver!
 //    Ekusos22, Bug reporter!
+//    whoppps, 
 //
 //
 // ==================================== Extra Credits To =====================================================
