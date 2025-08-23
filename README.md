@@ -62,9 +62,7 @@ Gonna add a video here showcasing this client!
 
  ## Jobs to carry out (Here for now)
 
-- Make/reoptimize more modules!
-
-- Add a video showcasing the client (ModuleMaster64's job)
+- Add a video showcasing the client with the new GUI interface (MM64's job whenever not MM64 is busy with Click GUI)
   
   ## Goals (May not be added)
   
