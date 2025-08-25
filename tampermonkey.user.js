@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Impact For Miniblox
 // @namespace    ProgMEM-CC, ModuleM64, he557, 7GrandDad, BlueDragon7327, DataM0del/RealPacket, ekusos22, whoppps
-// @version      2
+// @version      4.0.1
 // @description  The ultimate MiniBlox hacked client. Built for stealth, speed, and total domination. Fully dark-mode optimized with a modern UI and high performance.
-// @author       7GrandDad, ProgMEM-CC, ModuleMaster64, he557, RealPacket/DataM0del (Codeberg/Github names), BlueDragon7327
+// @author       7GrandDad, ProgMEM-CC, ModuleMaster64, he557, RealPacket/DataM0del (Codeberg/Github names), BlueDragon7327,
 // @match        https://miniblox.io/*
 // @match        https://miniblox.org/*
 // @match        https://miniblox.online/*
@@ -25,22 +25,22 @@
 //  ProgMEM-CC (github.com/ProgMEM-CC)
 //  ModuleMaster64 (github.com/ModuleMaster64)
 //  DataM0del (github.com/datam0del)
-//  BlueDragon7327 (github.com/BlueDragon7327) (**NEW DEV**)
-//  Ekusos22 (github.com/ekusos22) (**ANOTHER NEW DEV**) 
-//  whoppps (github.com/whoppps) (Brand New Dev!)
+//  BlueDragon7327 (github.com/BlueDragon7327) 
+//  dtkiller-jp (github.com/dtkiller-jp)
+//  whoppps (github.com/whoppps)
 //
 //
 //  Pls, we may need more devs!
 //  
 // =============================================== Credits To ================================================
-//    7GrandDad, the OG Creator of the Vape v4 hacked client  for miniblox
+//    7GrandDad, the OG Creator of the Vape v4 hacked client for miniblox
 //    he557, adding bypasses and and pushing through, making the client work
 //    ProgMEM-CC, the upgrader and reviver of the client as Impact V4 for miniblox
-//    @ModuleMaster64, the one who never fails to amaze, and also the creator of the ClickGUI and improving/adding modules!
+//    ModuleMaster64, the one who never fails to amaze, and also the creator of the ClickGUI and improving/adding modules!
 //    RealPacket, (codeberg, https://codeberg.org/RealPacket), for the inspiration of reviving the hacks
 //    BlueDragon7327, Module Researcher and solver!
-//    Ekusos22, Bug reporter!
-//    whoppps, 
+//    dtkiller-jp, Bug reporter!
+//    whoppps
 //
 //
 // ==================================== Extra Credits To =====================================================
@@ -62,6 +62,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>,
 // or see the project page of Impact V4 for miniblox.
+//
+//
+// Additional Terms:
+// Please refer to EULA.md
 //
 // ==/UserScript==
 
