@@ -14,9 +14,7 @@ Re added fly, some of my testers still want it (including me)
 
 Added better Scaffold bypass (module) by using a multi block scaffold (instead of just one inv space. It uses multiple inv slots from 1 - 9!)
 
-Added better Click GUI with animations and themes with console.logs incase of an error. next i will add a localstorage save/load if possible. (and other cool css stuff)
-
-Making Click GUI based off of LB (LiquidBounce) (shout out to devs of LB)
+Added better Click GUI with animations and themes with console.logs incase of an error. next i will add a localstorage binds.
 
 # Installation
 
@@ -32,8 +30,6 @@ Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 
 (I re-added fly bc it can be still useful at times, and i think tokeniser.js is ready for use)
 
-(M0duleMaster64's reply - alr)
-
 # Gallery of Impact Client!
 
 Hacks On! (OLD)
@@ -45,9 +41,7 @@ ON MENU with new toggled notfication that pops up
 In Game!
 ![image](https://github.com/user-attachments/assets/02dbf119-4c99-47f2-af53-6348e50e48be)
 
-Gonna add a video here showcasing this client!
-
-**console.log("Coming soon...")**
+**console.log("Video Coming soon...")**
 
 # Dev Notes
 
@@ -74,6 +68,6 @@ Gonna add a video here showcasing this client!
 
 - Command Block modification (in survival mode. Again this could be possible - MM64)
 
-- Working FLY / Airjump (this can be possible if RealPacket does the reset to the desync. this is also for nofall. see this https://codeberg.org/RealPacket/VapeForMiniblox/pulls/7
+- A Working FLY or Airjump (this can be possible if RealPacket does the reset to the desync. this is also for nofall. see this https://codeberg.org/RealPacket/VapeForMiniblox/pulls/7
 
 - Disabler for movement etc
