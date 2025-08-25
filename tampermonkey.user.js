@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Impact For Miniblox
 // @namespace    ProgMEM-CC, ModuleM64, he557, 7GrandDad, BlueDragon7327, DataM0del/RealPacket, ekusos22, whoppps
-// @version      4.0.1
-// @description  The ultimate MiniBlox hacked client. Built for stealth, speed, and total domination. Fully dark-mode optimized with a modern UI and high performance.
-// @author       7GrandDad, ProgMEM-CC, ModuleMaster64, he557, RealPacket/DataM0del (Codeberg/Github names), BlueDragon7327,
+// @version      4.0.2
+// @description  The ultimate MiniBlox hacked client. Built for stealth, speed, and total domination. Fully dark-mode optimized with a modern GUI and high performance guaranteed 
+// @author       7GrandDad, ProgMEM-CC, ModuleMaster64, he557, RealPacket/DataM0del (Codeberg/Github names), BlueDragon7327, whoppps
 // @match        https://miniblox.io/*
 // @match        https://miniblox.org/*
 // @match        https://miniblox.online/*
@@ -29,14 +29,13 @@
 //  dtkiller-jp (github.com/dtkiller-jp)
 //  whoppps (github.com/whoppps)
 //
-//
 //  Pls, we may need more devs!
 //  
 // =============================================== Credits To ================================================
 //    7GrandDad, the OG Creator of the Vape v4 hacked client for miniblox
 //    he557, adding bypasses and and pushing through, making the client work
 //    ProgMEM-CC, the upgrader and reviver of the client as Impact V4 for miniblox
-//    ModuleMaster64, the one who never fails to amaze, and also the creator of the ClickGUI and improving/adding modules!
+//    ModuleMaster64, the one who never fails to amaze, and also the creator of the new LiquidBounce themed ClickGUI and improving/adding modules!
 //    RealPacket, (codeberg, https://codeberg.org/RealPacket), for the inspiration of reviving the hacks
 //    BlueDragon7327, Module Researcher and solver!
 //    dtkiller-jp, Bug reporter!
@@ -68,4 +67,3 @@
 // Please refer to EULA.md
 //
 // ==/UserScript==
-
