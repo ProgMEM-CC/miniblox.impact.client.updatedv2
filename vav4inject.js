@@ -5,7 +5,7 @@ let replacements = {};
 let dumpedVarNames = {};
 const storeName = "a" + crypto.randomUUID().replaceAll("-", "").substring(16);
 const vapeName = crypto.randomUUID().replaceAll("-", "").substring(16);
-const VERSION = "4.0.1";
+const VERSION = "4.0.2";
 
 // ANTICHEAT HOOK
 function replaceAndCopyFunction(oldFunc, newFunc) {
@@ -1580,16 +1580,15 @@ const jesus = new Module("Jesus", function(callback) {
 		execute(publicUrl);
 	}
 })();
-
 (async function () {
   try {
-    // Load Minecraft font
+    // Loads the Minecraft Font onto GUI
     const fontLink = document.createElement("link");
     fontLink.href = "https://fonts.cdnfonts.com/css/minecraft-4";
     fontLink.rel = "stylesheet";
     document.head.appendChild(fontLink);
 
-    // Wait for store
+    // Wait for Modules!
     await new Promise((resolve) => {
       const loop = setInterval(() => {
         if (unsafeWindow?.globalThis?.[storeName]?.modules) {
@@ -1601,7 +1600,7 @@ const jesus = new Module("Jesus", function(callback) {
 
     injectGUI(unsafeWindow.globalThis[storeName]);
   } catch (err) {
-    console.error("[ClickGUI] Init failed:", err);
+    console.error("[ClickGUI] Init failed:", err);          // Checks for errors
   }
 
   function injectGUI(store) {
@@ -1619,7 +1618,7 @@ const jesus = new Module("Jesus", function(callback) {
       Utility: [
         "autorespawn","autorejoin","autoqueue",
         "autovote","filterbypass","anticheat",
-        "autofunnychat","musicfix","auto-funnychat","music-fix"
+        "autofunnychat","musicfix","auto-funnychat","music-fix"         // AutoFunnyChat doesnt enable properly but it works perfectly fine (disable) dont worry
       ]
     };
 
@@ -1631,7 +1630,7 @@ const jesus = new Module("Jesus", function(callback) {
       Utility: "🛠️"
     };
 
-    // === Styles (LB Theme + Scrollbars) ===
+    // === Styles (LiquidBounce Theme + Scrollbars) ===
     const style = document.createElement("style");
     style.textContent = `
       @keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}
@@ -1957,7 +1956,7 @@ const jesus = new Module("Jesus", function(callback) {
         localStorage.setItem("lb-pos-" + cat, JSON.stringify(pos));
         if (panels[cat]) { panels[cat].style.left=pos.left; panels[cat].style.top=pos.top; }
       });
-      showNotif("Layout reset to default ✅");
+      showNotif("Layout reset to default positions ✅");
     });
     panels["Utility"].appendChild(resetRow);
 
@@ -1968,7 +1967,7 @@ const jesus = new Module("Jesus", function(callback) {
     resetConfigRow.style.paddingLeft = "6px";
     resetConfigRow.style.fontWeight = "bold";
     resetConfigRow.style.color = "red";
-    resetConfigRow.textContent = "⛔ Reset Config";
+    resetConfigRow.textContent = "⛔ Reset Config?";
     resetConfigRow.addEventListener("click", () => {
       localStorage.removeItem("lb-mods");
       Object.keys(localStorage)
@@ -1982,7 +1981,7 @@ const jesus = new Module("Jesus", function(callback) {
     // === Global Search ===
     const searchWrap = document.createElement("div");
     searchWrap.className = "lb-searchwrap";
-    searchWrap.innerHTML = `<input type="text" class="lb-search" placeholder="Search...">`;
+    searchWrap.innerHTML = `<input type="text" class="lb-search" placeholder="Search..">`;
     document.body.appendChild(searchWrap);
 
     const searchBox = searchWrap.querySelector("input");
@@ -2001,7 +2000,7 @@ const jesus = new Module("Jesus", function(callback) {
     // === Startup notification ===
     setTimeout(() => { showNotif("[ClickGUI] Press '\\\\' to open GUI", 4000); }, 500);
 
-    // === Toggle GUI ===
+    // === Toggle the LB GUI ===
     let visible = false;
     document.addEventListener("keydown", (e) => {
       if (e.code === "Backslash") {
