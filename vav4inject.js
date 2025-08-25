@@ -1604,351 +1604,410 @@ const jesus = new Module("Jesus", function(callback) {
     console.error("[ClickGUI] Init failed:", err);
   }
 
-  async function injectGUI(store) {
-    const moduleCategories = {
-      Combat: ["aura", "reach", "velocity", "crit", "hit", "attack"],
-      Movement: ["fly", "speed", "step", "bhop", "sprint"],
-      Render: ["esp", "tracer", "fullbright", "nametag"],
-      Misc: ["autogg", "scaffold", "spammer", "inv", "chest", "timer"],
-    };
-    const categoryIcons = {
-      Combat: "⚔️",
-      Movement: "🏃",
-      Render: "👁️",
-      Misc: "🧰",
+  function injectGUI(store) {
+    const categories = {
+      Combat: ["autoclicker", "killaura", "velocity", "wtap"],
+      Movement: [
+        "scaffold","jesus","phase","nofall","sprint","keepsprint","step",
+        "speed","fly","noslowdown","spiderclimb"
+      ],
+      "Player / Render": [
+        "invcleaner","invwalk","autoarmor","ghostjoin",
+        "playeresp","nametags+","textgui","clickgui"
+      ],
+      World: ["fastbreak","breaker","autocraft","cheststeal","timer"],
+      Utility: [
+        "autorespawn","autorejoin","autoqueue",
+        "autovote","filterbypass","anticheat",
+        "autofunnychat","musicfix","auto-funnychat","music-fix"
+      ]
     };
 
-    // Core Styles + Animations
+    const catIcons = {
+      Combat: "⚔️",
+      Movement: "🏃",
+      "Player / Render": "🧑👁️",
+      World: "🌍",
+      Utility: "🛠️"
+    };
+
+    // === Styles (LB Theme + Scrollbars) ===
     const style = document.createElement("style");
     style.textContent = `
-      @keyframes rainbowText { 0% { background-position: 0% } 100% { background-position: 100% } }
-      @keyframes guiEnter {
-        0% { opacity: 0; transform: scale(0.8); }
-        100% { opacity: 1; transform: scale(1); }
+      @keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}
+      .lb-panel {
+        position:absolute;
+        width:220px;
+        background:#111;
+        border:2px solid #00aaff;
+        border-radius:0;
+        font-family:"Minecraft", monospace;
+        color:white;
+        animation:guiEnter .25s ease-out;
+        z-index:100000;
+
+        /* Scrollable */
+        max-height:420px;
+        overflow-y:auto;
+        overflow-x:hidden;
       }
-      @keyframes guiExit {
-        0% { opacity: 1; transform: scale(1); }
-        100% { opacity: 0; transform: scale(0.8); }
+      .lb-panel::-webkit-scrollbar { width:6px; }
+      .lb-panel::-webkit-scrollbar-thumb { background:#00aaff; }
+      .lb-panel::-webkit-scrollbar-track { background:#111; }
+      .lb-header {
+        background:#0a0a0a;
+        padding:6px;
+        font-weight:bold;
+        cursor:move;
+        user-select:none;
+        text-align:center;
+        border-bottom:1px solid #00aaff;
+        color:white;
       }
-      @keyframes fadeSlideIn {
-        0% { opacity: 0; transform: translateY(10px); }
-        100% { opacity: 1; transform: translateY(0); }
+      .lb-module {
+        padding:4px 6px;
+        border-bottom:1px solid #1b1b1b;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        cursor:pointer;
       }
-      #clickGUI {
-        position: fixed; top:0; left:0; width:100vw; height:100vh;
-        overflow-y: auto; background: rgba(15,15,15,0.95); color: white;
-        font-family: monospace; border: 2px solid lime; padding: 20px;
-        border-radius: 8px; z-index: 999999; display: none;
+      .lb-module:hover { background:#151a20; }
+      .lb-module.active { color:#00aaff; }
+      .lb-options {
+        display:none;
+        flex-direction:column;
+        gap:4px;
+        padding:4px 6px;
+        background:#0f0f12;
+        border-top:1px dashed #1e1e1e;
       }
-      #clickGUI.showing {
-        animation: guiEnter 0.5s cubic-bezier(.17,.67,.83,.67) forwards;
+      .lb-options.show { display:flex; animation:guiEnter .2s ease-out; }
+      .lb-options label {
+        font-size:12px;
+        display:flex;
+        justify-content:space-between;
+        color:white;
       }
-      #clickGUI.hiding {
-        animation: guiExit 0.4s cubic-bezier(.83,.03,.17,1) forwards;
+      .lb-options input[type="range"] { flex:1; margin-left:4px; }
+      .lb-options input[type="text"] {
+        flex:1;
+        margin-left:4px;
+        font-size:12px;
+        background:#0a0a0a;
+        color:white;
+        border:1px solid #00aaff;
+        font-family:"Minecraft", monospace;
+        padding:2px;
       }
-      #clickGUI h2 {
-        text-align:center; font-size:24px; font-weight:bold;
-        background:linear-gradient(270deg, red, orange, yellow, green, blue, indigo, violet);
-        background-size:1400% 1400%; -webkit-background-clip:text; color:transparent;
-        animation:rainbowText 6s linear infinite; cursor:move;
+      .notif-wrap {
+        position:fixed; bottom:40px; right:30px;
+        display:flex; flex-direction:column; align-items:flex-end;
+        pointer-events:none; z-index:999999;
       }
-      .module {
-        margin-bottom:10px; padding-bottom:6px; border-bottom:1px dashed #444;
-        opacity: 0; transform: translateY(10px);
-        animation: fadeSlideIn 0.4s forwards;
+      .notif {
+        background:#0a0a0a;
+        color:white;
+        padding:8px 12px;
+        margin-top:6px;
+        border:2px solid #00aaff;
+        border-radius:0;
+        font-family:"Minecraft", monospace;
+        opacity:1;
+        transform:translateX(120%);
+        transition:opacity .3s, transform .3s ease;
       }
-      .toggle-btn { float:right; background:lime; color:black; border:none;
-        padding:2px 6px; border-radius:4px; cursor:pointer; font-weight:bold; }
-      .option-line { margin:4px 0; font-size:13px; position:relative; }
-      input[type="range"] { width:calc(100% - 40px); vertical-align:middle; }
-      input[type="text"] { width:100%; font-size:12px; }
-      .live-label { position:absolute; right:0; top:2px; font-size:12px; color:lime; }
-      #guiControls { margin-top:12px; text-align:center; }
-      button.control { background:black; color:lime; border:1px solid lime;
-        padding:5px 8px; margin:2px; cursor:pointer; font-family:monospace; border-radius:4px; }
+      .lb-searchwrap {
+        position:fixed;
+        top:15px;
+        left:50%;
+        transform:translateX(-50%);
+        z-index:100001;
+        background:#0a0a0a;
+        border:2px solid #00aaff;
+        border-radius:0;
+        padding:4px 6px;
+        font-family:"Minecraft", monospace;
+      }
+      .lb-search {
+        background:#111;
+        border:none;
+        outline:none;
+        color:white;
+        font-size:13px;
+        width:180px;
+        font-family:"Minecraft", monospace;
+      }
+      .lb-search::placeholder { color:#00aaff; opacity:0.6; }
     `;
     document.head.appendChild(style);
 
-    // Notifications
+    // === Notifications ===
     const notifWrap = document.createElement("div");
-    Object.assign(notifWrap.style, {
-      position: "fixed",
-      bottom: "40px",
-      right: "30px",
-      zIndex: "1000000",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "flex-end",
-      pointerEvents: "none",
-    });
+    notifWrap.className = "notif-wrap";
     document.body.appendChild(notifWrap);
 
-    function showNotif(text, duration = 4000) {
-      const notif = document.createElement("div");
-      notif.textContent = text;
-      Object.assign(notif.style, {
-        background: "rgba(20,20,20,0.96)",
-        color: "lime",
-        fontFamily: "monospace",
-        fontSize: "16px",
-        marginTop: "8px",
-        padding: "10px 18px",
-        borderRadius: "8px",
-        border: "2px solid lime",
-        boxShadow: "0 2px 12px #000a",
-        opacity: "1",
-        transition: "opacity 0.4s, transform 0.5s cubic-bezier(.23,1.29,.56,1.01)",
-        transform: "translateX(120%)",
-        pointerEvents: "none",
-      });
-      notifWrap.appendChild(notif);
-
-      setTimeout(() => (notif.style.transform = "translateX(0)"), 20);
+    function showNotif(msg, dur = 3000) {
+      const n = document.createElement("div");
+      n.className = "notif";
+      n.textContent = msg;
+      notifWrap.appendChild(n);
+      setTimeout(() => (n.style.transform = "translateX(0)"), 30);
       setTimeout(() => {
-        notif.style.opacity = "0";
-        notif.style.transform = "translateX(120%)";
-      }, duration);
-      setTimeout(() => notif.remove(), duration + 400);
+        n.style.opacity = "0";
+        n.style.transform = "translateX(120%)";
+      }, dur);
+      setTimeout(() => n.remove(), dur + 400);
     }
 
-    // GUI
-    const gui = document.createElement("div");
-    gui.id = "clickGUI";
-    gui.innerHTML = `<h2 id="clickHeader">Massive GUI</h2>`;
-    document.body.appendChild(gui);
-
-    // Tabs & Search
-    const tabWrap = document.createElement("div");
-    tabWrap.style = "display:flex; gap:6px; margin-bottom:10px; justify-content:center;";
-    gui.appendChild(tabWrap);
-
-    const searchBar = document.createElement("input");
-    searchBar.type = "text";
-    searchBar.placeholder = "🔍 Search modules...";
-    searchBar.style =
-      "width:calc(100% - 20px); margin:0 auto 10px; display:block; padding:5px 8px; border:1px solid lime; background:black; color:lime; font-family:monospace;";
-    gui.appendChild(searchBar);
-
-    const tabModules = {};
-    let currentTab = "Combat";
-    for (const tabName of Object.keys(moduleCategories)) {
-      const btn = document.createElement("button");
-      btn.className = "control";
-      btn.textContent = tabName;
-      btn.onclick = () => switchTab(tabName);
-      tabWrap.appendChild(btn);
-      tabModules[tabName] = [];
+    // === Persistence Helpers ===
+    function saveModuleState(name, mod) {
+      const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
+      const opts = {};
+      if (mod.options) {
+        Object.entries(mod.options).forEach(([key, opt]) => {
+          opts[key] = opt[1];
+        });
+      }
+      saved[name] = { enabled: mod.enabled, bind: mod.bind, options: opts };
+      localStorage.setItem("lb-mods", JSON.stringify(saved));
     }
 
-    // Modules
+    function loadModuleState(name, mod) {
+      const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
+      if (saved[name]) {
+        if (saved[name].enabled !== mod.enabled && typeof mod.toggle === "function") {
+          mod.toggle();
+        }
+        if (saved[name].bind) {
+          mod.setbind(saved[name].bind);
+        }
+        if (saved[name].options && mod.options) {
+          Object.entries(saved[name].options).forEach(([key, val]) => {
+            if (mod.options[key]) mod.options[key][1] = val;
+          });
+        }
+      }
+    }
+
+    // === Panels ===
+    const panels = {};
+    Object.keys(categories).forEach((cat, i) => {
+      const panel = document.createElement("div");
+      panel.className = "lb-panel";
+      panel.style.left = 40 + i * 240 + "px";
+      panel.style.top = "100px";
+
+      const header = document.createElement("div");
+      header.className = "lb-header";
+      header.textContent = `${catIcons[cat]} ${cat}`;
+      panel.appendChild(header);
+
+      // Restore saved pos
+      const saved = localStorage.getItem("lb-pos-" + cat);
+      if (saved) {
+        const { left, top } = JSON.parse(saved);
+        panel.style.left = left;
+        panel.style.top = top;
+      }
+
+      // Dragging
+      let dragging = false, offsetX, offsetY;
+      header.addEventListener("mousedown", (e) => {
+        dragging = true;
+        offsetX = e.clientX - panel.offsetLeft;
+        offsetY = e.clientY - panel.offsetTop;
+      });
+      document.addEventListener("mousemove", (e) => {
+        if (dragging) {
+          panel.style.left = e.clientX - offsetX + "px";
+          panel.style.top = e.clientY - offsetY + "px";
+        }
+      });
+      document.addEventListener("mouseup", () => {
+        if (dragging) {
+          dragging = false;
+          localStorage.setItem("lb-pos-" + cat,
+            JSON.stringify({ left: panel.style.left, top: panel.style.top })
+          );
+        }
+      });
+
+      panels[cat] = panel;
+      document.body.appendChild(panel);
+    });
+
+    // === Modules ===
     Object.entries(store.modules).forEach(([name, mod]) => {
-      const box = document.createElement("div");
-      box.className = "module";
+      console.log("[ClickGUI] Found module:", name);
 
-      // Category
-      let cat = "Misc";
-      let icon = "❓";
-      for (const [k, keys] of Object.entries(moduleCategories)) {
-        if (keys.some((x) => name.toLowerCase().includes(x))) {
-          cat = k;
-          icon = categoryIcons[k];
-          break;
+      let cat = "Utility";
+      for (const [c, keys] of Object.entries(categories)) {
+        if (keys.some((k) => name.toLowerCase().includes(k))) {
+          cat = c; break;
         }
       }
 
-      const toggle = document.createElement("button");
-      toggle.className = "toggle-btn";
-      toggle.textContent = mod.enabled ? "ON" : "OFF";
-      toggle.onclick = () => {
-        mod.toggle();
-        toggle.textContent = mod.enabled ? "ON" : "OFF";
-        showNotif(`${name} ${mod.enabled ? "enabled ✅" : "disabled ❌"}`);
-      };
+      // Restore state
+      loadModuleState(name, mod);
 
-      box.innerHTML = `<b>${icon} ${name}</b>`;
-      box.appendChild(toggle);
+      const row = document.createElement("div");
+      row.className = "lb-module" + (mod.enabled ? " active" : "");
+      row.innerHTML = `<span>${name}</span><span>${mod.enabled ? "ON" : "OFF"}</span>`;
 
-      // Options
+      const optionsBox = document.createElement("div");
+      optionsBox.className = "lb-options";
+
+      // Toggle
+      row.addEventListener("mousedown", (e) => {
+        if (e.button === 0) {
+          if (typeof mod.toggle === "function") mod.toggle();
+          row.classList.toggle("active", mod.enabled);
+          row.lastChild.textContent = mod.enabled ? "ON" : "OFF";
+          showNotif(`${name} ${mod.enabled ? "enabled ✅" : "disabled ❌"}`);
+          saveModuleState(name, mod);
+        }
+      });
+
+      // Expand
+      row.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        optionsBox.classList.toggle("show");
+      });
+
+      // Options UI
       if (mod.options) {
-        Object.values(mod.options).forEach((opt) => {
+        Object.entries(mod.options).forEach(([key, opt]) => {
           const [type, val, label] = opt;
-          const line = document.createElement("div");
-          line.className = "option-line";
-          line.textContent = label + ": ";
+          const line = document.createElement("label");
+          line.textContent = label;
 
           if (type === Boolean) {
             const cb = document.createElement("input");
-            cb.type = "checkbox";
-            cb.checked = val;
-            cb.onchange = () => (opt[1] = cb.checked);
+            cb.type = "checkbox"; cb.checked = val;
+            cb.onchange = () => {
+              opt[1] = cb.checked;
+              saveModuleState(name, mod);
+            };
             line.appendChild(cb);
           } else if (type === Number) {
             const slider = document.createElement("input");
             slider.type = "range";
             const [min, max, step] = opt.range ?? [0, 10, 0.1];
-            slider.min = min;
-            slider.max = max;
-            slider.step = step;
-            slider.value = val;
-
-            const liveLabel = document.createElement("span");
-            liveLabel.className = "live-label";
-            liveLabel.textContent = val;
-
+            slider.min = min; slider.max = max; slider.step = step; slider.value = val;
             slider.oninput = () => {
               opt[1] = parseFloat(slider.value);
-              liveLabel.textContent = slider.value;
+              saveModuleState(name, mod);
             };
-
             line.appendChild(slider);
-            line.appendChild(liveLabel);
           } else if (type === String) {
             const input = document.createElement("input");
-            input.type = "text";
-            input.value = val;
-            input.onchange = () => (opt[1] = input.value);
+            input.type = "text"; input.value = val;
+            input.onchange = () => {
+              opt[1] = input.value;
+              saveModuleState(name, mod);
+            };
             line.appendChild(input);
           }
-          box.appendChild(line);
+          optionsBox.appendChild(line);
         });
       }
 
       // Keybind
-      const bindLine = document.createElement("div");
-      bindLine.className = "option-line";
-      bindLine.innerHTML = `Bind: <input type="text" style="width:60px" value="${mod.bind}">`;
-      const bindInput = bindLine.querySelector("input");
+      const bindLine = document.createElement("label");
+      bindLine.textContent = "Bind:";
+      const bindInput = document.createElement("input");
+      bindInput.type = "text"; bindInput.value = mod.bind;
+      bindInput.style.width = "70px";
+      bindInput.style.background = "#0a0a0a";
+      bindInput.style.color = "white";
+      bindInput.style.border = "1px solid #00aaff";
+      bindInput.style.fontFamily = '"Minecraft", monospace';
+      bindInput.style.fontSize = "12px";
+      bindInput.style.padding = "2px";
       bindInput.onchange = (e) => {
         mod.setbind(e.target.value);
-        showNotif(`${name} bind set to: ${e.target.value}`);
+        showNotif(`${name} bind set to ${e.target.value}`);
+        saveModuleState(name, mod);
       };
-      box.appendChild(bindLine);
+      bindLine.appendChild(bindInput);
+      optionsBox.appendChild(bindLine);
 
-      tabModules[cat].push(box);
-      box.style.display = cat === currentTab ? "block" : "none";
-      gui.appendChild(box);
+      panels[cat].appendChild(row);
+      panels[cat].appendChild(optionsBox);
     });
 
-    function switchTab(tab) {
-      currentTab = tab;
-      const q = searchBar.value.toLowerCase();
-      Object.entries(tabModules).forEach(([cat, boxes]) => {
-        boxes.forEach((b, i) => {
-          const nm = b.querySelector("b").textContent.toLowerCase();
-          if (cat === tab && (!q || nm.includes(q))) {
-            b.style.display = "block";
-            b.style.animationDelay = `${i * 0.05}s`; // stagger entrance
-          } else {
-            b.style.display = "none";
-          }
-        });
+    // === Reset Layout ===
+    const resetRow = document.createElement("div");
+    resetRow.className = "lb-module";
+    resetRow.style.justifyContent = "flex-start";
+    resetRow.style.paddingLeft = "6px";
+    resetRow.style.fontWeight = "bold";
+    resetRow.style.color = "#00aaff";
+    resetRow.textContent = "↺ Reset Layout";
+    resetRow.addEventListener("click", () => {
+      const defaults = {
+        Combat:{left:"40px",top:"100px"},
+        Movement:{left:"280px",top:"100px"},
+        "Player / Render":{left:"520px",top:"100px"},
+        World:{left:"760px",top:"100px"},
+        Utility:{left:"1000px",top:"100px"}
+      };
+      Object.entries(defaults).forEach(([cat,pos])=>{
+        localStorage.setItem("lb-pos-" + cat, JSON.stringify(pos));
+        if (panels[cat]) { panels[cat].style.left=pos.left; panels[cat].style.top=pos.top; }
       });
-    }
-    searchBar.addEventListener("input", () => switchTab(currentTab));
+      showNotif("Layout reset to default ✅");
+    });
+    panels["Utility"].appendChild(resetRow);
 
-    // Theme logic stays same as last version...
-    const ctrl = document.createElement("div");
-    ctrl.id = "guiControls";
-    gui.appendChild(ctrl);
+    // === Reset Config ===
+    const resetConfigRow = document.createElement("div");
+    resetConfigRow.className = "lb-module";
+    resetConfigRow.style.justifyContent = "flex-start";
+    resetConfigRow.style.paddingLeft = "6px";
+    resetConfigRow.style.fontWeight = "bold";
+    resetConfigRow.style.color = "red";
+    resetConfigRow.textContent = "⛔ Reset Config";
+    resetConfigRow.addEventListener("click", () => {
+      localStorage.removeItem("lb-mods");
+      Object.keys(localStorage)
+        .filter((k) => k.startsWith("lb-pos-"))
+        .forEach((k) => localStorage.removeItem(k));
+      alert("Config has been reset!");
+      location.reload();
+    });
+    panels["Utility"].appendChild(resetConfigRow);
 
-    const themes = ["dark", "minecraft", "neon", "glass", "frame", "sunset", "ocean", "chrome", "terminal"];
-    let themeIndex = themes.indexOf(await GM_getValue("guiTheme", "dark"));
+    // === Global Search ===
+    const searchWrap = document.createElement("div");
+    searchWrap.className = "lb-searchwrap";
+    searchWrap.innerHTML = `<input type="text" class="lb-search" placeholder="Search...">`;
+    document.body.appendChild(searchWrap);
 
-    const themeBtn = document.createElement("button");
-    themeBtn.className = "control";
-    themeBtn.textContent = "Toggle Theme";
-    themeBtn.onclick = () => {
-      themeIndex = (themeIndex + 1) % themes.length;
-      GM_setValue("guiTheme", themes[themeIndex]);
-      applyTheme(themes[themeIndex]);
-    };
-    ctrl.appendChild(themeBtn);
-
-    function applyTheme(m) {
-      const root = document.getElementById("clickGUI");
-      const buttons = root.querySelectorAll("button");
-      const wasVisible = root.style.display === "block";
-
-      root.style.background = "";
-      root.style.color = "";
-      root.style.border = "";
-      root.style.fontFamily = "";
-      root.style.backdropFilter = "";
-      root.style.imageRendering = "";
-
-      buttons.forEach((b) => {
-        b.style.background = "";
-        b.style.color = "";
-        b.style.border = "";
+    const searchBox = searchWrap.querySelector("input");
+    searchBox.addEventListener("input", () => {
+      const term = searchBox.value.toLowerCase();
+      document.querySelectorAll(".lb-module").forEach((row) => {
+        const name = row.firstChild.textContent.toLowerCase();
+        row.style.display = name.includes(term) ? "flex" : "none";
       });
+    });
 
-      const setBtn = (bg, clr, border) =>
-        buttons.forEach((b) => {
-          b.style.background = bg;
-          b.style.color = clr;
-          b.style.border = border;
-        });
+    // === Hide on load ===
+    Object.values(panels).forEach((p) => (p.style.display = "none"));
+    searchWrap.style.display = "none";
 
-      switch (m) {
-        case "dark":
-          root.style.background = "rgba(15,15,15,0.95)";
-          root.style.color = "#fff"; root.style.border = "2px solid lime";
-          setBtn("black", "lime", "1px solid lime"); break;
-        case "minecraft":
-          root.style.background =
-            'url("https://cdn.jsdelivr.net/gh/InventivetalentDev/minecraft-assets/assets/minecraft/textures/block/stone.png") repeat';
-          root.style.backgroundSize = "64px 64px"; root.style.imageRendering = "pixelated";
-          root.style.color = "#0f0"; root.style.fontFamily = '"Minecraft", monospace';
-          root.style.border = "3px double #0f0";
-          setBtn("#1a1a1a", "#0f0", "1px solid #0f0"); break;
-        case "neon":
-          root.style.background = "#000"; root.style.color = "#0ff"; root.style.border = "2px solid #0ff";
-          setBtn("#111", "#0ff", "1px solid #0ff"); break;
-        case "glass":
-          root.style.background = "rgba(255,255,255,0.08)";
-          root.style.color = "#fff"; root.style.backdropFilter = "blur(10px)";
-          root.style.border = "1px solid rgba(255,255,255,0.2)";
-          setBtn("rgba(255,255,255,0.15)", "#fff", "1px solid rgba(255,255,255,0.3)"); break;
-        case "frame":
-          root.style.background = "#ddd"; root.style.color = "#111"; root.style.border = "2px solid #444";
-          setBtn("#eee", "#111", "1px solid #888"); break;
-        case "sunset":
-          root.style.background = "linear-gradient(135deg,#ff5f6d,#ffc371)";
-          root.style.color = "#fff"; root.style.border = "2px solid #ffb347";
-          setBtn("#ff7e5f", "#fff", "1px solid #fff"); break;
-        case "ocean":
-          root.style.background = "linear-gradient(135deg,#2b5876,#4e4376)";
-          root.style.color = "#ccf"; root.style.border = "2px solid #88f";
-          setBtn("#334", "#ccf", "1px solid #ccf"); break;
-        case "chrome":
-          root.style.background = "#dfe4ea"; root.style.color = "#2f3542"; root.style.border = "2px solid #57606f";
-          setBtn("#f1f2f6", "#2f3542", "1px solid #57606f"); break;
-        case "terminal":
-          root.style.background = "#000"; root.style.color = "#0f0"; root.style.border = "2px solid #0f0";
-          setBtn("#000", "#0f0", "1px solid #0f0"); break;
-      }
+    // === Startup notification ===
+    setTimeout(() => { showNotif("[ClickGUI] Press '\\\\' to open GUI", 4000); }, 500);
 
-      if (wasVisible) root.style.display = "block";
-    }
-    applyTheme(themes[themeIndex]);
-
-    // Toggle with Backslash + Exit animation
+    // === Toggle GUI ===
     let visible = false;
     document.addEventListener("keydown", (e) => {
       if (e.code === "Backslash") {
-        if (!visible) {
-          gui.style.display = "block";
-          gui.classList.remove("hiding");
-          gui.classList.add("showing");
-          visible = true;
-        } else {
-          gui.classList.remove("showing");
-          gui.classList.add("hiding");
-          gui.addEventListener("animationend", () => {
-            if (gui.classList.contains("hiding")) gui.style.display = "none";
-          }, { once: true });
-          visible = false;
-        }
+        visible = !visible;
+        Object.values(panels).forEach((p)=> (p.style.display=visible?"block":"none"));
+        searchWrap.style.display = visible ? "block":"none";
       }
     });
   }
