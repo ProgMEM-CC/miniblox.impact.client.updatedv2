@@ -14,7 +14,7 @@ Re added fly, some of my testers still want it (including me)
 
 Added better Scaffold bypass (module) by using a multi block scaffold (instead of just one inv space. It uses multiple inv slots from 1 - 9!)
 
-Added better Click GUI with animations and themes with console.logs incase of an error. next i will add a localstorage binds.
+LB CLICK GUI for now Implemented into (injection.js take a look)
 
 # Installation
 
