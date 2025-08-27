@@ -1582,13 +1582,13 @@ const jesus = new Module("Jesus", function(callback) {
 })();
 (async function () {
   try {
-    // Loads the Minecraft Font onto GUI
+    // Load Minecraft font
     const fontLink = document.createElement("link");
     fontLink.href = "https://fonts.cdnfonts.com/css/minecraft-4";
     fontLink.rel = "stylesheet";
     document.head.appendChild(fontLink);
 
-    // Wait for Modules!
+    // Wait for store
     await new Promise((resolve) => {
       const loop = setInterval(() => {
         if (unsafeWindow?.globalThis?.[storeName]?.modules) {
@@ -1600,7 +1600,7 @@ const jesus = new Module("Jesus", function(callback) {
 
     injectGUI(unsafeWindow.globalThis[storeName]);
   } catch (err) {
-    console.error("[ClickGUI] Init failed:", err);          // Checks for errors
+    console.error("[ClickGUI] Init failed:", err);
   }
 
   function injectGUI(store) {
@@ -1618,7 +1618,7 @@ const jesus = new Module("Jesus", function(callback) {
       Utility: [
         "autorespawn","autorejoin","autoqueue",
         "autovote","filterbypass","anticheat",
-        "autofunnychat","musicfix","auto-funnychat","music-fix"         // AutoFunnyChat doesnt enable properly but it works perfectly fine (disable) dont worry
+        "autofunnychat","musicfix","auto-funnychat","music-fix"
       ]
     };
 
@@ -1630,7 +1630,7 @@ const jesus = new Module("Jesus", function(callback) {
       Utility: "🛠️"
     };
 
-    // === Styles (LiquidBounce Theme + Scrollbars) ===
+    // === Styles (LB Theme + Scrollbars + HUD) ===
     const style = document.createElement("style");
     style.textContent = `
       @keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}
@@ -1738,6 +1738,25 @@ const jesus = new Module("Jesus", function(callback) {
         font-family:"Minecraft", monospace;
       }
       .lb-search::placeholder { color:#00aaff; opacity:0.6; }
+      /* === HUD === */
+.lb-hud {
+  position:fixed;
+  top:30px;
+  left:40px;
+  background:rgba(16,24,32,0.95);
+  color:#00aaff;
+  font-family:"Minecraft", monospace, monospace;
+  font-size:13px;
+  border:2px solid #00aaff;
+  border-radius:2px;
+  padding:6px 10px;
+  z-index:1000001;
+  box-shadow:0 2px 12px #0009;
+  user-select:none;
+  pointer-events:none;
+  min-width:120px;
+}
+      .lb-hud b { color:white; }
     `;
     document.head.appendChild(style);
 
@@ -1838,8 +1857,6 @@ const jesus = new Module("Jesus", function(callback) {
 
     // === Modules ===
     Object.entries(store.modules).forEach(([name, mod]) => {
-      console.log("[ClickGUI] Found module:", name);
-
       let cat = "Utility";
       for (const [c, keys] of Object.entries(categories)) {
         if (keys.some((k) => name.toLowerCase().includes(k))) {
@@ -1956,7 +1973,7 @@ const jesus = new Module("Jesus", function(callback) {
         localStorage.setItem("lb-pos-" + cat, JSON.stringify(pos));
         if (panels[cat]) { panels[cat].style.left=pos.left; panels[cat].style.top=pos.top; }
       });
-      showNotif("Layout reset to default positions ✅");
+      showNotif("Layout reset to default ✅");
     });
     panels["Utility"].appendChild(resetRow);
 
@@ -1967,7 +1984,7 @@ const jesus = new Module("Jesus", function(callback) {
     resetConfigRow.style.paddingLeft = "6px";
     resetConfigRow.style.fontWeight = "bold";
     resetConfigRow.style.color = "red";
-    resetConfigRow.textContent = "⛔ Reset Config?";
+    resetConfigRow.textContent = "⛔ Reset Config";
     resetConfigRow.addEventListener("click", () => {
       localStorage.removeItem("lb-mods");
       Object.keys(localStorage)
@@ -1981,7 +1998,7 @@ const jesus = new Module("Jesus", function(callback) {
     // === Global Search ===
     const searchWrap = document.createElement("div");
     searchWrap.className = "lb-searchwrap";
-    searchWrap.innerHTML = `<input type="text" class="lb-search" placeholder="Search..">`;
+    searchWrap.innerHTML = `<input type="text" class="lb-search" placeholder="Search...">`;
     document.body.appendChild(searchWrap);
 
     const searchBox = searchWrap.querySelector("input");
@@ -2000,14 +2017,89 @@ const jesus = new Module("Jesus", function(callback) {
     // === Startup notification ===
     setTimeout(() => { showNotif("[ClickGUI] Press '\\\\' to open GUI", 4000); }, 500);
 
-    // === Toggle the LB GUI ===
+    // === Toggle GUI ===
     let visible = false;
     document.addEventListener("keydown", (e) => {
       if (e.code === "Backslash") {
         visible = !visible;
         Object.values(panels).forEach((p)=> (p.style.display=visible?"block":"none"));
         searchWrap.style.display = visible ? "block":"none";
+        // hud.style.display = visible ? "block" : "none"; // HUD is always visible now
       }
     });
+
+    // === HUD Overlay for Miniblox.io ===
+    // Username selection logic
+    function pickUsername() {
+      let name = localStorage.getItem("lb-hud-username") || "";
+      let correct = false;
+      while (!correct) {
+        name = prompt("Enter your username for the HUD:", name || "");
+        if (name === null || name.trim() === "") {
+          alert("Username cannot be empty.");
+          continue;
+        }
+        let response = prompt(`"${name}" is your name, correct? (yes/no)`);
+        if (response && response.trim().toLowerCase() === "yes") {
+          correct = true;
+        } else {
+          alert("Please retype your username.");
+        }
+      }
+      localStorage.setItem("lb-hud-username", name);
+      return name;
+    }
+
+    // Only ask if not set
+    let username = localStorage.getItem("lb-hud-username");
+    if (!username || username.trim() === "") {
+      username = pickUsername();
+    }
+
+    // Timer
+    const startTime = Date.now();
+    function formatTime(ms) {
+      const sec = Math.floor(ms / 1000) % 60;
+      const min = Math.floor(ms / 60000) % 60;
+      const hour = Math.floor(ms / 3600000);
+      return [
+        hour.toString().padStart(2, '0'),
+        min.toString().padStart(2, '0'),
+        sec.toString().padStart(2, '0')
+      ].join(':');
+    }
+
+    // HUD element
+    const hud = document.createElement('div');
+    hud.className = 'lb-hud';
+    hud.style.display = "block"; // Always show HUD
+    document.body.appendChild(hud);
+
+    function updateHUD() {
+      const elapsed = formatTime(Date.now() - startTime);
+      username = localStorage.getItem("lb-hud-username") || username;
+      hud.innerHTML = `
+        <div><b>Username:</b> ${username}</div>
+        <div><b>Time:</b> ${elapsed}</div>
+        <div><b>Playing on:</b> miniblox.io</div>
+      `;
+    }
+    setInterval(updateHUD, 1000);
+    updateHUD();
+
+    // Option to change username from GUI
+    const changeUserRow = document.createElement("div");
+    changeUserRow.className = "lb-module";
+    changeUserRow.style.justifyContent = "flex-start";
+    changeUserRow.style.paddingLeft = "6px";
+    changeUserRow.style.fontWeight = "bold";
+    changeUserRow.style.color = "#00aaff";
+    changeUserRow.textContent = "✎ Change HUD Username";
+    changeUserRow.addEventListener("click", () => {
+      username = pickUsername();
+      updateHUD();
+      showNotif("HUD username updated ✅");
+    });
+    panels["Utility"].appendChild(changeUserRow);
   }
 })();
