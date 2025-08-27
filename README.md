@@ -52,11 +52,6 @@ In Game!
 - **DO NOT EVER PUBLISH UNSTABLE CHANGES TO THE "/" (ROOT) FOLDER. PUBLISH IT TO "beta" FOLDER INSTEAD PLS**
 
 ![MinibloxClient Stats](https://gitmystat.vercel.app/repo?theme=dino&username=progmem-cc&repo=miniblox.impact.client.updatedv2)
-
-
- ## Jobs to carry out (Here for now)
-
-- Add a video showcasing the client with the new GUI interface (MM64's job whenever not MM64 is busy with Click GUI)
   
   ## Goals (May not be added)
   
