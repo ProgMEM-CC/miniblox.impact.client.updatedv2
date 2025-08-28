@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Impact For Miniblox
-// @namespace    ProgMEM-CC, ModuleM64, he557, 7GrandDad, BlueDragon7327, DataM0del/RealPacket, ekusos22, whoppps
+// @namespace    ProgMEM-CC, ModuleM64, he557, 7GrandDad, BlueDragon7327, DataM0del/RealPacket, ekusos22, whoppps, ispyboy
 // @version      4.0.2
 // @description  The ultimate MiniBlox hacked client. Built for stealth, speed, and total domination. Fully dark-mode optimized with a modern GUI and high performance guaranteed 
-// @author       7GrandDad, ProgMEM-CC, ModuleMaster64, he557, RealPacket/DataM0del (Codeberg/Github names), BlueDragon7327, whoppps
+// @author       7GrandDad, ProgMEM-CC, ModuleMaster64, he557, RealPacket/DataM0del (Codeberg/Github names), BlueDragon7327, whoppps, ispyboy
 // @match        https://miniblox.io/*
 // @match        https://miniblox.online/*
 // @match        https://miniblox.org/*
@@ -28,6 +28,7 @@
 //  BlueDragon7327 (github.com/BlueDragon7327) 
 //  dtkiller-jp (github.com/dtkiller-jp)
 //  whoppps (github.com/whoppps)
+//  ispyboy (github.com/ispyboy)
 //
 //  Pls, we may need more devs!
 //  
@@ -40,6 +41,7 @@
 //    BlueDragon7327, Module Researcher and solver!
 //    dtkiller-jp, Bug reporter!
 //    whoppps
+//    ispyboy
 //
 //
 // ==================================== Extra Credits To =====================================================
