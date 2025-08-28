@@ -2,10 +2,6 @@ We welcome contributions from the community! Whether you're fixing bugs, adding 
 
 make your own repo!
 
-Clone your fork:
-
-git clone https://github.com/YOUR_USERNAME/miniblox.impact.client.updatedv2.git
-
 Make your changes locally on **your** repo of it
 
 Contribution Guidelines!
