@@ -26,21 +26,6 @@ Copy tampermonkey.user.js and paste into your preferred userscript manager. (Tam
 
 Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 
-# Notes to M0duleMaster64
-
-(I re-added fly bc it can be still useful at times, and i think tokeniser.js is ready for use)
-
-# Gallery of Impact Client!
-
-Hacks On! (OLD)
-![Hacks On! (old photo)](./.github/images/client.png)
-
-ON MENU with new toggled notfication that pops up
-![image](https://github.com/user-attachments/assets/5580f818-10a4-488d-959e-6d2a3410f8a5)
-
-In Game!
-![image](https://github.com/user-attachments/assets/02dbf119-4c99-47f2-af53-6348e50e48be)
-
 **console.log("Video Coming soon...")**
 
 # Dev Notes
