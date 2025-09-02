@@ -2,42 +2,42 @@ var GhostJoin = new Module("GhostJoin", function(callback) {
     if (!callback) {
         delete tickLoop["GhostJoin"];
         if (window.__ghostJoinLoop) {
-            clearTimeout(window.__ghostJoinLoop);
+            clearInterval(window.__ghostJoinLoop);
             window.__ghostJoinLoop = undefined;
         }
         return;
     }
 
     var fakeNames = [
-        "Vector", "Tester", "KanusMaximus", "Qhyun",
-        "Notch", "Dream", "Steve", "Herobrine"         // 4 Minecraft devs v 4 Miniblox devs LOL
+        "(99) Vector",         // Owner
+        "(99) Tester",         // Admin
+        "(99) KanusMaximus",   // Admin
+        "(99) Qhyun",          // Admin                // 3 devs and a owner for miniblox LOL
     ];
     var lastGhost = null;
 
-    function getRandomDelay(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
+    if (window.__ghostJoinLoop) {
+        clearInterval(window.__ghostJoinLoop);
     }
 
-    function spawnGhost() {
+    window.__ghostJoinLoop = setInterval(function() {
         var name = fakeNames[Math.floor(Math.random() * fakeNames.length)];
         lastGhost = name;
-        var joinText = "[Ghost] " + name + " joined the game";
 
-        // Inject ghost message directly
-        ClientSocket.sendPacket(new SPacketMessage({ text: joinText }));
-        game.chat.addChat({ text: joinText, color: "yellow", extra: [] });
+        game.chat.addChat({
+            text: name + " joined the game",
+            color: "yellow"
+        });
+    }, 10000); // Every 10 seconds
 
-        window.__ghostJoinLoop = setTimeout(function() {
-            if (lastGhost) {
-                var leaveText = "[Ghost] " + lastGhost + " left the game";
-                ClientSocket.sendPacket(new SPacketMessage({ text: leaveText }));
-                game.chat.addChat({ text: leaveText, color: "yellow", extra: [] });
-                lastGhost = null;
-            }
+    tickLoop["GhostJoin"] = function() {
+        if (lastGhost) {
+            game.chat.addChat({
+                text: lastGhost + " left the game",
+                color: "yellow"
+            });
 
-            window.__ghostJoinLoop = setTimeout(spawnGhost, getRandomDelay(5000, 15000));
-        }, getRandomDelay(5000, 15000));
-    }
-
-    spawnGhost();
+            lastGhost = null;
+        }
+    };
 });
