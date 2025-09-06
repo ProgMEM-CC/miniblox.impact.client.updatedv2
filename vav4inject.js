@@ -801,7 +801,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 						if (goUp || goDown) {
 							player.motion.y = goUp ? jetpackvert[1] : -jetpackvert[1];
 						} else {
-							player.motion.y = (ticks < 18 && ticks % 6 < 4 ? jetpackUpMotion[1] : jetpackGlide[1]);
+							player.motion.y = (ticks < 18 && ticks % 6 < 4 ? jetpackUpMotion[1] : -jetpackGlide[1]);
 						}
 					};
 				}
@@ -814,7 +814,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 			});
 			jetpackvalue = jetpack.addoption("Speed", Number, 2);
-			jetpackGlide = jetpack.addoption("GlideValue", Number, -0.27);
+			jetpackGlide = jetpack.addoption("GlideValue", Number, 0.27);
 			jetpackUpMotion = jetpack.addoption("UpMotion", Number, 4);
 			jetpackvert = jetpack.addoption("Vertical", Number, 0.27);
 
