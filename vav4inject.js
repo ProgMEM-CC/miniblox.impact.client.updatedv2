@@ -814,7 +814,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 			});
 			jumpflyvalue = jumpfly.addoption("Speed", Number, 2);
-			jumpFlyGlide = jumpfly.addoption("GlideValue", Number, -0.27);
+			jumpFlyGlide = jumpfly.addoption("GlideValue", Number, 1);
 			jumpFlyUpMotion = jumpfly.addoption("UpMotion", Number, 4);
 			jumpflyvert = jumpfly.addoption("Vertical", Number, 0.27);
 
