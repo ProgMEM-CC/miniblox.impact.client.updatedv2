@@ -1,0 +1,8 @@
+# Dependencies
+/node_modules
+
+# Lockfiles
+/package-lock.json
+
+# Build output
+/vav4inject.build.js
