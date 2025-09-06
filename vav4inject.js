@@ -786,37 +786,37 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
    
    
    
-   			let jumpflyvalue, jumpflyvert, jumpFlyUpMotion, jumpFlyGlide;
-			// JumpFly
-			const jumpfly = new Module("JumpFly", function(callback) {
+   			let jetpackvalue, jetpackvert, jetpackUpMotion, jetpackGlide;
+			// jetpack
+			const jetpack = new Module("JetPack", function(callback) {
 				if (callback) {
 					let ticks = 0;
-					tickLoop["JumpFly"] = function() {
+					tickLoop["JetPack"] = function() {
 						ticks++;
-						const dir = getMoveDirection(jumpflyvalue[1]);
+						const dir = getMoveDirection(jetpackvalue[1]);
 						player.motion.x = dir.x;
 						player.motion.z = dir.z;
 						const goUp = keyPressedDump("space");
 						const goDown = keyPressedDump("shift");
 						if (goUp || goDown) {
-							player.motion.y = goUp ? jumpflyvert[1] : -jumpflyvert[1];
+							player.motion.y = goUp ? jetpackvert[1] : -jetpackvert[1];
 						} else {
-							player.motion.y = (ticks < 18 && ticks % 6 < 4 ? jumpFlyUpMotion[1] : jumpFlyGlide[1]);
+							player.motion.y = (ticks < 18 && ticks % 6 < 4 ? jetpackUpMotion[1] : jetpackGlide[1]);
 						}
 					};
 				}
 				else {
-					delete tickLoop["JumpFly"];
+					delete tickLoop["JetPack"];
 					if (player) {
 						player.motion.x = Math.max(Math.min(player.motion.x, 0.3), -0.3);
 						player.motion.z = Math.max(Math.min(player.motion.z, 0.3), -0.3);
 					}
 				}
 			});
-			jumpflyvalue = jumpfly.addoption("Speed", Number, 2);
-			jumpFlyGlide = jumpfly.addoption("GlideValue", Number, 1);
-			jumpFlyUpMotion = jumpfly.addoption("UpMotion", Number, 4);
-			jumpflyvert = jumpfly.addoption("Vertical", Number, 0.27);
+			jetpackvalue = jetpack.addoption("Speed", Number, 2);
+			jetpackGlide = jetpack.addoption("GlideValue", Number, -0.27);
+			jetpackUpMotion = jetpack.addoption("UpMotion", Number, 4);
+			jetpackvert = jetpack.addoption("Vertical", Number, 0.27);
 
 
    
@@ -1645,7 +1645,7 @@ const jesus = new Module("Jesus", function(callback) {
       Combat: ["autoclicker", "killaura", "velocity", "wtap"],
       Movement: [
         "scaffold","jesus","phase","nofall","sprint","keepsprint","step",
-        "speed","fly","noslowdown","spiderclimb","jumpfly"
+        "speed","fly","noslowdown","spiderclimb","jetpack"
       ],
       "Player / Render": [
         "invcleaner","invwalk","autoarmor","ghostjoin",
