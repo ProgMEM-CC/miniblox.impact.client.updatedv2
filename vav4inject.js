@@ -797,7 +797,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 						player.motion.x = dir.x;
 						player.motion.z = dir.z;
 						const goUp = keyPressedDump("space");
-						const goDown = keyPressedDump("shift");
+						const goDown = false; 		//keyPressedDump("shift"), might not be needed
 						if (goUp || goDown) {
 							player.motion.y = goUp ? jetpackvert[1] : -jetpackvert[1];
 						} else {
