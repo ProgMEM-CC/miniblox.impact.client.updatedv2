@@ -814,7 +814,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 			});
 			jetpackvalue = jetpack.addoption("Speed", Number, 2);
-			jetpackGlide = jetpack.addoption("GlideValue", Number, 0.27);
+			jetpackGlide = jetpack.addoption("Glide", Number, 0.27);
 			jetpackUpMotion = jetpack.addoption("UpMotion", Number, 4);
 			jetpackvert = jetpack.addoption("Vertical", Number, 0.27);
 
