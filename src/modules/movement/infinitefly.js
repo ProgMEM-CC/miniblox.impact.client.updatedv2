@@ -1,3 +1,7 @@
+/**
+ * InfiniteFly Module
+ */
+
 let infiniteFlyVert;
 const infiniteFly = new Module("InfiniteFly", function(callback) {
 	if (callback) {

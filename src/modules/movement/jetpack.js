@@ -1,5 +1,9 @@
+/**
+ * JetPack Module
+ */
+
 let jetpackvalue, jetpackvert, jetpackUpMotion, jetpackGlide;
-// jetpack
+
 const jetpack = new Module("JetPack", function(callback) {
 	if (callback) {
 		let ticks = 0;
@@ -9,7 +13,7 @@ const jetpack = new Module("JetPack", function(callback) {
 			player.motion.x = dir.x;
 			player.motion.z = dir.z;
 			const goUp = keyPressedDump("space");
-			const goDown = false; 		//keyPressedDump("shift"), might not be needed
+			const goDown = false; // keyPressedDump("shift"), might not be needed
 			if (goUp || goDown) {
 				player.motion.y = goUp ? jetpackvert[1] : -jetpackvert[1];
 			} else {

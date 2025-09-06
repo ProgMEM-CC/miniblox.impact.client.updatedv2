@@ -1,3 +1,7 @@
+/**
+ * AutoClicker Module
+ */
+
 let clickDelay = Date.now();
 new Module("AutoClicker", function(callback) {
 	if (callback) {

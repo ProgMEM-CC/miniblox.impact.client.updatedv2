@@ -1,3 +1,7 @@
+/**
+ * Killaura Module
+ */
+
 let attackDelay = Date.now();
 let didSwing = false;
 let attacked = 0;
@@ -8,9 +12,9 @@ let killaurarange, killaurablock, killaurabox, killauraangle, killaurawall, kill
 
 function wrapAngleTo180_radians(j) {
 	return j = j % (2 * Math.PI),
-		j >= Math.PI && (j -= 2 * Math.PI),
-		j < -Math.PI && (j += 2 * Math.PI),
-		j
+	j >= Math.PI && (j -= 2 * Math.PI),
+	j < -Math.PI && (j += 2 * Math.PI),
+	j
 }
 
 function killauraAttack(entity, first) {

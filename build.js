@@ -12,15 +12,28 @@ async function build() {
     try {
         console.log('Starting build...');
 
-        // 1. Read and combine all module files
+        // 1. Read and combine all module files recursively
         let combinedModulesCode = '';
-        const moduleFiles = await fs.readdir(MODULES_DIR);
-        for (const fileName of moduleFiles.filter(f => f.endsWith('.js'))) {
-            const filePath = path.join(MODULES_DIR, fileName);
-            console.log(`Reading module ${filePath}...`);
-            const code = await fs.readFile(filePath, 'utf-8');
-            combinedModulesCode += code + '\n\n';
+        
+        async function readModulesRecursively(dir) {
+            const items = await fs.readdir(dir, { withFileTypes: true });
+            
+            for (const item of items) {
+                const fullPath = path.join(dir, item.name);
+                
+                if (item.isDirectory()) {
+                    // Recursively read subdirectories
+                    await readModulesRecursively(fullPath);
+                } else if (item.name.endsWith('.js')) {
+                    // Read JavaScript files
+                    console.log(`Reading module ${fullPath}...`);
+                    const code = await fs.readFile(fullPath, 'utf-8');
+                    combinedModulesCode += code + '\n\n';
+                }
+            }
         }
+        
+        await readModulesRecursively(MODULES_DIR);
 
         // 2. Read the main template file
         console.log(`Reading main file ${MAIN_FILE}...`);
