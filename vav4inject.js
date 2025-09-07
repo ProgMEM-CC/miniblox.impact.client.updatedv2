@@ -630,7 +630,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
                                 };
                                 ClientSocket.sendPacket(new SPacketPlayerPosLook({
                                     pos: pos,
-									onGround: true
+									onGround: false
                                 }));
                             }
                         }
