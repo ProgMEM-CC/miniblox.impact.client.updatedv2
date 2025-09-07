@@ -2080,6 +2080,10 @@ timervalue = timer.addoption("Value", Number, 1.2);
 	}
 
 	let loadedConfig = false;
+	
+	// Initialize globalThis store properly like the original
+	Object.defineProperty(unsafeWindow.globalThis, storeName, {value: {}, enumerable: false});
+	
 	if (typeof GM_getValue !== "undefined") {
 		document.addEventListener("DOMContentLoaded", function() {
 			setTimeout(function() {
@@ -2087,23 +2091,18 @@ timervalue = timer.addoption("Value", Number, 1.2);
 			}, 10);
 		});
 		
-		// Initialize globalThis store if it doesn't exist
-		if (!unsafeWindow.globalThis[storeName]) {
-			unsafeWindow.globalThis[storeName] = {};
-		}
-		
 		unsafeWindow.globalThis[storeName].saveVapeConfig = saveVapeConfig;
 		unsafeWindow.globalThis[storeName].loadVapeConfig = loadVapeConfig;
 		unsafeWindow.globalThis[storeName].exportVapeConfig = exportVapeConfig;
 		unsafeWindow.globalThis[storeName].importVapeConfig = importVapeConfig;
 		
-		// Wait for modules to be available before loading config
+		// Wait for modules to be available before loading config (like original)
 		const configLoop = setInterval(() => {
 			if (unsafeWindow.globalThis[storeName].modules) {
 				clearInterval(configLoop);
 				loadVapeConfig();
 			}
-		}, 100);
+		}, 10);
 		
 		setInterval(async function() {
 			if (unsafeWindow.globalThis[storeName].modules) {
