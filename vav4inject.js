@@ -609,49 +609,34 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 				else delete tickLoop["AntiFall"];
 			});
-			// Miniblox Disabler (ported from LiquidBounce)
-let minibloxSeqNum = 0;
-
-const minibloxDisabler = new Module("MinibloxDisabler", function(callback) {
-    if (callback) {
-        tickLoop["MinibloxDisabler"] = function() {
-            if (!player) return;
-
-            try {
-                // Increment sequence number each tick
-                minibloxSeqNum++;
-
-                // Mimic 1.8 player input packet
-                const sideways = player.moveStrafeDump ?? 0;
-                const forward = player.moveForwardDump ?? 0;
-                const jumping = keyPressedDump("space") || player.jumping;
-                const sneaking = keyPressedDump("shift") || player.isSneaking;
-
-                ClientSocket.sendPacket(new SPacketPlayerInput({
-                    sideways: sideways,
-                    forward: forward,
-                    jumping: jumping,
-                    sneaking: sneaking,
-                    sequenceNumber: minibloxSeqNum
-                }));
-            } catch (err) {
-                game.chat.addChat({
-                    text: "[DisablerMiniblox] Error: " + err.message,
-                    color: "red"
-                });
-				console.error(err.message);
-            }
-        };
-    } else {
-        delete tickLoop["MinibloxDisabler"];
-    }
-});
 
 
 
 
 
 
+
+			// SpeedBETA
+   			const speedbeta = new Module("SpeedBETA", function(callback){
+	  			if (callback){
+	  				tickLoop["SpeedBETA"] = function() {
+	   					                        if (true) {
+                            const offsets = [.51, .5, .49, -.49, 0];
+                            for (const offset of offsets) {
+                                const pos = {
+                                    x: player.pos.x,
+                                    y: player.pos.y + offset,
+                                    z: player.pos.z
+                                };
+                                ClientSocket.sendPacket(new SPacketPlayerPosLook({
+                                    pos
+                                }));
+                            }
+                        }
+					};
+	 			}
+	 			else delete tickLoop["SpeedBETA"]
+	 		});
 
 
 			// Killaura
