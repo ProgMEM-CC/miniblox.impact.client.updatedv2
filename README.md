@@ -8,7 +8,7 @@ BEFORE USING, Read EULA.md
 
 # Changelog
 
-Re added fly, some of my testers still want it (including me)
+A working fly with desync created by RealPacket!
 
 .toggle all command (does not work, will be fixed soon)
 
@@ -47,7 +47,5 @@ Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 - Force Creative / Inventory Modification (like thrax client - was made by 7GrandDad i think)
 
 - Command Block modification (in survival mode. Again this could be possible - MM64)
-
-- A Working FLY or Airjump (ADDED DESYNC - RealPacket made this) (i will add this to here now - MM64)
 
 - Disabler for movement etc
