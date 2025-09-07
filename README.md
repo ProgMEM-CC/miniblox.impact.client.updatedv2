@@ -10,7 +10,7 @@ BEFORE USING, Read EULA.md
 
 All notable changes to this project will be documented in this file.
 
-## [5] - 2025-09-07
+## [v5] - 2025-09-07
 ### Added
 - Fly/NoFall exploit with desync mechanics by `RealPacket`
 - Multi-block Scaffold bypass using inventory slots 1–9
