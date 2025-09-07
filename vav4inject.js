@@ -629,7 +629,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
                                     z: player.pos.z
                                 };
                                 ClientSocket.sendPacket(new SPacketPlayerPosLook({
-                                    pos
+                                    pos: pos
                                 }));
                             }
                         }
