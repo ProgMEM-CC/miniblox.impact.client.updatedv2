@@ -609,6 +609,46 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 				else delete tickLoop["AntiFall"];
 			});
+			// Miniblox Disabler (ported from LiquidBounce)
+const minibloxDisabler = new Module("MinibloxDisabler", function(callback) {
+    if (callback) {
+        tickLoop["MinibloxDisabler"] = function() {
+            // TODO: In Kotlin this checked "usesViaFabricPlus && isEqual1_8"
+            // For now we assume protocol OK, or you can add your own check.
+
+            if (!player) return;
+
+            try {
+                // Mimic 1.8 player input packet
+                const sideways = player.moveStrafeDump ?? 0;
+                const forward = player.moveForwardDump ?? 0;
+                const jumping = keyPressedDump("space") || player.jumping;
+                const sneaking = keyPressedDump("shift") || player.isSneaking;
+
+                ClientSocket.sendPacket(new SPacketPlayerInput({
+                    sideways: sideways,
+                    forward: forward,
+                    jumping: jumping,
+                    sneaking: sneaking
+                }));
+            } catch (err) {
+                game.chat.addChat({
+                    text: "[DisablerMiniblox] Error: " + err.message,
+                    color: "red"
+                });
+            }
+        };
+    } else {
+        delete tickLoop["MinibloxDisabler"];
+    }
+});
+
+
+
+
+
+
+
 
 			// Killaura
 			let attackDelay = Date.now();
