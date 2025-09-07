@@ -616,29 +616,6 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 
 
 
-			// SpeedBETA
-   			const speedbeta = new Module("SpeedBETA", function(callback){
-	  			if (callback){
-	  				tickLoop["SpeedBETA"] = function() {
-	   					                        if (true) {
-                            const offsets = [.51, .5, .49, -.49, 0];
-                            for (const offset of offsets) {
-                                const pos = {
-                                    x: player.pos.x,
-                                    y: player.pos.y + offset,
-                                    z: player.pos.z
-                                };
-                                ClientSocket.sendPacket(new SPacketPlayerPosLook({
-                                    pos: pos,
-									onGround: false
-                                }));
-                            }
-                        }
-					};
-	 			}
-	 			else delete tickLoop["SpeedBETA"]
-	 		});
-
 
 			// Killaura
 			let attackDelay = Date.now();
