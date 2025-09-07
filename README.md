@@ -6,15 +6,22 @@
 
 BEFORE USING, Read EULA.md
 
-# Changelog
+# 📦 Changelog
 
-A working fly/nofall with desync created by RealPacket!
+All notable changes to this project will be documented in this file.
 
-.toggle all command (does not work, will be fixed soon)
+## [5] - 2025-09-07
+### Added
+- Fly/NoFall exploit with desync mechanics by `RealPacket`
+- Multi-block Scaffold bypass using inventory slots 1–9
+- LB Click GUI injected via `injection.js`
 
-Added better Scaffold bypass (module) by using a multi block scaffold (instead of just one inv space. It uses multiple inv slots from 1 - 9!)
+### Fixed
+- Improved inventory handling for Scaffold module
+- Minor UI tweaks in Click GUI
 
-LB CLICK GUI for now Implemented into (injection.js take a look)
+### Known Issues
+- `.toggle all` command is currently non-functional (fix coming soon)
 
 # Installation
 
