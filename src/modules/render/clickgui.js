@@ -31,74 +31,71 @@ function injectGUI(store) {
 
     // === Styles (LiquidBounce Theme + Scrollbars) ===
     const style = document.createElement("style");
-    style.textContent = `
-      @keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}
-      .lb-panel {
-        position:absolute;
-        width:220px;
-        background:#111;
-        border:2px solid #00aaff;
-        border-radius:0;
-        font-family:"Minecraft", monospace;
-        color:white;
-        animation:guiEnter .25s ease-out;
-        z-index:100000;
-
-        /* Scrollable */
-        max-height:420px;
-        overflow-y:auto;
-        overflow-x:hidden;
-      }
-      .lb-panel::-webkit-scrollbar { width:6px; }
-      .lb-panel::-webkit-scrollbar-thumb { background:#00aaff; }
-      .lb-panel::-webkit-scrollbar-track { background:#111; }
-      .lb-header {
-        background:#0a0a0a;
-        padding:6px;
-        font-weight:bold;
-        cursor:move;
-        user-select:none;
-        text-align:center;
-        border-bottom:1px solid #00aaff;
-      }
-      .lb-module {
-        padding:4px 8px;
-        cursor:pointer;
-        transition:background .15s;
-        border-bottom:1px solid #222;
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-      }
-      .lb-module:hover { background:#222; }
-      .lb-module.enabled { background:#003366; color:#00aaff; }
-      .lb-module.enabled:hover { background:#004488; }
-      .lb-bind { font-size:10px; color:#666; }
-      .lb-settings {
-        margin-left:8px;
-        padding:2px 6px;
-        background:#333;
-        border:1px solid #555;
-        font-size:10px;
-        cursor:pointer;
-      }
-      .lb-settings:hover { background:#444; }
-      .lb-option {
-        padding:3px 12px;
-        background:#1a1a1a;
-        border-bottom:1px solid #333;
-        font-size:11px;
-      }
-      .lb-option input {
-        background:#333;
-        border:1px solid #555;
-        color:white;
-        padding:2px 4px;
-        width:60px;
-        margin-left:8px;
-      }
-      .lb-option input[type="checkbox"] { width:auto; }
-    `;
+    style.textContent = 
+      "@keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}" +
+      ".lb-panel {" +
+        "position:absolute;" +
+        "width:220px;" +
+        "background:#111;" +
+        "border:2px solid #00aaff;" +
+        "border-radius:0;" +
+        "font-family:monospace;" +
+        "color:white;" +
+        "animation:guiEnter .25s ease-out;" +
+        "z-index:100000;" +
+        "max-height:420px;" +
+        "overflow-y:auto;" +
+        "overflow-x:hidden;" +
+      "}" +
+      ".lb-panel::-webkit-scrollbar { width:6px; }" +
+      ".lb-panel::-webkit-scrollbar-thumb { background:#00aaff; }" +
+      ".lb-panel::-webkit-scrollbar-track { background:#111; }" +
+      ".lb-header {" +
+        "background:#0a0a0a;" +
+        "padding:6px;" +
+        "font-weight:bold;" +
+        "cursor:move;" +
+        "user-select:none;" +
+        "text-align:center;" +
+        "border-bottom:1px solid #00aaff;" +
+      "}" +
+      ".lb-module {" +
+        "padding:4px 8px;" +
+        "cursor:pointer;" +
+        "transition:background .15s;" +
+        "border-bottom:1px solid #222;" +
+        "display:flex;" +
+        "justify-content:space-between;" +
+        "align-items:center;" +
+      "}" +
+      ".lb-module:hover { background:#222; }" +
+      ".lb-module.enabled { background:#003366; color:#00aaff; }" +
+      ".lb-module.enabled:hover { background:#004488; }" +
+      ".lb-bind { font-size:10px; color:#666; }" +
+      ".lb-settings {" +
+        "margin-left:8px;" +
+        "padding:2px 6px;" +
+        "background:#333;" +
+        "border:1px solid #555;" +
+        "font-size:10px;" +
+        "cursor:pointer;" +
+      "}" +
+      ".lb-settings:hover { background:#444; }" +
+      ".lb-option {" +
+        "padding:3px 12px;" +
+        "background:#1a1a1a;" +
+        "border-bottom:1px solid #333;" +
+        "font-size:11px;" +
+      "}" +
+      ".lb-option input {" +
+        "background:#333;" +
+        "border:1px solid #555;" +
+        "color:white;" +
+        "padding:2px 4px;" +
+        "width:60px;" +
+        "margin-left:8px;" +
+      "}" +
+      ".lb-option input[type='checkbox'] { width:auto; }";
     document.head.appendChild(style);
 
     let panels = {};
@@ -115,7 +112,7 @@ function injectGUI(store) {
 
       const header = document.createElement("div");
       header.className = "lb-header";
-      header.textContent = `${catIcons[category]} ${category}`;
+      header.textContent = catIcons[category] + " " + category;
       panel.appendChild(header);
 
       // Make draggable
@@ -134,7 +131,7 @@ function injectGUI(store) {
         if (!module) return;
 
         const moduleDiv = document.createElement("div");
-        moduleDiv.className = `lb-module ${module.enabled ? "enabled" : ""}`;
+        moduleDiv.className = "lb-module " + (module.enabled ? "enabled" : "");
 
         const nameSpan = document.createElement("span");
         nameSpan.textContent = module.name;
@@ -147,7 +144,7 @@ function injectGUI(store) {
         if (module.bind) {
           const bindSpan = document.createElement("span");
           bindSpan.className = "lb-bind";
-          bindSpan.textContent = `[${module.bind}]`;
+          bindSpan.textContent = "[" + module.bind + "]";
           rightSide.appendChild(bindSpan);
         }
 
@@ -166,7 +163,7 @@ function injectGUI(store) {
 
         moduleDiv.addEventListener("click", () => {
           module.toggle();
-          moduleDiv.className = `lb-module ${module.enabled ? "enabled" : ""}`;
+          moduleDiv.className = "lb-module " + (module.enabled ? "enabled" : "");
         });
 
         panel.appendChild(moduleDiv);

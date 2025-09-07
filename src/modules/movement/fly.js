@@ -7,7 +7,11 @@ function getMoveDirection(moveSpeed) {
 	let moveForward = player.moveForwardDump;
 	let speed = moveStrafe * moveStrafe + moveForward * moveForward;
 	if (speed >= 1e-4) {
-		speed = Math.sqrt(speed), speed < 1 && (speed = 1), speed = 1 / speed, moveStrafe = moveStrafe * speed, moveForward = moveForward * speed;
+		speed = Math.sqrt(speed);
+		if (speed < 1) speed = 1;
+		speed = 1 / speed;
+		moveStrafe = moveStrafe * speed;
+		moveForward = moveForward * speed;
 		const rt = Math.cos(player.yaw) * moveSpeed;
 		const nt = -Math.sin(player.yaw) * moveSpeed;
 		return new Vector3$1(moveStrafe * rt - moveForward * nt, 0, moveForward * rt + moveStrafe * nt);

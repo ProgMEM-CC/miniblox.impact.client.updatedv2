@@ -2,25 +2,33 @@
 
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&duration=2500&pause=1000&color=7179F7&width=435&lines=The+ultimate+MiniBlox+hacked+client!+;Built+for+stealth%2C+speed%2C+and+total+domination.;Fully+dark-mode+optimized+with+a+modern+UI)](https://git.io/typing-svg)
 
+## 🚀 v4 - Modular Architecture
+
+This version adopts a fully modular architecture, significantly improving maintainability and extensibility.
+
+### 📁 Module Structure
+- **Combat**: autoclicker, killaura, velocity, wtap
+- **Movement**: fly, jetpack, infinitefly, keepsprint, noslowdown, sprint, phase, invwalk, jesus, step, spiderclimb
+- **Player**: nofall, antifall, autoarmor, invcleaner, ghostjoin, playeresp
+- **World**: fastbreak, breaker, autocraft, cheststeal, timer, scaffold
+- **Utility**: autorespawn, autorejoin, antiban, autofunnychat, chatdisabler, filterbypass, autoqueue, autovote, anticheat, musicfix
+- **Render**: clickgui, textgui, chams, nametags
+
+### 🔧 Build System
+```bash
+npm run build  # Lint + Build
+node build.js  # Build only
+```
+
 # EULA
 
 BEFORE USING, Read EULA.md
 
-# Changelog
-
-Re added fly, some of my testers still want it (including me)
-
-.toggle all command (does not work, will be fixed soon)
-
-Added better Scaffold bypass (module) by using a multi block scaffold (instead of just one inv space. It uses multiple inv slots from 1 - 9!)
-
-LB CLICK GUI for now Implemented into (injection.js take a look)
-
 # Installation
 
-Copy tampermonkey.user.js and paste into your preferred userscript manager. (Tampermonkey, Greasemonkey, Violentmonkey etc)
+1. Copy `tampermonkey.user.js` and paste it into your preferred userscript manager (Tampermonkey, Greasemonkey, Violentmonkey, etc.).
 
-(M0duleMaster64's comment - Or use the main.js and manually put in the injection.js after the main)
+2. For developers: Run `npm run build` after modifying modules.
 
 ## Join the Discord here
 

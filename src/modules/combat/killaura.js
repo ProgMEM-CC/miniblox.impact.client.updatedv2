@@ -58,7 +58,7 @@ function block() {
 	if (swordCheck() && killaurablock[1]) {
 		if (!blocking) {
 			playerControllerMP.syncItemDump();
-			ClientSocket.sendPacket(new SPacketUseItem);
+			ClientSocket.sendPacket(new SPacketUseItem());
 			blocking = true;
 		}
 	} else blocking = false;

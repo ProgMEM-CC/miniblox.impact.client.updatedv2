@@ -11,11 +11,11 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        unsafeWindow
-// @require      https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/vav4inject.build.js
+// @require      https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/OOP-dev/build/client.build.js
 // @run-at       document-start
 // ** This is Important For Updating **
-// @updateURL    https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/main/tampermonkey.user.js
-// @downloadURL  https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/main/tampermonkey.user.js
+// @updateURL    https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/OOP-dev/tampermonkey.user.js
+// @downloadURL  https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/OOP-dev/tampermonkey.user.js
 // @license      AGPL-3.0-only
 // 
 // =========================================== EULA ==========================================================

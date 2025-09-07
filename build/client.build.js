@@ -480,8 +480,55 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		true
 		);
 
-	// MODULES - Combat
-	/**
+	// MAIN
+	addModification('document.addEventListener("contextmenu",m=>m.preventDefault());', /*js*/`
+		// my code lol
+		(function() {
+			class Module {
+				constructor(name, func) {
+					this.name = name;
+					this.func = func;
+					this.enabled = false;
+					this.bind = "";
+					this.options = {};
+					modules[this.name] = this;
+				}
+				toggle() {
+					this.enabled = !this.enabled;
+					enabledModules[this.name] = this.enabled;
+					this.func(this.enabled);
+				}
+				setbind(key, manual) {
+					if (this.bind != "") delete keybindCallbacks[this.bind];
+					this.bind = key;
+					if (manual) game.chat.addChat({text: "Bound " + this.name + " to " + (key == "" ? "none" : key) + "!"});
+					if (key == "") return;
+					const module = this;
+					keybindCallbacks[this.bind] = function(j) {
+						if (Game.isActive()) {
+							module.toggle();
+							game.chat.addChat({
+								text: module.name + (module.enabled ? " Enabled!" : " Disabled!"),
+								color: module.enabled ? "lime" : "red"
+							});
+						}
+					};
+				}
+				addoption(name, typee, defaultt) {
+					this.options[name] = [typee, defaultt, name, defaultt];
+					return this.options[name];
+				}
+			}
+
+			function reloadTickLoop(value) {
+				if (game.tickLoop) {
+					MSPT = value;
+					clearInterval(game.tickLoop);
+					game.tickLoop = setInterval(() => game.fixedUpdate(), MSPT);
+				}
+			}
+
+			/**
  * AutoClicker Module
  */
 
@@ -558,7 +605,7 @@ function block() {
 	if (swordCheck() && killaurablock[1]) {
 		if (!blocking) {
 			playerControllerMP.syncItemDump();
-			ClientSocket.sendPacket(new SPacketUseItem);
+			ClientSocket.sendPacket(new SPacketUseItem());
 			blocking = true;
 		}
 	} else blocking = false;
@@ -682,7 +729,11 @@ function getMoveDirection(moveSpeed) {
 	let moveForward = player.moveForwardDump;
 	let speed = moveStrafe * moveStrafe + moveForward * moveForward;
 	if (speed >= 1e-4) {
-		speed = Math.sqrt(speed), speed < 1 && (speed = 1), speed = 1 / speed, moveStrafe = moveStrafe * speed, moveForward = moveForward * speed;
+		speed = Math.sqrt(speed);
+		if (speed < 1) speed = 1;
+		speed = 1 / speed;
+		moveStrafe = moveStrafe * speed;
+		moveForward = moveForward * speed;
 		const rt = Math.cos(player.yaw) * moveSpeed;
 		const nt = -Math.sin(player.yaw) * moveSpeed;
 		return new Vector3$1(moveStrafe * rt - moveForward * nt, 0, moveForward * rt + moveStrafe * nt);
@@ -1197,74 +1248,71 @@ function injectGUI(store) {
 
     // === Styles (LiquidBounce Theme + Scrollbars) ===
     const style = document.createElement("style");
-    style.textContent = `
-      @keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}
-      .lb-panel {
-        position:absolute;
-        width:220px;
-        background:#111;
-        border:2px solid #00aaff;
-        border-radius:0;
-        font-family:"Minecraft", monospace;
-        color:white;
-        animation:guiEnter .25s ease-out;
-        z-index:100000;
-
-        /* Scrollable */
-        max-height:420px;
-        overflow-y:auto;
-        overflow-x:hidden;
-      }
-      .lb-panel::-webkit-scrollbar { width:6px; }
-      .lb-panel::-webkit-scrollbar-thumb { background:#00aaff; }
-      .lb-panel::-webkit-scrollbar-track { background:#111; }
-      .lb-header {
-        background:#0a0a0a;
-        padding:6px;
-        font-weight:bold;
-        cursor:move;
-        user-select:none;
-        text-align:center;
-        border-bottom:1px solid #00aaff;
-      }
-      .lb-module {
-        padding:4px 8px;
-        cursor:pointer;
-        transition:background .15s;
-        border-bottom:1px solid #222;
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-      }
-      .lb-module:hover { background:#222; }
-      .lb-module.enabled { background:#003366; color:#00aaff; }
-      .lb-module.enabled:hover { background:#004488; }
-      .lb-bind { font-size:10px; color:#666; }
-      .lb-settings {
-        margin-left:8px;
-        padding:2px 6px;
-        background:#333;
-        border:1px solid #555;
-        font-size:10px;
-        cursor:pointer;
-      }
-      .lb-settings:hover { background:#444; }
-      .lb-option {
-        padding:3px 12px;
-        background:#1a1a1a;
-        border-bottom:1px solid #333;
-        font-size:11px;
-      }
-      .lb-option input {
-        background:#333;
-        border:1px solid #555;
-        color:white;
-        padding:2px 4px;
-        width:60px;
-        margin-left:8px;
-      }
-      .lb-option input[type="checkbox"] { width:auto; }
-    `;
+    style.textContent = 
+      "@keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}" +
+      ".lb-panel {" +
+        "position:absolute;" +
+        "width:220px;" +
+        "background:#111;" +
+        "border:2px solid #00aaff;" +
+        "border-radius:0;" +
+        "font-family:monospace;" +
+        "color:white;" +
+        "animation:guiEnter .25s ease-out;" +
+        "z-index:100000;" +
+        "max-height:420px;" +
+        "overflow-y:auto;" +
+        "overflow-x:hidden;" +
+      "}" +
+      ".lb-panel::-webkit-scrollbar { width:6px; }" +
+      ".lb-panel::-webkit-scrollbar-thumb { background:#00aaff; }" +
+      ".lb-panel::-webkit-scrollbar-track { background:#111; }" +
+      ".lb-header {" +
+        "background:#0a0a0a;" +
+        "padding:6px;" +
+        "font-weight:bold;" +
+        "cursor:move;" +
+        "user-select:none;" +
+        "text-align:center;" +
+        "border-bottom:1px solid #00aaff;" +
+      "}" +
+      ".lb-module {" +
+        "padding:4px 8px;" +
+        "cursor:pointer;" +
+        "transition:background .15s;" +
+        "border-bottom:1px solid #222;" +
+        "display:flex;" +
+        "justify-content:space-between;" +
+        "align-items:center;" +
+      "}" +
+      ".lb-module:hover { background:#222; }" +
+      ".lb-module.enabled { background:#003366; color:#00aaff; }" +
+      ".lb-module.enabled:hover { background:#004488; }" +
+      ".lb-bind { font-size:10px; color:#666; }" +
+      ".lb-settings {" +
+        "margin-left:8px;" +
+        "padding:2px 6px;" +
+        "background:#333;" +
+        "border:1px solid #555;" +
+        "font-size:10px;" +
+        "cursor:pointer;" +
+      "}" +
+      ".lb-settings:hover { background:#444; }" +
+      ".lb-option {" +
+        "padding:3px 12px;" +
+        "background:#1a1a1a;" +
+        "border-bottom:1px solid #333;" +
+        "font-size:11px;" +
+      "}" +
+      ".lb-option input {" +
+        "background:#333;" +
+        "border:1px solid #555;" +
+        "color:white;" +
+        "padding:2px 4px;" +
+        "width:60px;" +
+        "margin-left:8px;" +
+      "}" +
+      ".lb-option input[type='checkbox'] { width:auto; }";
     document.head.appendChild(style);
 
     let panels = {};
@@ -1281,7 +1329,7 @@ function injectGUI(store) {
 
       const header = document.createElement("div");
       header.className = "lb-header";
-      header.textContent = `${catIcons[category]} ${category}`;
+      header.textContent = catIcons[category] + " " + category;
       panel.appendChild(header);
 
       // Make draggable
@@ -1300,7 +1348,7 @@ function injectGUI(store) {
         if (!module) return;
 
         const moduleDiv = document.createElement("div");
-        moduleDiv.className = `lb-module ${module.enabled ? "enabled" : ""}`;
+        moduleDiv.className = "lb-module " + (module.enabled ? "enabled" : "");
 
         const nameSpan = document.createElement("span");
         nameSpan.textContent = module.name;
@@ -1313,7 +1361,7 @@ function injectGUI(store) {
         if (module.bind) {
           const bindSpan = document.createElement("span");
           bindSpan.className = "lb-bind";
-          bindSpan.textContent = `[${module.bind}]`;
+          bindSpan.textContent = "[" + module.bind + "]";
           rightSide.appendChild(bindSpan);
         }
 
@@ -1332,7 +1380,7 @@ function injectGUI(store) {
 
         moduleDiv.addEventListener("click", () => {
           module.toggle();
-          moduleDiv.className = `lb-module ${module.enabled ? "enabled" : ""}`;
+          moduleDiv.className = "lb-module " + (module.enabled ? "enabled" : "");
         });
 
         panel.appendChild(moduleDiv);
@@ -1543,7 +1591,9 @@ const AutoFunnyChat = new Module("AutoFunnyChat", function(callback) {
     if (!callback) {
         delete tickLoop["AutoFunnyChat"];
         if (window.__autoFunnyKillMsgListener) {
-            ClientSocket.off && ClientSocket.off("CPacketMessage", window.__autoFunnyKillMsgListener);
+            if (ClientSocket.off) {
+                ClientSocket.off("CPacketMessage", window.__autoFunnyKillMsgListener);
+            }
             window.__autoFunnyKillMsgListener = undefined;
         }
         return;
@@ -1851,7 +1901,7 @@ const scaffold = new Module("DevScaffold", function(callback) {
 
                         const placePosition = new BlockPos(placeX, placeY, placeZ);
 
-                        function randomFaceOffset(face) {
+                        const randomFaceOffset = function(face) {
                             const rand = () => 0.1 + Math.random() * 0.8;
                             if (face.getAxis() === "Y") {
                                 return {
@@ -1951,5 +2001,72 @@ timervalue = timer.addoption("Value", Number, 1.2);
 
 
 
+			
+			globalThis.${storeName}.modules = modules;
+			globalThis.${storeName}.profile = "default";
+		})();
+	`);
+
+	async function saveVapeConfig(profile) {
+		if (!loadedConfig) return;
+		let saveList = {};
+		for(const [name, module] of Object.entries(unsafeWindow.globalThis[storeName].modules)) {
+			saveList[name] = {enabled: module.enabled, bind: module.bind, options: {}};
+			for(const [option, setting] of Object.entries(module.options)) {
+				saveList[name].options[option] = setting[1];
+			}
+		}
+		GM_setValue("vapeConfig" + (profile ?? unsafeWindow.globalThis[storeName].profile), JSON.stringify(saveList));
+		GM_setValue("mainVapeConfig", JSON.stringify({profile: unsafeWindow.globalThis[storeName].profile}));
+	}
+
+	async function loadVapeConfig(switched) {
+		loadedConfig = false;
+		const loadedMain = JSON.parse(await GM_getValue("mainVapeConfig", "{}")) ?? {profile: "default"};
+		unsafeWindow.globalThis[storeName].profile = switched ?? loadedMain.profile;
+		const loaded = JSON.parse(await GM_getValue("vapeConfig" + unsafeWindow.globalThis[storeName].profile, "{}"));
+		for(const [name, module] of Object.entries(unsafeWindow.globalThis[storeName].modules)) {
+			if (loaded[name]) {
+				if (loaded[name].enabled) module.toggle();
+				module.setbind(loaded[name].bind ?? "");
+				for(const [option, setting] of Object.entries(loaded[name].options ?? {})) {
+					if (module.options[option]) {
+						module.options[option][1] = setting;
+					}
+				}
+			}
+		}
+		loadedConfig = true;
+	}
+
+	async function exportVapeConfig() {
+		navigator.clipboard.writeText(await GM_getValue("vapeConfig" + unsafeWindow.globalThis[storeName].profile, "{}"));
+	}
+
+	async function importVapeConfig() {
+		const arg = await navigator.clipboard.readText();
+		if (!arg) return;
+		GM_setValue("vapeConfig" + unsafeWindow.globalThis[storeName].profile, arg);
+		loadVapeConfig();
+	}
+
+	let loadedConfig = false;
+	if (typeof GM_getValue !== "undefined") {
+		document.addEventListener("DOMContentLoaded", function() {
+			setTimeout(function() {
+				if (game && game.world) {
+					console.log("Vape config loaded!");
+				}
+			}, 10);
+		});
+		unsafeWindow.globalThis[storeName].saveVapeConfig = saveVapeConfig;
+		unsafeWindow.globalThis[storeName].loadVapeConfig = loadVapeConfig;
+		unsafeWindow.globalThis[storeName].exportVapeConfig = exportVapeConfig;
+		unsafeWindow.globalThis[storeName].importVapeConfig = importVapeConfig;
+		loadVapeConfig();
+		setInterval(async function() {
+			saveVapeConfig();
+		}, 10000);
+	}
 	
 })();

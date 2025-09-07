@@ -69,7 +69,9 @@ const AutoFunnyChat = new Module("AutoFunnyChat", function(callback) {
     if (!callback) {
         delete tickLoop["AutoFunnyChat"];
         if (window.__autoFunnyKillMsgListener) {
-            ClientSocket.off && ClientSocket.off("CPacketMessage", window.__autoFunnyKillMsgListener);
+            if (ClientSocket.off) {
+                ClientSocket.off("CPacketMessage", window.__autoFunnyKillMsgListener);
+            }
             window.__autoFunnyKillMsgListener = undefined;
         }
         return;

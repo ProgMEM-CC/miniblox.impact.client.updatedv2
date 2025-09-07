@@ -3,9 +3,9 @@ const path = require('path');
 
 const SRC_DIR = 'src';
 const MODULES_DIR = path.join(SRC_DIR, 'modules');
-const MAIN_FILE = path.join(SRC_DIR, 'vav4inject.js');
-const BUILD_DIR = '.';
-const OUTPUT_FILE = 'vav4inject.build.js';
+const MAIN_FILE = path.join(SRC_DIR, 'main.js');
+const BUILD_DIR = 'build';
+const OUTPUT_FILE = 'client.build.js';
 const MODULES_PLACEHOLDER = '//<MODULES_HERE>';
 
 async function build() {

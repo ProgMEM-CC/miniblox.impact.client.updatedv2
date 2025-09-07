@@ -117,7 +117,7 @@ const scaffold = new Module("DevScaffold", function(callback) {
 
                         const placePosition = new BlockPos(placeX, placeY, placeZ);
 
-                        function randomFaceOffset(face) {
+                        const randomFaceOffset = function(face) {
                             const rand = () => 0.1 + Math.random() * 0.8;
                             if (face.getAxis() === "Y") {
                                 return {

@@ -480,7 +480,121 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		true
 		);
 
-	// MODULES - Combat
-	//<MODULES_HERE>
+	// MAIN
+	addModification('document.addEventListener("contextmenu",m=>m.preventDefault());', /*js*/`
+		// my code lol
+		(function() {
+			class Module {
+				constructor(name, func) {
+					this.name = name;
+					this.func = func;
+					this.enabled = false;
+					this.bind = "";
+					this.options = {};
+					modules[this.name] = this;
+				}
+				toggle() {
+					this.enabled = !this.enabled;
+					enabledModules[this.name] = this.enabled;
+					this.func(this.enabled);
+				}
+				setbind(key, manual) {
+					if (this.bind != "") delete keybindCallbacks[this.bind];
+					this.bind = key;
+					if (manual) game.chat.addChat({text: "Bound " + this.name + " to " + (key == "" ? "none" : key) + "!"});
+					if (key == "") return;
+					const module = this;
+					keybindCallbacks[this.bind] = function(j) {
+						if (Game.isActive()) {
+							module.toggle();
+							game.chat.addChat({
+								text: module.name + (module.enabled ? " Enabled!" : " Disabled!"),
+								color: module.enabled ? "lime" : "red"
+							});
+						}
+					};
+				}
+				addoption(name, typee, defaultt) {
+					this.options[name] = [typee, defaultt, name, defaultt];
+					return this.options[name];
+				}
+			}
+
+			function reloadTickLoop(value) {
+				if (game.tickLoop) {
+					MSPT = value;
+					clearInterval(game.tickLoop);
+					game.tickLoop = setInterval(() => game.fixedUpdate(), MSPT);
+				}
+			}
+
+			//<MODULES_HERE>
+			
+			globalThis.${storeName}.modules = modules;
+			globalThis.${storeName}.profile = "default";
+		})();
+	`);
+
+	async function saveVapeConfig(profile) {
+		if (!loadedConfig) return;
+		let saveList = {};
+		for(const [name, module] of Object.entries(unsafeWindow.globalThis[storeName].modules)) {
+			saveList[name] = {enabled: module.enabled, bind: module.bind, options: {}};
+			for(const [option, setting] of Object.entries(module.options)) {
+				saveList[name].options[option] = setting[1];
+			}
+		}
+		GM_setValue("vapeConfig" + (profile ?? unsafeWindow.globalThis[storeName].profile), JSON.stringify(saveList));
+		GM_setValue("mainVapeConfig", JSON.stringify({profile: unsafeWindow.globalThis[storeName].profile}));
+	}
+
+	async function loadVapeConfig(switched) {
+		loadedConfig = false;
+		const loadedMain = JSON.parse(await GM_getValue("mainVapeConfig", "{}")) ?? {profile: "default"};
+		unsafeWindow.globalThis[storeName].profile = switched ?? loadedMain.profile;
+		const loaded = JSON.parse(await GM_getValue("vapeConfig" + unsafeWindow.globalThis[storeName].profile, "{}"));
+		for(const [name, module] of Object.entries(unsafeWindow.globalThis[storeName].modules)) {
+			if (loaded[name]) {
+				if (loaded[name].enabled) module.toggle();
+				module.setbind(loaded[name].bind ?? "");
+				for(const [option, setting] of Object.entries(loaded[name].options ?? {})) {
+					if (module.options[option]) {
+						module.options[option][1] = setting;
+					}
+				}
+			}
+		}
+		loadedConfig = true;
+	}
+
+	async function exportVapeConfig() {
+		navigator.clipboard.writeText(await GM_getValue("vapeConfig" + unsafeWindow.globalThis[storeName].profile, "{}"));
+	}
+
+	async function importVapeConfig() {
+		const arg = await navigator.clipboard.readText();
+		if (!arg) return;
+		GM_setValue("vapeConfig" + unsafeWindow.globalThis[storeName].profile, arg);
+		loadVapeConfig();
+	}
+
+	let loadedConfig = false;
+	if (typeof GM_getValue !== "undefined") {
+		document.addEventListener("DOMContentLoaded", function() {
+			setTimeout(function() {
+				if (game && game.world) {
+					console.log("Vape config loaded!");
+				}
+			}, 10);
+		});
+		unsafeWindow.globalThis[storeName].saveVapeConfig = saveVapeConfig;
+		unsafeWindow.globalThis[storeName].loadVapeConfig = loadVapeConfig;
+		unsafeWindow.globalThis[storeName].exportVapeConfig = exportVapeConfig;
+		unsafeWindow.globalThis[storeName].importVapeConfig = importVapeConfig;
+		loadVapeConfig();
+		setInterval(async function() {
+			saveVapeConfig();
+		}, 10000);
+	}
 	
 })();
