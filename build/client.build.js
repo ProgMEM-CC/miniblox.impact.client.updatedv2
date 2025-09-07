@@ -2070,3 +2070,370 @@ timervalue = timer.addoption("Value", Number, 1.2);
 	}
 	
 })();
+
+(async function () {
+  try {
+    // Loads the Minecraft Font onto GUI
+    const fontLink = document.createElement("link");
+    fontLink.href = "https://fonts.cdnfonts.com/css/minecraft-4";
+    fontLink.rel = "stylesheet";
+    document.head.appendChild(fontLink);
+
+    // Wait for Modules!
+    await new Promise((resolve) => {
+      const loop = setInterval(() => {
+        if (unsafeWindow?.globalThis?.[storeName]?.modules) {
+          clearInterval(loop);
+          resolve();
+        }
+      }, 20);
+    });
+
+    injectGUI(unsafeWindow.globalThis[storeName]);
+  } catch (err) {
+    console.error("[ClickGUI] Init failed:", err);
+  }
+
+  function injectGUI(store) {
+    const categories = {
+      Combat: ["autoclicker", "killaura", "velocity", "wtap"],
+      Movement: [
+        "scaffold","jesus","phase","nofall","sprint","keepsprint","step",
+        "speed","fly","noslowdown","spiderclimb","jetpack"
+      ],
+      "Player / Render": [
+        "invcleaner","invwalk","autoarmor","ghostjoin",
+        "playeresp","nametags+","textgui","clickgui"
+      ],
+      World: ["fastbreak","breaker","autocraft","cheststeal","timer"],
+      Utility: [
+        "autorespawn","autorejoin","autoqueue",
+        "autovote","filterbypass","anticheat",
+        "autofunnychat","musicfix","auto-funnychat","music-fix"
+      ]
+    };
+
+    const catIcons = {
+      Combat: "⚔️",
+      Movement: "🏃",
+      "Player / Render": "🧑👁️",
+      World: "🌍",
+      Utility: "🛠️"
+    };
+
+    // === Notification System ===
+    const notifWrap = document.createElement("div");
+    notifWrap.className = "notif-wrap";
+    document.body.appendChild(notifWrap);
+
+    function showNotif(msg, dur = 3000) {
+      const n = document.createElement("div");
+      n.className = "notif";
+      n.textContent = msg;
+      notifWrap.appendChild(n);
+      setTimeout(() => (n.style.transform = "translateX(0)"), 30);
+      setTimeout(() => {
+        n.style.opacity = "0";
+        n.style.transform = "translateX(120%)";
+      }, dur);
+      setTimeout(() => n.remove(), dur + 400);
+    }
+
+    // === Styles (LiquidBounce Theme + Scrollbars) ===
+    const style = document.createElement("style");
+    style.textContent = 
+      "@keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}" +
+      ".notif-wrap {" +
+        "position:fixed;" +
+        "top:10px;" +
+        "right:10px;" +
+        "z-index:100002;" +
+        "pointer-events:none;" +
+      "}" +
+      ".notif {" +
+        "background:#111;" +
+        "border:2px solid #00aaff;" +
+        "color:white;" +
+        "padding:8px 12px;" +
+        "margin-bottom:5px;" +
+        "font-family:monospace;" +
+        "font-size:12px;" +
+        "transform:translateX(120%);" +
+        "transition:all 0.3s ease;" +
+        "opacity:1;" +
+      "}" +
+      ".lb-panel {" +
+        "position:absolute;" +
+        "width:220px;" +
+        "background:#111;" +
+        "border:2px solid #00aaff;" +
+        "border-radius:0;" +
+        "font-family:monospace;" +
+        "color:white;" +
+        "animation:guiEnter .25s ease-out;" +
+        "z-index:100000;" +
+        "max-height:420px;" +
+        "overflow-y:auto;" +
+        "overflow-x:hidden;" +
+      "}" +
+      ".lb-panel::-webkit-scrollbar { width:6px; }" +
+      ".lb-panel::-webkit-scrollbar-thumb { background:#00aaff; }" +
+      ".lb-panel::-webkit-scrollbar-track { background:#111; }" +
+      ".lb-header {" +
+        "background:#0a0a0a;" +
+        "padding:6px;" +
+        "font-weight:bold;" +
+        "cursor:move;" +
+        "user-select:none;" +
+        "text-align:center;" +
+        "border-bottom:1px solid #00aaff;" +
+      "}" +
+      ".lb-module {" +
+        "padding:4px 8px;" +
+        "cursor:pointer;" +
+        "transition:background .15s;" +
+        "border-bottom:1px solid #222;" +
+        "display:flex;" +
+        "justify-content:space-between;" +
+        "align-items:center;" +
+      "}" +
+      ".lb-module:hover { background:#222; }" +
+      ".lb-module.enabled { background:#003366; color:#00aaff; }" +
+      ".lb-module.enabled:hover { background:#004488; }" +
+      ".lb-bind { font-size:10px; color:#666; }" +
+      ".lb-settings {" +
+        "margin-left:8px;" +
+        "padding:2px 6px;" +
+        "background:#333;" +
+        "border:1px solid #555;" +
+        "font-size:10px;" +
+        "cursor:pointer;" +
+      "}" +
+      ".lb-settings:hover { background:#444; }" +
+      ".lb-option {" +
+        "padding:3px 12px;" +
+        "background:#1a1a1a;" +
+        "border-bottom:1px solid #333;" +
+        "font-size:11px;" +
+      "}" +
+      ".lb-option input {" +
+        "background:#333;" +
+        "border:1px solid #555;" +
+        "color:white;" +
+        "padding:2px 4px;" +
+        "width:60px;" +
+        "margin-left:8px;" +
+      "}" +
+      ".lb-option input[type='checkbox'] { width:auto; }" +
+      ".lb-searchwrap {" +
+        "position:fixed;" +
+        "top:10px;" +
+        "right:10px;" +
+        "z-index:100001;" +
+      "}" +
+      ".lb-search {" +
+        "background:#111;" +
+        "border:2px solid #00aaff;" +
+        "color:white;" +
+        "padding:6px;" +
+        "font-family:monospace;" +
+        "outline:none;" +
+      "}";
+    document.head.appendChild(style);
+
+    let panels = {};
+    let dragData = null;
+
+    // === Create Panel ===
+    function createPanel(category, x = 50, y = 50) {
+      if (panels[category]) return panels[category];
+
+      const panel = document.createElement("div");
+      panel.className = "lb-panel";
+      panel.style.left = x + "px";
+      panel.style.top = y + "px";
+
+      const header = document.createElement("div");
+      header.className = "lb-header";
+      header.textContent = catIcons[category] + " " + category;
+      panel.appendChild(header);
+
+      // Make draggable
+      header.addEventListener("mousedown", (e) => {
+        dragData = {
+          panel,
+          offsetX: e.clientX - panel.offsetLeft,
+          offsetY: e.clientY - panel.offsetTop
+        };
+      });
+
+      // Add modules
+      const moduleNames = categories[category] || [];
+      moduleNames.forEach(modName => {
+        const module = store.modules[modName] || store.modules[modName.toLowerCase()];
+        if (!module) return;
+
+        const moduleDiv = document.createElement("div");
+        moduleDiv.className = "lb-module " + (module.enabled ? "enabled" : "");
+
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = module.name;
+        moduleDiv.appendChild(nameSpan);
+
+        const rightSide = document.createElement("div");
+        rightSide.style.display = "flex";
+        rightSide.style.alignItems = "center";
+
+        if (module.bind) {
+          const bindSpan = document.createElement("span");
+          bindSpan.className = "lb-bind";
+          bindSpan.textContent = "[" + module.bind + "]";
+          rightSide.appendChild(bindSpan);
+        }
+
+        if (Object.keys(module.options).length > 0) {
+          const settingsBtn = document.createElement("span");
+          settingsBtn.className = "lb-settings";
+          settingsBtn.textContent = "⚙";
+          settingsBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleSettings(moduleDiv, module);
+          });
+          rightSide.appendChild(settingsBtn);
+        }
+
+        moduleDiv.appendChild(rightSide);
+
+        moduleDiv.addEventListener("click", () => {
+          module.toggle();
+          moduleDiv.className = "lb-module " + (module.enabled ? "enabled" : "");
+        });
+
+        panel.appendChild(moduleDiv);
+      });
+
+      document.body.appendChild(panel);
+      panels[category] = panel;
+      return panel;
+    }
+
+    // === Settings Toggle ===
+    function toggleSettings(moduleDiv, module) {
+      const existing = moduleDiv.querySelector(".lb-option");
+      if (existing) {
+        // Remove all options
+        let next = moduleDiv.nextSibling;
+        while (next && next.classList?.contains("lb-option")) {
+          const toRemove = next;
+          next = next.nextSibling;
+          toRemove.remove();
+        }
+        return;
+      }
+
+      // Add options
+      Object.entries(module.options).forEach(([name, option]) => {
+        const optionDiv = document.createElement("div");
+        optionDiv.className = "lb-option";
+        optionDiv.innerHTML = name + ": ";
+
+        if (option[0] === Boolean) {
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.checked = option[1];
+          checkbox.addEventListener("change", () => {
+            option[1] = checkbox.checked;
+          });
+          optionDiv.appendChild(checkbox);
+        } else {
+          const input = document.createElement("input");
+          input.type = option[0] === Number ? "number" : "text";
+          input.value = option[1];
+          input.addEventListener("input", () => {
+            option[1] = option[0] === Number ? parseFloat(input.value) || 0 : input.value;
+          });
+          optionDiv.appendChild(input);
+        }
+
+        moduleDiv.parentNode.insertBefore(optionDiv, moduleDiv.nextSibling);
+      });
+    }
+
+    // === Mouse Events ===
+    document.addEventListener("mousemove", (e) => {
+      if (dragData) {
+        dragData.panel.style.left = (e.clientX - dragData.offsetX) + "px";
+        dragData.panel.style.top = (e.clientY - dragData.offsetY) + "px";
+      }
+    });
+
+    document.addEventListener("mouseup", () => {
+      if (dragData) {
+        const category = Object.keys(panels).find(key => panels[key] === dragData.panel);
+        if (category) {
+          localStorage.setItem("lb-pos-" + category, JSON.stringify({
+            x: parseInt(dragData.panel.style.left),
+            y: parseInt(dragData.panel.style.top)
+          }));
+        }
+      }
+      dragData = null;
+    });
+
+    // === Create Panels ===
+    Object.keys(categories).forEach((category, index) => {
+      const saved = JSON.parse(localStorage.getItem("lb-pos-" + category) || "{}");
+      createPanel(category, saved.x || (50 + index * 240), saved.y || 50);
+    });
+
+    // === Reset Config ===
+    const resetConfigRow = document.createElement("div");
+    resetConfigRow.className = "lb-module";
+    resetConfigRow.style.justifyContent = "flex-start";
+    resetConfigRow.style.paddingLeft = "6px";
+    resetConfigRow.style.fontWeight = "bold";
+    resetConfigRow.style.color = "red";
+    resetConfigRow.textContent = "⛔ Reset Config?";
+    resetConfigRow.addEventListener("click", () => {
+      localStorage.removeItem("lb-mods");
+      Object.keys(localStorage)
+        .filter((k) => k.startsWith("lb-pos-"))
+        .forEach((k) => localStorage.removeItem(k));
+      alert("Config has been reset!");
+      location.reload();
+    });
+    panels["Utility"].appendChild(resetConfigRow);
+
+    // === Global Search ===
+    const searchWrap = document.createElement("div");
+    searchWrap.className = "lb-searchwrap";
+    searchWrap.innerHTML = "<input type=\"text\" class=\"lb-search\" placeholder=\"Search..\">";
+    document.body.appendChild(searchWrap);
+
+    const searchBox = searchWrap.querySelector("input");
+    searchBox.addEventListener("input", () => {
+      const term = searchBox.value.toLowerCase();
+      document.querySelectorAll(".lb-module").forEach((row) => {
+        const name = row.firstChild.textContent.toLowerCase();
+        row.style.display = name.includes(term) ? "flex" : "none";
+      });
+    });
+
+    // === Hide on load ===
+    Object.values(panels).forEach((p) => (p.style.display = "none"));
+    searchWrap.style.display = "none";
+
+    // === Startup notification ===
+    setTimeout(() => { showNotif("[ClickGUI] Press '\\\\' to open GUI", 4000); }, 500);
+
+    // === Toggle the LB GUI ===
+    let visible = false;
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Backslash") {
+        visible = !visible;
+        Object.values(panels).forEach((p)=> (p.style.display=visible?"block":"none"));
+        searchWrap.style.display = visible ? "block":"none";
+      }
+    });
+  }
+})();
