@@ -250,15 +250,17 @@ function modifyCode(text) {
 		}
 
 		if (h.text && h.text.indexOf("won the game") != -1 && h.id == undefined && enabledModules["AutoQueue"]) {
-			game.requestQueue();
+			if (typeof game !== "undefined" && game.requestQueue) game.requestQueue();
 		}
 	`);
 	addModification('ClientSocket.on("CPacketUpdateStatus",h=>{', `
 		if (h.rank && h.rank != "" && RANK.LEVEL[$.rank].permLevel > 2) {
-			game.chat.addChat({
-				text: "STAFF DETECTED : " + h.rank + "\\n".repeat(10),
-				color: "red"
-			});
+			if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
+				game.chat.addChat({
+					text: "STAFF DETECTED : " + h.rank + "\\n".repeat(10),
+					color: "red"
+				});
+			}
 		}
 	`);
 
@@ -319,7 +321,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	addModification('u&&player.mode.isCreative()', `||enabledModules["FastBreak"]`);
 
 	// INVWALK
-	addModification('keyPressed(m)&&Game.isActive(!1)', 'keyPressed(m)&&(Game.isActive(!1)||enabledModules["InvWalk"]&&!game.chat.showInput)', true);
+	addModification('keyPressed(m)&&Game.isActive(!1)', 'keyPressed(m)&&(Game.isActive(!1)||enabledModules["InvWalk"]&&!(typeof game !== "undefined" && game.chat && game.chat.showInput))', true);
 
 	// PHASE
 	addModification('calculateXOffset(A,this.getEntityBoundingBox(),g.x)', 'enabledModules["Phase"] ? g.x : calculateXOffset(A,this.getEntityBoundingBox(),g.x)', true);
@@ -389,10 +391,12 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					const module = args.length > 1 && getModule(args[1]);
 					if (module) {
 						module.toggle();
-						game.chat.addChat({
-							text: module.name + (module.enabled ? " Enabled!" : " Disabled!"),
-							color: module.enabled ? "lime" : "red"
-						});
+						if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
+							game.chat.addChat({
+								text: module.name + (module.enabled ? " Enabled!" : " Disabled!"),
+								color: module.enabled ? "lime" : "red"
+							});
+						}
 					}
 					else if (args[1] == "all") {
 						for(const [name, module] of Object.entries(modules)) module.toggle();
@@ -402,12 +406,16 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			case ".modules":
 				chatString = "Module List\\n";
 				for(const [name, module] of Object.entries(modules)) chatString += "\\n" + name;
-				game.chat.addChat({text: chatString});
+				if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
+					game.chat.addChat({text: chatString});
+				}
 				return this.closeInput();
 			case ".binds":
 				chatString = "Bind List\\n";
 				for(const [name, module] of Object.entries(modules)) chatString += "\\n" + name + " : " + (module.bind != "" ? module.bind : "none");
-				game.chat.addChat({text: chatString});
+				if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
+					game.chat.addChat({text: chatString});
+				}
 				return this.closeInput();
 			case ".setoption":
 			case ".reset": {
@@ -417,7 +425,9 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					if (args.length < 3) {
 						chatString = module.name + " Options";
 						for(const [name, value] of Object.entries(module.options)) chatString += "\\n" + name + " : " + value[0].name + " : " + value[1];
-						game.chat.addChat({text: chatString});
+						if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
+							game.chat.addChat({text: chatString});
+						}
 						return this.closeInput();
 					}
 
@@ -430,13 +440,17 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					// ! don't change the default value (the last option), otherwise .reset won't work properly!
 					if (reset) {
 						option[1] = option[option.length - 1];
-						game.chat.addChat({text: "Reset " + module.name + " " + option[2] + " to " + option[1]});
+						if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
+							game.chat.addChat({text: "Reset " + module.name + " " + option[2] + " to " + option[1]});
+						}
 						return this.closeInput();
 					}
 					if (option[0] == Number) option[1] = !isNaN(Number.parseFloat(args[3])) ? Number.parseFloat(args[3]) : option[1];
 					else if (option[0] == Boolean) option[1] = args[3] == "true";
 					else if (option[0] == String) option[1] = args.slice(3).join(" ");
-					game.chat.addChat({text: "Set " + module.name + " " + option[2] + " to " + option[1]});
+					if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
+						game.chat.addChat({text: "Set " + module.name + " " + option[2] + " to " + option[1]});
+					}
 				}
 				return this.closeInput();
 			}
@@ -446,20 +460,28 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					switch (args[1]) {
 						case "save":
 							globalThis.${storeName}.saveVapeConfig(args[2]);
-							game.chat.addChat({text: "Saved config " + args[2]});
+							if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
+								game.chat.addChat({text: "Saved config " + args[2]});
+							}
 							break;
 						case "load":
 							globalThis.${storeName}.saveVapeConfig();
 							globalThis.${storeName}.loadVapeConfig(args[2]);
-							game.chat.addChat({text: "Loaded config " + args[2]});
+							if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
+								game.chat.addChat({text: "Loaded config " + args[2]});
+							}
 							break;
 						case "import":
 							globalThis.${storeName}.importVapeConfig(args[2]);
-							game.chat.addChat({text: "Imported config"});
+							if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
+								game.chat.addChat({text: "Imported config"});
+							}
 							break;
 						case "export":
 							globalThis.${storeName}.exportVapeConfig();
-							game.chat.addChat({text: "Config set to clipboard!"});
+							if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
+								game.chat.addChat({text: "Config set to clipboard!"});
+							}
 							break;
 					}
 				}
@@ -501,16 +523,20 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				setbind(key, manual) {
 					if (this.bind != "") delete keybindCallbacks[this.bind];
 					this.bind = key;
-					if (manual) game.chat.addChat({text: "Bound " + this.name + " to " + (key == "" ? "none" : key) + "!"});
+					if (manual && typeof game !== "undefined" && game.chat && game.chat.addChat) {
+						game.chat.addChat({text: "Bound " + this.name + " to " + (key == "" ? "none" : key) + "!"});
+					}
 					if (key == "") return;
 					const module = this;
 					keybindCallbacks[this.bind] = function(j) {
 						if (Game.isActive()) {
 							module.toggle();
-							game.chat.addChat({
-								text: module.name + (module.enabled ? " Enabled!" : " Disabled!"),
-								color: module.enabled ? "lime" : "red"
-							});
+							if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
+								game.chat.addChat({
+									text: module.name + (module.enabled ? " Enabled!" : " Disabled!"),
+									color: module.enabled ? "lime" : "red"
+								});
+							}
 						}
 					};
 				}
@@ -521,7 +547,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			}
 
 			function reloadTickLoop(value) {
-				if (game.tickLoop) {
+				if (typeof game !== "undefined" && game.tickLoop) {
 					MSPT = value;
 					clearInterval(game.tickLoop);
 					game.tickLoop = setInterval(() => game.fixedUpdate(), MSPT);
