@@ -8,7 +8,7 @@ BEFORE USING, Read EULA.md
 
 # Changelog
 
-A working fly with desync created by RealPacket!
+A working fly/nofall with desync created by RealPacket!
 
 .toggle all command (does not work, will be fixed soon)
 
