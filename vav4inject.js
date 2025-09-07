@@ -610,15 +610,17 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				else delete tickLoop["AntiFall"];
 			});
 			// Miniblox Disabler (ported from LiquidBounce)
+let minibloxSeqNum = 0;
+
 const minibloxDisabler = new Module("MinibloxDisabler", function(callback) {
     if (callback) {
         tickLoop["MinibloxDisabler"] = function() {
-            // TODO: In Kotlin this checked "usesViaFabricPlus && isEqual1_8"
-            // For now we assume protocol OK, or you can add your own check.
-
             if (!player) return;
 
             try {
+                // Increment sequence number each tick
+                minibloxSeqNum++;
+
                 // Mimic 1.8 player input packet
                 const sideways = player.moveStrafeDump ?? 0;
                 const forward = player.moveForwardDump ?? 0;
@@ -629,13 +631,15 @@ const minibloxDisabler = new Module("MinibloxDisabler", function(callback) {
                     sideways: sideways,
                     forward: forward,
                     jumping: jumping,
-                    sneaking: sneaking
+                    sneaking: sneaking,
+                    sequenceNumber: minibloxSeqNum
                 }));
             } catch (err) {
                 game.chat.addChat({
                     text: "[DisablerMiniblox] Error: " + err.message,
                     color: "red"
                 });
+				console.error(err.message);
             }
         };
     } else {
