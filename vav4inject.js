@@ -106,10 +106,16 @@ function modifyCode(text) {
 		}, 0);
 	`);
 	addModification('y:this.getEntityBoundingBox().min.y,', 'y:sendY != false ? sendY : this.getEntityBoundingBox().min.y,', true);
+	addModification("const player=new ClientEntityPlayer", `
+// note: when using the desync,
+// your position will only update every 20 ticks.
+let serverPos = player.pos.clone();
+`);
 	addModification('Potions.jump.getId(),"5");', `
 		let blocking = false;
 		let sendYaw = false;
 		let sendY = false;
+        let desync = false;
 		let breakStart = Date.now();
 		let noMove = Date.now();
 
@@ -121,6 +127,24 @@ function modifyCode(text) {
 
 		let tickLoop = {};
 		let renderTickLoop = {};
+  
+  /**
+		 * clamps the given position to the given range
+		 * @param {Vector3} pos
+		 * @param {Vector3} serverPos
+		 * @param {number} range
+		 * @returns {Vector3} the clamped position
+		**/
+		function desyncMath(pos, serverPos, range) {
+			const moveVec = {x: (pos.x - serverPos.x), y: (pos.y - serverPos.y), z: (pos.z - serverPos.z)};
+			const moveMag = Math.sqrt(moveVec.x * moveVec.x + moveVec.y * moveVec.y + moveVec.z * moveVec.z);
+
+			return moveMag > range ? {
+				x: serverPos.x + ((moveVec.x / moveMag) * range),
+				y: serverPos.y + ((moveVec.y / moveMag) * range),
+				z: serverPos.z + ((moveVec.z / moveMag) * range)
+			} : pos;
+		}
 
 		let lastJoined, velocityhori, velocityvert, chatdisablermsg, textguifont, textguisize, textguishadow, attackedEntity, stepheight;
 		let attackTime = Date.now();
@@ -306,6 +330,16 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	// NOSLOWDOWN
 	addModification('updatePlayerMoveState(),this.isUsingItem()', 'updatePlayerMoveState(),(this.isUsingItem() && !enabledModules["NoSlowdown"])', true);
 	addModification('S&&!this.isUsingItem()', 'S&&!(this.isUsingItem() && !enabledModules["NoSlowdown"])', true);
+
+	 // DESYNC
+	addModification("this.inputSequenceNumber++", 'desync ? this.inputSequenceNumber : this.inputSequenceNumber++', true);
+	// addModification("new PBVector3({x:this.pos.x,y:this.pos.y,z:this.pos.z})", "desync ? inputPos : inputPos = this.pos", true);
+
+	// auto-reset the desync variable.
+	addModification("reconcileServerPosition(h){", "serverPos = h;");
+
+	// hook into reconcileServerPosition
+	// so we know our server pos
 
 	// STEP
 	addModification('p.y=this.stepHeight;', 'p.y=(enabledModules["Step"]?Math.max(stepheight[1],this.stepHeight):this.stepHeight);', true);
@@ -555,6 +589,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			const velocity = new Module("Velocity", function() {});
 			velocityhori = velocity.addoption("Horizontal", Number, 0);
 			velocityvert = velocity.addoption("Vertical", Number, 0);
+   
 			// Nofall beta?
    						let noFallExtraYBeta;
 			const NoFallBeta = new Module("NoFallBeta", function(callback) {
@@ -577,26 +612,22 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			noFallExtraYBeta = NoFallBeta.addoption("extraY", Number, .41);
 
 
-
 			// NoFall
 			new Module("NoFall", function(callback) {
-				if (callback) {
-					let ticks = 0;
-					tickLoop["NoFall"] = function() {
-        				const ray = rayTraceBlocks(player.getEyePos(), player.getEyePos().clone().setY(0), false, false, false, game.world);
-						if (player.fallDistance > 2.5 && ray) {
-							ClientSocket.sendPacket(new SPacketPlayerPosLook({pos: {x: player.pos.x, y: ray.hitVec.y, z: player.pos.z}, onGround: true}));
-							player.fallDistance = 0;
-						}
-					};
+				if (!callback) {
+					delete tickLoop["NoFall"];
+					return;
 				}
-				else delete tickLoop["NoFall"];
+				tickLoop["NoFall"] = function() {
+					if (player.motionY < -0.6 && fallDistance >= 2.5)
+						desync = true;
+				};
 			});
 
 			// WTap
 			new Module("WTap", function() {});
 
-			// AntiVoid
+			// AntiFall
 			new Module("AntiFall", function(callback) {
 				if (callback) {
 					let ticks = 0;
@@ -609,13 +640,6 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 				else delete tickLoop["AntiFall"];
 			});
-
-
-
-
-
-
-
 
 			// Killaura
 			let attackDelay = Date.now();
@@ -790,30 +814,27 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			// Fly
 			let flyvalue, flyvert, flybypass;
 			const fly = new Module("Fly", function(callback) {
-				if (callback) {
-					let ticks = 0;
-					tickLoop["Fly"] = function() {
-						ticks++;
-						const dir = getMoveDirection(flyvalue[1]);
-						player.motion.x = dir.x;
-						player.motion.z = dir.z;
-						player.motion.y = keyPressedDump("space") ? flyvert[1] : (keyPressedDump("shift") ? -flyvert[1] : 0);
-					};
-				}
-				else {
-					delete tickLoop["Fly"];
+				if (!callback) {
 					if (player) {
 						player.motion.x = Math.max(Math.min(player.motion.x, 0.3), -0.3);
 						player.motion.z = Math.max(Math.min(player.motion.z, 0.3), -0.3);
 					}
+					delete tickLoop["Fly"];
+					desync = false;
+					return;
 				}
+				desync = true;
+				tickLoop["Fly"] = function() {
+					const dir = getMoveDirection(flyvalue[1]);
+					player.motion.x = dir.x;
+					player.motion.z = dir.z;
+					player.motion.y = keyPressedDump("space") ? flyvert[1] : (keyPressedDump("shift") ? -flyvert[1] : 0);
+				};
 			});
 			flybypass = fly.addoption("Bypass", Boolean, true);
-			flyvalue = fly.addoption("Speed", Number, 2);
-			flyvert = fly.addoption("Vertical", Number, 0.7);
+			flyvalue = fly.addoption("Speed", Number, 0.19);
+			flyvert = fly.addoption("Vertical", Number, 0.3);
 			
-   
-   
    
    			let jetpackvalue, jetpackvert, jetpackUpMotion, jetpackGlide;
 			// jetpack
@@ -1394,72 +1415,42 @@ function dropSlot(index) {
     playerControllerDump.windowClickDump(windowId, -999, 0, 0, player); // drop outside
 }
 
-                        // Place this with your other module definitions inside the main function
-
 let funnyMessages = [
-    // Classic Miniblox-style funny & savage messages
-    "Sent back to the lobby—don't trip on the way out!",
-    "Was that your best? Miniblox says no.",
-    "You dropped faster than my WiFi.",
-    "Did you forget to equip skill today?",
-    "That was a tutorial death, right?",
-    "Tip: Dodging is allowed.",
-    "Respawn and try again (maybe with both hands).",
-    "Out-clicked, out-played, outta here.",
-    "Next time, bring a helmet. And armor. And hope.",
-    "Imagine losing in Miniblox... tragic.",
-    "Your blocks? My blocks now.",
-    "Are you sure you're not an NPC?",
-    "Pro tip: The void is not a shortcut.",
-    "Is your keyboard upside down?",
-    "That scoreboard doesn't lie.",
-    "Miniblox called—wants its win streak back.",
-    "Did you lag, or just freeze from fear?",
-    "Was that a speedrun to the void?",
-    "GG! (It was mostly me though.)",
-    "You just got Minibloxed!",
-    // Extra savage Miniblox lines
-    "Don't blame the ping, blame the skill.",
-    "You make AFK players look cracked.",
-    "If you were any slower, you'd be a block.",
-    "That was less of a fight, more of a donation.",
-    "Did you forget which game you're playing?",
-    "Keyboard check. Mouse check. Skill... missing.",
-    "If losing was an achievement, you'd be top of the leaderboard.",
-    "You respawn more than you blink.",
-    "Hope you enjoy the respawn timer.",
-    "Maybe try winning... just once?",
-    "Did you just speedrun getting eliminated?",
-    "Miniblox tip: Winning is allowed.",
-    "You just made the highlight reel—of fails.",
-    "The only thing lower than your HP was your chance to win.",
-    "If you see this, you lost the 50/50. Badly.",
-    "That performance was sponsored by gravity.",
-    "Your only kill streak is in the practice lobby.",
-    "You bring a whole new meaning to 'easy win.'",
-    "That was faster than a Miniblox queue skip.",
-    "You just gave me free stats.",
-    // Legacy funny/mean lines
-    "Did you drop your keyboard? Because your plays are a mess.",
-    "I’ve seen bots with better aim.",
-    "Are you playing with your monitor off?",
-    "You just got outplayed by someone eating snacks IRL.",
-    "Did your mouse disconnect?",
-    "If you’re reading this, you just lost a 1v1.",
-    "Not even lag could save you.",
-    "Skill issue detected. Please reinstall.",
-    "Your respawn button must be tired.",
-    "You fight like a Miniblox villager.",
-    "Maybe try using both hands next time.",
-    "Spectator mode looks good on you.",
-    "I hope you brought a map, because you’re lost.",
-    "Knocked out like my WiFi on a stormy day.",
-    "That combo was sponsored by gravity.",
-    "I’d say GG, but that wasn’t even close.",
-    "Do you need a tutorial?",
-    "Blink if you need help.",
-    "You just got styled on.",
-    "Don’t worry, practice makes... well, you tried."
+"Prediction ACs: great at guessing wrong.",
+"Lag spikes? Blame the AC trying to play psychic.",
+"Jesus walked on water. ACs still trip over puddles.",
+"Walking on air? ACs call it a glitch. We call it precision.",
+"Prediction ACs eat packets. Too bad they choke on velocity.",
+"Gravity’s a suggestion. ACs treat it like gospel.",
+"Scaffold smoother than your AC’s excuses.",
+"Tick-perfect bridging. ACs still counting frames.",
+"Snapped into water? ACs thought you were a fish.",
+"Water-walking? ACs still learning to swim.",
+"Falling? Nah. Just descending with style while ACs panic.",
+"Patch notes say 'fixed.' Reality says 'still broken.'",
+"Bypass? No. ACs just forgot how to detect.",
+"Modules adapt. ACs react — poorly.",
+"Silent movement. Loud AC confusion.",
+"Prediction? Velocity? ACs still buffering.",
+"No permission asked. ACs weren’t invited.",
+"Every module is a flex. ACs just fold.",
+"No config needed. ACs still reading the manual.",
+"Toggle. Deliver. ACs scramble.",
+"ACs don’t detect. They guess and hope.",
+"Unleashed. ACs unleashed their incompetence.",
+"No drama. Just domination.",
+"ACs patch. We evolve.",
+"Cheating? No. Just outperforming your AC’s imagination.",
+"Toggle scaffold. Build legacy. ACs build logs no one reads.",
+"Flinch? ACs do. We don’t.",
+"Modules = superpowers. ACs = kryptonite to themselves.",
+"ACs call it daddy. We call it Tuesday.",
+"Still undetected. Still undefeated. ACs still confused.",
+"Toggle one module. Server cries. ACs sob.",
+"Patch notes scared. ACs terrified.",
+"Your client warned you. ACs didn’t listen.",
+"Smooth as silk. ACs still stuck in sandpaper mode.",
+"Stealth so clean, ACs think it's a ghost."
 ];
 
 const AutoFunnyChat = new Module("AutoFunnyChat", function(callback) {
@@ -1666,14 +1657,14 @@ const jesus = new Module("Jesus", function(callback) {
 
     injectGUI(unsafeWindow.globalThis[storeName]);
   } catch (err) {
-    console.error("[ClickGUI] Init failed:", err);          // Checks for errors
+    console.error("[ClickGUI] Init failed:", err);          // Checks for any errors that could break the GUI
   }
 
   function injectGUI(store) {
-    const categories = {
+    const categories = {                                                             // If there is any module i have missed pls add it to the categories
       Combat: ["autoclicker", "killaura", "velocity", "wtap"],
       Movement: [
-        "scaffold","jesus","phase","nofall","sprint","keepsprint","step",
+        "scaffold","jesus","phase","nofall","antifall","sprint","keepsprint","step",
         "speed","fly","noslowdown","spiderclimb","jetpack"
       ],
       "Player / Render": [
@@ -1682,7 +1673,7 @@ const jesus = new Module("Jesus", function(callback) {
       ],
       World: ["fastbreak","breaker","autocraft","cheststeal","timer"],
       Utility: [
-        "autorespawn","autorejoin","autoqueue",
+        "autorespawn","autorejoin","autoqueue",                         
         "autovote","filterbypass","anticheat",
         "autofunnychat","musicfix","auto-funnychat","music-fix"         // AutoFunnyChat doesnt enable properly but it works perfectly fine (disable) dont worry
       ]
