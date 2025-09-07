@@ -2008,7 +2008,7 @@ timervalue = timer.addoption("Value", Number, 1.2);
 	`);
 
 	async function saveVapeConfig(profile) {
-		if (!loadedConfig) return;
+		if (!loadedConfig || !unsafeWindow.globalThis[storeName] || !unsafeWindow.globalThis[storeName].modules) return;
 		let saveList = {};
 		for(const [name, module] of Object.entries(unsafeWindow.globalThis[storeName].modules)) {
 			saveList[name] = {enabled: module.enabled, bind: module.bind, options: {}};
@@ -2021,6 +2021,7 @@ timervalue = timer.addoption("Value", Number, 1.2);
 	}
 
 	async function loadVapeConfig(switched) {
+		if (!unsafeWindow.globalThis[storeName] || !unsafeWindow.globalThis[storeName].modules) return;
 		loadedConfig = false;
 		const loadedMain = JSON.parse(await GM_getValue("mainVapeConfig", "{}")) ?? {profile: "default"};
 		unsafeWindow.globalThis[storeName].profile = switched ?? loadedMain.profile;
@@ -2040,10 +2041,12 @@ timervalue = timer.addoption("Value", Number, 1.2);
 	}
 
 	async function exportVapeConfig() {
+		if (!unsafeWindow.globalThis[storeName]) return;
 		navigator.clipboard.writeText(await GM_getValue("vapeConfig" + unsafeWindow.globalThis[storeName].profile, "{}"));
 	}
 
 	async function importVapeConfig() {
+		if (!unsafeWindow.globalThis[storeName]) return;
 		const arg = await navigator.clipboard.readText();
 		if (!arg) return;
 		GM_setValue("vapeConfig" + unsafeWindow.globalThis[storeName].profile, arg);
@@ -2054,18 +2057,32 @@ timervalue = timer.addoption("Value", Number, 1.2);
 	if (typeof GM_getValue !== "undefined") {
 		document.addEventListener("DOMContentLoaded", function() {
 			setTimeout(function() {
-				if (game && game.world) {
-					console.log("Vape config loaded!");
-				}
+				console.log("Vape config system initialized!");
 			}, 10);
 		});
+		
+		// Initialize globalThis store if it doesn't exist
+		if (!unsafeWindow.globalThis[storeName]) {
+			unsafeWindow.globalThis[storeName] = {};
+		}
+		
 		unsafeWindow.globalThis[storeName].saveVapeConfig = saveVapeConfig;
 		unsafeWindow.globalThis[storeName].loadVapeConfig = loadVapeConfig;
 		unsafeWindow.globalThis[storeName].exportVapeConfig = exportVapeConfig;
 		unsafeWindow.globalThis[storeName].importVapeConfig = importVapeConfig;
-		loadVapeConfig();
+		
+		// Wait for modules to be available before loading config
+		const configLoop = setInterval(() => {
+			if (unsafeWindow.globalThis[storeName].modules) {
+				clearInterval(configLoop);
+				loadVapeConfig();
+			}
+		}, 100);
+		
 		setInterval(async function() {
-			saveVapeConfig();
+			if (unsafeWindow.globalThis[storeName].modules) {
+				saveVapeConfig();
+			}
 		}, 10000);
 	}
 	
