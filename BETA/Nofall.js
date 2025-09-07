@@ -1,19 +1,19 @@
-			let noFallExtraY;
-			const NoFall = new Module("NoFall", function(callback) {
+			let noFallExtraYBeta;
+			const NoFallBeta = new Module("NoFallBeta", function(callback) {
 				if (callback) {
-					tickLoop["NoFall"] = function() {
+					tickLoop["NoFallBeta"] = function() {
 						// check if the player is falling and above a block
 						// player.fallDistance = 0;
 						const boundingBox = player.getEntityBoundingBox();
 						const clone = boundingBox.min.clone();
-						clone.y -= noFallExtraY[1];
+						clone.y -= noFallExtraYBeta[1];
 						const block = rayTraceBlocks(boundingBox.min, clone, true, false, false, game.world);
 						if (block) {
-							sendY = player.pos.y + noFallExtraY[1];
+							sendY = player.pos.y + noFallExtraYBeta[1];
 						}
 					}
 				} else {
-					delete tickLoop["NoFall"];
+					delete tickLoop["NoFallBeta"];
 				}
 			});
-			noFallExtraY = NoFall.addoption("extraY", Number, .41);
+			noFallExtraYBeta = NoFallBeta.addoption("extraY", Number, .41);
