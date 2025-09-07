@@ -48,6 +48,6 @@ Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 
 - Command Block modification (in survival mode. Again this could be possible - MM64)
 
-- A Working FLY or Airjump (this can be possible if RealPacket does the reset to the desync. this is also for nofall. see this https://codeberg.org/RealPacket/VapeForMiniblox/pulls/7
+- A Working FLY or Airjump (ADDED DESYNC - RealPacket made this) (i will add this to here now - MM64)
 
 - Disabler for movement etc
