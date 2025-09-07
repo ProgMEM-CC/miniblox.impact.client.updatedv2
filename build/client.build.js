@@ -520,7 +520,20 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 			}
 
-			/**
+			
+// Global variables injected for module compatibility
+// These variables are defined in the main script context and made available to modules
+var game, player, controls, hud3D, ClientSocket, playerControllerMP, playerControllerDump;
+var keyPressedDump, moveStrafeDump, moveForwardDump, entitiesDump, isInvisibleDump, attackDump;
+var lastReportedYawDump, windowClickDump, damageReduceAmountDump, boxGeometryDump, syncItemDump;
+var Vector3$1, BlockPos, EnumFacing, Materials, Items, Enchantments;
+var EntityPlayer, ItemSword, ItemArmor, ItemBlock, ItemTool, ItemAppleGold;
+var SPacketPlayerPosLook, SPacketMessage, SPacketClick, SPacketUseEntity, SPacketUseItem, SPacketPlayerAction, SPacketRespawn$1, SPacketCraftItem;
+var PBVector3, PBAction, ContainerChest, Mesh;
+var rayTraceBlocks, canCraftItem, craftItem, recipes, degToRad;
+var MSPT;
+
+/**
  * AutoClicker Module
  */
 
@@ -616,6 +629,7 @@ function unblock() {
 }
 
 function getTeam(entity) {
+	if (typeof game === 'undefined' || !game.playerList) return;
 	const entry = game.playerList.playerDataMap.get(entity.id);
 	if (!entry) return;
 	return entry.color != "white" ? entry.color : undefined;
@@ -1977,17 +1991,18 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
  * Timer Module
  */
 
-function reloadTickLoop(value) {
-	if (game.tickLoop) {
-		MSPT = value;
-		clearInterval(game.tickLoop);
-		game.tickLoop = setInterval(() => game.fixedUpdate(), MSPT);
-	}
-}
-
+// Timer module variables
 let timervalue;
+
+// Timer module implementation
 const timer = new Module("Timer", function(callback) {
-	reloadTickLoop(callback ? 50 / timervalue[1] : 50);
+	// reloadTickLoop function moved inline to access runtime variables
+	const value = callback ? 50 / timervalue[1] : 50;
+	if (typeof game !== 'undefined' && game.tickLoop) {
+		if (typeof MSPT !== 'undefined') MSPT = value;
+		clearInterval(game.tickLoop);
+		game.tickLoop = setInterval(() => game.fixedUpdate(), value);
+	}
 });
 timervalue = timer.addoption("Value", Number, 1.2);
 

@@ -77,6 +77,7 @@ function unblock() {
 }
 
 function getTeam(entity) {
+	if (typeof game === 'undefined' || !game.playerList) return;
 	const entry = game.playerList.playerDataMap.get(entity.id);
 	if (!entry) return;
 	return entry.color != "white" ? entry.color : undefined;

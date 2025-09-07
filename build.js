@@ -12,9 +12,23 @@ async function build() {
     try {
         console.log('Starting build...');
 
-        // 1. Read and combine all module files recursively
-        let combinedModulesCode = '';
+        // 1. Add global variable declarations for modules
+        let combinedModulesCode = `
+// Global variables injected for module compatibility
+// These variables are defined in the main script context and made available to modules
+var game, player, controls, hud3D, ClientSocket, playerControllerMP, playerControllerDump;
+var keyPressedDump, moveStrafeDump, moveForwardDump, entitiesDump, isInvisibleDump, attackDump;
+var lastReportedYawDump, windowClickDump, damageReduceAmountDump, boxGeometryDump, syncItemDump;
+var Vector3$1, BlockPos, EnumFacing, Materials, Items, Enchantments;
+var EntityPlayer, ItemSword, ItemArmor, ItemBlock, ItemTool, ItemAppleGold;
+var SPacketPlayerPosLook, SPacketMessage, SPacketClick, SPacketUseEntity, SPacketUseItem, SPacketPlayerAction, SPacketRespawn$1, SPacketCraftItem;
+var PBVector3, PBAction, ContainerChest, Mesh;
+var rayTraceBlocks, canCraftItem, craftItem, recipes, degToRad;
+var MSPT;
+
+`;
         
+        // 2. Read and combine all module files recursively
         async function readModulesRecursively(dir) {
             const items = await fs.readdir(dir, { withFileTypes: true });
             
