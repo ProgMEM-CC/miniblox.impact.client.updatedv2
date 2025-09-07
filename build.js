@@ -43,7 +43,10 @@ async function build() {
         console.log(`Replacing placeholder...`);
         const finalCode = mainCode.replace(MODULES_PLACEHOLDER, combinedModulesCode);
 
-        // 4. Write the final output
+        // 4. Ensure build directory exists
+        await fs.mkdir(BUILD_DIR, { recursive: true });
+
+        // 5. Write the final output
         const outputPath = path.join(BUILD_DIR, OUTPUT_FILE);
         await fs.writeFile(outputPath, finalCode);
         console.log(`Build successful! Output written to ${outputPath}`);

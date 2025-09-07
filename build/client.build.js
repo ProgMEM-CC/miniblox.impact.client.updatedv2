@@ -250,17 +250,15 @@ function modifyCode(text) {
 		}
 
 		if (h.text && h.text.indexOf("won the game") != -1 && h.id == undefined && enabledModules["AutoQueue"]) {
-			if (typeof game !== "undefined" && game.requestQueue) game.requestQueue();
+			game.requestQueue();
 		}
 	`);
 	addModification('ClientSocket.on("CPacketUpdateStatus",h=>{', `
 		if (h.rank && h.rank != "" && RANK.LEVEL[$.rank].permLevel > 2) {
-			if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
-				game.chat.addChat({
-					text: "STAFF DETECTED : " + h.rank + "\\n".repeat(10),
-					color: "red"
-				});
-			}
+			game.chat.addChat({
+				text: "STAFF DETECTED : " + h.rank + "\\n".repeat(10),
+				color: "red"
+			});
 		}
 	`);
 
@@ -321,7 +319,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	addModification('u&&player.mode.isCreative()', `||enabledModules["FastBreak"]`);
 
 	// INVWALK
-	addModification('keyPressed(m)&&Game.isActive(!1)', 'keyPressed(m)&&(Game.isActive(!1)||enabledModules["InvWalk"]&&!(typeof game !== "undefined" && game.chat && game.chat.showInput))', true);
+	addModification('keyPressed(m)&&Game.isActive(!1)', 'keyPressed(m)&&(Game.isActive(!1)||enabledModules["InvWalk"]&&!game.chat.showInput)', true);
 
 	// PHASE
 	addModification('calculateXOffset(A,this.getEntityBoundingBox(),g.x)', 'enabledModules["Phase"] ? g.x : calculateXOffset(A,this.getEntityBoundingBox(),g.x)', true);
@@ -391,12 +389,10 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					const module = args.length > 1 && getModule(args[1]);
 					if (module) {
 						module.toggle();
-						if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
-							game.chat.addChat({
-								text: module.name + (module.enabled ? " Enabled!" : " Disabled!"),
-								color: module.enabled ? "lime" : "red"
-							});
-						}
+						game.chat.addChat({
+							text: module.name + (module.enabled ? " Enabled!" : " Disabled!"),
+							color: module.enabled ? "lime" : "red"
+						});
 					}
 					else if (args[1] == "all") {
 						for(const [name, module] of Object.entries(modules)) module.toggle();
@@ -406,16 +402,12 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			case ".modules":
 				chatString = "Module List\\n";
 				for(const [name, module] of Object.entries(modules)) chatString += "\\n" + name;
-				if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
-					game.chat.addChat({text: chatString});
-				}
+				game.chat.addChat({text: chatString});
 				return this.closeInput();
 			case ".binds":
 				chatString = "Bind List\\n";
 				for(const [name, module] of Object.entries(modules)) chatString += "\\n" + name + " : " + (module.bind != "" ? module.bind : "none");
-				if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
-					game.chat.addChat({text: chatString});
-				}
+				game.chat.addChat({text: chatString});
 				return this.closeInput();
 			case ".setoption":
 			case ".reset": {
@@ -425,9 +417,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					if (args.length < 3) {
 						chatString = module.name + " Options";
 						for(const [name, value] of Object.entries(module.options)) chatString += "\\n" + name + " : " + value[0].name + " : " + value[1];
-						if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
-							game.chat.addChat({text: chatString});
-						}
+						game.chat.addChat({text: chatString});
 						return this.closeInput();
 					}
 
@@ -440,17 +430,13 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					// ! don't change the default value (the last option), otherwise .reset won't work properly!
 					if (reset) {
 						option[1] = option[option.length - 1];
-						if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
-							game.chat.addChat({text: "Reset " + module.name + " " + option[2] + " to " + option[1]});
-						}
+						game.chat.addChat({text: "Reset " + module.name + " " + option[2] + " to " + option[1]});
 						return this.closeInput();
 					}
 					if (option[0] == Number) option[1] = !isNaN(Number.parseFloat(args[3])) ? Number.parseFloat(args[3]) : option[1];
 					else if (option[0] == Boolean) option[1] = args[3] == "true";
 					else if (option[0] == String) option[1] = args.slice(3).join(" ");
-					if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
-						game.chat.addChat({text: "Set " + module.name + " " + option[2] + " to " + option[1]});
-					}
+					game.chat.addChat({text: "Set " + module.name + " " + option[2] + " to " + option[1]});
 				}
 				return this.closeInput();
 			}
@@ -460,28 +446,20 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					switch (args[1]) {
 						case "save":
 							globalThis.${storeName}.saveVapeConfig(args[2]);
-							if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
-								game.chat.addChat({text: "Saved config " + args[2]});
-							}
+							game.chat.addChat({text: "Saved config " + args[2]});
 							break;
 						case "load":
 							globalThis.${storeName}.saveVapeConfig();
 							globalThis.${storeName}.loadVapeConfig(args[2]);
-							if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
-								game.chat.addChat({text: "Loaded config " + args[2]});
-							}
+							game.chat.addChat({text: "Loaded config " + args[2]});
 							break;
 						case "import":
 							globalThis.${storeName}.importVapeConfig(args[2]);
-							if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
-								game.chat.addChat({text: "Imported config"});
-							}
+							game.chat.addChat({text: "Imported config"});
 							break;
 						case "export":
 							globalThis.${storeName}.exportVapeConfig();
-							if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
-								game.chat.addChat({text: "Config set to clipboard!"});
-							}
+							game.chat.addChat({text: "Config set to clipboard!"});
 							break;
 					}
 				}
@@ -523,34 +501,22 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				setbind(key, manual) {
 					if (this.bind != "") delete keybindCallbacks[this.bind];
 					this.bind = key;
-					if (manual && typeof game !== "undefined" && game.chat && game.chat.addChat) {
-						game.chat.addChat({text: "Bound " + this.name + " to " + (key == "" ? "none" : key) + "!"});
-					}
+					if (manual) game.chat.addChat({text: "Bound " + this.name + " to " + (key == "" ? "none" : key) + "!"});
 					if (key == "") return;
 					const module = this;
 					keybindCallbacks[this.bind] = function(j) {
 						if (Game.isActive()) {
 							module.toggle();
-							if (typeof game !== "undefined" && game.chat && game.chat.addChat) {
-								game.chat.addChat({
-									text: module.name + (module.enabled ? " Enabled!" : " Disabled!"),
-									color: module.enabled ? "lime" : "red"
-								});
-							}
+							game.chat.addChat({
+								text: module.name + (module.enabled ? " Enabled!" : " Disabled!"),
+								color: module.enabled ? "lime" : "red"
+							});
 						}
 					};
 				}
 				addoption(name, typee, defaultt) {
 					this.options[name] = [typee, defaultt, name, defaultt];
 					return this.options[name];
-				}
-			}
-
-			function reloadTickLoop(value) {
-				if (typeof game !== "undefined" && game.tickLoop) {
-					MSPT = value;
-					clearInterval(game.tickLoop);
-					game.tickLoop = setInterval(() => game.fixedUpdate(), MSPT);
 				}
 			}
 
@@ -2027,7 +1993,7 @@ timervalue = timer.addoption("Value", Number, 1.2);
 
 
 
-			
+
 			globalThis.${storeName}.modules = modules;
 			globalThis.${storeName}.profile = "default";
 		})();
@@ -2139,9 +2105,7 @@ timervalue = timer.addoption("Value", Number, 1.2);
 	else {
 		execute(publicUrl);
 	}
-	
 })();
-
 (async function () {
   try {
     // Loads the Minecraft Font onto GUI
@@ -2162,7 +2126,7 @@ timervalue = timer.addoption("Value", Number, 1.2);
 
     injectGUI(unsafeWindow.globalThis[storeName]);
   } catch (err) {
-    console.error("[ClickGUI] Init failed:", err);
+    console.error("[ClickGUI] Init failed:", err);          // Checks for errors
   }
 
   function injectGUI(store) {
@@ -2180,7 +2144,7 @@ timervalue = timer.addoption("Value", Number, 1.2);
       Utility: [
         "autorespawn","autorejoin","autoqueue",
         "autovote","filterbypass","anticheat",
-        "autofunnychat","musicfix","auto-funnychat","music-fix"
+        "autofunnychat","musicfix","auto-funnychat","music-fix"         // AutoFunnyChat doesnt enable properly but it works perfectly fine (disable) dont worry
       ]
     };
 
@@ -2192,7 +2156,118 @@ timervalue = timer.addoption("Value", Number, 1.2);
       Utility: "🛠️"
     };
 
-    // === Notification System ===
+    // === Styles (LiquidBounce Theme + Scrollbars) ===
+    const style = document.createElement("style");
+    style.textContent = `
+      @keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}
+      .lb-panel {
+        position:absolute;
+        width:220px;
+        background:#111;
+        border:2px solid #00aaff;
+        border-radius:0;
+        font-family:"Minecraft", monospace;
+        color:white;
+        animation:guiEnter .25s ease-out;
+        z-index:100000;
+
+        /* Scrollable */
+        max-height:420px;
+        overflow-y:auto;
+        overflow-x:hidden;
+      }
+      .lb-panel::-webkit-scrollbar { width:6px; }
+      .lb-panel::-webkit-scrollbar-thumb { background:#00aaff; }
+      .lb-panel::-webkit-scrollbar-track { background:#111; }
+      .lb-header {
+        background:#0a0a0a;
+        padding:6px;
+        font-weight:bold;
+        cursor:move;
+        user-select:none;
+        text-align:center;
+        border-bottom:1px solid #00aaff;
+        color:white;
+      }
+      .lb-module {
+        padding:4px 6px;
+        border-bottom:1px solid #1b1b1b;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        cursor:pointer;
+      }
+      .lb-module:hover { background:#151a20; }
+      .lb-module.active { color:#00aaff; }
+      .lb-options {
+        display:none;
+        flex-direction:column;
+        gap:4px;
+        padding:4px 6px;
+        background:#0f0f12;
+        border-top:1px dashed #1e1e1e;
+      }
+      .lb-options.show { display:flex; animation:guiEnter .2s ease-out; }
+      .lb-options label {
+        font-size:12px;
+        display:flex;
+        justify-content:space-between;
+        color:white;
+      }
+      .lb-options input[type="range"] { flex:1; margin-left:4px; }
+      .lb-options input[type="text"] {
+        flex:1;
+        margin-left:4px;
+        font-size:12px;
+        background:#0a0a0a;
+        color:white;
+        border:1px solid #00aaff;
+        font-family:"Minecraft", monospace;
+        padding:2px;
+      }
+      .notif-wrap {
+        position:fixed; bottom:40px; right:30px;
+        display:flex; flex-direction:column; align-items:flex-end;
+        pointer-events:none; z-index:999999;
+      }
+      .notif {
+        background:#0a0a0a;
+        color:white;
+        padding:8px 12px;
+        margin-top:6px;
+        border:2px solid #00aaff;
+        border-radius:0;
+        font-family:"Minecraft", monospace;
+        opacity:1;
+        transform:translateX(120%);
+        transition:opacity .3s, transform .3s ease;
+      }
+      .lb-searchwrap {
+        position:fixed;
+        top:15px;
+        left:50%;
+        transform:translateX(-50%);
+        z-index:100001;
+        background:#0a0a0a;
+        border:2px solid #00aaff;
+        border-radius:0;
+        padding:4px 6px;
+        font-family:"Minecraft", monospace;
+      }
+      .lb-search {
+        background:#111;
+        border:none;
+        outline:none;
+        color:white;
+        font-size:13px;
+        width:180px;
+        font-family:"Minecraft", monospace;
+      }
+      .lb-search::placeholder { color:#00aaff; opacity:0.6; }
+    `;
+    document.head.appendChild(style);
+
+    // === Notifications ===
     const notifWrap = document.createElement("div");
     notifWrap.className = "notif-wrap";
     document.body.appendChild(notifWrap);
@@ -2210,252 +2285,207 @@ timervalue = timer.addoption("Value", Number, 1.2);
       setTimeout(() => n.remove(), dur + 400);
     }
 
-    // === Styles (LiquidBounce Theme + Scrollbars) ===
-    const style = document.createElement("style");
-    style.textContent = 
-      "@keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}" +
-      ".notif-wrap {" +
-        "position:fixed;" +
-        "top:10px;" +
-        "right:10px;" +
-        "z-index:100002;" +
-        "pointer-events:none;" +
-      "}" +
-      ".notif {" +
-        "background:#111;" +
-        "border:2px solid #00aaff;" +
-        "color:white;" +
-        "padding:8px 12px;" +
-        "margin-bottom:5px;" +
-        "font-family:monospace;" +
-        "font-size:12px;" +
-        "transform:translateX(120%);" +
-        "transition:all 0.3s ease;" +
-        "opacity:1;" +
-      "}" +
-      ".lb-panel {" +
-        "position:absolute;" +
-        "width:220px;" +
-        "background:#111;" +
-        "border:2px solid #00aaff;" +
-        "border-radius:0;" +
-        "font-family:monospace;" +
-        "color:white;" +
-        "animation:guiEnter .25s ease-out;" +
-        "z-index:100000;" +
-        "max-height:420px;" +
-        "overflow-y:auto;" +
-        "overflow-x:hidden;" +
-      "}" +
-      ".lb-panel::-webkit-scrollbar { width:6px; }" +
-      ".lb-panel::-webkit-scrollbar-thumb { background:#00aaff; }" +
-      ".lb-panel::-webkit-scrollbar-track { background:#111; }" +
-      ".lb-header {" +
-        "background:#0a0a0a;" +
-        "padding:6px;" +
-        "font-weight:bold;" +
-        "cursor:move;" +
-        "user-select:none;" +
-        "text-align:center;" +
-        "border-bottom:1px solid #00aaff;" +
-      "}" +
-      ".lb-module {" +
-        "padding:4px 8px;" +
-        "cursor:pointer;" +
-        "transition:background .15s;" +
-        "border-bottom:1px solid #222;" +
-        "display:flex;" +
-        "justify-content:space-between;" +
-        "align-items:center;" +
-      "}" +
-      ".lb-module:hover { background:#222; }" +
-      ".lb-module.enabled { background:#003366; color:#00aaff; }" +
-      ".lb-module.enabled:hover { background:#004488; }" +
-      ".lb-bind { font-size:10px; color:#666; }" +
-      ".lb-settings {" +
-        "margin-left:8px;" +
-        "padding:2px 6px;" +
-        "background:#333;" +
-        "border:1px solid #555;" +
-        "font-size:10px;" +
-        "cursor:pointer;" +
-      "}" +
-      ".lb-settings:hover { background:#444; }" +
-      ".lb-option {" +
-        "padding:3px 12px;" +
-        "background:#1a1a1a;" +
-        "border-bottom:1px solid #333;" +
-        "font-size:11px;" +
-      "}" +
-      ".lb-option input {" +
-        "background:#333;" +
-        "border:1px solid #555;" +
-        "color:white;" +
-        "padding:2px 4px;" +
-        "width:60px;" +
-        "margin-left:8px;" +
-      "}" +
-      ".lb-option input[type='checkbox'] { width:auto; }" +
-      ".lb-searchwrap {" +
-        "position:fixed;" +
-        "top:10px;" +
-        "right:10px;" +
-        "z-index:100001;" +
-      "}" +
-      ".lb-search {" +
-        "background:#111;" +
-        "border:2px solid #00aaff;" +
-        "color:white;" +
-        "padding:6px;" +
-        "font-family:monospace;" +
-        "outline:none;" +
-      "}";
-    document.head.appendChild(style);
+    // === Persistence Helpers ===
+    function saveModuleState(name, mod) {
+      const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
+      const opts = {};
+      if (mod.options) {
+        Object.entries(mod.options).forEach(([key, opt]) => {
+          opts[key] = opt[1];
+        });
+      }
+      saved[name] = { enabled: mod.enabled, bind: mod.bind, options: opts };
+      localStorage.setItem("lb-mods", JSON.stringify(saved));
+    }
 
-    let panels = {};
-    let dragData = null;
+    function loadModuleState(name, mod) {
+      const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
+      if (saved[name]) {
+        if (saved[name].enabled !== mod.enabled && typeof mod.toggle === "function") {
+          mod.toggle();
+        }
+        if (saved[name].bind) {
+          mod.setbind(saved[name].bind);
+        }
+        if (saved[name].options && mod.options) {
+          Object.entries(saved[name].options).forEach(([key, val]) => {
+            if (mod.options[key]) mod.options[key][1] = val;
+          });
+        }
+      }
+    }
 
-    // === Create Panel ===
-    function createPanel(category, x = 50, y = 50) {
-      if (panels[category]) return panels[category];
-
+    // === Panels ===
+    const panels = {};
+    Object.keys(categories).forEach((cat, i) => {
       const panel = document.createElement("div");
       panel.className = "lb-panel";
-      panel.style.left = x + "px";
-      panel.style.top = y + "px";
+      panel.style.left = 40 + i * 240 + "px";
+      panel.style.top = "100px";
 
       const header = document.createElement("div");
       header.className = "lb-header";
-      header.textContent = catIcons[category] + " " + category;
+      header.textContent = `${catIcons[cat]} ${cat}`;
       panel.appendChild(header);
 
-      // Make draggable
+      // Restore saved pos
+      const saved = localStorage.getItem("lb-pos-" + cat);
+      if (saved) {
+        const { left, top } = JSON.parse(saved);
+        panel.style.left = left;
+        panel.style.top = top;
+      }
+
+      // Dragging
+      let dragging = false, offsetX, offsetY;
       header.addEventListener("mousedown", (e) => {
-        dragData = {
-          panel,
-          offsetX: e.clientX - panel.offsetLeft,
-          offsetY: e.clientY - panel.offsetTop
-        };
+        dragging = true;
+        offsetX = e.clientX - panel.offsetLeft;
+        offsetY = e.clientY - panel.offsetTop;
+      });
+      document.addEventListener("mousemove", (e) => {
+        if (dragging) {
+          panel.style.left = e.clientX - offsetX + "px";
+          panel.style.top = e.clientY - offsetY + "px";
+        }
+      });
+      document.addEventListener("mouseup", () => {
+        if (dragging) {
+          dragging = false;
+          localStorage.setItem("lb-pos-" + cat,
+            JSON.stringify({ left: panel.style.left, top: panel.style.top })
+          );
+        }
       });
 
-      // Add modules
-      const moduleNames = categories[category] || [];
-      moduleNames.forEach(modName => {
-        const module = store.modules[modName] || store.modules[modName.toLowerCase()];
-        if (!module) return;
-
-        const moduleDiv = document.createElement("div");
-        moduleDiv.className = "lb-module " + (module.enabled ? "enabled" : "");
-
-        const nameSpan = document.createElement("span");
-        nameSpan.textContent = module.name;
-        moduleDiv.appendChild(nameSpan);
-
-        const rightSide = document.createElement("div");
-        rightSide.style.display = "flex";
-        rightSide.style.alignItems = "center";
-
-        if (module.bind) {
-          const bindSpan = document.createElement("span");
-          bindSpan.className = "lb-bind";
-          bindSpan.textContent = "[" + module.bind + "]";
-          rightSide.appendChild(bindSpan);
-        }
-
-        if (Object.keys(module.options).length > 0) {
-          const settingsBtn = document.createElement("span");
-          settingsBtn.className = "lb-settings";
-          settingsBtn.textContent = "⚙";
-          settingsBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            toggleSettings(moduleDiv, module);
-          });
-          rightSide.appendChild(settingsBtn);
-        }
-
-        moduleDiv.appendChild(rightSide);
-
-        moduleDiv.addEventListener("click", () => {
-          module.toggle();
-          moduleDiv.className = "lb-module " + (module.enabled ? "enabled" : "");
-        });
-
-        panel.appendChild(moduleDiv);
-      });
-
+      panels[cat] = panel;
       document.body.appendChild(panel);
-      panels[category] = panel;
-      return panel;
-    }
+    });
 
-    // === Settings Toggle ===
-    function toggleSettings(moduleDiv, module) {
-      const existing = moduleDiv.querySelector(".lb-option");
-      if (existing) {
-        // Remove all options
-        let next = moduleDiv.nextSibling;
-        while (next && next.classList?.contains("lb-option")) {
-          const toRemove = next;
-          next = next.nextSibling;
-          toRemove.remove();
+    // === Modules ===
+    Object.entries(store.modules).forEach(([name, mod]) => {
+      console.log("[ClickGUI] Found module:", name);
+
+      let cat = "Utility";
+      const lowerName = name.toLowerCase();
+      for (const [c, keys] of Object.entries(categories)) {
+        if (keys.some((k) => lowerName.includes(k))) {
+          cat = c; break;
         }
-        return;
       }
 
-      // Add options
-      Object.entries(module.options).forEach(([name, option]) => {
-        const optionDiv = document.createElement("div");
-        optionDiv.className = "lb-option";
-        optionDiv.innerHTML = name + ": ";
+      // Restore state
+      loadModuleState(name, mod);
 
-        if (option[0] === Boolean) {
-          const checkbox = document.createElement("input");
-          checkbox.type = "checkbox";
-          checkbox.checked = option[1];
-          checkbox.addEventListener("change", () => {
-            option[1] = checkbox.checked;
-          });
-          optionDiv.appendChild(checkbox);
-        } else {
-          const input = document.createElement("input");
-          input.type = option[0] === Number ? "number" : "text";
-          input.value = option[1];
-          input.addEventListener("input", () => {
-            option[1] = option[0] === Number ? parseFloat(input.value) || 0 : input.value;
-          });
-          optionDiv.appendChild(input);
+      const row = document.createElement("div");
+      row.className = "lb-module" + (mod.enabled ? " active" : "");
+      row.innerHTML = `<span>${name}</span><span>${mod.enabled ? "ON" : "OFF"}</span>`;
+
+      const optionsBox = document.createElement("div");
+      optionsBox.className = "lb-options";
+
+      // Toggle
+      row.addEventListener("mousedown", (e) => {
+        if (e.button === 0) {
+          if (typeof mod.toggle === "function") mod.toggle();
+          row.classList.toggle("active", mod.enabled);
+          row.lastChild.textContent = mod.enabled ? "ON" : "OFF";
+          showNotif(`${name} ${mod.enabled ? "enabled ✅" : "disabled ❌"}`);
+          saveModuleState(name, mod);
         }
-
-        moduleDiv.parentNode.insertBefore(optionDiv, moduleDiv.nextSibling);
       });
-    }
 
-    // === Mouse Events ===
-    document.addEventListener("mousemove", (e) => {
-      if (dragData) {
-        dragData.panel.style.left = (e.clientX - dragData.offsetX) + "px";
-        dragData.panel.style.top = (e.clientY - dragData.offsetY) + "px";
+      // Expand
+      row.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        optionsBox.classList.toggle("show");
+      });
+
+      // Options UI
+      if (mod.options) {
+        Object.entries(mod.options).forEach(([key, opt]) => {
+          const [type, val, label] = opt;
+          const line = document.createElement("label");
+          line.textContent = label;
+
+          if (type === Boolean) {
+            const cb = document.createElement("input");
+            cb.type = "checkbox"; cb.checked = val;
+            cb.onchange = () => {
+              opt[1] = cb.checked;
+              saveModuleState(name, mod);
+            };
+            line.appendChild(cb);
+          } else if (type === Number) {
+            const slider = document.createElement("input");
+            slider.type = "range";
+            const [min, max, step] = opt.range ?? [0, 10, 0.1];
+            slider.min = min; slider.max = max; slider.step = step; slider.value = val;
+            slider.oninput = () => {
+              opt[1] = parseFloat(slider.value);
+              saveModuleState(name, mod);
+            };
+            line.appendChild(slider);
+          } else if (type === String) {
+            const input = document.createElement("input");
+            input.type = "text"; input.value = val;
+            input.onchange = () => {
+              opt[1] = input.value;
+              saveModuleState(name, mod);
+            };
+            line.appendChild(input);
+          }
+          optionsBox.appendChild(line);
+        });
       }
+
+      // Keybind
+      const bindLine = document.createElement("label");
+      bindLine.textContent = "Bind:";
+      const bindInput = document.createElement("input");
+      bindInput.type = "text"; bindInput.value = mod.bind;
+      bindInput.style.width = "70px";
+      bindInput.style.background = "#0a0a0a";
+      bindInput.style.color = "white";
+      bindInput.style.border = "1px solid #00aaff";
+      bindInput.style.fontFamily = '"Minecraft", monospace';
+      bindInput.style.fontSize = "12px";
+      bindInput.style.padding = "2px";
+      bindInput.onchange = (e) => {
+        mod.setbind(e.target.value);
+        showNotif(`${name} bind set to ${e.target.value}`);
+        saveModuleState(name, mod);
+      };
+      bindLine.appendChild(bindInput);
+      optionsBox.appendChild(bindLine);
+
+      panels[cat].appendChild(row);
+      panels[cat].appendChild(optionsBox);
     });
 
-    document.addEventListener("mouseup", () => {
-      if (dragData) {
-        const category = Object.keys(panels).find(key => panels[key] === dragData.panel);
-        if (category) {
-          localStorage.setItem("lb-pos-" + category, JSON.stringify({
-            x: parseInt(dragData.panel.style.left),
-            y: parseInt(dragData.panel.style.top)
-          }));
-        }
-      }
-      dragData = null;
+    // === Reset Layout ===
+    const resetRow = document.createElement("div");
+    resetRow.className = "lb-module";
+    resetRow.style.justifyContent = "flex-start";
+    resetRow.style.paddingLeft = "6px";
+    resetRow.style.fontWeight = "bold";
+    resetRow.style.color = "#00aaff";
+    resetRow.textContent = "↺ Reset Layout";
+    resetRow.addEventListener("click", () => {
+      const defaults = {
+        Combat:{left:"40px",top:"100px"},
+        Movement:{left:"280px",top:"100px"},
+        "Player / Render":{left:"520px",top:"100px"},
+        World:{left:"760px",top:"100px"},
+        Utility:{left:"1000px",top:"100px"}
+      };
+      Object.entries(defaults).forEach(([cat,pos])=>{
+        localStorage.setItem("lb-pos-" + cat, JSON.stringify(pos));
+        if (panels[cat]) { panels[cat].style.left=pos.left; panels[cat].style.top=pos.top; }
+      });
+      showNotif("Layout reset to default positions ✅");
     });
-
-    // === Create Panels ===
-    Object.keys(categories).forEach((category, index) => {
-      const saved = JSON.parse(localStorage.getItem("lb-pos-" + category) || "{}");
-      createPanel(category, saved.x || (50 + index * 240), saved.y || 50);
-    });
+    panels["Utility"].appendChild(resetRow);
 
     // === Reset Config ===
     const resetConfigRow = document.createElement("div");
@@ -2478,7 +2508,7 @@ timervalue = timer.addoption("Value", Number, 1.2);
     // === Global Search ===
     const searchWrap = document.createElement("div");
     searchWrap.className = "lb-searchwrap";
-    searchWrap.innerHTML = "<input type=\"text\" class=\"lb-search\" placeholder=\"Search..\">";
+    searchWrap.innerHTML = `<input type="text" class="lb-search" placeholder="Search..">`;
     document.body.appendChild(searchWrap);
 
     const searchBox = searchWrap.querySelector("input");
@@ -2495,12 +2525,12 @@ timervalue = timer.addoption("Value", Number, 1.2);
     searchWrap.style.display = "none";
 
     // === Startup notification ===
-    setTimeout(() => { showNotif("[ClickGUI] Press 'RightArrow' to open GUI", 4000); }, 500);
+    setTimeout(() => { showNotif("[ClickGUI] Press '\\\\' to open GUI", 4000); }, 500);
 
     // === Toggle the LB GUI ===
     let visible = false;
     document.addEventListener("keydown", (e) => {
-      if (e.code === "ArrowRight") {
+      if (e.code === "Backslash") {
         visible = !visible;
         Object.values(panels).forEach((p)=> (p.style.display=visible?"block":"none"));
         searchWrap.style.display = visible ? "block":"none";
