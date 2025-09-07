@@ -2424,12 +2424,12 @@ timervalue = timer.addoption("Value", Number, 1.2);
     searchWrap.style.display = "none";
 
     // === Startup notification ===
-    setTimeout(() => { showNotif("[ClickGUI] Press '\\\\' to open GUI", 4000); }, 500);
+    setTimeout(() => { showNotif("[ClickGUI] Press 'RightArrow' to open GUI", 4000); }, 500);
 
     // === Toggle the LB GUI ===
     let visible = false;
     document.addEventListener("keydown", (e) => {
-      if (e.code === "Backslash") {
+      if (e.code === "ArrowRight") {
         visible = !visible;
         Object.values(panels).forEach((p)=> (p.style.display=visible?"block":"none"));
         searchWrap.style.display = visible ? "block":"none";
