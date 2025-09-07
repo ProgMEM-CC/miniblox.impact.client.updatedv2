@@ -2034,7 +2034,7 @@ timervalue = timer.addoption("Value", Number, 1.2);
 	`);
 
 	async function saveVapeConfig(profile) {
-		if (!loadedConfig || !unsafeWindow.globalThis[storeName] || !unsafeWindow.globalThis[storeName].modules) return;
+		if (!loadedConfig) return;
 		let saveList = {};
 		for(const [name, module] of Object.entries(unsafeWindow.globalThis[storeName].modules)) {
 			saveList[name] = {enabled: module.enabled, bind: module.bind, options: {}};
@@ -2047,19 +2047,25 @@ timervalue = timer.addoption("Value", Number, 1.2);
 	}
 
 	async function loadVapeConfig(switched) {
-		if (!unsafeWindow.globalThis[storeName] || !unsafeWindow.globalThis[storeName].modules) return;
 		loadedConfig = false;
 		const loadedMain = JSON.parse(await GM_getValue("mainVapeConfig", "{}")) ?? {profile: "default"};
 		unsafeWindow.globalThis[storeName].profile = switched ?? loadedMain.profile;
 		const loaded = JSON.parse(await GM_getValue("vapeConfig" + unsafeWindow.globalThis[storeName].profile, "{}"));
-		for(const [name, module] of Object.entries(unsafeWindow.globalThis[storeName].modules)) {
-			if (loaded[name]) {
-				if (loaded[name].enabled) module.toggle();
-				module.setbind(loaded[name].bind ?? "");
-				for(const [option, setting] of Object.entries(loaded[name].options ?? {})) {
-					if (module.options[option]) {
-						module.options[option][1] = setting;
-					}
+		if (!loaded) {
+			loadedConfig = true;
+			return;
+		}
+
+		for(const [name, module] of Object.entries(loaded)) {
+			const realModule = unsafeWindow.globalThis[storeName].modules[name];
+			if (!realModule) continue;
+			if (realModule.enabled != module.enabled) realModule.toggle();
+			if (realModule.bind != module.bind) realModule.setbind(module.bind);
+			if (module.options) {
+				for(const [option, setting] of Object.entries(module.options)) {
+					const realOption = realModule.options[option];
+					if (!realOption) continue;
+					realOption[1] = setting;
 				}
 			}
 		}
@@ -2067,12 +2073,10 @@ timervalue = timer.addoption("Value", Number, 1.2);
 	}
 
 	async function exportVapeConfig() {
-		if (!unsafeWindow.globalThis[storeName]) return;
 		navigator.clipboard.writeText(await GM_getValue("vapeConfig" + unsafeWindow.globalThis[storeName].profile, "{}"));
 	}
 
 	async function importVapeConfig() {
-		if (!unsafeWindow.globalThis[storeName]) return;
 		const arg = await navigator.clipboard.readText();
 		if (!arg) return;
 		GM_setValue("vapeConfig" + unsafeWindow.globalThis[storeName].profile, arg);
@@ -2080,35 +2084,60 @@ timervalue = timer.addoption("Value", Number, 1.2);
 	}
 
 	let loadedConfig = false;
-	
-	// Initialize globalThis store properly like the original
-	Object.defineProperty(unsafeWindow.globalThis, storeName, {value: {}, enumerable: false});
-	
-	if (typeof GM_getValue !== "undefined") {
-		document.addEventListener("DOMContentLoaded", function() {
-			setTimeout(function() {
-				console.log("Vape config system initialized!");
+	async function execute(src, oldScript) {
+		Object.defineProperty(unsafeWindow.globalThis, storeName, {value: {}, enumerable: false});
+		if (oldScript) oldScript.type = 'javascript/blocked';
+		await fetch(src).then(e => e.text()).then(e => modifyCode(e));
+		if (oldScript) oldScript.type = 'module';
+		await new Promise((resolve) => {
+			const loop = setInterval(async function() {
+				if (unsafeWindow.globalThis[storeName].modules) {
+					clearInterval(loop);
+					resolve();
+				}
 			}, 10);
 		});
-		
 		unsafeWindow.globalThis[storeName].saveVapeConfig = saveVapeConfig;
 		unsafeWindow.globalThis[storeName].loadVapeConfig = loadVapeConfig;
 		unsafeWindow.globalThis[storeName].exportVapeConfig = exportVapeConfig;
 		unsafeWindow.globalThis[storeName].importVapeConfig = importVapeConfig;
-		
-		// Wait for modules to be available before loading config (like original)
-		const configLoop = setInterval(() => {
-			if (unsafeWindow.globalThis[storeName].modules) {
-				clearInterval(configLoop);
-				loadVapeConfig();
-			}
-		}, 10);
-		
+		loadVapeConfig();
 		setInterval(async function() {
-			if (unsafeWindow.globalThis[storeName].modules) {
-				saveVapeConfig();
-			}
+			saveVapeConfig();
 		}, 10000);
+	}
+
+	const publicUrl = "scripturl";
+	// https://stackoverflow.com/questions/22141205/intercept-and-alter-a-sites-javascript-using-greasemonkey
+	if (publicUrl == "scripturl") {
+		if (navigator.userAgent.indexOf("Firefox") != -1) {
+			window.addEventListener("beforescriptexecute", function(e) {
+				if (e.target.src.includes("https://miniblox.io/assets/index")) {
+					e.preventDefault();
+					e.stopPropagation();
+					execute(e.target.src);
+				}
+			}, false);
+		}
+		else {
+			new MutationObserver(async (mutations, observer) => {
+				let oldScript = mutations
+					.flatMap(e => [...e.addedNodes])
+					.filter(e => e.tagName == 'SCRIPT')
+					.find(e => e.src.includes("https://miniblox.io/assets/index"));
+
+				if (oldScript) {
+					observer.disconnect();
+					execute(oldScript.src, oldScript);
+				}
+			}).observe(document, {
+				childList: true,
+				subtree: true,
+			});
+		}
+	}
+	else {
+		execute(publicUrl);
 	}
 	
 })();
