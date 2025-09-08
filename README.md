@@ -10,6 +10,10 @@ BEFORE USING, Read EULA.md
 
 All notable changes to this project will be documented in this file.
 
+## [v5] - 2025-09-08
+### Added
+- New filter bypass for / commands
+
 ## [v5] - 2025-09-07
 ### Added
 - Fly/NoFall exploit with desync mechanics by `RealPacket`
