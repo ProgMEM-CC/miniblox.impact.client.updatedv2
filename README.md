@@ -58,5 +58,3 @@ Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 - Force Creative / Inventory Modification (like thrax client - was made by 7GrandDad i think)
 
 - Command Block modification (in survival mode. Again this could be possible - MM64)
-
-- Disabler for movement etc
