@@ -33,11 +33,9 @@ Copy tampermonkey.user.js and paste into your preferred userscript manager. (Tam
 
 (M0duleMaster64's comment - Or use the main.js and manually put in the injection.js after the main)
 
-## Join the Discord here
+## (if you can) pls Join the Discord here
 
 Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
-
-**console.log("Video Coming soon...")**
 
 # Dev Notes
 
@@ -51,10 +49,10 @@ Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
   
   ## Goals (May not be added)
   
-- ForceOP Module (MM64 and ProgMEM's Job, forceop like means u can ban the owner in a server :D) (May not be added/ may not work)
+- ForceOP Module (MM64 and ProgMEM's Job, forceop like means u can ban the owner in a server :D) (could work? - MM64)
 
 - Nuker (I dont think this will work - MM64.)
 
-- Force Creative / Inventory Modification (like thrax client - was made by 7GrandDad i think)
+- Force Creative / Inventory Modification (like thrax client - was made by 7GrandDad but could implement it to here)
 
 - Command Block modification (in survival mode. Again this could be possible - MM64)
