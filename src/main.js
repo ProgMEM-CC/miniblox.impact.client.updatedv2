@@ -21,11 +21,11 @@ function replaceAndCopyFunction(oldFunc, newFunc) {
 	});
 }
 
-Object.getOwnPropertyNames = replaceAndCopyFunction(Object.getOwnPropertyNames, function(list) {
+Object.getOwnPropertyNames = replaceAndCopyFunction(Object.getOwnPropertyNames, function (list) {
 	if (list.indexOf(storeName) != -1) list.splice(list.indexOf(storeName), 1);
 	return list;
 });
-Object.getOwnPropertyDescriptors = replaceAndCopyFunction(Object.getOwnPropertyDescriptors, function(list) {
+Object.getOwnPropertyDescriptors = replaceAndCopyFunction(Object.getOwnPropertyDescriptors, function (list) {
 	delete list[storeName];
 	return list;
 });
@@ -50,10 +50,10 @@ function addDump(replacement, code) {
  */
 function modifyCode(text) {
 	let modifiedText = text;
-	for(const [name, regex] of Object.entries(dumpedVarNames)) {
+	for (const [name, regex] of Object.entries(dumpedVarNames)) {
 		const matched = modifiedText.match(regex);
 		if (matched) {
-			for(const [replacement, code] of Object.entries(replacements)){
+			for (const [replacement, code] of Object.entries(replacements)) {
 				delete replacements[replacement];
 				replacements[replacement.replaceAll(name, matched[1])] = [code[0].replaceAll(name, matched[1]), code[1]];
 			}
@@ -65,7 +65,7 @@ function modifyCode(text) {
 	const unmatchedReplacements = Object.entries(replacements).filter(r => modifiedText.replace(r[0]) === text);
 	if (unmatchedReplacements.length > 0) console.warn("Unmatched replacements:", unmatchedReplacements);
 
-	for(const [replacement, code] of Object.entries(replacements)) {
+	for (const [replacement, code] of Object.entries(replacements)) {
 		modifiedText = modifiedText.replace(replacement, code[1] ? code[0] : replacement + code[0]);
 
 	}
@@ -80,7 +80,7 @@ function modifyCode(text) {
 	newScript.remove();
 }
 
-(function() {
+(function () {
 	'use strict';
 
 	// DUMPING
@@ -214,7 +214,7 @@ function modifyCode(text) {
 		}
 	`);
 
-	
+
 	addModification('+=h*y+u*x}', `
 		if (this == player) {
 			for(const [index, func] of Object.entries(tickLoop)) if (func) func();
@@ -478,7 +478,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		'const m=player.openContainer',
 		`const m = player.openContainer ?? { getLowerChestInventory: () => {getSizeInventory: () => 0} }`,
 		true
-		);
+	);
 
 	// MAIN
 	addModification('document.addEventListener("contextmenu",m=>m.preventDefault());', /*js*/`
@@ -530,19 +530,19 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	async function saveVapeConfig(profile) {
 		if (!loadedConfig) return;
 		let saveList = {};
-		for(const [name, module] of Object.entries(unsafeWindow.globalThis[storeName].modules)) {
-			saveList[name] = {enabled: module.enabled, bind: module.bind, options: {}};
-			for(const [option, setting] of Object.entries(module.options)) {
+		for (const [name, module] of Object.entries(unsafeWindow.globalThis[storeName].modules)) {
+			saveList[name] = { enabled: module.enabled, bind: module.bind, options: {} };
+			for (const [option, setting] of Object.entries(module.options)) {
 				saveList[name].options[option] = setting[1];
 			}
 		}
 		GM_setValue("vapeConfig" + (profile ?? unsafeWindow.globalThis[storeName].profile), JSON.stringify(saveList));
-		GM_setValue("mainVapeConfig", JSON.stringify({profile: unsafeWindow.globalThis[storeName].profile}));
+		GM_setValue("mainVapeConfig", JSON.stringify({ profile: unsafeWindow.globalThis[storeName].profile }));
 	}
 
 	async function loadVapeConfig(switched) {
 		loadedConfig = false;
-		const loadedMain = JSON.parse(await GM_getValue("mainVapeConfig", "{}")) ?? {profile: "default"};
+		const loadedMain = JSON.parse(await GM_getValue("mainVapeConfig", "{}")) ?? { profile: "default" };
 		unsafeWindow.globalThis[storeName].profile = switched ?? loadedMain.profile;
 		const loaded = JSON.parse(await GM_getValue("vapeConfig" + unsafeWindow.globalThis[storeName].profile, "{}"));
 		if (!loaded) {
@@ -550,13 +550,13 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			return;
 		}
 
-		for(const [name, module] of Object.entries(loaded)) {
+		for (const [name, module] of Object.entries(loaded)) {
 			const realModule = unsafeWindow.globalThis[storeName].modules[name];
 			if (!realModule) continue;
 			if (realModule.enabled != module.enabled) realModule.toggle();
 			if (realModule.bind != module.bind) realModule.setbind(module.bind);
 			if (module.options) {
-				for(const [option, setting] of Object.entries(module.options)) {
+				for (const [option, setting] of Object.entries(module.options)) {
 					const realOption = realModule.options[option];
 					if (!realOption) continue;
 					realOption[1] = setting;
@@ -579,12 +579,12 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 
 	let loadedConfig = false;
 	async function execute(src, oldScript) {
-		Object.defineProperty(unsafeWindow.globalThis, storeName, {value: {}, enumerable: false});
+		Object.defineProperty(unsafeWindow.globalThis, storeName, { value: {}, enumerable: false });
 		if (oldScript) oldScript.type = 'javascript/blocked';
 		await fetch(src).then(e => e.text()).then(e => modifyCode(e));
 		if (oldScript) oldScript.type = 'module';
 		await new Promise((resolve) => {
-			const loop = setInterval(async function() {
+			const loop = setInterval(async function () {
 				if (unsafeWindow.globalThis[storeName].modules) {
 					clearInterval(loop);
 					resolve();
@@ -596,7 +596,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		unsafeWindow.globalThis[storeName].exportVapeConfig = exportVapeConfig;
 		unsafeWindow.globalThis[storeName].importVapeConfig = importVapeConfig;
 		loadVapeConfig();
-		setInterval(async function() {
+		setInterval(async function () {
 			saveVapeConfig();
 		}, 10000);
 	}
@@ -605,7 +605,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	// https://stackoverflow.com/questions/22141205/intercept-and-alter-a-sites-javascript-using-greasemonkey
 	if (publicUrl == "scripturl") {
 		if (navigator.userAgent.indexOf("Firefox") != -1) {
-			window.addEventListener("beforescriptexecute", function(e) {
+			window.addEventListener("beforescriptexecute", function (e) {
 				if (e.target.src.includes("https://miniblox.io/assets/index")) {
 					e.preventDefault();
 					e.stopPropagation();
@@ -635,58 +635,58 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	}
 })();
 (async function () {
-  try {
-    // Loads the Minecraft Font onto GUI
-    const fontLink = document.createElement("link");
-    fontLink.href = "https://fonts.cdnfonts.com/css/minecraft-4";
-    fontLink.rel = "stylesheet";
-    document.head.appendChild(fontLink);
+	try {
+		// Loads the Minecraft Font onto GUI
+		const fontLink = document.createElement("link");
+		fontLink.href = "https://fonts.cdnfonts.com/css/minecraft-4";
+		fontLink.rel = "stylesheet";
+		document.head.appendChild(fontLink);
 
-    // Wait for Modules!
-    await new Promise((resolve) => {
-      const loop = setInterval(() => {
-        if (unsafeWindow?.globalThis?.[storeName]?.modules) {
-          clearInterval(loop);
-          resolve();
-        }
-      }, 20);
-    });
+		// Wait for Modules!
+		await new Promise((resolve) => {
+			const loop = setInterval(() => {
+				if (unsafeWindow?.globalThis?.[storeName]?.modules) {
+					clearInterval(loop);
+					resolve();
+				}
+			}, 20);
+		});
 
-    injectGUI(unsafeWindow.globalThis[storeName]);
-  } catch (err) {
-    console.error("[ClickGUI] Init failed:", err);          // Checks for errors
-  }
+		injectGUI(unsafeWindow.globalThis[storeName]);
+	} catch (err) {
+		console.error("[ClickGUI] Init failed:", err);          // Checks for errors
+	}
 
-  function injectGUI(store) {
-    const categories = {
-      Combat: ["autoclicker", "killaura", "velocity", "wtap"],
-      Movement: [
-        "scaffold","jesus","phase","nofall","sprint","keepsprint","step",
-        "speed","fly","noslowdown","spiderclimb","jetpack"
-      ],
-      "Player / Render": [
-        "invcleaner","invwalk","autoarmor","ghostjoin",
-        "playeresp","nametags+","textgui","clickgui"
-      ],
-      World: ["fastbreak","breaker","autocraft","cheststeal","timer"],
-      Utility: [
-        "autorespawn","autorejoin","autoqueue",
-        "autovote","filterbypass","anticheat",
-        "autofunnychat","musicfix","auto-funnychat","music-fix"         // AutoFunnyChat doesnt enable properly but it works perfectly fine (disable) dont worry
-      ]
-    };
+	function injectGUI(store) {
+		const categories = {
+			Combat: ["autoclicker", "killaura", "velocity", "wtap"],
+			Movement: [
+				"scaffold", "jesus", "phase", "nofall", "sprint", "keepsprint", "step",
+				"speed", "fly", "noslowdown", "spiderclimb", "jetpack"
+			],
+			"Player / Render": [
+				"invcleaner", "invwalk", "autoarmor", "ghostjoin",
+				"playeresp", "nametags+", "textgui", "clickgui"
+			],
+			World: ["fastbreak", "breaker", "autocraft", "cheststeal", "timer"],
+			Utility: [
+				"autorespawn", "autorejoin", "autoqueue",
+				"autovote", "filterbypass", "anticheat",
+				"autofunnychat", "musicfix", "auto-funnychat", "music-fix"         // AutoFunnyChat doesnt enable properly but it works perfectly fine (disable) dont worry
+			]
+		};
 
-    const catIcons = {
-      Combat: "⚔️",
-      Movement: "🏃",
-      "Player / Render": "🧑👁️",
-      World: "🌍",
-      Utility: "🛠️"
-    };
+		const catIcons = {
+			Combat: "⚔️",
+			Movement: "🏃",
+			"Player / Render": "🧑👁️",
+			World: "🌍",
+			Utility: "🛠️"
+		};
 
-    // === Styles (LiquidBounce Theme + Scrollbars) ===
-    const style = document.createElement("style");
-    style.textContent = `
+		// === Styles (LiquidBounce Theme + Scrollbars) ===
+		const style = document.createElement("style");
+		style.textContent = `
       @keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}
       .lb-panel {
         position:absolute;
@@ -793,276 +793,276 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
       }
       .lb-search::placeholder { color:#00aaff; opacity:0.6; }
     `;
-    document.head.appendChild(style);
+		document.head.appendChild(style);
 
-    // === Notifications ===
-    const notifWrap = document.createElement("div");
-    notifWrap.className = "notif-wrap";
-    document.body.appendChild(notifWrap);
+		// === Notifications ===
+		const notifWrap = document.createElement("div");
+		notifWrap.className = "notif-wrap";
+		document.body.appendChild(notifWrap);
 
-    function showNotif(msg, dur = 3000) {
-      const n = document.createElement("div");
-      n.className = "notif";
-      n.textContent = msg;
-      notifWrap.appendChild(n);
-      setTimeout(() => (n.style.transform = "translateX(0)"), 30);
-      setTimeout(() => {
-        n.style.opacity = "0";
-        n.style.transform = "translateX(120%)";
-      }, dur);
-      setTimeout(() => n.remove(), dur + 400);
-    }
+		function showNotif(msg, dur = 3000) {
+			const n = document.createElement("div");
+			n.className = "notif";
+			n.textContent = msg;
+			notifWrap.appendChild(n);
+			setTimeout(() => (n.style.transform = "translateX(0)"), 30);
+			setTimeout(() => {
+				n.style.opacity = "0";
+				n.style.transform = "translateX(120%)";
+			}, dur);
+			setTimeout(() => n.remove(), dur + 400);
+		}
 
-    // === Persistence Helpers ===
-    function saveModuleState(name, mod) {
-      const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
-      const opts = {};
-      if (mod.options) {
-        Object.entries(mod.options).forEach(([key, opt]) => {
-          opts[key] = opt[1];
-        });
-      }
-      saved[name] = { enabled: mod.enabled, bind: mod.bind, options: opts };
-      localStorage.setItem("lb-mods", JSON.stringify(saved));
-    }
+		// === Persistence Helpers ===
+		function saveModuleState(name, mod) {
+			const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
+			const opts = {};
+			if (mod.options) {
+				Object.entries(mod.options).forEach(([key, opt]) => {
+					opts[key] = opt[1];
+				});
+			}
+			saved[name] = { enabled: mod.enabled, bind: mod.bind, options: opts };
+			localStorage.setItem("lb-mods", JSON.stringify(saved));
+		}
 
-    function loadModuleState(name, mod) {
-      const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
-      if (saved[name]) {
-        if (saved[name].enabled !== mod.enabled && typeof mod.toggle === "function") {
-          mod.toggle();
-        }
-        if (saved[name].bind) {
-          mod.setbind(saved[name].bind);
-        }
-        if (saved[name].options && mod.options) {
-          Object.entries(saved[name].options).forEach(([key, val]) => {
-            if (mod.options[key]) mod.options[key][1] = val;
-          });
-        }
-      }
-    }
+		function loadModuleState(name, mod) {
+			const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
+			if (saved[name]) {
+				if (saved[name].enabled !== mod.enabled && typeof mod.toggle === "function") {
+					mod.toggle();
+				}
+				if (saved[name].bind) {
+					mod.setbind(saved[name].bind);
+				}
+				if (saved[name].options && mod.options) {
+					Object.entries(saved[name].options).forEach(([key, val]) => {
+						if (mod.options[key]) mod.options[key][1] = val;
+					});
+				}
+			}
+		}
 
-    // === Panels ===
-    const panels = {};
-    Object.keys(categories).forEach((cat, i) => {
-      const panel = document.createElement("div");
-      panel.className = "lb-panel";
-      panel.style.left = 40 + i * 240 + "px";
-      panel.style.top = "100px";
+		// === Panels ===
+		const panels = {};
+		Object.keys(categories).forEach((cat, i) => {
+			const panel = document.createElement("div");
+			panel.className = "lb-panel";
+			panel.style.left = 40 + i * 240 + "px";
+			panel.style.top = "100px";
 
-      const header = document.createElement("div");
-      header.className = "lb-header";
-      header.textContent = `${catIcons[cat]} ${cat}`;
-      panel.appendChild(header);
+			const header = document.createElement("div");
+			header.className = "lb-header";
+			header.textContent = `${catIcons[cat]} ${cat}`;
+			panel.appendChild(header);
 
-      // Restore saved pos
-      const saved = localStorage.getItem("lb-pos-" + cat);
-      if (saved) {
-        const { left, top } = JSON.parse(saved);
-        panel.style.left = left;
-        panel.style.top = top;
-      }
+			// Restore saved pos
+			const saved = localStorage.getItem("lb-pos-" + cat);
+			if (saved) {
+				const { left, top } = JSON.parse(saved);
+				panel.style.left = left;
+				panel.style.top = top;
+			}
 
-      // Dragging
-      let dragging = false, offsetX, offsetY;
-      header.addEventListener("mousedown", (e) => {
-        dragging = true;
-        offsetX = e.clientX - panel.offsetLeft;
-        offsetY = e.clientY - panel.offsetTop;
-      });
-      document.addEventListener("mousemove", (e) => {
-        if (dragging) {
-          panel.style.left = e.clientX - offsetX + "px";
-          panel.style.top = e.clientY - offsetY + "px";
-        }
-      });
-      document.addEventListener("mouseup", () => {
-        if (dragging) {
-          dragging = false;
-          localStorage.setItem("lb-pos-" + cat,
-            JSON.stringify({ left: panel.style.left, top: panel.style.top })
-          );
-        }
-      });
+			// Dragging
+			let dragging = false, offsetX, offsetY;
+			header.addEventListener("mousedown", (e) => {
+				dragging = true;
+				offsetX = e.clientX - panel.offsetLeft;
+				offsetY = e.clientY - panel.offsetTop;
+			});
+			document.addEventListener("mousemove", (e) => {
+				if (dragging) {
+					panel.style.left = e.clientX - offsetX + "px";
+					panel.style.top = e.clientY - offsetY + "px";
+				}
+			});
+			document.addEventListener("mouseup", () => {
+				if (dragging) {
+					dragging = false;
+					localStorage.setItem("lb-pos-" + cat,
+						JSON.stringify({ left: panel.style.left, top: panel.style.top })
+					);
+				}
+			});
 
-      panels[cat] = panel;
-      document.body.appendChild(panel);
-    });
+			panels[cat] = panel;
+			document.body.appendChild(panel);
+		});
 
-    // === Modules ===
-    Object.entries(store.modules).forEach(([name, mod]) => {
-      console.log("[ClickGUI] Found module:", name);
+		// === Modules ===
+		Object.entries(store.modules).forEach(([name, mod]) => {
+			console.log("[ClickGUI] Found module:", name);
 
-      let cat = "Utility";
-      const lowerName = name.toLowerCase();
-      for (const [c, keys] of Object.entries(categories)) {
-        if (keys.some((k) => lowerName.includes(k))) {
-          cat = c; break;
-        }
-      }
+			let cat = "Utility";
+			const lowerName = name.toLowerCase();
+			for (const [c, keys] of Object.entries(categories)) {
+				if (keys.some((k) => lowerName.includes(k))) {
+					cat = c; break;
+				}
+			}
 
-      // Restore state
-      loadModuleState(name, mod);
+			// Restore state
+			loadModuleState(name, mod);
 
-      const row = document.createElement("div");
-      row.className = "lb-module" + (mod.enabled ? " active" : "");
-      row.innerHTML = `<span>${name}</span><span>${mod.enabled ? "ON" : "OFF"}</span>`;
+			const row = document.createElement("div");
+			row.className = "lb-module" + (mod.enabled ? " active" : "");
+			row.innerHTML = `<span>${name}</span><span>${mod.enabled ? "ON" : "OFF"}</span>`;
 
-      const optionsBox = document.createElement("div");
-      optionsBox.className = "lb-options";
+			const optionsBox = document.createElement("div");
+			optionsBox.className = "lb-options";
 
-      // Toggle
-      row.addEventListener("mousedown", (e) => {
-        if (e.button === 0) {
-          if (typeof mod.toggle === "function") mod.toggle();
-          row.classList.toggle("active", mod.enabled);
-          row.lastChild.textContent = mod.enabled ? "ON" : "OFF";
-          showNotif(`${name} ${mod.enabled ? "enabled ✅" : "disabled ❌"}`);
-          saveModuleState(name, mod);
-        }
-      });
+			// Toggle
+			row.addEventListener("mousedown", (e) => {
+				if (e.button === 0) {
+					if (typeof mod.toggle === "function") mod.toggle();
+					row.classList.toggle("active", mod.enabled);
+					row.lastChild.textContent = mod.enabled ? "ON" : "OFF";
+					showNotif(`${name} ${mod.enabled ? "enabled ✅" : "disabled ❌"}`);
+					saveModuleState(name, mod);
+				}
+			});
 
-      // Expand
-      row.addEventListener("contextmenu", (e) => {
-        e.preventDefault();
-        optionsBox.classList.toggle("show");
-      });
+			// Expand
+			row.addEventListener("contextmenu", (e) => {
+				e.preventDefault();
+				optionsBox.classList.toggle("show");
+			});
 
-      // Options UI
-      if (mod.options) {
-        Object.entries(mod.options).forEach(([key, opt]) => {
-          const [type, val, label] = opt;
-          const line = document.createElement("label");
-          line.textContent = label;
+			// Options UI
+			if (mod.options) {
+				Object.entries(mod.options).forEach(([key, opt]) => {
+					const [type, val, label] = opt;
+					const line = document.createElement("label");
+					line.textContent = label;
 
-          if (type === Boolean) {
-            const cb = document.createElement("input");
-            cb.type = "checkbox"; cb.checked = val;
-            cb.onchange = () => {
-              opt[1] = cb.checked;
-              saveModuleState(name, mod);
-            };
-            line.appendChild(cb);
-          } else if (type === Number) {
-            const slider = document.createElement("input");
-            slider.type = "range";
-            const [min, max, step] = opt.range ?? [0, 10, 0.1];
-            slider.min = min; slider.max = max; slider.step = step; slider.value = val;
-            slider.oninput = () => {
-              opt[1] = parseFloat(slider.value);
-              saveModuleState(name, mod);
-            };
-            line.appendChild(slider);
-          } else if (type === String) {
-            const input = document.createElement("input");
-            input.type = "text"; input.value = val;
-            input.onchange = () => {
-              opt[1] = input.value;
-              saveModuleState(name, mod);
-            };
-            line.appendChild(input);
-          }
-          optionsBox.appendChild(line);
-        });
-      }
+					if (type === Boolean) {
+						const cb = document.createElement("input");
+						cb.type = "checkbox"; cb.checked = val;
+						cb.onchange = () => {
+							opt[1] = cb.checked;
+							saveModuleState(name, mod);
+						};
+						line.appendChild(cb);
+					} else if (type === Number) {
+						const slider = document.createElement("input");
+						slider.type = "range";
+						const [min, max, step] = opt.range ?? [0, 10, 0.1];
+						slider.min = min; slider.max = max; slider.step = step; slider.value = val;
+						slider.oninput = () => {
+							opt[1] = parseFloat(slider.value);
+							saveModuleState(name, mod);
+						};
+						line.appendChild(slider);
+					} else if (type === String) {
+						const input = document.createElement("input");
+						input.type = "text"; input.value = val;
+						input.onchange = () => {
+							opt[1] = input.value;
+							saveModuleState(name, mod);
+						};
+						line.appendChild(input);
+					}
+					optionsBox.appendChild(line);
+				});
+			}
 
-      // Keybind
-      const bindLine = document.createElement("label");
-      bindLine.textContent = "Bind:";
-      const bindInput = document.createElement("input");
-      bindInput.type = "text"; bindInput.value = mod.bind;
-      bindInput.style.width = "70px";
-      bindInput.style.background = "#0a0a0a";
-      bindInput.style.color = "white";
-      bindInput.style.border = "1px solid #00aaff";
-      bindInput.style.fontFamily = '"Minecraft", monospace';
-      bindInput.style.fontSize = "12px";
-      bindInput.style.padding = "2px";
-      bindInput.onchange = (e) => {
-        mod.setbind(e.target.value);
-        showNotif(`${name} bind set to ${e.target.value}`);
-        saveModuleState(name, mod);
-      };
-      bindLine.appendChild(bindInput);
-      optionsBox.appendChild(bindLine);
+			// Keybind
+			const bindLine = document.createElement("label");
+			bindLine.textContent = "Bind:";
+			const bindInput = document.createElement("input");
+			bindInput.type = "text"; bindInput.value = mod.bind;
+			bindInput.style.width = "70px";
+			bindInput.style.background = "#0a0a0a";
+			bindInput.style.color = "white";
+			bindInput.style.border = "1px solid #00aaff";
+			bindInput.style.fontFamily = '"Minecraft", monospace';
+			bindInput.style.fontSize = "12px";
+			bindInput.style.padding = "2px";
+			bindInput.onchange = (e) => {
+				mod.setbind(e.target.value);
+				showNotif(`${name} bind set to ${e.target.value}`);
+				saveModuleState(name, mod);
+			};
+			bindLine.appendChild(bindInput);
+			optionsBox.appendChild(bindLine);
 
-      panels[cat].appendChild(row);
-      panels[cat].appendChild(optionsBox);
-    });
+			panels[cat].appendChild(row);
+			panels[cat].appendChild(optionsBox);
+		});
 
-    // === Reset Layout ===
-    const resetRow = document.createElement("div");
-    resetRow.className = "lb-module";
-    resetRow.style.justifyContent = "flex-start";
-    resetRow.style.paddingLeft = "6px";
-    resetRow.style.fontWeight = "bold";
-    resetRow.style.color = "#00aaff";
-    resetRow.textContent = "↺ Reset Layout";
-    resetRow.addEventListener("click", () => {
-      const defaults = {
-        Combat:{left:"40px",top:"100px"},
-        Movement:{left:"280px",top:"100px"},
-        "Player / Render":{left:"520px",top:"100px"},
-        World:{left:"760px",top:"100px"},
-        Utility:{left:"1000px",top:"100px"}
-      };
-      Object.entries(defaults).forEach(([cat,pos])=>{
-        localStorage.setItem("lb-pos-" + cat, JSON.stringify(pos));
-        if (panels[cat]) { panels[cat].style.left=pos.left; panels[cat].style.top=pos.top; }
-      });
-      showNotif("Layout reset to default positions ✅");
-    });
-    panels["Utility"].appendChild(resetRow);
+		// === Reset Layout ===
+		const resetRow = document.createElement("div");
+		resetRow.className = "lb-module";
+		resetRow.style.justifyContent = "flex-start";
+		resetRow.style.paddingLeft = "6px";
+		resetRow.style.fontWeight = "bold";
+		resetRow.style.color = "#00aaff";
+		resetRow.textContent = "↺ Reset Layout";
+		resetRow.addEventListener("click", () => {
+			const defaults = {
+				Combat: { left: "40px", top: "100px" },
+				Movement: { left: "280px", top: "100px" },
+				"Player / Render": { left: "520px", top: "100px" },
+				World: { left: "760px", top: "100px" },
+				Utility: { left: "1000px", top: "100px" }
+			};
+			Object.entries(defaults).forEach(([cat, pos]) => {
+				localStorage.setItem("lb-pos-" + cat, JSON.stringify(pos));
+				if (panels[cat]) { panels[cat].style.left = pos.left; panels[cat].style.top = pos.top; }
+			});
+			showNotif("Layout reset to default positions ✅");
+		});
+		panels["Utility"].appendChild(resetRow);
 
-    // === Reset Config ===
-    const resetConfigRow = document.createElement("div");
-    resetConfigRow.className = "lb-module";
-    resetConfigRow.style.justifyContent = "flex-start";
-    resetConfigRow.style.paddingLeft = "6px";
-    resetConfigRow.style.fontWeight = "bold";
-    resetConfigRow.style.color = "red";
-    resetConfigRow.textContent = "⛔ Reset Config?";
-    resetConfigRow.addEventListener("click", () => {
-      localStorage.removeItem("lb-mods");
-      Object.keys(localStorage)
-        .filter((k) => k.startsWith("lb-pos-"))
-        .forEach((k) => localStorage.removeItem(k));
-      alert("Config has been reset!");
-      location.reload();
-    });
-    panels["Utility"].appendChild(resetConfigRow);
+		// === Reset Config ===
+		const resetConfigRow = document.createElement("div");
+		resetConfigRow.className = "lb-module";
+		resetConfigRow.style.justifyContent = "flex-start";
+		resetConfigRow.style.paddingLeft = "6px";
+		resetConfigRow.style.fontWeight = "bold";
+		resetConfigRow.style.color = "red";
+		resetConfigRow.textContent = "⛔ Reset Config?";
+		resetConfigRow.addEventListener("click", () => {
+			localStorage.removeItem("lb-mods");
+			Object.keys(localStorage)
+				.filter((k) => k.startsWith("lb-pos-"))
+				.forEach((k) => localStorage.removeItem(k));
+			alert("Config has been reset!");
+			location.reload();
+		});
+		panels["Utility"].appendChild(resetConfigRow);
 
-    // === Global Search ===
-    const searchWrap = document.createElement("div");
-    searchWrap.className = "lb-searchwrap";
-    searchWrap.innerHTML = `<input type="text" class="lb-search" placeholder="Search..">`;
-    document.body.appendChild(searchWrap);
+		// === Global Search ===
+		const searchWrap = document.createElement("div");
+		searchWrap.className = "lb-searchwrap";
+		searchWrap.innerHTML = `<input type="text" class="lb-search" placeholder="Search..">`;
+		document.body.appendChild(searchWrap);
 
-    const searchBox = searchWrap.querySelector("input");
-    searchBox.addEventListener("input", () => {
-      const term = searchBox.value.toLowerCase();
-      document.querySelectorAll(".lb-module").forEach((row) => {
-        const name = row.firstChild.textContent.toLowerCase();
-        row.style.display = name.includes(term) ? "flex" : "none";
-      });
-    });
+		const searchBox = searchWrap.querySelector("input");
+		searchBox.addEventListener("input", () => {
+			const term = searchBox.value.toLowerCase();
+			document.querySelectorAll(".lb-module").forEach((row) => {
+				const name = row.firstChild.textContent.toLowerCase();
+				row.style.display = name.includes(term) ? "flex" : "none";
+			});
+		});
 
-    // === Hide on load ===
-    Object.values(panels).forEach((p) => (p.style.display = "none"));
-    searchWrap.style.display = "none";
+		// === Hide on load ===
+		Object.values(panels).forEach((p) => (p.style.display = "none"));
+		searchWrap.style.display = "none";
 
-    // === Startup notification ===
-    setTimeout(() => { showNotif("[ClickGUI] Press '\\\\' to open GUI", 4000); }, 500);
+		// === Startup notification ===
+		setTimeout(() => { showNotif("[ClickGUI] Press '\\\\' to open GUI", 4000); }, 500);
 
-    // === Toggle the LB GUI ===
-    let visible = false;
-    document.addEventListener("keydown", (e) => {
-      if (e.code === "Backslash") {
-        visible = !visible;
-        Object.values(panels).forEach((p)=> (p.style.display=visible?"block":"none"));
-        searchWrap.style.display = visible ? "block":"none";
-      }
-    });
-  }
+		// === Toggle the LB GUI ===
+		let visible = false;
+		document.addEventListener("keydown", (e) => {
+			if (e.code === "Backslash") {
+				visible = !visible;
+				Object.values(panels).forEach((p) => (p.style.display = visible ? "block" : "none"));
+				searchWrap.style.display = visible ? "block" : "none";
+			}
+		});
+	}
 })();
