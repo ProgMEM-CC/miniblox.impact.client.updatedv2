@@ -46,13 +46,3 @@ Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 - **DO NOT EVER PUBLISH UNSTABLE CHANGES TO THE "/" (ROOT) FOLDER. PUBLISH IT TO "beta" FOLDER INSTEAD PLS**
 
 ![MinibloxClient Stats](https://gitmystat.vercel.app/repo?theme=dino&username=progmem-cc&repo=miniblox.impact.client.updatedv2)
-  
-  ## Goals (May not be added)
-  
-- ForceOP Module (MM64 and ProgMEM's Job, forceop like means u can ban the owner in a server :D) (could work? - MM64)
-
-- Nuker (I dont think this will work - MM64.)
-
-- Force Creative / Inventory Modification (like thrax client - was made by 7GrandDad but could implement it to here)
-
-- Command Block modification (in survival mode. Again this could be possible - MM64)
