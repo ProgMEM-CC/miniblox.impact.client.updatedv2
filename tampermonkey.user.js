@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Impact For Miniblox!
 // @namespace    ProgMEM-CC, ModuleM64, he557, 7GrandDad, BlueDragon7327, DataM0del/RealPacket, ekusos22, whoppps, ispyboy
-// @version      5.4.0
+// @version      5.5.0
 // @description  The ultimate MiniBlox hacked client. Built for stealth, speed, and total domination. Fully dark-mode optimized with a modern GUI and high performance guaranteed 
 // @author       7GrandDad, ProgMEM-CC, ModuleMaster64, he557, RealPacket or DataM0del (Codeberg/Github names), BlueDragon7327, whoppps, ispyboy
 // @match        https://miniblox.io/*
@@ -29,14 +29,14 @@
 //  whoppps (github.com/whoppps)
 //  ispyboy (github.com/ispyboy)
 //
-//  Pls, we could need more devs!
+//  we could need more devs lol.
 //  
 // =============================================== Credits To ================================================
-//    7GrandDad, the OG Creator of the Vape v4 hacked client for miniblox
-//    he557, adding bypasses and and pushing through, making the client work
-//    ProgMEM-CC, the upgrader and reviver of the client as Impact V4 for miniblox
+//    7GrandDad, the OG Creator of the Vape v4 hacked client for miniblox!
+//    he557, adding bypasses and and pushing through, making the client work!
+//    ProgMEM-CC, the upgrader and reviver of the client as Impact V4 for miniblox!
 //    ModuleMaster64, the one who never fails to amaze, and also the creator of the new LiquidBounce themed ClickGUI and improving/adding ground-breaking modules!
-//    RealPacket, (codeberg, https://codeberg.org/RealPacket), for the inspiration of reviving the hacks and making a genius desync for Fly and Nofall!
+//    RealPacket, (codeberg: https://codeberg.org/RealPacket), for the inspiration of reviving the hacks and making a genius desync for Fly and Nofall, also creating a 1.7 blocking animation for KillAura
 //    BlueDragon7327, Module Researcher and solver!
 //    dtkiller-jp, Bug reporter!
 //    whoppps
