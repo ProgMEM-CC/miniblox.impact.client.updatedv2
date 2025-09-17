@@ -36,7 +36,7 @@
 //    he557, adding bypasses and and pushing through, making the client work!
 //    ProgMEM-CC, the upgrader and reviver of the client as Impact V4 for miniblox!
 //    ModuleMaster64, the one who never fails to amaze, and also the creator of the new LiquidBounce themed ClickGUI and improving/adding ground-breaking modules!
-//    RealPacket, (codeberg: https://codeberg.org/RealPacket), for the inspiration of reviving the hacks and making a genius desync for Fly and Nofall, also creating a 1.7 blocking animation for KillAura
+//    RealPacket, (codeberg: https://codeberg.org/RealPacket), for the inspiration of reviving the hacks and making a genius desync for Fly and Nofall, also creating a 1.7 blocking animation for KillAura (coming soon)
 //    BlueDragon7327, Module Researcher and solver!
 //    dtkiller-jp, Bug reporter!
 //    whoppps
