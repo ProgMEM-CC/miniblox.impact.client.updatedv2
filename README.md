@@ -43,6 +43,6 @@ Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 
 - **When updating the version of the script, remember to update VERSIONFILE, tampermonkey.js and injection.js**
 
-- **DO NOT EVER PUBLISH UNSTABLE CHANGES TO THE "/" (ROOT) FOLDER. PUBLISH IT TO "beta" FOLDER INSTEAD PLS**
+- **DO NOT EVER PUBLISH UNSTABLE CHANGES (ie. not working modules) TO THE "/" (ROOT) FOLDER. Please PUBLISH IT TO "beta" FOLDER INSTEAD**
 
 ![MinibloxClient Stats](https://gitmystat.vercel.app/repo?theme=dino&username=progmem-cc&repo=miniblox.impact.client.updatedv2)
