@@ -1645,13 +1645,11 @@ const jesus = new Module("Jesus", function(callback) {
 })();
 (async function () {
   try {
-    // Loads the Minecraft Font onto GUI
     const fontLink = document.createElement("link");
-    fontLink.href = "https://fonts.cdnfonts.com/css/minecraft-4";
+    fontLink.href = "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap";
     fontLink.rel = "stylesheet";
     document.head.appendChild(fontLink);
 
-    // Wait for Modules!
     await new Promise((resolve) => {
       const loop = setInterval(() => {
         if (unsafeWindow?.globalThis?.[storeName]?.modules) {
@@ -1663,144 +1661,46 @@ const jesus = new Module("Jesus", function(callback) {
 
     injectGUI(unsafeWindow.globalThis[storeName]);
   } catch (err) {
-    console.error("[ClickGUI] Init failed:", err);          // Checks for any errors that could break the GUI
+    console.error("[ClickGUI] Init failed:", err);
   }
 
   function injectGUI(store) {
-    const categories = {                                                             // If there is any module i have missed pls add it to the categories
+    const categories = {
       Combat: ["autoclicker", "killaura", "velocity", "wtap"],
-      Movement: [
-        "scaffold","jesus","phase","nofall","antifall","sprint","keepsprint","step",
-        "speed","fly","noslowdown","spiderclimb","jetpack"
-      ],
-      "Player / Render": [
-        "invcleaner","invwalk","autoarmor","ghostjoin",
-        "playeresp","nametags+","textgui","clickgui"
-      ],
-      World: ["fastbreak","breaker","autocraft","cheststeal","timer"],
-      Utility: [
-        "autorespawn","autorejoin","autoqueue",                         
-        "autovote","filterbypass","anticheat",
-        "autofunnychat","musicfix","auto-funnychat","music-fix"         // AutoFunnyChat doesnt enable properly but it works perfectly fine (disable) dont worry
-      ]
+      Movement: ["scaffold","jesus","phase","nofall","antifall","sprint","keepsprint","step","speed","jetpack","noslowdown"],
+      RendLayer: ["invcleaner","invwalk","autoarmor","esp","nametags+","textgui","clickgui","longjump"],
+      World: ["fastbreak","breaker","autocraft","cheststeal","timer","creativemode"],
+      Utility: ["autorespawn","autorejoin","autoqueue","autovote","filterbypass","anticheat","autofunnychat","chatdisabler","musicfix","auto-funnychat","music-fix"]
     };
+    const catIcons = { Combat:"⚔️", Movement:"🏃", "RendLayer":"🧑👁️", World:"🌍", Utility:"🛠️" };
 
-    const catIcons = {
-      Combat: "⚔️",
-      Movement: "🏃",
-      "Player / Render": "🧑👁️",
-      World: "🌍",
-      Utility: "🛠️"
-    };
-
-    // === Styles (LiquidBounce Theme + Scrollbars) ===
+    // === Styles ===
     const style = document.createElement("style");
     style.textContent = `
       @keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}
-      .lb-panel {
-        position:absolute;
-        width:220px;
-        background:#111;
-        border:2px solid #00aaff;
-        border-radius:0;
-        font-family:"Minecraft", monospace;
-        color:white;
-        animation:guiEnter .25s ease-out;
-        z-index:100000;
-
-        /* Scrollable */
-        max-height:420px;
-        overflow-y:auto;
-        overflow-x:hidden;
-      }
+      .lb-panel { position:absolute; width:220px; background:#111; border:2px solid #00aaff; font-family:"Poppins", sans-serif; color:white; animation:guiEnter .25s ease-out; z-index:100000; max-height:420px; overflow-x:hidden; }
       .lb-panel::-webkit-scrollbar { width:6px; }
       .lb-panel::-webkit-scrollbar-thumb { background:#00aaff; }
       .lb-panel::-webkit-scrollbar-track { background:#111; }
-      .lb-header {
-        background:#0a0a0a;
-        padding:6px;
-        font-weight:bold;
-        cursor:move;
-        user-select:none;
-        text-align:center;
-        border-bottom:1px solid #00aaff;
-        color:white;
-      }
-      .lb-module {
-        padding:4px 6px;
-        border-bottom:1px solid #1b1b1b;
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        cursor:pointer;
-      }
+      .lb-header { background:#0a0a0a; padding:6px; font-weight:600; cursor:move; text-align:center; border-bottom:1px solid #00aaff; }
+      .lb-module { padding:4px 6px; border-bottom:1px solid #1b1b1b; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
       .lb-module:hover { background:#151a20; }
       .lb-module.active { color:#00aaff; }
-      .lb-options {
-        display:none;
-        flex-direction:column;
-        gap:4px;
-        padding:4px 6px;
-        background:#0f0f12;
-        border-top:1px dashed #1e1e1e;
-      }
+      .lb-options { display:none; flex-direction:column; gap:4px; padding:4px 6px; background:#0f0f12; border-top:1px dashed #1e1e1e; }
       .lb-options.show { display:flex; animation:guiEnter .2s ease-out; }
-      .lb-options label {
-        font-size:12px;
-        display:flex;
-        justify-content:space-between;
-        color:white;
-      }
-      .lb-options input[type="range"] { flex:1; margin-left:4px; }
-      .lb-options input[type="text"] {
-        flex:1;
-        margin-left:4px;
-        font-size:12px;
-        background:#0a0a0a;
-        color:white;
-        border:1px solid #00aaff;
-        font-family:"Minecraft", monospace;
-        padding:2px;
-      }
-      .notif-wrap {
-        position:fixed; bottom:40px; right:30px;
-        display:flex; flex-direction:column; align-items:flex-end;
-        pointer-events:none; z-index:999999;
-      }
-      .notif {
-        background:#0a0a0a;
-        color:white;
-        padding:8px 12px;
-        margin-top:6px;
-        border:2px solid #00aaff;
-        border-radius:0;
-        font-family:"Minecraft", monospace;
-        opacity:1;
-        transform:translateX(120%);
-        transition:opacity .3s, transform .3s ease;
-      }
-      .lb-searchwrap {
-        position:fixed;
-        top:15px;
-        left:50%;
-        transform:translateX(-50%);
-        z-index:100001;
-        background:#0a0a0a;
-        border:2px solid #00aaff;
-        border-radius:0;
-        padding:4px 6px;
-        font-family:"Minecraft", monospace;
-      }
-      .lb-search {
-        background:#111;
-        border:none;
-        outline:none;
-        color:white;
-        font-size:13px;
-        width:180px;
-        font-family:"Minecraft", monospace;
-      }
+      .lb-options label { font-size:12px; display:flex; justify-content:space-between; color:white; }
+      .lb-options input[type="text"], .lb-options input[type="range"] { flex:1; margin-left:4px; font-family:"Poppins", sans-serif; }
+      .notif-wrap { position:fixed; bottom:40px; right:30px; display:flex; flex-direction:column; align-items:flex-end; pointer-events:none; z-index:999999; }
+      .notif { display:flex; align-items:center; gap:8px; background:rgba(20,20,20,0.85); color:white; padding:10px 14px; margin-top:8px; border-radius:10px; font-family:"Poppins", sans-serif; font-size:13px; backdrop-filter:blur(6px); box-shadow:0 4px 12px rgba(0,0,0,0.4); opacity:1; transform:translateX(120%); transition:opacity .3s, transform .3s ease; border-left:4px solid; }
+      .notif.info { border-color:#3498db; }
+      .notif.success { border-color:#2ecc71; }
+      .notif.warn { border-color:#f1c40f; }
+      .notif.error { border-color:#e74c3c; }
+      .lb-searchwrap { position:fixed; top:15px; left:50%; transform:translateX(-50%); z-index:100001; background:#0a0a0a; border:2px solid #00aaff; padding:4px 6px; font-family:"Poppins", sans-serif; }
+      .lb-search { background:#111; border:none; outline:none; color:white; font-size:13px; width:180px; font-family:"Poppins", sans-serif; }
       .lb-search::placeholder { color:#00aaff; opacity:0.6; }
+      .lb-content { overflow: hidden; transition: max-height 0.3s ease; max-height:1000px; }
+      .lb-content.collapsed { max-height:0; }
     `;
     document.head.appendChild(style);
 
@@ -1808,51 +1708,35 @@ const jesus = new Module("Jesus", function(callback) {
     const notifWrap = document.createElement("div");
     notifWrap.className = "notif-wrap";
     document.body.appendChild(notifWrap);
-
-    function showNotif(msg, dur = 3000) {
+    function showNotif(msg, type = "info", dur = 3000) {
       const n = document.createElement("div");
-      n.className = "notif";
-      n.textContent = msg;
+      n.className = `notif ${type}`;
+      let icon = type === "info" ? "ℹ️" : type === "success" ? "✅" : type === "warn" ? "⚠️" : "❌";
+      n.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
       notifWrap.appendChild(n);
       setTimeout(() => (n.style.transform = "translateX(0)"), 30);
-      setTimeout(() => {
-        n.style.opacity = "0";
-        n.style.transform = "translateX(120%)";
-      }, dur);
+      setTimeout(() => { n.style.opacity = "0"; n.style.transform = "translateX(120%)"; }, dur);
       setTimeout(() => n.remove(), dur + 400);
     }
 
-    // === Persistence Helpers ===
+    // === Persistence helpers ===
     function saveModuleState(name, mod) {
       const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
       const opts = {};
-      if (mod.options) {
-        Object.entries(mod.options).forEach(([key, opt]) => {
-          opts[key] = opt[1];
-        });
-      }
+      if (mod.options) Object.entries(mod.options).forEach(([k, opt]) => { opts[k] = opt[1]; });
       saved[name] = { enabled: mod.enabled, bind: mod.bind, options: opts };
       localStorage.setItem("lb-mods", JSON.stringify(saved));
     }
-
     function loadModuleState(name, mod) {
       const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
       if (saved[name]) {
-        if (saved[name].enabled !== mod.enabled && typeof mod.toggle === "function") {
-          mod.toggle();
-        }
-        if (saved[name].bind) {
-          mod.setbind(saved[name].bind);
-        }
-        if (saved[name].options && mod.options) {
-          Object.entries(saved[name].options).forEach(([key, val]) => {
-            if (mod.options[key]) mod.options[key][1] = val;
-          });
-        }
+        if (saved[name].enabled !== mod.enabled && typeof mod.toggle === "function") mod.toggle();
+        if (saved[name].bind) mod.setbind(saved[name].bind);
+        if (saved[name].options && mod.options) Object.entries(saved[name].options).forEach(([k, v]) => { if (mod.options[k]) mod.options[k][1] = v; });
       }
     }
 
-    // === Panels ===
+    // === Panels with slide collapsible content ===
     const panels = {};
     Object.keys(categories).forEach((cat, i) => {
       const panel = document.createElement("div");
@@ -1862,37 +1746,41 @@ const jesus = new Module("Jesus", function(callback) {
 
       const header = document.createElement("div");
       header.className = "lb-header";
-      header.textContent = `${catIcons[cat]} ${cat}`;
+
+      const collapseBtn = document.createElement("span");
+      collapseBtn.style.float = "right";
+      collapseBtn.style.cursor = "pointer";
+
+      const titleSpan = document.createElement("span");
+      titleSpan.textContent = `${catIcons[cat]} ${cat}`;
+
+      header.appendChild(titleSpan);
+      header.appendChild(collapseBtn);
       panel.appendChild(header);
 
-      // Restore saved pos
       const saved = localStorage.getItem("lb-pos-" + cat);
-      if (saved) {
-        const { left, top } = JSON.parse(saved);
-        panel.style.left = left;
-        panel.style.top = top;
-      }
+      if (saved) { const { left, top } = JSON.parse(saved); panel.style.left = left; panel.style.top = top; }
 
-      // Dragging
       let dragging = false, offsetX, offsetY;
-      header.addEventListener("mousedown", (e) => {
-        dragging = true;
-        offsetX = e.clientX - panel.offsetLeft;
-        offsetY = e.clientY - panel.offsetTop;
-      });
-      document.addEventListener("mousemove", (e) => {
-        if (dragging) {
-          panel.style.left = e.clientX - offsetX + "px";
-          panel.style.top = e.clientY - offsetY + "px";
-        }
-      });
-      document.addEventListener("mouseup", () => {
-        if (dragging) {
-          dragging = false;
-          localStorage.setItem("lb-pos-" + cat,
-            JSON.stringify({ left: panel.style.left, top: panel.style.top })
-          );
-        }
+      header.addEventListener("mousedown", (e) => { dragging = true; offsetX = e.clientX - panel.offsetLeft; offsetY = e.clientY - panel.offsetTop; });
+      document.addEventListener("mousemove", (e) => { if (dragging) { panel.style.left = e.clientX - offsetX + "px"; panel.style.top = e.clientY - offsetY + "px"; } });
+      document.addEventListener("mouseup", () => { if (dragging) { dragging = false; localStorage.setItem("lb-pos-" + cat, JSON.stringify({ left: panel.style.left, top: panel.style.top })); } });
+
+      // collapse content
+      const contentWrap = document.createElement("div");
+      contentWrap.className = "lb-content";
+      panel.appendChild(contentWrap);
+
+      let collapsed = localStorage.getItem("lb-collapsed-" + cat) === "true";
+      if (collapsed) contentWrap.classList.add("collapsed");
+      collapseBtn.textContent = collapsed ? "[+]" : "[-]";
+
+      collapseBtn.addEventListener("click", () => {
+        collapsed = !collapsed;
+        if (collapsed) contentWrap.classList.add("collapsed");
+        else contentWrap.classList.remove("collapsed");
+        collapseBtn.textContent = collapsed ? "[+]" : "[-]";
+        localStorage.setItem("lb-collapsed-" + cat, collapsed);
       });
 
       panels[cat] = panel;
@@ -1901,110 +1789,48 @@ const jesus = new Module("Jesus", function(callback) {
 
     // === Modules ===
     Object.entries(store.modules).forEach(([name, mod]) => {
-      console.log("[ClickGUI] Found module:", name);
-
       let cat = "Utility";
-      for (const [c, keys] of Object.entries(categories)) {
-        if (keys.some((k) => name.toLowerCase().includes(k))) {
-          cat = c; break;
-        }
-      }
-
-      // Restore state
+      for (const [c, keys] of Object.entries(categories)) if (keys.some((k) => name.toLowerCase().includes(k))) { cat = c; break; }
       loadModuleState(name, mod);
-
       const row = document.createElement("div");
       row.className = "lb-module" + (mod.enabled ? " active" : "");
       row.innerHTML = `<span>${name}</span><span>${mod.enabled ? "ON" : "OFF"}</span>`;
-
       const optionsBox = document.createElement("div");
       optionsBox.className = "lb-options";
-
-      // Toggle
       row.addEventListener("mousedown", (e) => {
         if (e.button === 0) {
           if (typeof mod.toggle === "function") mod.toggle();
           row.classList.toggle("active", mod.enabled);
           row.lastChild.textContent = mod.enabled ? "ON" : "OFF";
-          showNotif(`${name} ${mod.enabled ? "enabled ✅" : "disabled ❌"}`);
+          showNotif(`${name} ${mod.enabled ? "enabled" : "disabled"}`, mod.enabled ? "success" : "error");
           saveModuleState(name, mod);
         }
       });
-
-      // Expand
-      row.addEventListener("contextmenu", (e) => {
-        e.preventDefault();
-        optionsBox.classList.toggle("show");
+      row.addEventListener("contextmenu", (e) => { e.preventDefault(); optionsBox.classList.toggle("show"); });
+      if (mod.options) Object.entries(mod.options).forEach(([key, opt]) => {
+        const [type, val, label] = opt;
+        const line = document.createElement("label");
+        line.textContent = label;
+        if (type === Boolean) { const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = val; cb.onchange = () => { opt[1] = cb.checked; saveModuleState(name, mod); }; line.appendChild(cb);}
+        else if (type === Number) { const slider = document.createElement("input"); slider.type = "range"; const [min, max, step] = opt.range ?? [0, 10, 0.1]; slider.min = min; slider.max = max; slider.step = step; slider.value = val; slider.oninput = () => { opt[1] = parseFloat(slider.value); saveModuleState(name, mod); }; line.appendChild(slider);}
+        else if (type === String) { const input = document.createElement("input"); input.type = "text"; input.value = val; input.onchange = () => { opt[1] = input.value; saveModuleState(name, mod); }; line.appendChild(input);}
+        optionsBox.appendChild(line);
       });
-
-      // Options UI
-      if (mod.options) {
-        Object.entries(mod.options).forEach(([key, opt]) => {
-          const [type, val, label] = opt;
-          const line = document.createElement("label");
-          line.textContent = label;
-
-          if (type === Boolean) {
-            const cb = document.createElement("input");
-            cb.type = "checkbox"; cb.checked = val;
-            cb.onchange = () => {
-              opt[1] = cb.checked;
-              saveModuleState(name, mod);
-            };
-            line.appendChild(cb);
-          } else if (type === Number) {
-            const slider = document.createElement("input");
-            slider.type = "range";
-            const [min, max, step] = opt.range ?? [0, 10, 0.1];
-            slider.min = min; slider.max = max; slider.step = step; slider.value = val;
-            slider.oninput = () => {
-              opt[1] = parseFloat(slider.value);
-              saveModuleState(name, mod);
-            };
-            line.appendChild(slider);
-          } else if (type === String) {
-            const input = document.createElement("input");
-            input.type = "text"; input.value = val;
-            input.onchange = () => {
-              opt[1] = input.value;
-              saveModuleState(name, mod);
-            };
-            line.appendChild(input);
-          }
-          optionsBox.appendChild(line);
-        });
-      }
-
-      // Keybind
       const bindLine = document.createElement("label");
       bindLine.textContent = "Bind:";
       const bindInput = document.createElement("input");
       bindInput.type = "text"; bindInput.value = mod.bind;
-      bindInput.style.width = "70px";
-      bindInput.style.background = "#0a0a0a";
-      bindInput.style.color = "white";
-      bindInput.style.border = "1px solid #00aaff";
-      bindInput.style.fontFamily = '"Minecraft", monospace';
-      bindInput.style.fontSize = "12px";
-      bindInput.style.padding = "2px";
-      bindInput.onchange = (e) => {
-        mod.setbind(e.target.value);
-        showNotif(`${name} bind set to ${e.target.value}`);
-        saveModuleState(name, mod);
-      };
-      bindLine.appendChild(bindInput);
-      optionsBox.appendChild(bindLine);
+      bindInput.style.width = "70px"; bindInput.style.background = "#0a0a0a"; bindInput.style.color = "white"; bindInput.style.border = "1px solid #00aaff"; bindInput.style.fontFamily = '"Poppins", sans-serif'; bindInput.style.fontSize = "12px"; bindInput.style.padding = "2px";
+      bindInput.onchange = (e) => { mod.setbind(e.target.value); showNotif(`${name} bind set to ${e.target.value}`, "info"); saveModuleState(name, mod); };
+      bindLine.appendChild(bindInput); optionsBox.appendChild(bindLine);
 
-      panels[cat].appendChild(row);
-      panels[cat].appendChild(optionsBox);
+      panels[cat].querySelector(".lb-content").appendChild(row);
+      panels[cat].querySelector(".lb-content").appendChild(optionsBox);
     });
 
-    // === Reset Layout ===
+    // === Reset / Config buttons (Utility panel) ===
     const resetRow = document.createElement("div");
     resetRow.className = "lb-module";
-    resetRow.style.justifyContent = "flex-start";
-    resetRow.style.paddingLeft = "6px";
-    resetRow.style.fontWeight = "bold";
     resetRow.style.color = "#00aaff";
     resetRow.textContent = "↺ Reset Layout";
     resetRow.addEventListener("click", () => {
@@ -2019,34 +1845,28 @@ const jesus = new Module("Jesus", function(callback) {
         localStorage.setItem("lb-pos-" + cat, JSON.stringify(pos));
         if (panels[cat]) { panels[cat].style.left=pos.left; panels[cat].style.top=pos.top; }
       });
-      showNotif("Layout reset to default positions ✅");
+      showNotif("Layout reset to default", "success");
     });
-    panels["Utility"].appendChild(resetRow);
+    panels["Utility"].querySelector(".lb-content").appendChild(resetRow);
 
-    // === Reset Config ===
     const resetConfigRow = document.createElement("div");
     resetConfigRow.className = "lb-module";
-    resetConfigRow.style.justifyContent = "flex-start";
-    resetConfigRow.style.paddingLeft = "6px";
-    resetConfigRow.style.fontWeight = "bold";
     resetConfigRow.style.color = "red";
-    resetConfigRow.textContent = "⛔ Reset Config?";
+    resetConfigRow.textContent = "⛔ Reset Config";
     resetConfigRow.addEventListener("click", () => {
       localStorage.removeItem("lb-mods");
-      Object.keys(localStorage)
-        .filter((k) => k.startsWith("lb-pos-"))
-        .forEach((k) => localStorage.removeItem(k));
+      Object.keys(localStorage).filter((k) => k.startsWith("lb-pos-")).forEach((k) => localStorage.removeItem(k));
+      Object.keys(localStorage).filter((k) => k.startsWith("lb-collapsed-")).forEach((k) => localStorage.removeItem(k));
       alert("Config has been reset!");
       location.reload();
     });
-    panels["Utility"].appendChild(resetConfigRow);
+    panels["Utility"].querySelector(".lb-content").appendChild(resetConfigRow);
 
-    // === Global Search ===
+    // === Search ===
     const searchWrap = document.createElement("div");
     searchWrap.className = "lb-searchwrap";
-    searchWrap.innerHTML = `<input type="text" class="lb-search" placeholder="Search..">`;
+    searchWrap.innerHTML = `<input type="text" class="lb-search" placeholder="Search...">`;
     document.body.appendChild(searchWrap);
-
     const searchBox = searchWrap.querySelector("input");
     searchBox.addEventListener("input", () => {
       const term = searchBox.value.toLowerCase();
@@ -2061,9 +1881,9 @@ const jesus = new Module("Jesus", function(callback) {
     searchWrap.style.display = "none";
 
     // === Startup notification ===
-    setTimeout(() => { showNotif("[ClickGUI] Press '\\\\' to open GUI", 4000); }, 500);
+    setTimeout(() => { showNotif("[LBGUI] Press \\\\ to open GUI", "info", 4000); }, 500);
 
-    // === Toggle the LB GUI ===
+    // === Toggle GUI ===
     let visible = false;
     document.addEventListener("keydown", (e) => {
       if (e.code === "Backslash") {
