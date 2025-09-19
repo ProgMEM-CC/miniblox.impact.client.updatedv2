@@ -171,7 +171,6 @@ let serverPos = player.pos.clone();
 	// DRAWING SETUP
 	addModification('I(this,"glintTexture");', `
 		I(this, "vapeTexture");
-		I(this, "v4Texture");
 	`);
 	/**
 	 * @param {string} url
@@ -183,8 +182,7 @@ let serverPos = player.pos.clone();
 	addModification('skinManager.loadTextures(),', ',this.loadVape(),');
 	addModification('async loadSpritesheet(){', `
 		async loadVape() {
-			this.vapeTexture = await this.loader.loadAsync("${corsMoment("https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/logo.png")}");
-			this.v4Texture = await this.loader.loadAsync("${corsMoment("https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/logov4.png")}");
+			this.vapeTexture = await this.loader.loadAsync("${corsMoment("https://raw.githubusercontent.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/main/logo_old.png")}");
 		}
 		async loadSpritesheet(){
 	`, true);
@@ -196,47 +194,107 @@ let serverPos = player.pos.clone();
 	`, true);
 
 	addModification('COLOR_TOOLTIP_BG,BORDER_SIZE)}', `
-		function drawImage(ctx, img, posX, posY, sizeX, sizeY, color) {
-			if (color) {
-				ctx.fillStyle = color;
-				ctx.fillRect(posX, posY, sizeX, sizeY);
-				ctx.globalCompositeOperation = "destination-in";
-			}
-			ctx.drawImage(img, posX, posY, sizeX, sizeY);
-			if (color) ctx.globalCompositeOperation = "source-over";
-		}
-	`);
+    function drawImage(ctx, img, posX, posY, sizeX, sizeY, color) {
+        if (color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(posX, posY, sizeX, sizeY);
+            ctx.globalCompositeOperation = "destination-in";
+        }
+        ctx.drawImage(img, posX, posY, sizeX, sizeY);
+        if (color) ctx.globalCompositeOperation = "source-over";
+    }
+`);
 
-	// TEXT GUI
-	addModification('(this.drawSelectedItemStack(),this.drawHintBox())', /*js*/`
-		if (ctx$5 && enabledModules["TextGUI"]) {
-			const colorOffset = (Date.now() / 4000);
-			const posX = 15;
-			const posY = 17;
-			ctx$5.imageSmoothingEnabled = true;
-			ctx$5.imageSmoothingQuality = "high";
-			drawImage(ctx$5, textureManager.vapeTexture.image, posX, posY, 80, 21, \`HSL(\${(colorOffset % 1) * 360}, 100%, 50%)\`);
-			drawImage(ctx$5, textureManager.v4Texture.image, posX + 81, posY + 1, 33, 18);
+addModification(
+  '(this.drawSelectedItemStack(),this.drawHintBox())',
+  /*js*/`
+    if (ctx$5 && enabledModules["TextGUI"]) {
+        const colorOffset = Date.now() / 4000;
 
-			let offset = 0;
-			let stringList = [];
-			for(const [module, value] of Object.entries(enabledModules)) {
-				if (!value || module == "TextGUI") continue;
-				stringList.push(module);
-			}
+        const canvasW = ctx$5.canvas.width;
+        const canvasH = ctx$5.canvas.height;
 
-			stringList.sort(function(a, b) {
-				const compA = ctx$5.measureText(a).width;
-				const compB = ctx$5.measureText(b).width;
-				return compA < compB ? 1 : -1;
-			});
+        ctx$5.imageSmoothingEnabled = true;
+        ctx$5.imageSmoothingQuality = "high";
 
-			for(const module of stringList) {
-				offset++;
-				drawText(ctx$5, module, posX + 6, posY + 12 + ((textguisize[1] + 3) * offset), textguisize[1] + "px " + textguifont[1], \`HSL(\${((colorOffset - (0.025 * offset)) % 1) * 360}, 100%, 50%)\`, "left", "top", 1, textguishadow[1]);
-			}
-		}
-	`);
+        // Draw logo (bottom-right)
+        const logo = textureManager.vapeTexture.image;
+        const scale = 0.9;
+        const logoW = logo.width * scale;
+        const logoH = logo.height * scale;
+        const posX = canvasW - logoW - 15;
+        const posY = canvasH - logoH - 15;
+
+        ctx$5.shadowColor = "rgba(0, 0, 0, 0.6)";
+        ctx$5.shadowBlur = 6;
+        drawImage(ctx$5, logo, posX, posY, logoW, logoH);
+        ctx$5.shadowColor = "transparent";
+        ctx$5.shadowBlur = 0;
+
+        let offset = 0;
+        const stringList = [];
+
+        for (const [module, value] of Object.entries(enabledModules)) {
+            if (!value || module === "TextGUI") continue;
+            stringList.push(module);
+        }
+
+        // Sort by width (desc)
+        stringList.sort(
+          (a, b) => ctx$5.measureText(b).width - ctx$5.measureText(a).width
+        );
+
+        // Draw modules on the right
+        const paddingRight = 15;
+        const startY = 27 + 10;
+
+        for (const moduleName of stringList) {
+            offset++;
+
+            const text = moduleName;
+            const fontStyle = \`\${textguisize[1]}px \${textguifont[1]}\`;
+            ctx$5.font = fontStyle;
+
+            const textWidth = ctx$5.measureText(text).width;
+            const x = canvasW - textWidth - paddingRight;
+            const y = startY + (textguisize[1] + 3) * offset;
+
+            // Text shadow
+            ctx$5.shadowColor = "black";
+            ctx$5.shadowBlur = 4;
+            ctx$5.shadowOffsetX = 1;
+            ctx$5.shadowOffsetY = 1;
+
+            drawText(
+                ctx$5,
+                text,
+                x,
+                y,
+                fontStyle,
+                \`hsl(\${((colorOffset - 0.025 * offset) % 1) * 360},100%,50%)\`,
+                "left",
+                "top",
+                1,
+                textguishadow[1]
+            );
+
+            // Reset shadow
+            ctx$5.shadowColor = "transparent";
+            ctx$5.shadowBlur = 0;
+            ctx$5.shadowOffsetX = 0;
+            ctx$5.shadowOffsetY = 0;
+
+            // Draw status dot
+            const dotX = x - 12;
+            const dotY = y - 4;
+            ctx$5.fillStyle = enabledModules[moduleName] ? "lime" : "red";
+            ctx$5.beginPath();
+            ctx$5.arc(dotX, dotY, 4, 0, Math.PI * 2);
+            ctx$5.fill();
+        }
+    }
+`
+);
 
 	
 	addModification('+=h*y+u*x}', `
