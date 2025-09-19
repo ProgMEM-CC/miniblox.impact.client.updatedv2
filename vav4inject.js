@@ -1339,7 +1339,7 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 
     tickLoop["InvCleaner"] = function () {
         const now = Date.now();
-        if (now - lastRun < 65) return;
+        if (now - lastRun < 100) return;
         lastRun = now;
 
         const slots = player?.inventoryContainer?.inventorySlots;
@@ -1418,7 +1418,7 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 function dropSlot(index) {
     const windowId = player.openContainer.windowId;
     playerControllerDump.windowClickDump(windowId, index, 0, 0, player);
-    playerControllerDump.windowClickDump(windowId, -999, 0, 0, player); // drop outside
+    playerControllerDump.windowClickDump(windowId, -999, 0, 0, player); // drop outside of the window
 }
 
 let funnyMessages = [
@@ -1426,7 +1426,7 @@ let funnyMessages = [
 "Lag spikes? Blame the AC trying to play psychic.",
 "Jesus walked on water. ACs still trip over puddles.",
 "Walking on air? ACs call it a glitch. We call it precision.",
-"Prediction ACs eat packets. Too bad they choke on velocity.",
+"Prediction ACs eat packets 4 breakfast. Too bad they choke on velocity.",
 "Gravity’s a suggestion. ACs treat it like gospel.",
 "Scaffold smoother than your AC’s excuses.",
 "Tick-perfect bridging. ACs still counting frames.",
@@ -1444,8 +1444,8 @@ let funnyMessages = [
 "Toggle. Deliver. ACs scramble.",
 "ACs don’t detect. They guess and hope.",
 "Unleashed. ACs unleashed their incompetence.",
-"No drama. Just domination.",
-"ACs patch. We evolve.",
+"No drama. Just full domination over servers.",
+"ACs getting patched? We evolve.",
 "Cheating? No. Just outperforming your AC’s imagination.",
 "Toggle scaffold. Build legacy. ACs build logs no one reads.",
 "Flinch? ACs do. We don’t.",
@@ -1643,6 +1643,7 @@ const jesus = new Module("Jesus", function(callback) {
 		execute(publicUrl);
 	}
 })();
+// Added new Poppins font 
 (async function () {
   try {
     const fontLink = document.createElement("link");
@@ -1661,7 +1662,7 @@ const jesus = new Module("Jesus", function(callback) {
 
     injectGUI(unsafeWindow.globalThis[storeName]);
   } catch (err) {
-    console.error("[ClickGUI] Init failed:", err);
+    console.error("[Cl1ckGU1] Init failed:", err);
   }
 
   function injectGUI(store) {
@@ -1719,7 +1720,7 @@ const jesus = new Module("Jesus", function(callback) {
       setTimeout(() => n.remove(), dur + 400);
     }
 
-    // === Persistence helpers ===
+    // === Persistence helpers with localstorage ===
     function saveModuleState(name, mod) {
       const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
       const opts = {};
@@ -1845,7 +1846,7 @@ const jesus = new Module("Jesus", function(callback) {
         localStorage.setItem("lb-pos-" + cat, JSON.stringify(pos));
         if (panels[cat]) { panels[cat].style.left=pos.left; panels[cat].style.top=pos.top; }
       });
-      showNotif("Layout reset to default", "success");
+      showNotif("#Layout has been reset to default!#", "success");
     });
     panels["Utility"].querySelector(".lb-content").appendChild(resetRow);
 
@@ -1880,10 +1881,10 @@ const jesus = new Module("Jesus", function(callback) {
     Object.values(panels).forEach((p) => (p.style.display = "none"));
     searchWrap.style.display = "none";
 
-    // === Startup notification ===
-    setTimeout(() => { showNotif("[LBGUI] Press \\\\ to open GUI", "info", 4000); }, 500);
+    // === Loading screen startup notification! ===
+    setTimeout(() => { showNotif("[CLickGUI@v5.5] Press \\\\ to open ClickGUI! Enjoy!", "info", 4000); }, 500);
 
-    // === Toggle GUI ===
+    // === Toggle ClickGUI ===
     let visible = false;
     document.addEventListener("keydown", (e) => {
       if (e.code === "Backslash") {
