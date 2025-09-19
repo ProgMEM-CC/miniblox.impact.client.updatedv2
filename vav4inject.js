@@ -166,7 +166,7 @@ let serverPos = player.pos.clone();
 	`);
 
 	addModification('VERSION$1," | ",', `"${vapeName} v${VERSION}"," | ",`);
-	addModification('if(!x.canConnect){', 'x.errorMessage = x.errorMessage === "Could not join server. You are connected to a VPN or proxy. Please disconnect from it and refresh the page." ? "You\'re maybe IP banned or you\'re using a vpn " : x.errorMessage;');
+	addModification('if(!x.canConnect){', 'x.errorMessage = x.errorMessage === "Could not join server. You are connected to a VPN or proxy. Please disconnect from it and refresh this page." ? "You\'re possibly IP banned or you\'re using a VPN " : x.errorMessage;');
 
 	// DRAWING SETUP
 	addModification('I(this,"glintTexture");', `
@@ -182,7 +182,7 @@ let serverPos = player.pos.clone();
 	addModification('skinManager.loadTextures(),', ',this.loadVape(),');
 	addModification('async loadSpritesheet(){', `
 		async loadVape() {
-			this.vapeTexture = await this.loader.loadAsync("${corsMoment("https://raw.githubusercontent.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/main/logo_old.png")}");
+			this.vapeTexture = await this.loader.loadAsync("${corsMoment("https://raw.githubusercontent.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/main/Logo.png")}");
 		}
 		async loadSpritesheet(){
 	`, true);
