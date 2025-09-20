@@ -206,7 +206,7 @@ let serverPos = player.pos.clone();
 	`);
 
 	// TEXT GUI
-	addModification(
+addModification(
   '(this.drawSelectedItemStack(),this.drawHintBox())',
   /*js*/`
     if (ctx$5 && enabledModules["TextGUI"]) {
@@ -988,6 +988,13 @@ jetpackvert = jetpack.addoption("Vertical", Number, 0.27);
 new Module("KeepSprint", function() {});
 
 
+// === MOVEMENT/LONGJUMP MODULE ===
+/**
+ * LongJump Module
+ */
+
+new Module("LongJump", function() {});
+
 // === MOVEMENT/NOSLOWDOWN MODULE ===
 /**
  * NoSlowdown Module
@@ -1063,7 +1070,7 @@ const step = new Module("Step", function(callback) {
 		player.stepHeight = 0.6;
 	}
 });
-stepheight = step.addoption("Height", Number, 1);
+stepheight = step.addoption("Height", Number, 2);
 
 
 // === PLAYER/ANTIFALL MODULE ===
@@ -1153,6 +1160,13 @@ new Module("AutoArmor", function(callback) {
 });
 
 
+// === PLAYER/ESP MODULE ===
+/**
+ * ESP Module (alias for PlayerESP)
+ */
+
+new Module("ESP", function() {});
+
 // === PLAYER/GHOSTJOIN MODULE ===
 /**
  * GhostJoin Module
@@ -1165,6 +1179,59 @@ new Module("GhostJoin", function() {});
 /**
  * InvCleaner Module
  */
+
+const armorPriority = ["leather", "chain", "iron", "diamond"];
+const weaponClasses = new Set(["ItemSword", "ItemAxe", "ItemBow", "ItemPickaxe"]);
+const essentials = ["gapple", "golden apple", "ender pearl", "fire charge"];
+const customKeep = ["god helmet", "legend boots"];
+
+const bestArmor = {};
+const bestItems = {};
+let lastRun = 0;
+
+function getArmorScore(stack) {
+    const item = stack.getItem();
+    const material = item.getArmorMaterial?.()?.toLowerCase?.() ?? "unknown";
+    const priority = armorPriority.indexOf(material);
+    const durability = stack.getMaxDamage() - stack.getItemDamage();
+    return (priority === -1 ? -999 : priority * 1000) + durability;
+}
+
+function getMaterialScore(name) {
+    name = name.toLowerCase();
+    if (name.includes("diamond")) return 4;
+    if (name.includes("iron")) return 3;
+    if (name.includes("chain")) return 2;
+    if (name.includes("wood")) return 1;
+    return 0;
+}
+
+function getScore(stack, item) {
+    const damage = item.getDamageVsEntity?.() ?? 0;
+    const enchants = stack.getEnchantmentTagList()?.length ?? 0;
+    const material = getMaterialScore(stack.getDisplayName());
+    return damage + enchants * 1.5 + material * 0.5;
+}
+
+function isSameItem(a, b) {
+    if (!a || !b) return false;
+    const nameA = a.stack.getDisplayName()?.toLowerCase();
+    const nameB = b.stack.getDisplayName()?.toLowerCase();
+    const enchA = a.stack.getEnchantmentTagList()?.toString();
+    const enchB = b.stack.getEnchantmentTagList()?.toString();
+    return nameA === nameB && enchA === enchB;
+}
+
+function shouldKeep(stack) {
+    const name = stack.getDisplayName().toLowerCase();
+    return essentials.some(k => name.includes(k)) || customKeep.some(k => name.includes(k));
+}
+
+function dropSlot(index) {
+    const windowId = player.openContainer.windowId;
+    playerControllerDump.windowClickDump(windowId, index, 0, 0, player);
+    playerControllerDump.windowClickDump(windowId, -999, 0, 0, player); // drop outside of the window
+}
 
 const InvCleaner = new Module("InvCleaner", function (callback) {
     if (!callback) {
@@ -1373,272 +1440,271 @@ new Module("Chams", function() {});
  */
 
 function injectGUI(store) {
-    const categories = {
-      Combat: ["autoclicker", "killaura", "velocity", "wtap"],
-      Movement: [
-        "scaffold","jesus","phase","nofall","sprint","keepsprint","step",
-        "speed","fly","noslowdown","spiderclimb","jetpack"
-      ],
-      "Player / Render": [
-        "invcleaner","invwalk","autoarmor","ghostjoin",
-        "playeresp","nametags+","textgui","clickgui"
-      ],
-      World: ["fastbreak","breaker","autocraft","cheststeal","timer"],
-      Utility: [
-        "autorespawn","autorejoin","autoqueue",
-        "autovote","filterbypass","anticheat",
-        "autofunnychat","musicfix","auto-funnychat","music-fix"
-      ]
-    };
+  const categories = {
+    Combat: ["autoclicker", "killaura", "velocity", "wtap"],
+    Movement: ["scaffold", "jesus", "phase", "nofall", "antifall", "sprint", "keepsprint", "step", "speed", "jetpack", "noslowdown"],
+    RendLayer: ["invcleaner", "invwalk", "autoarmor", "esp", "nametags+", "textgui", "clickgui", "longjump"],
+    World: ["fastbreak", "breaker", "autocraft", "cheststeal", "timer", "creativemode"],
+    Utility: ["autorespawn", "autorejoin", "autoqueue", "autovote", "filterbypass", "anticheat", "autofunnychat", "chatdisabler", "musicfix", "auto-funnychat", "music-fix"]
+  };
 
-    const catIcons = {
-      Combat: "⚔️",
-      Movement: "🏃",
-      "Player / Render": "🧑👁️",
-      World: "🌍",
-      Utility: "🛠️"
-    };
+  const catIcons = { Combat: "⚔️", Movement: "🏃", "RendLayer": "🧑👁️", World: "🌍", Utility: "🛠️" };
 
-    // === Styles (LiquidBounce Theme + Scrollbars) ===
-    const style = document.createElement("style");
-    style.textContent = 
-      "@keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}" +
-      ".lb-panel {" +
-        "position:absolute;" +
-        "width:220px;" +
-        "background:#111;" +
-        "border:2px solid #00aaff;" +
-        "border-radius:0;" +
-        "font-family:monospace;" +
-        "color:white;" +
-        "animation:guiEnter .25s ease-out;" +
-        "z-index:100000;" +
-        "max-height:420px;" +
-        "overflow-y:auto;" +
-        "overflow-x:hidden;" +
-      "}" +
-      ".lb-panel::-webkit-scrollbar { width:6px; }" +
-      ".lb-panel::-webkit-scrollbar-thumb { background:#00aaff; }" +
-      ".lb-panel::-webkit-scrollbar-track { background:#111; }" +
-      ".lb-header {" +
-        "background:#0a0a0a;" +
-        "padding:6px;" +
-        "font-weight:bold;" +
-        "cursor:move;" +
-        "user-select:none;" +
-        "text-align:center;" +
-        "border-bottom:1px solid #00aaff;" +
-      "}" +
-      ".lb-module {" +
-        "padding:4px 8px;" +
-        "cursor:pointer;" +
-        "transition:background .15s;" +
-        "border-bottom:1px solid #222;" +
-        "display:flex;" +
-        "justify-content:space-between;" +
-        "align-items:center;" +
-      "}" +
-      ".lb-module:hover { background:#222; }" +
-      ".lb-module.enabled { background:#003366; color:#00aaff; }" +
-      ".lb-module.enabled:hover { background:#004488; }" +
-      ".lb-bind { font-size:10px; color:#666; }" +
-      ".lb-settings {" +
-        "margin-left:8px;" +
-        "padding:2px 6px;" +
-        "background:#333;" +
-        "border:1px solid #555;" +
-        "font-size:10px;" +
-        "cursor:pointer;" +
-      "}" +
-      ".lb-settings:hover { background:#444; }" +
-      ".lb-option {" +
-        "padding:3px 12px;" +
-        "background:#1a1a1a;" +
-        "border-bottom:1px solid #333;" +
-        "font-size:11px;" +
-      "}" +
-      ".lb-option input {" +
-        "background:#333;" +
-        "border:1px solid #555;" +
-        "color:white;" +
-        "padding:2px 4px;" +
-        "width:60px;" +
-        "margin-left:8px;" +
-      "}" +
-      ".lb-option input[type='checkbox'] { width:auto; }";
-    document.head.appendChild(style);
+  // === Styles ===
+  const style = document.createElement("style");
+  style.textContent =
+    "@keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}" +
+    ".lb-panel { position:absolute; width:220px; background:#111; border:2px solid #00aaff; font-family:\"Poppins\", sans-serif; color:white; animation:guiEnter .25s ease-out; z-index:100000; max-height:420px; overflow-x:hidden; }" +
+    ".lb-panel::-webkit-scrollbar { width:6px; }" +
+    ".lb-panel::-webkit-scrollbar-thumb { background:#00aaff; }" +
+    ".lb-panel::-webkit-scrollbar-track { background:#111; }" +
+    ".lb-header { background:#0a0a0a; padding:6px; font-weight:bold; cursor:move; user-select:none; text-align:center; border-bottom:1px solid #00aaff; }" +
+    ".lb-module { padding:4px 8px; cursor:pointer; transition:background .15s; border-bottom:1px solid #222; display:flex; justify-content:space-between; align-items:center; }" +
+    ".lb-module:hover { background:#222; }" +
+    ".lb-module.enabled { background:#003366; color:#00aaff; }" +
+    ".lb-module.enabled:hover { background:#004488; }" +
+    ".lb-bind { font-size:10px; color:#666; }" +
+    ".lb-settings { margin-left:8px; padding:2px 6px; background:#333; border:1px solid #555; font-size:10px; cursor:pointer; }" +
+    ".lb-settings:hover { background:#444; }" +
+    ".lb-option { padding:3px 12px; background:#1a1a1a; border-bottom:1px solid #333; font-size:11px; }" +
+    ".lb-option input { background:#333; border:1px solid #555; color:white; padding:2px 4px; width:60px; margin-left:8px; }" +
+    ".lb-option input[type='checkbox'] { width:auto; }" +
+    ".lb-content.collapsed { display:none; }";
+  document.head.appendChild(style);
 
-    let panels = {};
-    let dragData = null;
+  let panels = {};
 
-    // === Create Panel ===
-    function createPanel(category, x = 50, y = 50) {
-      if (panels[category]) return panels[category];
+  // === Create Panel ===
+  function createPanel(category, x = 50, y = 50) {
+    if (panels[category]) return panels[category];
 
-      const panel = document.createElement("div");
-      panel.className = "lb-panel";
-      panel.style.left = x + "px";
-      panel.style.top = y + "px";
+    const panel = document.createElement("div");
+    panel.className = "lb-panel";
+    panel.style.left = x + "px";
+    panel.style.top = y + "px";
 
-      const header = document.createElement("div");
-      header.className = "lb-header";
-      header.textContent = catIcons[category] + " " + category;
-      panel.appendChild(header);
+    const header = document.createElement("div");
+    header.className = "lb-header";
 
-      // Make draggable
-      header.addEventListener("mousedown", (e) => {
-        dragData = {
-          panel,
-          offsetX: e.clientX - panel.offsetLeft,
-          offsetY: e.clientY - panel.offsetTop
-        };
-      });
+    const collapseBtn = document.createElement("span");
+    collapseBtn.style.float = "right";
+    collapseBtn.style.cursor = "pointer";
 
-      // Add modules
-      const moduleNames = categories[category] || [];
-      moduleNames.forEach(modName => {
-        const module = store.modules[modName] || store.modules[modName.toLowerCase()];
-        if (!module) return;
+    const titleSpan = document.createElement("span");
+    titleSpan.textContent = catIcons[category] + " " + category;
 
-        const moduleDiv = document.createElement("div");
-        moduleDiv.className = "lb-module " + (module.enabled ? "enabled" : "");
+    header.appendChild(titleSpan);
+    header.appendChild(collapseBtn);
 
-        const nameSpan = document.createElement("span");
-        nameSpan.textContent = module.name;
-        moduleDiv.appendChild(nameSpan);
+    panel.appendChild(header);
 
-        const rightSide = document.createElement("div");
-        rightSide.style.display = "flex";
-        rightSide.style.alignItems = "center";
-
-        if (module.bind) {
-          const bindSpan = document.createElement("span");
-          bindSpan.className = "lb-bind";
-          bindSpan.textContent = "[" + module.bind + "]";
-          rightSide.appendChild(bindSpan);
-        }
-
-        if (Object.keys(module.options).length > 0) {
-          const settingsBtn = document.createElement("span");
-          settingsBtn.className = "lb-settings";
-          settingsBtn.textContent = "⚙";
-          settingsBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            toggleSettings(moduleDiv, module);
-          });
-          rightSide.appendChild(settingsBtn);
-        }
-
-        moduleDiv.appendChild(rightSide);
-
-        moduleDiv.addEventListener("click", () => {
-          module.toggle();
-          moduleDiv.className = "lb-module " + (module.enabled ? "enabled" : "");
-        });
-
-        panel.appendChild(moduleDiv);
-      });
-
-      document.body.appendChild(panel);
-      panels[category] = panel;
-      return panel;
+    // Position restoration
+    const saved = localStorage.getItem("lb-pos-" + category);
+    if (saved) {
+      const { left, top } = JSON.parse(saved);
+      panel.style.left = left;
+      panel.style.top = top;
     }
 
-    // === Settings Toggle ===
-    function toggleSettings(moduleDiv, module) {
-      const existing = moduleDiv.querySelector(".lb-option");
-      if (existing) {
-        // Remove all options
-        let next = moduleDiv.nextSibling;
-        while (next && next.classList?.contains("lb-option")) {
-          const toRemove = next;
-          next = next.nextSibling;
-          toRemove.remove();
-        }
-        return;
-      }
-
-      // Add options
-      Object.entries(module.options).forEach(([name, option]) => {
-        const optionDiv = document.createElement("div");
-        optionDiv.className = "lb-option";
-
-        const label = document.createElement("span");
-        label.textContent = name + ":";
-        optionDiv.appendChild(label);
-
-        if (option[0] === Boolean) {
-          const checkbox = document.createElement("input");
-          checkbox.type = "checkbox";
-          checkbox.checked = option[1];
-          checkbox.addEventListener("change", () => {
-            option[1] = checkbox.checked;
-          });
-          optionDiv.appendChild(checkbox);
-        } else {
-          const input = document.createElement("input");
-          input.type = option[0] === Number ? "number" : "text";
-          input.value = option[1];
-          input.addEventListener("input", () => {
-            if (option[0] === Number) {
-              const val = parseFloat(input.value);
-              if (!isNaN(val)) option[1] = val;
-            } else {
-              option[1] = input.value;
-            }
-          });
-          optionDiv.appendChild(input);
-        }
-
-        moduleDiv.parentNode.insertBefore(optionDiv, moduleDiv.nextSibling);
-      });
-    }
-
-    // === Mouse Events ===
+    // Dragging functionality
+    let dragging = false, offsetX, offsetY;
+    header.addEventListener("mousedown", (e) => {
+      dragging = true;
+      offsetX = e.clientX - panel.offsetLeft;
+      offsetY = e.clientY - panel.offsetTop;
+    });
     document.addEventListener("mousemove", (e) => {
-      if (dragData) {
-        dragData.panel.style.left = (e.clientX - dragData.offsetX) + "px";
-        dragData.panel.style.top = (e.clientY - dragData.offsetY) + "px";
+      if (dragging) {
+        panel.style.left = e.clientX - offsetX + "px";
+        panel.style.top = e.clientY - offsetY + "px";
       }
     });
-
     document.addEventListener("mouseup", () => {
-      dragData = null;
+      if (dragging) {
+        dragging = false;
+        localStorage.setItem("lb-pos-" + category, JSON.stringify({
+          left: panel.style.left,
+          top: panel.style.top
+        }));
+      }
     });
 
-    // === Toggle GUI ===
-    function toggleGUI() {
-      const visible = Object.keys(panels).length > 0 && panels[Object.keys(panels)[0]].style.display !== "none";
-      
-      if (visible) {
-        // Hide all panels
-        Object.values(panels).forEach(panel => panel.style.display = "none");
-      } else {
-        // Show/create panels
-        let offsetX = 50;
-        Object.keys(categories).forEach(category => {
-          const panel = createPanel(category, offsetX, 50);
-          panel.style.display = "block";
-          offsetX += 240;
-        });
+    const contentWrap = document.createElement("div");
+    contentWrap.className = "lb-content";
+
+    // Collapse functionality
+    let collapsed = localStorage.getItem("lb-collapsed-" + category) === "true";
+    if (collapsed) contentWrap.classList.add("collapsed");
+    collapseBtn.textContent = collapsed ? "[+]" : "[-]";
+
+    collapseBtn.addEventListener("click", () => {
+      collapsed = !collapsed;
+      if (collapsed) contentWrap.classList.add("collapsed");
+      else contentWrap.classList.remove("collapsed");
+      collapseBtn.textContent = collapsed ? "[+]" : "[-]";
+      localStorage.setItem("lb-collapsed-" + category, collapsed);
+    });
+
+    // Add modules
+    const moduleNames = categories[category] || [];
+    moduleNames.forEach(modName => {
+      const module = store.modules[modName] || store.modules[modName.toLowerCase()];
+      if (!module) return;
+
+      const moduleDiv = document.createElement("div");
+      moduleDiv.className = "lb-module " + (module.enabled ? "enabled" : "");
+
+      const nameSpan = document.createElement("span");
+      nameSpan.textContent = module.name;
+      moduleDiv.appendChild(nameSpan);
+
+      const rightSide = document.createElement("div");
+      rightSide.style.display = "flex";
+      rightSide.style.alignItems = "center";
+
+      if (module.bind) {
+        const bindSpan = document.createElement("span");
+        bindSpan.className = "lb-bind";
+        bindSpan.textContent = "[" + module.bind + "]";
+        rightSide.appendChild(bindSpan);
       }
+
+      if (Object.keys(module.options).length > 0) {
+        const settingsBtn = document.createElement("span");
+        settingsBtn.className = "lb-settings";
+        settingsBtn.textContent = "⚙";
+        settingsBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          toggleSettings(moduleDiv, module);
+        });
+        rightSide.appendChild(settingsBtn);
+      }
+
+      moduleDiv.appendChild(rightSide);
+
+      moduleDiv.addEventListener("click", () => {
+        module.toggle();
+        moduleDiv.className = "lb-module " + (module.enabled ? "enabled" : "");
+      });
+
+      contentWrap.appendChild(moduleDiv);
+    });
+
+    panel.appendChild(contentWrap);
+
+    document.body.appendChild(panel);
+    panels[category] = panel;
+    return panel;
+  }
+
+  // === Settings Toggle ===
+  function toggleSettings(moduleDiv, module) {
+    const existing = moduleDiv.querySelector(".lb-option");
+    if (existing) {
+      // Remove all options
+      let next = moduleDiv.nextSibling;
+      while (next && next.classList?.contains("lb-option")) {
+        const toRemove = next;
+        next = next.nextSibling;
+        toRemove.remove();
+      }
+      return;
     }
 
-    // Bind to right shift
-    window.addEventListener("keydown", (e) => {
-      if (e.code === "ShiftRight") {
-        toggleGUI();
-      }
-    });
+    // Add options
+    Object.entries(module.options).forEach(([name, option]) => {
+      const optionDiv = document.createElement("div");
+      optionDiv.className = "lb-option";
 
-    return { toggleGUI, createPanel };
+      const label = document.createElement("span");
+      label.textContent = name + ":";
+      optionDiv.appendChild(label);
+
+      if (option[0] === Boolean) {
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = option[1];
+        checkbox.addEventListener("change", () => {
+          option[1] = checkbox.checked;
+        });
+        optionDiv.appendChild(checkbox);
+      } else {
+        const input = document.createElement("input");
+        input.type = option[0] === Number ? "number" : "text";
+        input.value = option[1];
+        input.addEventListener("input", () => {
+          if (option[0] === Number) {
+            const val = parseFloat(input.value);
+            if (!isNaN(val)) option[1] = val;
+          } else {
+            option[1] = input.value;
+          }
+        });
+        optionDiv.appendChild(input);
+      }
+
+      moduleDiv.parentNode.insertBefore(optionDiv, moduleDiv.nextSibling);
+    });
+  }
+
+  // === Toggle GUI ===
+  function toggleGUI() {
+    const visible = Object.keys(panels).length > 0 && panels[Object.keys(panels)[0]].style.display !== "none";
+
+    if (visible) {
+      // Hide all panels
+      Object.values(panels).forEach(panel => panel.style.display = "none");
+    } else {
+      // Show/create panels
+      let offsetX = 50;
+      Object.keys(categories).forEach(category => {
+        const panel = createPanel(category, offsetX, 50);
+        panel.style.display = "block";
+        offsetX += 240;
+      });
+    }
+  }
+
+  // Bind to right shift
+  window.addEventListener("keydown", (e) => {
+    if (e.code === "ShiftRight") {
+      toggleGUI();
+    }
+  });
+
+  return { toggleGUI, createPanel };
 }
 
 // Create ClickGUI module
-new Module("ClickGUI", function(callback) {
-    // ClickGUI is always active, just controls visibility
-});
+new Module("ClickGUI", function (callback) {
+  // Initialize exactly like the original vav4inject_old.js
+  (async function() {
+    try {
+      // Add Poppins font (like original)
+      const fontLink = document.createElement("link");
+      fontLink.href = "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap";
+      fontLink.rel = "stylesheet";
+      document.head.appendChild(fontLink);
 
+      // Wait for all modules to be loaded (like original)
+      await new Promise((resolve) => {
+        const loop = setInterval(() => {
+          if (unsafeWindow?.globalThis?.[storeName]?.modules) {
+            clearInterval(loop);
+            resolve();
+          }
+        }, 20);
+      });
+
+      const store = unsafeWindow.globalThis[storeName];
+      if (store && store.modules) {
+        injectGUI(store);
+      }
+    } catch (err) {
+      console.error("[ClickGUI] Init failed:", err);
+    }
+  })();
+});
 
 // === RENDER/NAMETAGS MODULE ===
 /**
@@ -1697,6 +1763,31 @@ new Module("AutoCraft", function(callback) {
  * Breaker Module
  */
 
+function getItemStrength(stack) {
+	if (stack == null) return 0;
+	const itemBase = stack.getItem();
+	let base = 1;
+
+	if (itemBase instanceof ItemSword) base += itemBase.attackDamage;
+	else if (itemBase instanceof ItemArmor) base += itemBase.damageReduceAmountDump;
+
+	const nbttaglist = stack.getEnchantmentTagList();
+	if (nbttaglist != null) {
+		for (let i = 0; i < nbttaglist.length; ++i) {
+			const id = nbttaglist[i].id;
+			const lvl = nbttaglist[i].lvl;
+
+			if (id == Enchantments.sharpness.effectId) base += lvl * 1.25;
+			else if (id == Enchantments.protection.effectId) base += Math.floor(((6 + lvl * lvl) / 3) * 0.75);
+			else if (id == Enchantments.efficiency.effectId) base += (lvl * lvl + 1);
+			else if (id == Enchantments.power.effectId) base += lvl;
+			else base += lvl * 0.01;
+		}
+	}
+
+	return base * stack.stackSize;
+}
+
 let breakerrange;
 const breaker = new Module("Breaker", function(callback) {
 	if (callback) {
@@ -1745,6 +1836,13 @@ const cheststeal = new Module("ChestSteal", function(callback) {
 cheststealblocks = cheststeal.addoption("Blocks", Boolean, true);
 cheststealtools = cheststeal.addoption("Tools", Boolean, false);
 
+
+// === WORLD/CREATIVEMODE MODULE ===
+/**
+ * CreativeMode Module
+ */
+
+new Module("CreativeMode", function() {});
 
 // === WORLD/FASTBREAK MODULE ===
 /**
@@ -2018,66 +2116,41 @@ new Module("AntiCheat", function(callback) {
  */
 
 let funnyMessages = [
-    "Sent back to the lobby—don't trip on the way out!",
-    "Was that your best? Miniblox says no.",
-    "You dropped faster than my WiFi.",
-    "Did you forget to equip skill today?",
-    "That was a tutorial death, right?",
-    "Tip: Dodging is allowed.",
-    "Respawn and try again (maybe with both hands).",
-    "Out-clicked, out-played, outta here.",
-    "Next time, bring a helmet. And armor. And hope.",
-    "Imagine losing in Miniblox... tragic.",
-    "Your blocks? My blocks now.",
-    "Are you sure you're not an NPC?",
-    "Pro tip: The void is not a shortcut.",
-    "Is your keyboard upside down?",
-    "That scoreboard doesn't lie.",
-    "Miniblox called—wants its win streak back.",
-    "Did you lag, or just freeze from fear?",
-    "Was that a speedrun to the void?",
-    "GG! (It was mostly me though.)",
-    "You just got Minibloxed!",
-    "Don't blame the ping, blame the skill.",
-    "You make AFK players look cracked.",
-    "If you were any slower, you'd be a block.",
-    "That was less of a fight, more of a donation.",
-    "Did you forget which game you're playing?",
-    "Keyboard check. Mouse check. Skill... missing.",
-    "If losing was an achievement, you'd be top of the leaderboard.",
-    "You respawn more than you blink.",
-    "Hope you enjoy the respawn timer.",
-    "Maybe try winning... just once?",
-    "Did you just speedrun getting eliminated?",
-    "Miniblox tip: Winning is allowed.",
-    "You just made the highlight reel—of fails.",
-    "The only thing lower than your HP was your chance to win.",
-    "If you see this, you lost the 50/50. Badly.",
-    "That performance was sponsored by gravity.",
-    "Your only kill streak is in the practice lobby.",
-    "You bring a whole new meaning to 'easy win.'",
-    "That was faster than a Miniblox queue skip.",
-    "You just gave me free stats.",
-    "Did you drop your keyboard? Because your plays are a mess.",
-    "I've seen bots with better aim.",
-    "Are you playing with your monitor off?",
-    "You just got outplayed by someone eating snacks IRL.",
-    "Did your mouse disconnect?",
-    "If you're reading this, you just lost a 1v1.",
-    "Not even lag could save you.",
-    "Skill issue detected. Please reinstall.",
-    "Your respawn button must be tired.",
-    "You fight like a Miniblox villager.",
-    "Maybe try using both hands next time.",
-    "Spectator mode looks good on you.",
-    "I hope you brought a map, because you're lost.",
-    "Knocked out like my WiFi on a stormy day.",
-    "That combo was sponsored by gravity.",
-    "I'd say GG, but that wasn't even close.",
-    "Do you need a tutorial?",
-    "Blink if you need help.",
-    "You just got styled on.",
-    "Don't worry, practice makes... well, you tried."
+"Prediction ACs: great at guessing wrong.",
+"Lag spikes? Blame the AC trying to play psychic.",
+"Jesus walked on water. ACs still trip over puddles.",
+"Walking on air? ACs call it a glitch. We call it precision.",
+"Prediction ACs eat packets 4 breakfast. Too bad they choke on velocity.",
+"Gravity's a suggestion. ACs treat it like gospel.",
+"Scaffold smoother than your AC's excuses.",
+"Tick-perfect bridging. ACs still counting frames.",
+"Snapped into water? ACs thought you were a fish.",
+"Water-walking? ACs still learning to swim.",
+"Falling? Nah. Just descending with style while ACs panic.",
+"Patch notes say 'fixed.' Reality says 'still broken.'",
+"Bypass? No. ACs just forgot how to detect.",
+"Modules adapt. ACs react — poorly.",
+"Silent movement. Loud AC confusion.",
+"Prediction? Velocity? ACs still buffering.",
+"No permission asked. ACs weren't invited.",
+"Every module is a flex. ACs just fold.",
+"No config needed. ACs still reading the manual.",
+"Toggle. Deliver. ACs scramble.",
+"ACs don't detect. They guess and hope.",
+"Unleashed. ACs unleashed their incompetence.",
+"No drama. Just full domination over servers.",
+"ACs getting patched? We evolve.",
+"Cheating? No. Just outperforming your AC's imagination.",
+"Toggle scaffold. Build legacy. ACs build logs no one reads.",
+"Flinch? ACs do. We don't.",
+"Modules = superpowers. ACs = kryptonite to themselves.",
+"ACs call it daddy. We call it Tuesday.",
+"Still undetected. Still undefeated. ACs still confused.",
+"Toggle one module. Server cries. ACs sob.",
+"Patch notes scared. ACs terrified.",
+"Your client warned you. ACs didn't listen.",
+"Smooth as silk. ACs still stuck in sandpaper mode.",
+"Stealth so clean, ACs think it's a ghost."
 ];
 
 const AutoFunnyChat = new Module("AutoFunnyChat", function(callback) {
@@ -2314,417 +2387,12 @@ new Module("MusicFix", function() {});
 			}, 20);
 		});
 
-		injectGUI(unsafeWindow.globalThis[storeName]);
+		// ClickGUI is now handled by the ClickGUI module
 	} catch (err) {
-		console.error("[ClickGUI] Init failed:", err);          // Checks for errors
+		console.error("[Main] Init failed:", err);
 	}
 
-	function injectGUI(store) {
-		const categories = {
-			Combat: ["autoclicker", "killaura", "velocity", "wtap"],
-			Movement: [
-				"scaffold", "jesus", "phase", "nofall", "sprint", "keepsprint", "step",
-				"speed", "fly", "noslowdown", "spiderclimb", "jetpack"
-			],
-			"Player / Render": [
-				"invcleaner", "invwalk", "autoarmor", "ghostjoin",
-				"playeresp", "nametags+", "textgui", "clickgui"
-			],
-			World: ["fastbreak", "breaker", "autocraft", "cheststeal", "timer"],
-			Utility: [
-				"autorespawn", "autorejoin", "autoqueue",
-				"autovote", "filterbypass", "anticheat",
-				"autofunnychat", "musicfix", "auto-funnychat", "music-fix"         // AutoFunnyChat doesnt enable properly but it works perfectly fine (disable) dont worry
-			]
-		};
 
-		const catIcons = {
-			Combat: "⚔️",
-			Movement: "🏃",
-			"Player / Render": "🧑👁️",
-			World: "🌍",
-			Utility: "🛠️"
-		};
 
-		// === Styles (LiquidBounce Theme + Scrollbars) ===
-		const style = document.createElement("style");
-		style.textContent = `
-      @keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}
-      .lb-panel {
-        position:absolute;
-        width:220px;
-        background:#111;
-        border:2px solid #00aaff;
-        border-radius:0;
-        font-family:"Minecraft", monospace;
-        color:white;
-        animation:guiEnter .25s ease-out;
-        z-index:100000;
 
-        /* Scrollable */
-        max-height:420px;
-        overflow-y:auto;
-        overflow-x:hidden;
-      }
-      .lb-panel::-webkit-scrollbar { width:6px; }
-      .lb-panel::-webkit-scrollbar-thumb { background:#00aaff; }
-      .lb-panel::-webkit-scrollbar-track { background:#111; }
-      .lb-header {
-        background:#0a0a0a;
-        padding:6px;
-        font-weight:bold;
-        cursor:move;
-        user-select:none;
-        text-align:center;
-        border-bottom:1px solid #00aaff;
-        color:white;
-      }
-      .lb-module {
-        padding:4px 6px;
-        border-bottom:1px solid #1b1b1b;
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        cursor:pointer;
-      }
-      .lb-module:hover { background:#151a20; }
-      .lb-module.active { color:#00aaff; }
-      .lb-options {
-        display:none;
-        flex-direction:column;
-        gap:4px;
-        padding:4px 6px;
-        background:#0f0f12;
-        border-top:1px dashed #1e1e1e;
-      }
-      .lb-options.show { display:flex; animation:guiEnter .2s ease-out; }
-      .lb-options label {
-        font-size:12px;
-        display:flex;
-        justify-content:space-between;
-        color:white;
-      }
-      .lb-options input[type="range"] { flex:1; margin-left:4px; }
-      .lb-options input[type="text"] {
-        flex:1;
-        margin-left:4px;
-        font-size:12px;
-        background:#0a0a0a;
-        color:white;
-        border:1px solid #00aaff;
-        font-family:"Minecraft", monospace;
-        padding:2px;
-      }
-      .notif-wrap {
-        position:fixed; bottom:40px; right:30px;
-        display:flex; flex-direction:column; align-items:flex-end;
-        pointer-events:none; z-index:999999;
-      }
-      .notif {
-        background:#0a0a0a;
-        color:white;
-        padding:8px 12px;
-        margin-top:6px;
-        border:2px solid #00aaff;
-        border-radius:0;
-        font-family:"Minecraft", monospace;
-        opacity:1;
-        transform:translateX(120%);
-        transition:opacity .3s, transform .3s ease;
-      }
-      .lb-searchwrap {
-        position:fixed;
-        top:15px;
-        left:50%;
-        transform:translateX(-50%);
-        z-index:100001;
-        background:#0a0a0a;
-        border:2px solid #00aaff;
-        border-radius:0;
-        padding:4px 6px;
-        font-family:"Minecraft", monospace;
-      }
-      .lb-search {
-        background:#111;
-        border:none;
-        outline:none;
-        color:white;
-        font-size:13px;
-        width:180px;
-        font-family:"Minecraft", monospace;
-      }
-      .lb-search::placeholder { color:#00aaff; opacity:0.6; }
-    `;
-		document.head.appendChild(style);
-
-		// === Notifications ===
-		const notifWrap = document.createElement("div");
-		notifWrap.className = "notif-wrap";
-		document.body.appendChild(notifWrap);
-
-		function showNotif(msg, dur = 3000) {
-			const n = document.createElement("div");
-			n.className = "notif";
-			n.textContent = msg;
-			notifWrap.appendChild(n);
-			setTimeout(() => (n.style.transform = "translateX(0)"), 30);
-			setTimeout(() => {
-				n.style.opacity = "0";
-				n.style.transform = "translateX(120%)";
-			}, dur);
-			setTimeout(() => n.remove(), dur + 400);
-		}
-
-		// === Persistence Helpers ===
-		function saveModuleState(name, mod) {
-			const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
-			const opts = {};
-			if (mod.options) {
-				Object.entries(mod.options).forEach(([key, opt]) => {
-					opts[key] = opt[1];
-				});
-			}
-			saved[name] = { enabled: mod.enabled, bind: mod.bind, options: opts };
-			localStorage.setItem("lb-mods", JSON.stringify(saved));
-		}
-
-		function loadModuleState(name, mod) {
-			const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
-			if (saved[name]) {
-				if (saved[name].enabled !== mod.enabled && typeof mod.toggle === "function") {
-					mod.toggle();
-				}
-				if (saved[name].bind) {
-					mod.setbind(saved[name].bind);
-				}
-				if (saved[name].options && mod.options) {
-					Object.entries(saved[name].options).forEach(([key, val]) => {
-						if (mod.options[key]) mod.options[key][1] = val;
-					});
-				}
-			}
-		}
-
-		// === Panels ===
-		const panels = {};
-		Object.keys(categories).forEach((cat, i) => {
-			const panel = document.createElement("div");
-			panel.className = "lb-panel";
-			panel.style.left = 40 + i * 240 + "px";
-			panel.style.top = "100px";
-
-			const header = document.createElement("div");
-			header.className = "lb-header";
-			header.textContent = `${catIcons[cat]} ${cat}`;
-			panel.appendChild(header);
-
-			// Restore saved pos
-			const saved = localStorage.getItem("lb-pos-" + cat);
-			if (saved) {
-				const { left, top } = JSON.parse(saved);
-				panel.style.left = left;
-				panel.style.top = top;
-			}
-
-			// Dragging
-			let dragging = false, offsetX, offsetY;
-			header.addEventListener("mousedown", (e) => {
-				dragging = true;
-				offsetX = e.clientX - panel.offsetLeft;
-				offsetY = e.clientY - panel.offsetTop;
-			});
-			document.addEventListener("mousemove", (e) => {
-				if (dragging) {
-					panel.style.left = e.clientX - offsetX + "px";
-					panel.style.top = e.clientY - offsetY + "px";
-				}
-			});
-			document.addEventListener("mouseup", () => {
-				if (dragging) {
-					dragging = false;
-					localStorage.setItem("lb-pos-" + cat,
-						JSON.stringify({ left: panel.style.left, top: panel.style.top })
-					);
-				}
-			});
-
-			panels[cat] = panel;
-			document.body.appendChild(panel);
-		});
-
-		// === Modules ===
-		Object.entries(store.modules).forEach(([name, mod]) => {
-			console.log("[ClickGUI] Found module:", name);
-
-			let cat = "Utility";
-			const lowerName = name.toLowerCase();
-			for (const [c, keys] of Object.entries(categories)) {
-				if (keys.some((k) => lowerName.includes(k))) {
-					cat = c; break;
-				}
-			}
-
-			// Restore state
-			loadModuleState(name, mod);
-
-			const row = document.createElement("div");
-			row.className = "lb-module" + (mod.enabled ? " active" : "");
-			row.innerHTML = `<span>${name}</span><span>${mod.enabled ? "ON" : "OFF"}</span>`;
-
-			const optionsBox = document.createElement("div");
-			optionsBox.className = "lb-options";
-
-			// Toggle
-			row.addEventListener("mousedown", (e) => {
-				if (e.button === 0) {
-					if (typeof mod.toggle === "function") mod.toggle();
-					row.classList.toggle("active", mod.enabled);
-					row.lastChild.textContent = mod.enabled ? "ON" : "OFF";
-					showNotif(`${name} ${mod.enabled ? "enabled ✅" : "disabled ❌"}`);
-					saveModuleState(name, mod);
-				}
-			});
-
-			// Expand
-			row.addEventListener("contextmenu", (e) => {
-				e.preventDefault();
-				optionsBox.classList.toggle("show");
-			});
-
-			// Options UI
-			if (mod.options) {
-				Object.entries(mod.options).forEach(([key, opt]) => {
-					const [type, val, label] = opt;
-					const line = document.createElement("label");
-					line.textContent = label;
-
-					if (type === Boolean) {
-						const cb = document.createElement("input");
-						cb.type = "checkbox"; cb.checked = val;
-						cb.onchange = () => {
-							opt[1] = cb.checked;
-							saveModuleState(name, mod);
-						};
-						line.appendChild(cb);
-					} else if (type === Number) {
-						const slider = document.createElement("input");
-						slider.type = "range";
-						const [min, max, step] = opt.range ?? [0, 10, 0.1];
-						slider.min = min; slider.max = max; slider.step = step; slider.value = val;
-						slider.oninput = () => {
-							opt[1] = parseFloat(slider.value);
-							saveModuleState(name, mod);
-						};
-						line.appendChild(slider);
-					} else if (type === String) {
-						const input = document.createElement("input");
-						input.type = "text"; input.value = val;
-						input.onchange = () => {
-							opt[1] = input.value;
-							saveModuleState(name, mod);
-						};
-						line.appendChild(input);
-					}
-					optionsBox.appendChild(line);
-				});
-			}
-
-			// Keybind
-			const bindLine = document.createElement("label");
-			bindLine.textContent = "Bind:";
-			const bindInput = document.createElement("input");
-			bindInput.type = "text"; bindInput.value = mod.bind;
-			bindInput.style.width = "70px";
-			bindInput.style.background = "#0a0a0a";
-			bindInput.style.color = "white";
-			bindInput.style.border = "1px solid #00aaff";
-			bindInput.style.fontFamily = '"Minecraft", monospace';
-			bindInput.style.fontSize = "12px";
-			bindInput.style.padding = "2px";
-			bindInput.onchange = (e) => {
-				mod.setbind(e.target.value);
-				showNotif(`${name} bind set to ${e.target.value}`);
-				saveModuleState(name, mod);
-			};
-			bindLine.appendChild(bindInput);
-			optionsBox.appendChild(bindLine);
-
-			panels[cat].appendChild(row);
-			panels[cat].appendChild(optionsBox);
-		});
-
-		// === Reset Layout ===
-		const resetRow = document.createElement("div");
-		resetRow.className = "lb-module";
-		resetRow.style.justifyContent = "flex-start";
-		resetRow.style.paddingLeft = "6px";
-		resetRow.style.fontWeight = "bold";
-		resetRow.style.color = "#00aaff";
-		resetRow.textContent = "↺ Reset Layout";
-		resetRow.addEventListener("click", () => {
-			const defaults = {
-				Combat: { left: "40px", top: "100px" },
-				Movement: { left: "280px", top: "100px" },
-				"Player / Render": { left: "520px", top: "100px" },
-				World: { left: "760px", top: "100px" },
-				Utility: { left: "1000px", top: "100px" }
-			};
-			Object.entries(defaults).forEach(([cat, pos]) => {
-				localStorage.setItem("lb-pos-" + cat, JSON.stringify(pos));
-				if (panels[cat]) { panels[cat].style.left = pos.left; panels[cat].style.top = pos.top; }
-			});
-			showNotif("Layout reset to default positions ✅");
-		});
-		panels["Utility"].appendChild(resetRow);
-
-		// === Reset Config ===
-		const resetConfigRow = document.createElement("div");
-		resetConfigRow.className = "lb-module";
-		resetConfigRow.style.justifyContent = "flex-start";
-		resetConfigRow.style.paddingLeft = "6px";
-		resetConfigRow.style.fontWeight = "bold";
-		resetConfigRow.style.color = "red";
-		resetConfigRow.textContent = "⛔ Reset Config?";
-		resetConfigRow.addEventListener("click", () => {
-			localStorage.removeItem("lb-mods");
-			Object.keys(localStorage)
-				.filter((k) => k.startsWith("lb-pos-"))
-				.forEach((k) => localStorage.removeItem(k));
-			alert("Config has been reset!");
-			location.reload();
-		});
-		panels["Utility"].appendChild(resetConfigRow);
-
-		// === Global Search ===
-		const searchWrap = document.createElement("div");
-		searchWrap.className = "lb-searchwrap";
-		searchWrap.innerHTML = `<input type="text" class="lb-search" placeholder="Search..">`;
-		document.body.appendChild(searchWrap);
-
-		const searchBox = searchWrap.querySelector("input");
-		searchBox.addEventListener("input", () => {
-			const term = searchBox.value.toLowerCase();
-			document.querySelectorAll(".lb-module").forEach((row) => {
-				const name = row.firstChild.textContent.toLowerCase();
-				row.style.display = name.includes(term) ? "flex" : "none";
-			});
-		});
-
-		// === Hide on load ===
-		Object.values(panels).forEach((p) => (p.style.display = "none"));
-		searchWrap.style.display = "none";
-
-		// === Startup notification ===
-		setTimeout(() => { showNotif("[ClickGUI] Press '\\\\' to open GUI", 4000); }, 500);
-
-		// === Toggle the LB GUI ===
-		let visible = false;
-		document.addEventListener("keydown", (e) => {
-			if (e.code === "Backslash") {
-				visible = !visible;
-				Object.values(panels).forEach((p) => (p.style.display = visible ? "block" : "none"));
-				searchWrap.style.display = visible ? "block" : "none";
-			}
-		});
-	}
 })();

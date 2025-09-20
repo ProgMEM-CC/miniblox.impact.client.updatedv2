@@ -1,7 +1,7 @@
 {
-  "totalLines": 2731,
-  "totalSize": 88377,
-  "moduleCount": 43,
+  "totalLines": 2399,
+  "totalSize": 78736,
+  "moduleCount": 46,
   "moduleNames": [
     "AutoClicker",
     "Killaura",
@@ -13,6 +13,7 @@
     "Jesus",
     "JetPack",
     "KeepSprint",
+    "LongJump",
     "NoSlowdown",
     "Phase",
     "Speed",
@@ -21,6 +22,7 @@
     "Step",
     "AntiFall",
     "AutoArmor",
+    "ESP",
     "GhostJoin",
     "InvCleaner",
     "NoFall",
@@ -33,6 +35,7 @@
     "AutoCraft",
     "Breaker",
     "ChestSteal",
+    "CreativeMode",
     "FastBreak",
     "DevScaffold",
     "Timer",
@@ -47,6 +50,6 @@
     "FilterBypass",
     "MusicFix"
   ],
-  "buildTime": "2025-09-20T08:38:24.202Z",
+  "buildTime": "2025-09-20T09:23:33.458Z",
   "integrationIssues": 1
 }

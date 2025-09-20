@@ -14,4 +14,4 @@ const step = new Module("Step", function(callback) {
 		player.stepHeight = 0.6;
 	}
 });
-stepheight = step.addoption("Height", Number, 1);
+stepheight = step.addoption("Height", Number, 2);
