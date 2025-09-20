@@ -1891,7 +1891,7 @@ const jesus = new Module("Jesus", function(callback) {
     const resetRow = document.createElement("div");
     resetRow.className = "lb-module";
     resetRow.style.color = "#00aaff";
-    resetRow.textContent = "↺ Reset Layout";
+    resetRow.textContent = "↺ Reset Layout?";
     resetRow.addEventListener("click", () => {
       const defaults = {
         Combat:{left:"40px",top:"100px"},
@@ -1904,14 +1904,14 @@ const jesus = new Module("Jesus", function(callback) {
         localStorage.setItem("lb-pos-" + cat, JSON.stringify(pos));
         if (panels[cat]) { panels[cat].style.left=pos.left; panels[cat].style.top=pos.top; }
       });
-      showNotif("#Layout has been reset to default!#", "success");
+      showNotif("Layout has been reset to default!", "success");
     });
     panels["Utility"].querySelector(".lb-content").appendChild(resetRow);
 
     const resetConfigRow = document.createElement("div");
     resetConfigRow.className = "lb-module";
     resetConfigRow.style.color = "red";
-    resetConfigRow.textContent = "⛔ Reset Config";
+    resetConfigRow.textContent = "⛔ Reset Config?";
     resetConfigRow.addEventListener("click", () => {
       localStorage.removeItem("lb-mods");
       Object.keys(localStorage).filter((k) => k.startsWith("lb-pos-")).forEach((k) => localStorage.removeItem(k));
