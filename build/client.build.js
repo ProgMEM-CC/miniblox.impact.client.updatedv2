@@ -538,20 +538,20 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				if (args.length > 1) {
 					switch (args[1]) {
 						case "save":
-							globalThis.${storeName}.saveVapeConfig(args[2]);
+							globalThis.a.saveVapeConfig(args[2]);
 							game.chat.addChat({text: "Saved config " + args[2]});
 							break;
 						case "load":
-							globalThis.${storeName}.saveVapeConfig();
-							globalThis.${storeName}.loadVapeConfig(args[2]);
+							globalThis.a.saveVapeConfig();
+							globalThis.a.loadVapeConfig(args[2]);
 							game.chat.addChat({text: "Loaded config " + args[2]});
 							break;
 						case "import":
-							globalThis.${storeName}.importVapeConfig(args[2]);
+							globalThis.a.importVapeConfig(args[2]);
 							game.chat.addChat({text: "Imported config"});
 							break;
 						case "export":
-							globalThis.${storeName}.exportVapeConfig();
+							globalThis.a.exportVapeConfig();
 							game.chat.addChat({text: "Config set to clipboard!"});
 							break;
 					}
@@ -1689,14 +1689,14 @@ new Module("ClickGUI", function (callback) {
       // Wait for all modules to be loaded (like original)
       await new Promise((resolve) => {
         const loop = setInterval(() => {
-          if (unsafeWindow?.globalThis?.[storeName]?.modules) {
+          if (unsafeWindow?.globalThis?.["a"]?.modules) {
             clearInterval(loop);
             resolve();
           }
         }, 20);
       });
 
-      const store = unsafeWindow.globalThis[storeName];
+      const store = unsafeWindow.globalThis["a"];
       if (store && store.modules) {
         injectGUI(store);
       }
@@ -2257,8 +2257,8 @@ new Module("MusicFix", function() {});
 
 
 
-			globalThis.${storeName}.modules = modules;
-			globalThis.${storeName}.profile = "default";
+			globalThis.a.modules = modules;
+			globalThis.a.profile = "default";
 		})();
 	`);
 

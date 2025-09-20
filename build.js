@@ -172,7 +172,22 @@ async function build() {
             console.warn(`⚠️  Warning: Placeholder "${MODULES_PLACEHOLDER}" not found in main file!`);
         }
         
-        const finalCode = mainCode.replace(MODULES_PLACEHOLDER, combinedModulesCode);
+        // Replace storeName placeholder in modules if needed
+        const storeNameMatch = mainCode.match(/const storeName = "([^"]+)"/);
+        const storeName = storeNameMatch ? storeNameMatch[1] : null;
+        
+        let processedModulesCode = combinedModulesCode;
+        if (storeName) {
+            // Replace any storeName references in modules
+            processedModulesCode = combinedModulesCode.replace(/\$\{storeName\}/g, storeName);
+        }
+        
+        let finalCode = mainCode.replace(MODULES_PLACEHOLDER, processedModulesCode);
+        
+        // Also replace storeName placeholders in main code
+        if (storeName) {
+            finalCode = finalCode.replace(/\$\{storeName\}/g, storeName);
+        }
 
         // 4. Ensure build directory exists
         await fs.mkdir(BUILD_DIR, { recursive: true });

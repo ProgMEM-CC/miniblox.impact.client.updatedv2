@@ -252,14 +252,14 @@ new Module("ClickGUI", function (callback) {
       // Wait for all modules to be loaded (like original)
       await new Promise((resolve) => {
         const loop = setInterval(() => {
-          if (unsafeWindow?.globalThis?.[storeName]?.modules) {
+          if (unsafeWindow?.globalThis?.["${storeName}"]?.modules) {
             clearInterval(loop);
             resolve();
           }
         }, 20);
       });
 
-      const store = unsafeWindow.globalThis[storeName];
+      const store = unsafeWindow.globalThis["${storeName}"];
       if (store && store.modules) {
         injectGUI(store);
       }
