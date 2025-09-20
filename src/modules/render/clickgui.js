@@ -17,7 +17,7 @@ function injectGUI(store) {
   const style = document.createElement("style");
   style.textContent =
     "@keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}" +
-    ".lb-panel { position:absolute; width:220px; background:#111; border:2px solid #00aaff; font-family:\"Poppins\", sans-serif; color:white; animation:guiEnter .25s ease-out; z-index:100000; max-height:420px; overflow-x:hidden; }" +
+    ".lb-panel { position:absolute; width:220px; background:#111; border:2px solid #00aaff; font-family:'Poppins', sans-serif; color:white; animation:guiEnter .25s ease-out; z-index:100000; max-height:420px; overflow-x:hidden; }" +
     ".lb-panel::-webkit-scrollbar { width:6px; }" +
     ".lb-panel::-webkit-scrollbar-thumb { background:#00aaff; }" +
     ".lb-panel::-webkit-scrollbar-track { background:#111; }" +
@@ -113,6 +113,8 @@ function injectGUI(store) {
     moduleNames.forEach(modName => {
       const module = store.modules[modName] || store.modules[modName.toLowerCase()];
       if (!module) return;
+      
+      console.log("[ClickGUI] Found module:", module.name || modName);
 
       const moduleDiv = document.createElement("div");
       moduleDiv.className = "lb-module " + (module.enabled ? "enabled" : "");
@@ -261,7 +263,11 @@ new Module("ClickGUI", function (callback) {
 
       const store = unsafeWindow.globalThis["${storeName}"];
       if (store && store.modules) {
+        console.log("[ClickGUI] Initializing with", Object.keys(store.modules).length, "modules");
         injectGUI(store);
+        console.log("[ClickGUI] Initialization complete");
+      } else {
+        console.error("[ClickGUI] Store or modules not found");
       }
     } catch (err) {
       console.error("[ClickGUI] Init failed:", err);
