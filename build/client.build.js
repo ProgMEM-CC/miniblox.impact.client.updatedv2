@@ -520,7 +520,8 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 			}
 
-			/**
+			// === COMBAT/AUTOCLICKER MODULE ===
+/**
  * AutoClicker Module
  */
 
@@ -537,6 +538,7 @@ new Module("AutoClicker", function(callback) {
 });
 
 
+// === COMBAT/KILLAURA MODULE ===
 /**
  * Killaura Module
  */
@@ -696,6 +698,7 @@ killaurabox = killaura.addoption("Box", Boolean, true);
 killauraitem = killaura.addoption("LimitToSword", Boolean, false);
 
 
+// === COMBAT/VELOCITY MODULE ===
 /**
  * Velocity Module
  */
@@ -705,6 +708,7 @@ velocityhori = velocity.addoption("Horizontal", Number, 0);
 velocityvert = velocity.addoption("Vertical", Number, 0);
 
 
+// === COMBAT/WTAP MODULE ===
 /**
  * WTap Module
  */
@@ -712,26 +716,10 @@ velocityvert = velocity.addoption("Vertical", Number, 0);
 new Module("WTap", function() {});
 
 
+// === MOVEMENT/FLY MODULE ===
 /**
  * Fly Module
  */
-
-function getMoveDirection(moveSpeed) {
-	let moveStrafe = player.moveStrafeDump;
-	let moveForward = player.moveForwardDump;
-	let speed = moveStrafe * moveStrafe + moveForward * moveForward;
-	if (speed >= 1e-4) {
-		speed = Math.sqrt(speed);
-		if (speed < 1) speed = 1;
-		speed = 1 / speed;
-		moveStrafe = moveStrafe * speed;
-		moveForward = moveForward * speed;
-		const rt = Math.cos(player.yaw) * moveSpeed;
-		const nt = -Math.sin(player.yaw) * moveSpeed;
-		return new Vector3$1(moveStrafe * rt - moveForward * nt, 0, moveForward * rt + moveStrafe * nt);
-	}
-	return new Vector3$1(0, 0, 0);
-}
 
 function getMoveDirection(moveSpeed) {
 	let moveStrafe = player.moveStrafeDump;
@@ -775,6 +763,7 @@ flyvalue = fly.addoption("Speed", Number, 2);
 flyvert = fly.addoption("Vertical", Number, 0.7);
 
 
+// === MOVEMENT/INFINITEFLY MODULE ===
 /**
  * InfiniteFly Module
  */
@@ -808,6 +797,7 @@ const infiniteFly = new Module("InfiniteFly", function(callback) {
 infiniteFlyVert = infiniteFly.addoption("Vertical", Number, 0.3);
 
 
+// === MOVEMENT/INVWALK MODULE ===
 /**
  * InvWalk Module
  */
@@ -815,6 +805,7 @@ infiniteFlyVert = infiniteFly.addoption("Vertical", Number, 0.3);
 new Module("InvWalk", function() {});
 
 
+// === MOVEMENT/JESUS MODULE ===
 /**
  * Jesus Module
  */
@@ -851,6 +842,7 @@ const jesus = new Module("Jesus", function(callback) {
 });
 
 
+// === MOVEMENT/JETPACK MODULE ===
 /**
  * JetPack Module
  */
@@ -888,6 +880,7 @@ jetpackUpMotion = jetpack.addoption("UpMotion", Number, 4);
 jetpackvert = jetpack.addoption("Vertical", Number, 0.27);
 
 
+// === MOVEMENT/KEEPSPRINT MODULE ===
 /**
  * KeepSprint Module
  */
@@ -895,6 +888,7 @@ jetpackvert = jetpack.addoption("Vertical", Number, 0.27);
 new Module("KeepSprint", function() {});
 
 
+// === MOVEMENT/NOSLOWDOWN MODULE ===
 /**
  * NoSlowdown Module
  */
@@ -902,6 +896,7 @@ new Module("KeepSprint", function() {});
 new Module("NoSlowdown", function() {});
 
 
+// === MOVEMENT/PHASE MODULE ===
 /**
  * Phase Module
  */
@@ -909,6 +904,7 @@ new Module("NoSlowdown", function() {});
 new Module("Phase", function() {});
 
 
+// === MOVEMENT/SPEED MODULE ===
 /**
  * Speed Module
  */
@@ -927,6 +923,7 @@ new Module("Speed", function(callback) {
 });
 
 
+// === MOVEMENT/SPIDERCLIMB MODULE ===
 /**
  * SpiderClimb Module
  */
@@ -934,6 +931,7 @@ new Module("Speed", function(callback) {
 new Module("SpiderClimb", function() {});
 
 
+// === MOVEMENT/SPRINT MODULE ===
 /**
  * Sprint Module
  */
@@ -941,6 +939,7 @@ new Module("SpiderClimb", function() {});
 new Module("Sprint", function() {});
 
 
+// === MOVEMENT/STEP MODULE ===
 /**
  * Step Module
  */
@@ -960,6 +959,7 @@ const step = new Module("Step", function(callback) {
 stepheight = step.addoption("Height", Number, 1);
 
 
+// === PLAYER/ANTIFALL MODULE ===
 /**
  * AntiFall Module
  */
@@ -978,6 +978,7 @@ new Module("AntiFall", function(callback) {
 });
 
 
+// === PLAYER/AUTOARMOR MODULE ===
 /**
  * AutoArmor Module
  */
@@ -1045,6 +1046,7 @@ new Module("AutoArmor", function(callback) {
 });
 
 
+// === PLAYER/GHOSTJOIN MODULE ===
 /**
  * GhostJoin Module
  */
@@ -1052,6 +1054,7 @@ new Module("AutoArmor", function(callback) {
 new Module("GhostJoin", function() {});
 
 
+// === PLAYER/INVCLEANER MODULE ===
 /**
  * InvCleaner Module
  */
@@ -1193,6 +1196,7 @@ function dropSlot(index) {
 }
 
 
+// === PLAYER/NOFALL MODULE ===
 /**
  * NoFall Module
  */
@@ -1210,6 +1214,7 @@ new Module("NoFall", function(callback) {
 });
 
 
+// === PLAYER/PLAYERESP MODULE ===
 /**
  * PlayerESP Module
  */
@@ -1217,6 +1222,7 @@ new Module("NoFall", function(callback) {
 new Module("PlayerESP", function() {});
 
 
+// === RENDER/CHAMS MODULE ===
 /**
  * Chams Module
  */
@@ -1224,6 +1230,7 @@ new Module("PlayerESP", function() {});
 new Module("Chams", function() {});
 
 
+// === RENDER/CLICKGUI MODULE ===
 /**
  * ClickGUI Module
  */
@@ -1496,6 +1503,7 @@ new Module("ClickGUI", function(callback) {
 });
 
 
+// === RENDER/NAMETAGS MODULE ===
 /**
  * NameTags+ Module
  */
@@ -1503,6 +1511,7 @@ new Module("ClickGUI", function(callback) {
 new Module("NameTags+", function() {});
 
 
+// === RENDER/TEXTGUI MODULE ===
 /**
  * TextGUI Module
  */
@@ -1514,183 +1523,7 @@ textguishadow = textgui.addoption("Shadow", Boolean, true);
 textgui.toggle();
 
 
-/**
- * AntiBan Module
- */
-
-const antiban = new Module("AntiBan", function() {});
-antiban.toggle();
-
-
-/**
- * AntiCheat Module
- */
-
-new Module("AntiCheat", function() {});
-
-
-/**
- * AutoFunnyChat Module
- */
-
-let funnyMessages = [
-    "Sent back to the lobby—don't trip on the way out!",
-    "Was that your best? Miniblox says no.",
-    "You dropped faster than my WiFi.",
-    "Did you forget to equip skill today?",
-    "That was a tutorial death, right?",
-    "Tip: Dodging is allowed.",
-    "Respawn and try again (maybe with both hands).",
-    "Out-clicked, out-played, outta here.",
-    "Next time, bring a helmet. And armor. And hope.",
-    "Imagine losing in Miniblox... tragic.",
-    "Your blocks? My blocks now.",
-    "Are you sure you're not an NPC?",
-    "Pro tip: The void is not a shortcut.",
-    "Is your keyboard upside down?",
-    "That scoreboard doesn't lie.",
-    "Miniblox called—wants its win streak back.",
-    "Did you lag, or just freeze from fear?",
-    "Was that a speedrun to the void?",
-    "GG! (It was mostly me though.)",
-    "You just got Minibloxed!",
-    "Don't blame the ping, blame the skill.",
-    "You make AFK players look cracked.",
-    "If you were any slower, you'd be a block.",
-    "That was less of a fight, more of a donation.",
-    "Did you forget which game you're playing?",
-    "Keyboard check. Mouse check. Skill... missing.",
-    "If losing was an achievement, you'd be top of the leaderboard.",
-    "You respawn more than you blink.",
-    "Hope you enjoy the respawn timer.",
-    "Maybe try winning... just once?",
-    "Did you just speedrun getting eliminated?",
-    "Miniblox tip: Winning is allowed.",
-    "You just made the highlight reel—of fails.",
-    "The only thing lower than your HP was your chance to win.",
-    "If you see this, you lost the 50/50. Badly.",
-    "That performance was sponsored by gravity.",
-    "Your only kill streak is in the practice lobby.",
-    "You bring a whole new meaning to 'easy win.'",
-    "That was faster than a Miniblox queue skip.",
-    "You just gave me free stats.",
-    "Did you drop your keyboard? Because your plays are a mess.",
-    "I've seen bots with better aim.",
-    "Are you playing with your monitor off?",
-    "You just got outplayed by someone eating snacks IRL.",
-    "Did your mouse disconnect?",
-    "If you're reading this, you just lost a 1v1.",
-    "Not even lag could save you.",
-    "Skill issue detected. Please reinstall.",
-    "Your respawn button must be tired.",
-    "You fight like a Miniblox villager.",
-    "Maybe try using both hands next time.",
-    "Spectator mode looks good on you.",
-    "I hope you brought a map, because you're lost.",
-    "Knocked out like my WiFi on a stormy day.",
-    "That combo was sponsored by gravity.",
-    "I'd say GG, but that wasn't even close.",
-    "Do you need a tutorial?",
-    "Blink if you need help.",
-    "You just got styled on.",
-    "Don't worry, practice makes... well, you tried."
-];
-
-const AutoFunnyChat = new Module("AutoFunnyChat", function(callback) {
-    if (!callback) {
-        delete tickLoop["AutoFunnyChat"];
-        if (window.__autoFunnyKillMsgListener) {
-            if (ClientSocket.off) {
-                ClientSocket.off("CPacketMessage", window.__autoFunnyKillMsgListener);
-            }
-            window.__autoFunnyKillMsgListener = undefined;
-        }
-        return;
-    }
-    // Periodic random funny message
-    let lastSent = 0;
-    tickLoop["AutoFunnyChat"] = function() {
-        if (Date.now() - lastSent > 40000) { // Sends every 40 seconds
-            const msg = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
-            ClientSocket.sendPacket(new SPacketMessage({text: msg}));
-            lastSent = Date.now();
-        }
-    };
-
-    // Also send on kill events (Miniblox chat detection)
-    if (!window.__autoFunnyKillMsgListener) {
-        window.__autoFunnyKillMsgListener = function(h) {
-            if (
-                h.text &&
-                (
-                    h.text.includes("You eliminated") ||
-                    h.text.includes("You knocked out") ||
-                    h.text.includes("You sent") ||
-                    (h.text.includes("eliminated by") && h.text.includes(player.name)) ||
-                    h.text.includes(player.name + " eliminated")
-                )
-            ) {
-                const msg = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
-                setTimeout(function() {
-                    ClientSocket.sendPacket(new SPacketMessage({text: msg}));
-                }, 500 + Math.random() * 1000); // slight delay for realism
-            }
-        };
-        ClientSocket.on("CPacketMessage", window.__autoFunnyKillMsgListener);
-    }
-});
-
-
-/**
- * AutoQueue Module
- */
-
-new Module("AutoQueue", function() {});
-
-
-/**
- * AutoRejoin Module
- */
-
-new Module("AutoRejoin", function() {});
-
-
-/**
- * AutoRespawn Module
- */
-
-new Module("AutoRespawn", function() {});
-
-
-/**
- * AutoVote Module
- */
-
-new Module("AutoVote", function() {});
-
-
-/**
- * ChatDisabler Module
- */
-
-const chatdisabler = new Module("ChatDisabler", function() {});
-chatdisablermsg = chatdisabler.addoption("Message", String, "youtube.com/c/7GrandDadVape");
-
-
-/**
- * FilterBypass Module
- */
-
-new Module("FilterBypass", function() {});
-
-
-/**
- * MusicFix Module
- */
-
-new Module("MusicFix", function() {});
-
-
+// === WORLD/AUTOCRAFT MODULE ===
 /**
  * AutoCraft Module
  */
@@ -1722,6 +1555,7 @@ new Module("AutoCraft", function(callback) {
 });
 
 
+// === WORLD/BREAKER MODULE ===
 /**
  * Breaker Module
  */
@@ -1749,6 +1583,7 @@ const breaker = new Module("Breaker", function(callback) {
 breakerrange = breaker.addoption("Range", Number, 10);
 
 
+// === WORLD/CHESTSTEAL MODULE ===
 /**
  * ChestSteal Module
  */
@@ -1774,6 +1609,7 @@ cheststealblocks = cheststeal.addoption("Blocks", Boolean, true);
 cheststealtools = cheststeal.addoption("Tools", Boolean, false);
 
 
+// === WORLD/FASTBREAK MODULE ===
 /**
  * FastBreak Module
  */
@@ -1791,6 +1627,7 @@ new Module("FastBreak", function(callback) {
 });
 
 
+// === WORLD/SCAFFOLD MODULE ===
 /**
  * Scaffold Module
  */
@@ -1990,6 +1827,7 @@ scaffoldextend = scaffold.addoption("Extend", Number, 1);
 scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 
 
+// === WORLD/TIMER MODULE ===
 /**
  * Timer Module
  */
@@ -2008,6 +1846,193 @@ const timer = new Module("Timer", function(callback) {
 	}
 });
 timervalue = timer.addoption("Value", Number, 1.2);
+
+
+// === UTILITY/ANTIBAN MODULE ===
+/**
+ * AntiBan Module
+ */
+
+const antiban = new Module("AntiBan", function() {});
+antiban.toggle();
+
+
+// === UTILITY/ANTICHEAT MODULE ===
+/**
+ * AntiCheat Module
+ */
+
+new Module("AntiCheat", function() {});
+
+
+// === UTILITY/AUTOFUNNYCHAT MODULE ===
+/**
+ * AutoFunnyChat Module
+ */
+
+let funnyMessages = [
+    "Sent back to the lobby—don't trip on the way out!",
+    "Was that your best? Miniblox says no.",
+    "You dropped faster than my WiFi.",
+    "Did you forget to equip skill today?",
+    "That was a tutorial death, right?",
+    "Tip: Dodging is allowed.",
+    "Respawn and try again (maybe with both hands).",
+    "Out-clicked, out-played, outta here.",
+    "Next time, bring a helmet. And armor. And hope.",
+    "Imagine losing in Miniblox... tragic.",
+    "Your blocks? My blocks now.",
+    "Are you sure you're not an NPC?",
+    "Pro tip: The void is not a shortcut.",
+    "Is your keyboard upside down?",
+    "That scoreboard doesn't lie.",
+    "Miniblox called—wants its win streak back.",
+    "Did you lag, or just freeze from fear?",
+    "Was that a speedrun to the void?",
+    "GG! (It was mostly me though.)",
+    "You just got Minibloxed!",
+    "Don't blame the ping, blame the skill.",
+    "You make AFK players look cracked.",
+    "If you were any slower, you'd be a block.",
+    "That was less of a fight, more of a donation.",
+    "Did you forget which game you're playing?",
+    "Keyboard check. Mouse check. Skill... missing.",
+    "If losing was an achievement, you'd be top of the leaderboard.",
+    "You respawn more than you blink.",
+    "Hope you enjoy the respawn timer.",
+    "Maybe try winning... just once?",
+    "Did you just speedrun getting eliminated?",
+    "Miniblox tip: Winning is allowed.",
+    "You just made the highlight reel—of fails.",
+    "The only thing lower than your HP was your chance to win.",
+    "If you see this, you lost the 50/50. Badly.",
+    "That performance was sponsored by gravity.",
+    "Your only kill streak is in the practice lobby.",
+    "You bring a whole new meaning to 'easy win.'",
+    "That was faster than a Miniblox queue skip.",
+    "You just gave me free stats.",
+    "Did you drop your keyboard? Because your plays are a mess.",
+    "I've seen bots with better aim.",
+    "Are you playing with your monitor off?",
+    "You just got outplayed by someone eating snacks IRL.",
+    "Did your mouse disconnect?",
+    "If you're reading this, you just lost a 1v1.",
+    "Not even lag could save you.",
+    "Skill issue detected. Please reinstall.",
+    "Your respawn button must be tired.",
+    "You fight like a Miniblox villager.",
+    "Maybe try using both hands next time.",
+    "Spectator mode looks good on you.",
+    "I hope you brought a map, because you're lost.",
+    "Knocked out like my WiFi on a stormy day.",
+    "That combo was sponsored by gravity.",
+    "I'd say GG, but that wasn't even close.",
+    "Do you need a tutorial?",
+    "Blink if you need help.",
+    "You just got styled on.",
+    "Don't worry, practice makes... well, you tried."
+];
+
+const AutoFunnyChat = new Module("AutoFunnyChat", function(callback) {
+    if (!callback) {
+        delete tickLoop["AutoFunnyChat"];
+        if (window.__autoFunnyKillMsgListener) {
+            if (ClientSocket.off) {
+                ClientSocket.off("CPacketMessage", window.__autoFunnyKillMsgListener);
+            }
+            window.__autoFunnyKillMsgListener = undefined;
+        }
+        return;
+    }
+    // Periodic random funny message
+    let lastSent = 0;
+    tickLoop["AutoFunnyChat"] = function() {
+        if (Date.now() - lastSent > 40000) { // Sends every 40 seconds
+            const msg = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
+            ClientSocket.sendPacket(new SPacketMessage({text: msg}));
+            lastSent = Date.now();
+        }
+    };
+
+    // Also send on kill events (Miniblox chat detection)
+    if (!window.__autoFunnyKillMsgListener) {
+        window.__autoFunnyKillMsgListener = function(h) {
+            if (
+                h.text &&
+                (
+                    h.text.includes("You eliminated") ||
+                    h.text.includes("You knocked out") ||
+                    h.text.includes("You sent") ||
+                    (h.text.includes("eliminated by") && h.text.includes(player.name)) ||
+                    h.text.includes(player.name + " eliminated")
+                )
+            ) {
+                const msg = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
+                setTimeout(function() {
+                    ClientSocket.sendPacket(new SPacketMessage({text: msg}));
+                }, 500 + Math.random() * 1000); // slight delay for realism
+            }
+        };
+        ClientSocket.on("CPacketMessage", window.__autoFunnyKillMsgListener);
+    }
+});
+
+
+// === UTILITY/AUTOQUEUE MODULE ===
+/**
+ * AutoQueue Module
+ */
+
+new Module("AutoQueue", function() {});
+
+
+// === UTILITY/AUTOREJOIN MODULE ===
+/**
+ * AutoRejoin Module
+ */
+
+new Module("AutoRejoin", function() {});
+
+
+// === UTILITY/AUTORESPAWN MODULE ===
+/**
+ * AutoRespawn Module
+ */
+
+new Module("AutoRespawn", function() {});
+
+
+// === UTILITY/AUTOVOTE MODULE ===
+/**
+ * AutoVote Module
+ */
+
+new Module("AutoVote", function() {});
+
+
+// === UTILITY/CHATDISABLER MODULE ===
+/**
+ * ChatDisabler Module
+ */
+
+const chatdisabler = new Module("ChatDisabler", function() {});
+chatdisablermsg = chatdisabler.addoption("Message", String, "youtube.com/c/7GrandDadVape");
+
+
+// === UTILITY/FILTERBYPASS MODULE ===
+/**
+ * FilterBypass Module
+ */
+
+new Module("FilterBypass", function() {});
+
+
+// === UTILITY/MUSICFIX MODULE ===
+/**
+ * MusicFix Module
+ */
+
+new Module("MusicFix", function() {});
 
 
 

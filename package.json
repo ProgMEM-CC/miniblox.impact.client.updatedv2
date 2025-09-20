@@ -11,7 +11,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "jshint src",
     "build": "npm run lint && node build.js",
-    "diff": "npm run build && node tools/diff.js build/client.build.js vav4inject_old.js"
+    "diff": "npm run build && node tools/diff.js vav4inject_old.js build/client.build.js",
+    "diff:verbose": "npm run build && node tools/diff.js vav4inject_old.js build/client.build.js --verbose",
+    "diff:stats": "npm run build && node tools/diff.js vav4inject_old.js build/client.build.js --stats",
+    "diff:full": "npm run build && node tools/diff.js vav4inject_old.js build/client.build.js --verbose --stats"
   },
   "keywords": [],
   "author": "",
