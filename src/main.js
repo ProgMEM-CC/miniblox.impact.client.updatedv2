@@ -5,7 +5,7 @@ let replacements = {};
 let dumpedVarNames = {};
 const storeName = "a" + crypto.randomUUID().replaceAll("-", "").substring(16);
 const vapeName = crypto.randomUUID().replaceAll("-", "").substring(16);
-const VERSION = "5.0.0";
+const VERSION = "5.5";
 
 // ANTICHEAT HOOK
 function replaceAndCopyFunction(oldFunc, newFunc) {
@@ -106,10 +106,16 @@ function modifyCode(text) {
 		}, 0);
 	`);
 	addModification('y:this.getEntityBoundingBox().min.y,', 'y:sendY != false ? sendY : this.getEntityBoundingBox().min.y,', true);
+	addModification("const player=new ClientEntityPlayer", `
+// note: when using the desync,
+// your position will only update every 20 ticks.
+let serverPos = player.pos.clone();
+`);
 	addModification('Potions.jump.getId(),"5");', `
 		let blocking = false;
 		let sendYaw = false;
 		let sendY = false;
+        let desync = false;
 		let breakStart = Date.now();
 		let noMove = Date.now();
 
@@ -121,6 +127,24 @@ function modifyCode(text) {
 
 		let tickLoop = {};
 		let renderTickLoop = {};
+  
+  /**
+		 * clamps the given position to the given range
+		 * @param {Vector3} pos
+		 * @param {Vector3} serverPos
+		 * @param {number} range
+		 * @returns {Vector3} the clamped position
+		**/
+		function desyncMath(pos, serverPos, range) {
+			const moveVec = {x: (pos.x - serverPos.x), y: (pos.y - serverPos.y), z: (pos.z - serverPos.z)};
+			const moveMag = Math.sqrt(moveVec.x * moveVec.x + moveVec.y * moveVec.y + moveVec.z * moveVec.z);
+
+			return moveMag > range ? {
+				x: serverPos.x + ((moveVec.x / moveMag) * range),
+				y: serverPos.y + ((moveVec.y / moveMag) * range),
+				z: serverPos.z + ((moveVec.z / moveMag) * range)
+			} : pos;
+		}
 
 		let lastJoined, velocityhori, velocityvert, chatdisablermsg, textguifont, textguisize, textguishadow, attackedEntity, stepheight;
 		let attackTime = Date.now();
@@ -142,12 +166,11 @@ function modifyCode(text) {
 	`);
 
 	addModification('VERSION$1," | ",', `"${vapeName} v${VERSION}"," | ",`);
-	addModification('if(!x.canConnect){', 'x.errorMessage = x.errorMessage === "Could not join server. You are connected to a VPN or proxy. Please disconnect from it and refresh the page." ? "You\'re maybe IP banned or you\'re using a vpn " : x.errorMessage;');
+	addModification('if(!x.canConnect){', 'x.errorMessage = x.errorMessage === "Could not join server. You are connected to a VPN or proxy. Please disconnect from it and refresh this page." ? "You\'re possibly IP banned or you\'re using a VPN " : x.errorMessage;');
 
 	// DRAWING SETUP
 	addModification('I(this,"glintTexture");', `
 		I(this, "vapeTexture");
-		I(this, "v4Texture");
 	`);
 	/**
 	 * @param {string} url
@@ -159,8 +182,7 @@ function modifyCode(text) {
 	addModification('skinManager.loadTextures(),', ',this.loadVape(),');
 	addModification('async loadSpritesheet(){', `
 		async loadVape() {
-			this.vapeTexture = await this.loader.loadAsync("${corsMoment("https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/logo.png")}");
-			this.v4Texture = await this.loader.loadAsync("${corsMoment("https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/logov4.png")}");
+			this.vapeTexture = await this.loader.loadAsync("${corsMoment("https://raw.githubusercontent.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/main/Logo.png")}");
 		}
 		async loadSpritesheet(){
 	`, true);
@@ -172,47 +194,108 @@ function modifyCode(text) {
 	`, true);
 
 	addModification('COLOR_TOOLTIP_BG,BORDER_SIZE)}', `
-		function drawImage(ctx, img, posX, posY, sizeX, sizeY, color) {
-			if (color) {
-				ctx.fillStyle = color;
-				ctx.fillRect(posX, posY, sizeX, sizeY);
-				ctx.globalCompositeOperation = "destination-in";
-			}
-			ctx.drawImage(img, posX, posY, sizeX, sizeY);
-			if (color) ctx.globalCompositeOperation = "source-over";
-		}
+    function drawImage(ctx, img, posX, posY, sizeX, sizeY, color) {
+        if (color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(posX, posY, sizeX, sizeY);
+            ctx.globalCompositeOperation = "destination-in";
+        }
+        ctx.drawImage(img, posX, posY, sizeX, sizeY);
+        if (color) ctx.globalCompositeOperation = "source-over";
+    }
 	`);
 
 	// TEXT GUI
-	addModification('(this.drawSelectedItemStack(),this.drawHintBox())', /*js*/`
-		if (ctx$5 && enabledModules["TextGUI"]) {
-			const colorOffset = (Date.now() / 4000);
-			const posX = 15;
-			const posY = 17;
-			ctx$5.imageSmoothingEnabled = true;
-			ctx$5.imageSmoothingQuality = "high";
-			drawImage(ctx$5, textureManager.vapeTexture.image, posX, posY, 80, 21, \`HSL(\${(colorOffset % 1) * 360}, 100%, 50%)\`);
-			drawImage(ctx$5, textureManager.v4Texture.image, posX + 81, posY + 1, 33, 18);
+	addModification(
+  '(this.drawSelectedItemStack(),this.drawHintBox())',
+  /*js*/`
+    if (ctx$5 && enabledModules["TextGUI"]) {
+        const colorOffset = Date.now() / 4000;
 
-			let offset = 0;
-			let stringList = [];
-			for(const [module, value] of Object.entries(enabledModules)) {
-				if (!value || module == "TextGUI") continue;
-				stringList.push(module);
-			}
+        const canvasW = ctx$5.canvas.width;
+        const canvasH = ctx$5.canvas.height;
 
-			stringList.sort(function(a, b) {
-				const compA = ctx$5.measureText(a).width;
-				const compB = ctx$5.measureText(b).width;
-				return compA < compB ? 1 : -1;
-			});
+        ctx$5.imageSmoothingEnabled = true;
+        ctx$5.imageSmoothingQuality = "high";
 
-			for(const module of stringList) {
-				offset++;
-				drawText(ctx$5, module, posX + 6, posY + 12 + ((textguisize[1] + 3) * offset), textguisize[1] + "px " + textguifont[1], \`HSL(\${((colorOffset - (0.025 * offset)) % 1) * 360}, 100%, 50%)\`, "left", "top", 1, textguishadow[1]);
-			}
-		}
-	`);
+        // Draw logo (bottom-right)
+        const logo = textureManager.vapeTexture.image;
+        const scale = 0.9;
+        const logoW = logo.width * scale;
+        const logoH = logo.height * scale;
+        const posX = canvasW - logoW - 15;
+        const posY = canvasH - logoH - 15;
+
+        ctx$5.shadowColor = "rgba(0, 0, 0, 0.6)";
+        ctx$5.shadowBlur = 6;
+        drawImage(ctx$5, logo, posX, posY, logoW, logoH);
+        ctx$5.shadowColor = "transparent";
+        ctx$5.shadowBlur = 0;
+
+        let offset = 0;
+        const stringList = [];
+
+        for (const [module, value] of Object.entries(enabledModules)) {
+            if (!value || module === "TextGUI") continue;
+            stringList.push(module);
+        }
+
+        // Sort by width (desc)
+        stringList.sort(
+          (a, b) => ctx$5.measureText(b).width - ctx$5.measureText(a).width
+        );
+
+        // Draw modules on the right
+        const paddingRight = 15;
+        const startY = 27 + 10;
+
+        for (const moduleName of stringList) {
+            offset++;
+
+            const text = moduleName;
+            const fontStyle = \`\${textguisize[1]}px \${textguifont[1]}\`;
+            ctx$5.font = fontStyle;
+
+            const textWidth = ctx$5.measureText(text).width;
+            const x = canvasW - textWidth - paddingRight;
+            const y = startY + (textguisize[1] + 3) * offset;
+
+            // Text shadow
+            ctx$5.shadowColor = "black";
+            ctx$5.shadowBlur = 4;
+            ctx$5.shadowOffsetX = 1;
+            ctx$5.shadowOffsetY = 1;
+
+            drawText(
+                ctx$5,
+                text,
+                x,
+                y,
+                fontStyle,
+                \`hsl(\${((colorOffset - 0.025 * offset) % 1) * 360},100%,50%)\`,
+                "left",
+                "top",
+                1,
+                textguishadow[1]
+            );
+
+            // Reset shadow
+            ctx$5.shadowColor = "transparent";
+            ctx$5.shadowBlur = 0;
+            ctx$5.shadowOffsetX = 0;
+            ctx$5.shadowOffsetY = 0;
+
+            // Draw status dot
+            const dotX = x - 12;
+            const dotY = y - 4;
+            ctx$5.fillStyle = enabledModules[moduleName] ? "lime" : "red";
+            ctx$5.beginPath();
+            ctx$5.arc(dotX, dotY, 4, 0, Math.PI * 2);
+            ctx$5.fill();
+        }
+    }
+`
+);
 
 
 	addModification('+=h*y+u*x}', `
@@ -306,6 +389,16 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	// NOSLOWDOWN
 	addModification('updatePlayerMoveState(),this.isUsingItem()', 'updatePlayerMoveState(),(this.isUsingItem() && !enabledModules["NoSlowdown"])', true);
 	addModification('S&&!this.isUsingItem()', 'S&&!(this.isUsingItem() && !enabledModules["NoSlowdown"])', true);
+
+	 // DESYNC
+	addModification("this.inputSequenceNumber++", 'desync ? this.inputSequenceNumber : this.inputSequenceNumber++', true);
+	// addModification("new PBVector3({x:this.pos.x,y:this.pos.y,z:this.pos.z})", "desync ? inputPos : inputPos = this.pos", true);
+
+	// auto-reset the desync variable.
+	addModification("reconcileServerPosition(h){", "serverPos = h;");
+
+	// hook into reconcileServerPosition
+	// so we know our server pos
 
 	// STEP
 	addModification('p.y=this.stepHeight;', 'p.y=(enabledModules["Step"]?Math.max(stepheight[1],this.stepHeight):this.stepHeight);', true);
@@ -465,10 +558,10 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 				return this.closeInput();
 		}
-		if (enabledModules["FilterBypass"] && !this.inputValue.startsWith('/')) {
+		if (enabledModules["FilterBypass"] && !this.isInputCommandMode) {
 			const words = this.inputValue.split(" ");
 			let newwords = [];
-			for(const word of words) newwords.push(word.charAt(0) + '‎' + word.slice(1));
+			for(const word of words) newwords.push(word.charAt(0) + '\\\\' + word.slice(1));
 			this.inputValue = newwords.join(' ');
 		}
 	`);
@@ -484,6 +577,14 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	addModification('document.addEventListener("contextmenu",m=>m.preventDefault());', /*js*/`
 		// my code lol
 		(function() {
+            function reloadTickLoop(value) {
+				if (game.tickLoop) {
+					MSPT = value;
+					clearInterval(game.tickLoop);
+					game.tickLoop = setInterval(() => game.fixedUpdate(), MSPT);
+				}
+			}
+
 			class Module {
 				constructor(name, func) {
 					this.name = name;

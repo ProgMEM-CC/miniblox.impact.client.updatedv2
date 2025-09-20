@@ -1,7 +1,7 @@
 {
-  "totalLines": 2584,
-  "totalSize": 83539,
-  "moduleCount": 42,
+  "totalLines": 2731,
+  "totalSize": 88377,
+  "moduleCount": 43,
   "moduleNames": [
     "AutoClicker",
     "Killaura",
@@ -24,6 +24,7 @@
     "GhostJoin",
     "InvCleaner",
     "NoFall",
+    "NoFallBeta",
     "PlayerESP",
     "Chams",
     "ClickGUI",
@@ -46,6 +47,6 @@
     "FilterBypass",
     "MusicFix"
   ],
-  "buildTime": "2025-09-20T08:25:57.994Z",
+  "buildTime": "2025-09-20T08:38:24.202Z",
   "integrationIssues": 1
 }

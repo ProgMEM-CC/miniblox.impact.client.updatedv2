@@ -5,7 +5,7 @@ let replacements = {};
 let dumpedVarNames = {};
 const storeName = "a" + crypto.randomUUID().replaceAll("-", "").substring(16);
 const vapeName = crypto.randomUUID().replaceAll("-", "").substring(16);
-const VERSION = "5.0.0";
+const VERSION = "5.5";
 
 // ANTICHEAT HOOK
 function replaceAndCopyFunction(oldFunc, newFunc) {
@@ -106,10 +106,16 @@ function modifyCode(text) {
 		}, 0);
 	`);
 	addModification('y:this.getEntityBoundingBox().min.y,', 'y:sendY != false ? sendY : this.getEntityBoundingBox().min.y,', true);
+	addModification("const player=new ClientEntityPlayer", `
+// note: when using the desync,
+// your position will only update every 20 ticks.
+let serverPos = player.pos.clone();
+`);
 	addModification('Potions.jump.getId(),"5");', `
 		let blocking = false;
 		let sendYaw = false;
 		let sendY = false;
+        let desync = false;
 		let breakStart = Date.now();
 		let noMove = Date.now();
 
@@ -121,6 +127,24 @@ function modifyCode(text) {
 
 		let tickLoop = {};
 		let renderTickLoop = {};
+  
+  /**
+		 * clamps the given position to the given range
+		 * @param {Vector3} pos
+		 * @param {Vector3} serverPos
+		 * @param {number} range
+		 * @returns {Vector3} the clamped position
+		**/
+		function desyncMath(pos, serverPos, range) {
+			const moveVec = {x: (pos.x - serverPos.x), y: (pos.y - serverPos.y), z: (pos.z - serverPos.z)};
+			const moveMag = Math.sqrt(moveVec.x * moveVec.x + moveVec.y * moveVec.y + moveVec.z * moveVec.z);
+
+			return moveMag > range ? {
+				x: serverPos.x + ((moveVec.x / moveMag) * range),
+				y: serverPos.y + ((moveVec.y / moveMag) * range),
+				z: serverPos.z + ((moveVec.z / moveMag) * range)
+			} : pos;
+		}
 
 		let lastJoined, velocityhori, velocityvert, chatdisablermsg, textguifont, textguisize, textguishadow, attackedEntity, stepheight;
 		let attackTime = Date.now();
@@ -142,12 +166,11 @@ function modifyCode(text) {
 	`);
 
 	addModification('VERSION$1," | ",', `"${vapeName} v${VERSION}"," | ",`);
-	addModification('if(!x.canConnect){', 'x.errorMessage = x.errorMessage === "Could not join server. You are connected to a VPN or proxy. Please disconnect from it and refresh the page." ? "You\'re maybe IP banned or you\'re using a vpn " : x.errorMessage;');
+	addModification('if(!x.canConnect){', 'x.errorMessage = x.errorMessage === "Could not join server. You are connected to a VPN or proxy. Please disconnect from it and refresh this page." ? "You\'re possibly IP banned or you\'re using a VPN " : x.errorMessage;');
 
 	// DRAWING SETUP
 	addModification('I(this,"glintTexture");', `
 		I(this, "vapeTexture");
-		I(this, "v4Texture");
 	`);
 	/**
 	 * @param {string} url
@@ -159,8 +182,7 @@ function modifyCode(text) {
 	addModification('skinManager.loadTextures(),', ',this.loadVape(),');
 	addModification('async loadSpritesheet(){', `
 		async loadVape() {
-			this.vapeTexture = await this.loader.loadAsync("${corsMoment("https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/logo.png")}");
-			this.v4Texture = await this.loader.loadAsync("${corsMoment("https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/logov4.png")}");
+			this.vapeTexture = await this.loader.loadAsync("${corsMoment("https://raw.githubusercontent.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/main/Logo.png")}");
 		}
 		async loadSpritesheet(){
 	`, true);
@@ -172,47 +194,107 @@ function modifyCode(text) {
 	`, true);
 
 	addModification('COLOR_TOOLTIP_BG,BORDER_SIZE)}', `
-		function drawImage(ctx, img, posX, posY, sizeX, sizeY, color) {
-			if (color) {
-				ctx.fillStyle = color;
-				ctx.fillRect(posX, posY, sizeX, sizeY);
-				ctx.globalCompositeOperation = "destination-in";
-			}
-			ctx.drawImage(img, posX, posY, sizeX, sizeY);
-			if (color) ctx.globalCompositeOperation = "source-over";
-		}
-	`);
+    function drawImage(ctx, img, posX, posY, sizeX, sizeY, color) {
+        if (color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(posX, posY, sizeX, sizeY);
+            ctx.globalCompositeOperation = "destination-in";
+        }
+        ctx.drawImage(img, posX, posY, sizeX, sizeY);
+        if (color) ctx.globalCompositeOperation = "source-over";
+    }
+`);
 
-	// TEXT GUI
-	addModification('(this.drawSelectedItemStack(),this.drawHintBox())', /*js*/`
-		if (ctx$5 && enabledModules["TextGUI"]) {
-			const colorOffset = (Date.now() / 4000);
-			const posX = 15;
-			const posY = 17;
-			ctx$5.imageSmoothingEnabled = true;
-			ctx$5.imageSmoothingQuality = "high";
-			drawImage(ctx$5, textureManager.vapeTexture.image, posX, posY, 80, 21, \`HSL(\${(colorOffset % 1) * 360}, 100%, 50%)\`);
-			drawImage(ctx$5, textureManager.v4Texture.image, posX + 81, posY + 1, 33, 18);
+addModification(
+  '(this.drawSelectedItemStack(),this.drawHintBox())',
+  /*js*/`
+    if (ctx$5 && enabledModules["TextGUI"]) {
+        const colorOffset = Date.now() / 4000;
 
-			let offset = 0;
-			let stringList = [];
-			for(const [module, value] of Object.entries(enabledModules)) {
-				if (!value || module == "TextGUI") continue;
-				stringList.push(module);
-			}
+        const canvasW = ctx$5.canvas.width;
+        const canvasH = ctx$5.canvas.height;
 
-			stringList.sort(function(a, b) {
-				const compA = ctx$5.measureText(a).width;
-				const compB = ctx$5.measureText(b).width;
-				return compA < compB ? 1 : -1;
-			});
+        ctx$5.imageSmoothingEnabled = true;
+        ctx$5.imageSmoothingQuality = "high";
 
-			for(const module of stringList) {
-				offset++;
-				drawText(ctx$5, module, posX + 6, posY + 12 + ((textguisize[1] + 3) * offset), textguisize[1] + "px " + textguifont[1], \`HSL(\${((colorOffset - (0.025 * offset)) % 1) * 360}, 100%, 50%)\`, "left", "top", 1, textguishadow[1]);
-			}
-		}
-	`);
+        // Draw logo (bottom-right)
+        const logo = textureManager.vapeTexture.image;
+        const scale = 0.9;
+        const logoW = logo.width * scale;
+        const logoH = logo.height * scale;
+        const posX = canvasW - logoW - 15;
+        const posY = canvasH - logoH - 15;
+
+        ctx$5.shadowColor = "rgba(0, 0, 0, 0.6)";
+        ctx$5.shadowBlur = 6;
+        drawImage(ctx$5, logo, posX, posY, logoW, logoH);
+        ctx$5.shadowColor = "transparent";
+        ctx$5.shadowBlur = 0;
+
+        let offset = 0;
+        const stringList = [];
+
+        for (const [module, value] of Object.entries(enabledModules)) {
+            if (!value || module === "TextGUI") continue;
+            stringList.push(module);
+        }
+
+        // Sort by width (desc)
+        stringList.sort(
+          (a, b) => ctx$5.measureText(b).width - ctx$5.measureText(a).width
+        );
+
+        // Draw modules on the right
+        const paddingRight = 15;
+        const startY = 27 + 10;
+
+        for (const moduleName of stringList) {
+            offset++;
+
+            const text = moduleName;
+            const fontStyle = \`\${textguisize[1]}px \${textguifont[1]}\`;
+            ctx$5.font = fontStyle;
+
+            const textWidth = ctx$5.measureText(text).width;
+            const x = canvasW - textWidth - paddingRight;
+            const y = startY + (textguisize[1] + 3) * offset;
+
+            // Text shadow
+            ctx$5.shadowColor = "black";
+            ctx$5.shadowBlur = 4;
+            ctx$5.shadowOffsetX = 1;
+            ctx$5.shadowOffsetY = 1;
+
+            drawText(
+                ctx$5,
+                text,
+                x,
+                y,
+                fontStyle,
+                \`hsl(\${((colorOffset - 0.025 * offset) % 1) * 360},100%,50%)\`,
+                "left",
+                "top",
+                1,
+                textguishadow[1]
+            );
+
+            // Reset shadow
+            ctx$5.shadowColor = "transparent";
+            ctx$5.shadowBlur = 0;
+            ctx$5.shadowOffsetX = 0;
+            ctx$5.shadowOffsetY = 0;
+
+            // Draw status dot
+            const dotX = x - 12;
+            const dotY = y - 4;
+            ctx$5.fillStyle = enabledModules[moduleName] ? "lime" : "red";
+            ctx$5.beginPath();
+            ctx$5.arc(dotX, dotY, 4, 0, Math.PI * 2);
+            ctx$5.fill();
+        }
+    }
+`
+);
 
 	
 	addModification('+=h*y+u*x}', `
@@ -306,6 +388,16 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	// NOSLOWDOWN
 	addModification('updatePlayerMoveState(),this.isUsingItem()', 'updatePlayerMoveState(),(this.isUsingItem() && !enabledModules["NoSlowdown"])', true);
 	addModification('S&&!this.isUsingItem()', 'S&&!(this.isUsingItem() && !enabledModules["NoSlowdown"])', true);
+
+	 // DESYNC
+	addModification("this.inputSequenceNumber++", 'desync ? this.inputSequenceNumber : this.inputSequenceNumber++', true);
+	// addModification("new PBVector3({x:this.pos.x,y:this.pos.y,z:this.pos.z})", "desync ? inputPos : inputPos = this.pos", true);
+
+	// auto-reset the desync variable.
+	addModification("reconcileServerPosition(h){", "serverPos = h;");
+
+	// hook into reconcileServerPosition
+	// so we know our server pos
 
 	// STEP
 	addModification('p.y=this.stepHeight;', 'p.y=(enabledModules["Step"]?Math.max(stepheight[1],this.stepHeight):this.stepHeight);', true);
@@ -465,10 +557,10 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 				return this.closeInput();
 		}
-		if (enabledModules["FilterBypass"] && !this.inputValue.startsWith('/')) {
+		if (enabledModules["FilterBypass"] && !this.isInputCommandMode) {
 			const words = this.inputValue.split(" ");
 			let newwords = [];
-			for(const word of words) newwords.push(word.charAt(0) + '‎' + word.slice(1));
+			for(const word of words) newwords.push(word.charAt(0) + '\\\\' + word.slice(1));
 			this.inputValue = newwords.join(' ');
 		}
 	`);
@@ -555,26 +647,51 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			const velocity = new Module("Velocity", function() {});
 			velocityhori = velocity.addoption("Horizontal", Number, 0);
 			velocityvert = velocity.addoption("Vertical", Number, 0);
+   
+			// Nofall beta?
+   			let noFallExtraYBeta;
+			const NoFallBeta = new Module("NoFallBeta", function(callback) {
+				if (callback) {
+					tickLoop["NoFallBeta"] = function() {
+						// check if the player is falling and above a block
+						// player.fallDistance = 0;
+						const boundingBox = player.getEntityBoundingBox();
+						const clone = boundingBox.min.clone();
+						clone.y -= noFallExtraYBeta[1];
+						const block = rayTraceBlocks(boundingBox.min, clone, true, false, false, game.world);
+						if (block) {
+							sendY = player.pos.y + noFallExtraYBeta[1];
+						}
+					}
+				} else {
+					delete tickLoop["NoFallBeta"];
+				}
+			});
+			noFallExtraYBeta = NoFallBeta.addoption("extraY", Number, .41);
+
 
 			// NoFall
 			new Module("NoFall", function(callback) {
-				if (callback) {
-					let ticks = 0;
-					tickLoop["NoFall"] = function() {
-        				const ray = rayTraceBlocks(player.getEyePos(), player.getEyePos().clone().setY(0), false, false, false, game.world);
-						if (player.fallDistance > 2.5 && ray) {
-							ClientSocket.sendPacket(new SPacketPlayerPosLook({pos: {x: player.pos.x, y: ray.hitVec.y, z: player.pos.z}, onGround: true}));
-							player.fallDistance = 0;
-						}
-					};
+				if (!callback) {
+					delete tickLoop["NoFall"];
+	 				// only other module that uses desync right now is Fly.
+	  				if (!fly.enabled) desync = false;
+					return;
 				}
-				else delete tickLoop["NoFall"];
+				let shouldDesync = false;
+				tickLoop["NoFall"] = function() {
+					if (!desync && shouldDesync) desync = true;
+	 				// this will force desync off even if fly is on, but I'm too lazy to make an entire priority system
+	  				// or something just to fix the 0 uses of fly while you're on the ground
+	 				else if (player.onGround && shouldDesync && desync) desync = false;
+	  				shouldDesync = !player.onGround && player.motionY < -0.6 && player.fallDistance >= 2.5;
+				};
 			});
 
 			// WTap
 			new Module("WTap", function() {});
 
-			// AntiVoid
+			// AntiFall
 			new Module("AntiFall", function(callback) {
 				if (callback) {
 					let ticks = 0;
@@ -761,30 +878,27 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			// Fly
 			let flyvalue, flyvert, flybypass;
 			const fly = new Module("Fly", function(callback) {
-				if (callback) {
-					let ticks = 0;
-					tickLoop["Fly"] = function() {
-						ticks++;
-						const dir = getMoveDirection(flyvalue[1]);
-						player.motion.x = dir.x;
-						player.motion.z = dir.z;
-						player.motion.y = keyPressedDump("space") ? flyvert[1] : (keyPressedDump("shift") ? -flyvert[1] : 0);
-					};
-				}
-				else {
-					delete tickLoop["Fly"];
+				if (!callback) {
 					if (player) {
 						player.motion.x = Math.max(Math.min(player.motion.x, 0.3), -0.3);
 						player.motion.z = Math.max(Math.min(player.motion.z, 0.3), -0.3);
 					}
+					delete tickLoop["Fly"];
+					desync = false;
+					return;
 				}
+				desync = true;
+				tickLoop["Fly"] = function() {
+					const dir = getMoveDirection(flyvalue[1]);
+					player.motion.x = dir.x;
+					player.motion.z = dir.z;
+					player.motion.y = keyPressedDump("space") ? flyvert[1] : (keyPressedDump("shift") ? -flyvert[1] : 0);
+				};
 			});
 			flybypass = fly.addoption("Bypass", Boolean, true);
-			flyvalue = fly.addoption("Speed", Number, 2);
-			flyvert = fly.addoption("Vertical", Number, 0.7);
+			flyvalue = fly.addoption("Speed", Number, 0.19);
+			flyvert = fly.addoption("Vertical", Number, 0.3);
 			
-   
-   
    
    			let jetpackvalue, jetpackvert, jetpackUpMotion, jetpackGlide;
 			// jetpack
@@ -1283,7 +1397,7 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 
     tickLoop["InvCleaner"] = function () {
         const now = Date.now();
-        if (now - lastRun < 65) return;
+        if (now - lastRun < 100) return;
         lastRun = now;
 
         const slots = player?.inventoryContainer?.inventorySlots;
@@ -1362,75 +1476,45 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 function dropSlot(index) {
     const windowId = player.openContainer.windowId;
     playerControllerDump.windowClickDump(windowId, index, 0, 0, player);
-    playerControllerDump.windowClickDump(windowId, -999, 0, 0, player); // drop outside
+    playerControllerDump.windowClickDump(windowId, -999, 0, 0, player); // drop outside of the window
 }
 
-                        // Place this with your other module definitions inside the main function
-
 let funnyMessages = [
-    // Classic Miniblox-style funny & savage messages
-    "Sent back to the lobby—don't trip on the way out!",
-    "Was that your best? Miniblox says no.",
-    "You dropped faster than my WiFi.",
-    "Did you forget to equip skill today?",
-    "That was a tutorial death, right?",
-    "Tip: Dodging is allowed.",
-    "Respawn and try again (maybe with both hands).",
-    "Out-clicked, out-played, outta here.",
-    "Next time, bring a helmet. And armor. And hope.",
-    "Imagine losing in Miniblox... tragic.",
-    "Your blocks? My blocks now.",
-    "Are you sure you're not an NPC?",
-    "Pro tip: The void is not a shortcut.",
-    "Is your keyboard upside down?",
-    "That scoreboard doesn't lie.",
-    "Miniblox called—wants its win streak back.",
-    "Did you lag, or just freeze from fear?",
-    "Was that a speedrun to the void?",
-    "GG! (It was mostly me though.)",
-    "You just got Minibloxed!",
-    // Extra savage Miniblox lines
-    "Don't blame the ping, blame the skill.",
-    "You make AFK players look cracked.",
-    "If you were any slower, you'd be a block.",
-    "That was less of a fight, more of a donation.",
-    "Did you forget which game you're playing?",
-    "Keyboard check. Mouse check. Skill... missing.",
-    "If losing was an achievement, you'd be top of the leaderboard.",
-    "You respawn more than you blink.",
-    "Hope you enjoy the respawn timer.",
-    "Maybe try winning... just once?",
-    "Did you just speedrun getting eliminated?",
-    "Miniblox tip: Winning is allowed.",
-    "You just made the highlight reel—of fails.",
-    "The only thing lower than your HP was your chance to win.",
-    "If you see this, you lost the 50/50. Badly.",
-    "That performance was sponsored by gravity.",
-    "Your only kill streak is in the practice lobby.",
-    "You bring a whole new meaning to 'easy win.'",
-    "That was faster than a Miniblox queue skip.",
-    "You just gave me free stats.",
-    // Legacy funny/mean lines
-    "Did you drop your keyboard? Because your plays are a mess.",
-    "I’ve seen bots with better aim.",
-    "Are you playing with your monitor off?",
-    "You just got outplayed by someone eating snacks IRL.",
-    "Did your mouse disconnect?",
-    "If you’re reading this, you just lost a 1v1.",
-    "Not even lag could save you.",
-    "Skill issue detected. Please reinstall.",
-    "Your respawn button must be tired.",
-    "You fight like a Miniblox villager.",
-    "Maybe try using both hands next time.",
-    "Spectator mode looks good on you.",
-    "I hope you brought a map, because you’re lost.",
-    "Knocked out like my WiFi on a stormy day.",
-    "That combo was sponsored by gravity.",
-    "I’d say GG, but that wasn’t even close.",
-    "Do you need a tutorial?",
-    "Blink if you need help.",
-    "You just got styled on.",
-    "Don’t worry, practice makes... well, you tried."
+"Prediction ACs: great at guessing wrong.",
+"Lag spikes? Blame the AC trying to play psychic.",
+"Jesus walked on water. ACs still trip over puddles.",
+"Walking on air? ACs call it a glitch. We call it precision.",
+"Prediction ACs eat packets 4 breakfast. Too bad they choke on velocity.",
+"Gravity’s a suggestion. ACs treat it like gospel.",
+"Scaffold smoother than your AC’s excuses.",
+"Tick-perfect bridging. ACs still counting frames.",
+"Snapped into water? ACs thought you were a fish.",
+"Water-walking? ACs still learning to swim.",
+"Falling? Nah. Just descending with style while ACs panic.",
+"Patch notes say 'fixed.' Reality says 'still broken.'",
+"Bypass? No. ACs just forgot how to detect.",
+"Modules adapt. ACs react — poorly.",
+"Silent movement. Loud AC confusion.",
+"Prediction? Velocity? ACs still buffering.",
+"No permission asked. ACs weren’t invited.",
+"Every module is a flex. ACs just fold.",
+"No config needed. ACs still reading the manual.",
+"Toggle. Deliver. ACs scramble.",
+"ACs don’t detect. They guess and hope.",
+"Unleashed. ACs unleashed their incompetence.",
+"No drama. Just full domination over servers.",
+"ACs getting patched? We evolve.",
+"Cheating? No. Just outperforming your AC’s imagination.",
+"Toggle scaffold. Build legacy. ACs build logs no one reads.",
+"Flinch? ACs do. We don’t.",
+"Modules = superpowers. ACs = kryptonite to themselves.",
+"ACs call it daddy. We call it Tuesday.",
+"Still undetected. Still undefeated. ACs still confused.",
+"Toggle one module. Server cries. ACs sob.",
+"Patch notes scared. ACs terrified.",
+"Your client warned you. ACs didn’t listen.",
+"Smooth as silk. ACs still stuck in sandpaper mode.",
+"Stealth so clean, ACs think it's a ghost."
 ];
 
 const AutoFunnyChat = new Module("AutoFunnyChat", function(callback) {
@@ -1617,15 +1701,14 @@ const jesus = new Module("Jesus", function(callback) {
 		execute(publicUrl);
 	}
 })();
+// Added new Poppins font 
 (async function () {
   try {
-    // Loads the Minecraft Font onto GUI
     const fontLink = document.createElement("link");
-    fontLink.href = "https://fonts.cdnfonts.com/css/minecraft-4";
+    fontLink.href = "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap";
     fontLink.rel = "stylesheet";
     document.head.appendChild(fontLink);
 
-    // Wait for Modules!
     await new Promise((resolve) => {
       const loop = setInterval(() => {
         if (unsafeWindow?.globalThis?.[storeName]?.modules) {
@@ -1637,144 +1720,46 @@ const jesus = new Module("Jesus", function(callback) {
 
     injectGUI(unsafeWindow.globalThis[storeName]);
   } catch (err) {
-    console.error("[ClickGUI] Init failed:", err);          // Checks for errors
+    console.error("[Cl1ckGU1] Init failed:", err);
   }
 
   function injectGUI(store) {
     const categories = {
       Combat: ["autoclicker", "killaura", "velocity", "wtap"],
-      Movement: [
-        "scaffold","jesus","phase","nofall","sprint","keepsprint","step",
-        "speed","fly","noslowdown","spiderclimb","jetpack"
-      ],
-      "Player / Render": [
-        "invcleaner","invwalk","autoarmor","ghostjoin",
-        "playeresp","nametags+","textgui","clickgui"
-      ],
-      World: ["fastbreak","breaker","autocraft","cheststeal","timer"],
-      Utility: [
-        "autorespawn","autorejoin","autoqueue",
-        "autovote","filterbypass","anticheat",
-        "autofunnychat","musicfix","auto-funnychat","music-fix"         // AutoFunnyChat doesnt enable properly but it works perfectly fine (disable) dont worry
-      ]
+      Movement: ["scaffold","jesus","phase","nofall","antifall","sprint","keepsprint","step","speed","jetpack","noslowdown"],
+      RendLayer: ["invcleaner","invwalk","autoarmor","esp","nametags+","textgui","clickgui","longjump"],
+      World: ["fastbreak","breaker","autocraft","cheststeal","timer","creativemode"],
+      Utility: ["autorespawn","autorejoin","autoqueue","autovote","filterbypass","anticheat","autofunnychat","chatdisabler","musicfix","auto-funnychat","music-fix"]
     };
+    const catIcons = { Combat:"⚔️", Movement:"🏃", "RendLayer":"🧑👁️", World:"🌍", Utility:"🛠️" };
 
-    const catIcons = {
-      Combat: "⚔️",
-      Movement: "🏃",
-      "Player / Render": "🧑👁️",
-      World: "🌍",
-      Utility: "🛠️"
-    };
-
-    // === Styles (LiquidBounce Theme + Scrollbars) ===
+    // === Styles ===
     const style = document.createElement("style");
     style.textContent = `
       @keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}
-      .lb-panel {
-        position:absolute;
-        width:220px;
-        background:#111;
-        border:2px solid #00aaff;
-        border-radius:0;
-        font-family:"Minecraft", monospace;
-        color:white;
-        animation:guiEnter .25s ease-out;
-        z-index:100000;
-
-        /* Scrollable */
-        max-height:420px;
-        overflow-y:auto;
-        overflow-x:hidden;
-      }
+      .lb-panel { position:absolute; width:220px; background:#111; border:2px solid #00aaff; font-family:"Poppins", sans-serif; color:white; animation:guiEnter .25s ease-out; z-index:100000; max-height:420px; overflow-x:hidden; }
       .lb-panel::-webkit-scrollbar { width:6px; }
       .lb-panel::-webkit-scrollbar-thumb { background:#00aaff; }
       .lb-panel::-webkit-scrollbar-track { background:#111; }
-      .lb-header {
-        background:#0a0a0a;
-        padding:6px;
-        font-weight:bold;
-        cursor:move;
-        user-select:none;
-        text-align:center;
-        border-bottom:1px solid #00aaff;
-        color:white;
-      }
-      .lb-module {
-        padding:4px 6px;
-        border-bottom:1px solid #1b1b1b;
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        cursor:pointer;
-      }
+      .lb-header { background:#0a0a0a; padding:6px; font-weight:600; cursor:move; text-align:center; border-bottom:1px solid #00aaff; }
+      .lb-module { padding:4px 6px; border-bottom:1px solid #1b1b1b; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
       .lb-module:hover { background:#151a20; }
       .lb-module.active { color:#00aaff; }
-      .lb-options {
-        display:none;
-        flex-direction:column;
-        gap:4px;
-        padding:4px 6px;
-        background:#0f0f12;
-        border-top:1px dashed #1e1e1e;
-      }
+      .lb-options { display:none; flex-direction:column; gap:4px; padding:4px 6px; background:#0f0f12; border-top:1px dashed #1e1e1e; }
       .lb-options.show { display:flex; animation:guiEnter .2s ease-out; }
-      .lb-options label {
-        font-size:12px;
-        display:flex;
-        justify-content:space-between;
-        color:white;
-      }
-      .lb-options input[type="range"] { flex:1; margin-left:4px; }
-      .lb-options input[type="text"] {
-        flex:1;
-        margin-left:4px;
-        font-size:12px;
-        background:#0a0a0a;
-        color:white;
-        border:1px solid #00aaff;
-        font-family:"Minecraft", monospace;
-        padding:2px;
-      }
-      .notif-wrap {
-        position:fixed; bottom:40px; right:30px;
-        display:flex; flex-direction:column; align-items:flex-end;
-        pointer-events:none; z-index:999999;
-      }
-      .notif {
-        background:#0a0a0a;
-        color:white;
-        padding:8px 12px;
-        margin-top:6px;
-        border:2px solid #00aaff;
-        border-radius:0;
-        font-family:"Minecraft", monospace;
-        opacity:1;
-        transform:translateX(120%);
-        transition:opacity .3s, transform .3s ease;
-      }
-      .lb-searchwrap {
-        position:fixed;
-        top:15px;
-        left:50%;
-        transform:translateX(-50%);
-        z-index:100001;
-        background:#0a0a0a;
-        border:2px solid #00aaff;
-        border-radius:0;
-        padding:4px 6px;
-        font-family:"Minecraft", monospace;
-      }
-      .lb-search {
-        background:#111;
-        border:none;
-        outline:none;
-        color:white;
-        font-size:13px;
-        width:180px;
-        font-family:"Minecraft", monospace;
-      }
+      .lb-options label { font-size:12px; display:flex; justify-content:space-between; color:white; }
+      .lb-options input[type="text"], .lb-options input[type="range"] { flex:1; margin-left:4px; font-family:"Poppins", sans-serif; }
+      .notif-wrap { position:fixed; bottom:40px; right:30px; display:flex; flex-direction:column; align-items:flex-end; pointer-events:none; z-index:999999; }
+      .notif { display:flex; align-items:center; gap:8px; background:rgba(20,20,20,0.85); color:white; padding:10px 14px; margin-top:8px; border-radius:10px; font-family:"Poppins", sans-serif; font-size:13px; backdrop-filter:blur(6px); box-shadow:0 4px 12px rgba(0,0,0,0.4); opacity:1; transform:translateX(120%); transition:opacity .3s, transform .3s ease; border-left:4px solid; }
+      .notif.info { border-color:#3498db; }
+      .notif.success { border-color:#2ecc71; }
+      .notif.warn { border-color:#f1c40f; }
+      .notif.error { border-color:#e74c3c; }
+      .lb-searchwrap { position:fixed; top:15px; left:50%; transform:translateX(-50%); z-index:100001; background:#0a0a0a; border:2px solid #00aaff; padding:4px 6px; font-family:"Poppins", sans-serif; }
+      .lb-search { background:#111; border:none; outline:none; color:white; font-size:13px; width:180px; font-family:"Poppins", sans-serif; }
       .lb-search::placeholder { color:#00aaff; opacity:0.6; }
+      .lb-content { overflow: hidden; transition: max-height 0.3s ease; max-height:1000px; }
+      .lb-content.collapsed { max-height:0; }
     `;
     document.head.appendChild(style);
 
@@ -1782,51 +1767,35 @@ const jesus = new Module("Jesus", function(callback) {
     const notifWrap = document.createElement("div");
     notifWrap.className = "notif-wrap";
     document.body.appendChild(notifWrap);
-
-    function showNotif(msg, dur = 3000) {
+    function showNotif(msg, type = "info", dur = 3000) {
       const n = document.createElement("div");
-      n.className = "notif";
-      n.textContent = msg;
+      n.className = `notif ${type}`;
+      let icon = type === "info" ? "ℹ️" : type === "success" ? "✅" : type === "warn" ? "⚠️" : "❌";
+      n.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
       notifWrap.appendChild(n);
       setTimeout(() => (n.style.transform = "translateX(0)"), 30);
-      setTimeout(() => {
-        n.style.opacity = "0";
-        n.style.transform = "translateX(120%)";
-      }, dur);
+      setTimeout(() => { n.style.opacity = "0"; n.style.transform = "translateX(120%)"; }, dur);
       setTimeout(() => n.remove(), dur + 400);
     }
 
-    // === Persistence Helpers ===
+    // === Persistence helpers with localstorage ===
     function saveModuleState(name, mod) {
       const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
       const opts = {};
-      if (mod.options) {
-        Object.entries(mod.options).forEach(([key, opt]) => {
-          opts[key] = opt[1];
-        });
-      }
+      if (mod.options) Object.entries(mod.options).forEach(([k, opt]) => { opts[k] = opt[1]; });
       saved[name] = { enabled: mod.enabled, bind: mod.bind, options: opts };
       localStorage.setItem("lb-mods", JSON.stringify(saved));
     }
-
     function loadModuleState(name, mod) {
       const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
       if (saved[name]) {
-        if (saved[name].enabled !== mod.enabled && typeof mod.toggle === "function") {
-          mod.toggle();
-        }
-        if (saved[name].bind) {
-          mod.setbind(saved[name].bind);
-        }
-        if (saved[name].options && mod.options) {
-          Object.entries(saved[name].options).forEach(([key, val]) => {
-            if (mod.options[key]) mod.options[key][1] = val;
-          });
-        }
+        if (saved[name].enabled !== mod.enabled && typeof mod.toggle === "function") mod.toggle();
+        if (saved[name].bind) mod.setbind(saved[name].bind);
+        if (saved[name].options && mod.options) Object.entries(saved[name].options).forEach(([k, v]) => { if (mod.options[k]) mod.options[k][1] = v; });
       }
     }
 
-    // === Panels ===
+    // === Panels with slide collapsible content ===
     const panels = {};
     Object.keys(categories).forEach((cat, i) => {
       const panel = document.createElement("div");
@@ -1836,37 +1805,41 @@ const jesus = new Module("Jesus", function(callback) {
 
       const header = document.createElement("div");
       header.className = "lb-header";
-      header.textContent = `${catIcons[cat]} ${cat}`;
+
+      const collapseBtn = document.createElement("span");
+      collapseBtn.style.float = "right";
+      collapseBtn.style.cursor = "pointer";
+
+      const titleSpan = document.createElement("span");
+      titleSpan.textContent = `${catIcons[cat]} ${cat}`;
+
+      header.appendChild(titleSpan);
+      header.appendChild(collapseBtn);
       panel.appendChild(header);
 
-      // Restore saved pos
       const saved = localStorage.getItem("lb-pos-" + cat);
-      if (saved) {
-        const { left, top } = JSON.parse(saved);
-        panel.style.left = left;
-        panel.style.top = top;
-      }
+      if (saved) { const { left, top } = JSON.parse(saved); panel.style.left = left; panel.style.top = top; }
 
-      // Dragging
       let dragging = false, offsetX, offsetY;
-      header.addEventListener("mousedown", (e) => {
-        dragging = true;
-        offsetX = e.clientX - panel.offsetLeft;
-        offsetY = e.clientY - panel.offsetTop;
-      });
-      document.addEventListener("mousemove", (e) => {
-        if (dragging) {
-          panel.style.left = e.clientX - offsetX + "px";
-          panel.style.top = e.clientY - offsetY + "px";
-        }
-      });
-      document.addEventListener("mouseup", () => {
-        if (dragging) {
-          dragging = false;
-          localStorage.setItem("lb-pos-" + cat,
-            JSON.stringify({ left: panel.style.left, top: panel.style.top })
-          );
-        }
+      header.addEventListener("mousedown", (e) => { dragging = true; offsetX = e.clientX - panel.offsetLeft; offsetY = e.clientY - panel.offsetTop; });
+      document.addEventListener("mousemove", (e) => { if (dragging) { panel.style.left = e.clientX - offsetX + "px"; panel.style.top = e.clientY - offsetY + "px"; } });
+      document.addEventListener("mouseup", () => { if (dragging) { dragging = false; localStorage.setItem("lb-pos-" + cat, JSON.stringify({ left: panel.style.left, top: panel.style.top })); } });
+
+      // collapse content
+      const contentWrap = document.createElement("div");
+      contentWrap.className = "lb-content";
+      panel.appendChild(contentWrap);
+
+      let collapsed = localStorage.getItem("lb-collapsed-" + cat) === "true";
+      if (collapsed) contentWrap.classList.add("collapsed");
+      collapseBtn.textContent = collapsed ? "[+]" : "[-]";
+
+      collapseBtn.addEventListener("click", () => {
+        collapsed = !collapsed;
+        if (collapsed) contentWrap.classList.add("collapsed");
+        else contentWrap.classList.remove("collapsed");
+        collapseBtn.textContent = collapsed ? "[+]" : "[-]";
+        localStorage.setItem("lb-collapsed-" + cat, collapsed);
       });
 
       panels[cat] = panel;
@@ -1875,110 +1848,48 @@ const jesus = new Module("Jesus", function(callback) {
 
     // === Modules ===
     Object.entries(store.modules).forEach(([name, mod]) => {
-      console.log("[ClickGUI] Found module:", name);
-
       let cat = "Utility";
-      for (const [c, keys] of Object.entries(categories)) {
-        if (keys.some((k) => name.toLowerCase().includes(k))) {
-          cat = c; break;
-        }
-      }
-
-      // Restore state
+      for (const [c, keys] of Object.entries(categories)) if (keys.some((k) => name.toLowerCase().includes(k))) { cat = c; break; }
       loadModuleState(name, mod);
-
       const row = document.createElement("div");
       row.className = "lb-module" + (mod.enabled ? " active" : "");
       row.innerHTML = `<span>${name}</span><span>${mod.enabled ? "ON" : "OFF"}</span>`;
-
       const optionsBox = document.createElement("div");
       optionsBox.className = "lb-options";
-
-      // Toggle
       row.addEventListener("mousedown", (e) => {
         if (e.button === 0) {
           if (typeof mod.toggle === "function") mod.toggle();
           row.classList.toggle("active", mod.enabled);
           row.lastChild.textContent = mod.enabled ? "ON" : "OFF";
-          showNotif(`${name} ${mod.enabled ? "enabled ✅" : "disabled ❌"}`);
+          showNotif(`${name} ${mod.enabled ? "enabled" : "disabled"}`, mod.enabled ? "success" : "error");
           saveModuleState(name, mod);
         }
       });
-
-      // Expand
-      row.addEventListener("contextmenu", (e) => {
-        e.preventDefault();
-        optionsBox.classList.toggle("show");
+      row.addEventListener("contextmenu", (e) => { e.preventDefault(); optionsBox.classList.toggle("show"); });
+      if (mod.options) Object.entries(mod.options).forEach(([key, opt]) => {
+        const [type, val, label] = opt;
+        const line = document.createElement("label");
+        line.textContent = label;
+        if (type === Boolean) { const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = val; cb.onchange = () => { opt[1] = cb.checked; saveModuleState(name, mod); }; line.appendChild(cb);}
+        else if (type === Number) { const slider = document.createElement("input"); slider.type = "range"; const [min, max, step] = opt.range ?? [0, 10, 0.1]; slider.min = min; slider.max = max; slider.step = step; slider.value = val; slider.oninput = () => { opt[1] = parseFloat(slider.value); saveModuleState(name, mod); }; line.appendChild(slider);}
+        else if (type === String) { const input = document.createElement("input"); input.type = "text"; input.value = val; input.onchange = () => { opt[1] = input.value; saveModuleState(name, mod); }; line.appendChild(input);}
+        optionsBox.appendChild(line);
       });
-
-      // Options UI
-      if (mod.options) {
-        Object.entries(mod.options).forEach(([key, opt]) => {
-          const [type, val, label] = opt;
-          const line = document.createElement("label");
-          line.textContent = label;
-
-          if (type === Boolean) {
-            const cb = document.createElement("input");
-            cb.type = "checkbox"; cb.checked = val;
-            cb.onchange = () => {
-              opt[1] = cb.checked;
-              saveModuleState(name, mod);
-            };
-            line.appendChild(cb);
-          } else if (type === Number) {
-            const slider = document.createElement("input");
-            slider.type = "range";
-            const [min, max, step] = opt.range ?? [0, 10, 0.1];
-            slider.min = min; slider.max = max; slider.step = step; slider.value = val;
-            slider.oninput = () => {
-              opt[1] = parseFloat(slider.value);
-              saveModuleState(name, mod);
-            };
-            line.appendChild(slider);
-          } else if (type === String) {
-            const input = document.createElement("input");
-            input.type = "text"; input.value = val;
-            input.onchange = () => {
-              opt[1] = input.value;
-              saveModuleState(name, mod);
-            };
-            line.appendChild(input);
-          }
-          optionsBox.appendChild(line);
-        });
-      }
-
-      // Keybind
       const bindLine = document.createElement("label");
       bindLine.textContent = "Bind:";
       const bindInput = document.createElement("input");
       bindInput.type = "text"; bindInput.value = mod.bind;
-      bindInput.style.width = "70px";
-      bindInput.style.background = "#0a0a0a";
-      bindInput.style.color = "white";
-      bindInput.style.border = "1px solid #00aaff";
-      bindInput.style.fontFamily = '"Minecraft", monospace';
-      bindInput.style.fontSize = "12px";
-      bindInput.style.padding = "2px";
-      bindInput.onchange = (e) => {
-        mod.setbind(e.target.value);
-        showNotif(`${name} bind set to ${e.target.value}`);
-        saveModuleState(name, mod);
-      };
-      bindLine.appendChild(bindInput);
-      optionsBox.appendChild(bindLine);
+      bindInput.style.width = "70px"; bindInput.style.background = "#0a0a0a"; bindInput.style.color = "white"; bindInput.style.border = "1px solid #00aaff"; bindInput.style.fontFamily = '"Poppins", sans-serif'; bindInput.style.fontSize = "12px"; bindInput.style.padding = "2px";
+      bindInput.onchange = (e) => { mod.setbind(e.target.value); showNotif(`${name} bind set to ${e.target.value}`, "info"); saveModuleState(name, mod); };
+      bindLine.appendChild(bindInput); optionsBox.appendChild(bindLine);
 
-      panels[cat].appendChild(row);
-      panels[cat].appendChild(optionsBox);
+      panels[cat].querySelector(".lb-content").appendChild(row);
+      panels[cat].querySelector(".lb-content").appendChild(optionsBox);
     });
 
-    // === Reset Layout ===
+    // === Reset / Config buttons (Utility panel) ===
     const resetRow = document.createElement("div");
     resetRow.className = "lb-module";
-    resetRow.style.justifyContent = "flex-start";
-    resetRow.style.paddingLeft = "6px";
-    resetRow.style.fontWeight = "bold";
     resetRow.style.color = "#00aaff";
     resetRow.textContent = "↺ Reset Layout";
     resetRow.addEventListener("click", () => {
@@ -1993,34 +1904,28 @@ const jesus = new Module("Jesus", function(callback) {
         localStorage.setItem("lb-pos-" + cat, JSON.stringify(pos));
         if (panels[cat]) { panels[cat].style.left=pos.left; panels[cat].style.top=pos.top; }
       });
-      showNotif("Layout reset to default positions ✅");
+      showNotif("#Layout has been reset to default!#", "success");
     });
-    panels["Utility"].appendChild(resetRow);
+    panels["Utility"].querySelector(".lb-content").appendChild(resetRow);
 
-    // === Reset Config ===
     const resetConfigRow = document.createElement("div");
     resetConfigRow.className = "lb-module";
-    resetConfigRow.style.justifyContent = "flex-start";
-    resetConfigRow.style.paddingLeft = "6px";
-    resetConfigRow.style.fontWeight = "bold";
     resetConfigRow.style.color = "red";
-    resetConfigRow.textContent = "⛔ Reset Config?";
+    resetConfigRow.textContent = "⛔ Reset Config";
     resetConfigRow.addEventListener("click", () => {
       localStorage.removeItem("lb-mods");
-      Object.keys(localStorage)
-        .filter((k) => k.startsWith("lb-pos-"))
-        .forEach((k) => localStorage.removeItem(k));
+      Object.keys(localStorage).filter((k) => k.startsWith("lb-pos-")).forEach((k) => localStorage.removeItem(k));
+      Object.keys(localStorage).filter((k) => k.startsWith("lb-collapsed-")).forEach((k) => localStorage.removeItem(k));
       alert("Config has been reset!");
       location.reload();
     });
-    panels["Utility"].appendChild(resetConfigRow);
+    panels["Utility"].querySelector(".lb-content").appendChild(resetConfigRow);
 
-    // === Global Search ===
+    // === Search ===
     const searchWrap = document.createElement("div");
     searchWrap.className = "lb-searchwrap";
-    searchWrap.innerHTML = `<input type="text" class="lb-search" placeholder="Search..">`;
+    searchWrap.innerHTML = `<input type="text" class="lb-search" placeholder="Search...">`;
     document.body.appendChild(searchWrap);
-
     const searchBox = searchWrap.querySelector("input");
     searchBox.addEventListener("input", () => {
       const term = searchBox.value.toLowerCase();
@@ -2034,10 +1939,10 @@ const jesus = new Module("Jesus", function(callback) {
     Object.values(panels).forEach((p) => (p.style.display = "none"));
     searchWrap.style.display = "none";
 
-    // === Startup notification ===
-    setTimeout(() => { showNotif("[ClickGUI] Press '\\\\' to open GUI", 4000); }, 500);
+    // === Loading screen startup notification! ===
+    setTimeout(() => { showNotif("[CLickGUI@v5.5] Press \\\\ to open ClickGUI! Enjoy!", "info", 4000); }, 500);
 
-    // === Toggle the LB GUI ===
+    // === Toggle ClickGUI ===
     let visible = false;
     document.addEventListener("keydown", (e) => {
       if (e.code === "Backslash") {
