@@ -10,20 +10,65 @@ addModification('COLOR_TOOLTIP_BG,BORDER_SIZE)}', `
     }
 `);
 
-addModification('(this.drawSelectedItemStack(),this.drawHintBox())', /*js*/`
+addModification(
+  '(this.drawSelectedItemStack(),this.drawHintBox())',
+  /*js*/`
     if (ctx$5 && enabledModules["TextGUI"]) {
         const colorOffset = Date.now() / 4000;
-        const posX = 15;
-        const posY = 27;
+
+        const canvasW = ctx$5.canvas.width;
+        const canvasH = ctx$5.canvas.height;
 
         ctx$5.imageSmoothingEnabled = true;
         ctx$5.imageSmoothingQuality = "high";
 
-        // Draw logo (left)
+  // === Mode store ===
+  const moduleModes = {
+  autofunnychat: "Meme",
+  AutoRespawn: "Instant",
+  ChatDisabler: "Packets",
+  NoSlowdown: "Vanilla",
+  FilterBypass: "Unicode",
+  NameTags: "Custom",
+  AutoClicker: "RMB",
+  AutoQueue: "Instant",
+  ChestSteal: "Hypixel",
+  KeepSprint: "All",
+  InvCleaner: "Normal",
+  AutoArmor: "Smart",
+  AutoRejoin: "Delay",
+  LongJump: "Vanilla",
+  AntiCheat: "Bypass",
+  FastBreak: "Instant",
+  AutoCraft: "Sword",
+  AutoVote: "SkyWars",
+  MusicFix: "Auto",
+  Scaffold: "MultiBlock",
+  Velocity: "Basic",
+  InvWalk: "Normal",
+  AntiBan: "Packet",
+  Breaker: "Egg",
+  Killaura: "Single",
+  AntiFall: "Packet",
+  Speed: "JumpSpeed",
+  NoFall: "Desync",
+  Phase: "Normal",
+  Sprint: "Normal",
+  Jesus: "Vanilla",
+  Timer: "Boost",
+  WTap: "Legit",
+  Step: "Vanilla",
+  ESP: "Box",
+  Fly: "Desync",
+  };
+
+        // Draw logo (bottom-right)
         const logo = textureManager.vapeTexture.image;
         const scale = 0.9;
         const logoW = logo.width * scale;
         const logoH = logo.height * scale;
+        const posX = canvasW - logoW - 15;
+        const posY = canvasH - logoH - 15;
 
         ctx$5.shadowColor = "rgba(0, 0, 0, 0.6)";
         ctx$5.shadowBlur = 6;
@@ -31,11 +76,8 @@ addModification('(this.drawSelectedItemStack(),this.drawHintBox())', /*js*/`
         ctx$5.shadowColor = "transparent";
         ctx$5.shadowBlur = 0;
 
-        // Draw v4 badge next to logo
-        drawImage(ctx$5, textureManager.v4Texture.image, posX + logoW + 5, posY + 1, 33, 18);
-
         let offset = 0;
-        let stringList = [];
+        const stringList = [];
 
         for (const [module, value] of Object.entries(enabledModules)) {
             if (!value || module === "TextGUI") continue;
@@ -43,47 +85,72 @@ addModification('(this.drawSelectedItemStack(),this.drawHintBox())', /*js*/`
         }
 
         // Sort by width (desc)
-        stringList.sort((a, b) => ctx$5.measureText(b).width - ctx$5.measureText(a).width);
+        stringList.sort(
+          (a, b) => ctx$5.measureText(b).width - ctx$5.measureText(a).width
+        );
 
         // Draw modules on the right
-        const screenWidth = ctx$5.canvas.width;
         const paddingRight = 15;
-        const startY = posY + logoH + 10;
+        const startY = 27 + 10;
 
-        for (const module of stringList) {
+        for (const moduleName of stringList) {
             offset++;
 
-            const text = module;
             const fontStyle = \`\${textguisize[1]}px \${textguifont[1]}\`;
             ctx$5.font = fontStyle;
 
-            const textWidth = ctx$5.measureText(text).width;
-            const x = screenWidth - textWidth - paddingRight;
-            const y = startY + ((textguisize[1] + 3) * offset);
+            // Build strings
+            const rainbowText = moduleName;
+            const modeText = moduleModes[moduleName] ? " - " + moduleModes[moduleName] : "";
 
+            const fullText = rainbowText + modeText;
+            const textWidth = ctx$5.measureText(fullText).width;
+            const x = canvasW - textWidth - paddingRight;
+            const y = startY + (textguisize[1] + 3) * offset;
+
+            // Shadow for both parts
             ctx$5.shadowColor = "black";
             ctx$5.shadowBlur = 4;
             ctx$5.shadowOffsetX = 1;
             ctx$5.shadowOffsetY = 1;
 
+            // Draw rainbow part
             drawText(
                 ctx$5,
-                text,
+                rainbowText,
                 x,
                 y,
                 fontStyle,
-                \`HSL(\${((colorOffset - (0.025 * offset)) % 1) * 360}, 100%, 50%)\`,
+                \`hsl(\${((colorOffset - 0.025 * offset) % 1) * 360},100%,50%)\`,
                 "left",
                 "top",
                 1,
                 textguishadow[1]
             );
 
-            // Clean up shadow state
+            // Draw grey mode part (after rainbow width)
+            if (modeText) {
+                const rainbowWidth = ctx$5.measureText(rainbowText).width;
+                drawText(
+                    ctx$5,
+                    modeText,
+                    x + rainbowWidth,
+                    y,
+                    fontStyle,
+                    "#bbbbbb",
+                    "left",
+                    "top",
+                    1,
+                    textguishadow[1]
+                );
+            }
+
+            // Reset shadow
             ctx$5.shadowColor = "transparent";
             ctx$5.shadowBlur = 0;
             ctx$5.shadowOffsetX = 0;
             ctx$5.shadowOffsetY = 0;
         }
     }
-`);
+`
+);
