@@ -217,6 +217,46 @@ addModification(
         ctx$5.imageSmoothingEnabled = true;
         ctx$5.imageSmoothingQuality = "high";
 
+  // === Mode store if there any more please add to here! ===
+  const moduleModes = {
+  autofunnychat: "Meme",
+  AutoRespawn: "Instant",
+  ChatDisabler: "Packets",
+  NoSlowdown: "Vanilla",
+  FilterBypass: "Unicode",
+  NameTags: "Custom",
+  AutoClicker: "RMB",
+  AutoQueue: "Instant",
+  ChestSteal: "Hypixel",
+  KeepSprint: "All",
+  InvCleaner: "Normal",
+  AutoArmor: "Smart",
+  AutoRejoin: "Delay",
+  LongJump: "Vanilla",
+  AntiCheat: "Bypass",
+  FastBreak: "Instant",
+  AutoCraft: "Sword",
+  AutoVote: "SkyWars",
+  MusicFix: "Auto",
+  Scaffold: "MultiBlock",
+  Velocity: "Basic",
+  InvWalk: "Normal",
+  AntiBan: "Packet",
+  Breaker: "Egg",
+  Killaura: "Single",
+  AntiFall: "Packet",
+  Speed: "JumpSpeed",
+  NoFall: "Desync",
+  Phase: "Normal",
+  Sprint: "Normal",
+  Jesus: "Vanilla",
+  Timer: "Boost",
+  WTap: "Legit",
+  Step: "Vanilla",
+  ESP: "Box",
+  Fly: "Desync",
+  };
+
         // Draw logo (bottom-right)
         const logo = textureManager.vapeTexture.image;
         const scale = 0.9;
@@ -251,23 +291,28 @@ addModification(
         for (const moduleName of stringList) {
             offset++;
 
-            const text = moduleName;
             const fontStyle = \`\${textguisize[1]}px \${textguifont[1]}\`;
             ctx$5.font = fontStyle;
 
-            const textWidth = ctx$5.measureText(text).width;
+            // Build strings
+            const rainbowText = moduleName;
+            const modeText = moduleModes[moduleName] ? " - " + moduleModes[moduleName] : "";
+
+            const fullText = rainbowText + modeText;
+            const textWidth = ctx$5.measureText(fullText).width;
             const x = canvasW - textWidth - paddingRight;
             const y = startY + (textguisize[1] + 3) * offset;
 
-            // Text shadow
+            // Shadow for both parts
             ctx$5.shadowColor = "black";
             ctx$5.shadowBlur = 4;
             ctx$5.shadowOffsetX = 1;
             ctx$5.shadowOffsetY = 1;
 
+            // Draw rainbow part
             drawText(
                 ctx$5,
-                text,
+                rainbowText,
                 x,
                 y,
                 fontStyle,
@@ -278,19 +323,28 @@ addModification(
                 textguishadow[1]
             );
 
+            // Draw grey mode part (after rainbow width)
+            if (modeText) {
+                const rainbowWidth = ctx$5.measureText(rainbowText).width;
+                drawText(
+                    ctx$5,
+                    modeText,
+                    x + rainbowWidth,
+                    y,
+                    fontStyle,
+                    "#bbbbbb",
+                    "left",
+                    "top",
+                    1,
+                    textguishadow[1]
+                );
+            }
+
             // Reset shadow
             ctx$5.shadowColor = "transparent";
             ctx$5.shadowBlur = 0;
             ctx$5.shadowOffsetX = 0;
             ctx$5.shadowOffsetY = 0;
-
-            // Draw status dot
-            const dotX = x - 12;
-            const dotY = y - 4;
-            ctx$5.fillStyle = enabledModules[moduleName] ? "lime" : "red";
-            ctx$5.beginPath();
-            ctx$5.arc(dotX, dotY, 4, 0, Math.PI * 2);
-            ctx$5.fill();
         }
     }
 `
