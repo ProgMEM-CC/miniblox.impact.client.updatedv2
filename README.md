@@ -12,7 +12,8 @@ All notable changes to this project will be documented in this file.
 
 ## [v5.6] - 2025-09-21
 ### Improved
-- New TextGUI overhaul (removed status dot and added modes next to modules)
+- Minor TextGUI overhaul (removed status dot and added modes next to modules)
+- updated readme
 
 ## [v5] - 2025-09-08
 ### Added
@@ -22,14 +23,14 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Fly/NoFall exploit with desync mechanics by `RealPacket`
 - Multi-block Scaffold bypass using inventory slots 1–9
-- LB Click GUI injected via `injection.js`
+- LB Click GUI injected via `vav4inject.js`
 
 ### Fixed
 - Improved inventory handling for Scaffold module
 - Minor UI tweaks in Click GUI
 
 ### Known Issues
-- `.toggle all` command is currently non-functional (fix coming soon)
+- `.toggle all` command is currently non-functional (fix for this coming soon hopefully.)
 
 # Installation
 
