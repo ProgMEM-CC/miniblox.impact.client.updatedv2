@@ -10,6 +10,10 @@ BEFORE USING, Read EULA.md
 
 All notable changes to this project will be documented in this file.
 
+## [v5.6] - 2025-09-21
+### Improved
+- New TextGUI overhaul (removed status dot and added modes next to modules)
+
 ## [v5] - 2025-09-08
 ### Added
 - New filter bypass for / commands
