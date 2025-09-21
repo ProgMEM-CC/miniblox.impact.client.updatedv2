@@ -6,7 +6,7 @@
 
 BEFORE USING, Read EULA.md
 
-# 📦 Changelog
+# Impact Client Changelog (when a commit is pushed)
 
 All notable changes to this project will be documented in this file.
 
@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 ### Improved
 - Minor TextGUI overhaul (removed status dot and added modes next to modules)
 - updated readme
+- bumped version from v5.5 to v5.6
 
 ## [v5] - 2025-09-08
 ### Added
