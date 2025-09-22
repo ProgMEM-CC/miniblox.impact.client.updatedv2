@@ -17,7 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ## [v5.6] - 2025-09-21
 ### Improved
-- Minor TextGUI overhaul (removed status dot and added modes next to modules)
+- Minor `TextGUI` overhaul (removed status dot and added modes next to modules)
 - updated `readme`
 - bumped version from `v5.5` to `v5.6`
 
