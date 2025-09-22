@@ -23,12 +23,12 @@ All notable changes to this project will be documented in this file.
 
 ## [v5] - 2025-09-08
 ### Added
-- New filter bypass for / commands
+- New `filter bypass` for / commands
 
 ## [v5] - 2025-09-07
 ### Added
-- Fly/NoFall exploit with desync mechanics by `RealPacket`
-- Multi-block Scaffold bypass using inventory slots 1–9
+- `Fly/NoFall exploit with desync mechanics` by `RealPacket`
+- Multi-block `Scaffold bypass` using inventory slots 1–9
 - LB Click GUI injected via `vav4inject.js`
 - Improved inventory handling for Scaffold module
 - Minor UI tweaks in Click GUI
