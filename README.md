@@ -12,9 +12,14 @@ All notable changes to this project will be documented in this file.
 
 ## [v5.6] - 2025-09-21
 ### Improved
+- updated `moduleideas` file
+- updated `readme`
+
+## [v5.6] - 2025-09-21
+### Improved
 - Minor TextGUI overhaul (removed status dot and added modes next to modules)
-- updated readme
-- bumped version from v5.5 to v5.6
+- updated `readme`
+- bumped version from `v5.5` to `v5.6`
 
 ## [v5] - 2025-09-08
 ### Added
@@ -33,9 +38,9 @@ All notable changes to this project will be documented in this file.
 
 # Installation
 
-Copy tampermonkey.user.js and paste into your preferred userscript manager. (Tampermonkey, Greasemonkey, Violentmonkey etc)
+Copy `tampermonkey.user.js` and paste into your preferred userscript manager. (Tampermonkey, Greasemonkey, Violentmonkey etc)
 
-(M0duleMaster64's comment - Or use the main.js and manually put in the injection.js after the main)
+(M0duleMaster64's comment - Or use the `tampermonkey.user.js` and manually put in the `injection.js` after the main)
 
 ## (if you can) pls Join the Discord here
 
