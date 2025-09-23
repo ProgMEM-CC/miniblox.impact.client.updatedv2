@@ -10,6 +10,11 @@ BEFORE USING, Read EULA.md
 
 All notable changes to this project will be documented in this file.
 
+## [v5.7] - 2025-09-23
+### Improved
+- bumped `version` from `v5.6` to `v5.7`
+
+
 ## [v5.6] - 2025-09-22
 ### Improved
 - updated `moduleideas` file
@@ -19,7 +24,7 @@ All notable changes to this project will be documented in this file.
 ### Improved
 - Minor `TextGUI` overhaul (removed status dot and added modes next to modules)
 - updated `readme`
-- bumped version from `v5.5` to `v5.6`
+- bumped `version` from `v5.5` to `v5.6`
 
 ## [v5] - 2025-09-08
 ### Added
