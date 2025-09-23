@@ -11,9 +11,9 @@ BEFORE USING, Read EULA.md
 All notable changes to this project will be documented in this file.
 
 ## [v5.7] - 2025-09-23
-### Improved
+### Added or bumped
 - bumped `version` from `v5.6` to `v5.7`
-- New `MODULE` - `LongJump`
+- New `MODULE` added - `LongJump`
 
 
 ## [v5.6] - 2025-09-22
