@@ -204,7 +204,7 @@ let serverPos = player.pos.clone();
         if (color) ctx.globalCompositeOperation = "source-over";
     }
 `);
-
+// TextGUI (Created by ModuleMaster64)
 addModification(
   '(this.drawSelectedItemStack(),this.drawHintBox())',
   /*js*/`
@@ -449,7 +449,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	// auto-reset the desync variable.
 	addModification("reconcileServerPosition(h){", "serverPos = h;");
 
-	// hook into reconcileServerPosition
+	// hook into the reconcileServerPosition
 	// so we know our server pos
 
 	// STEP
@@ -479,7 +479,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		}
 	`);
 
-	// PLAYER ESP (created by me :D)
+	// PLAYER ESP (created by ModuleMaster64 :D)
 	addModification(')&&(p.mesh.visible=this.shouldRenderEntity(p))', `
   if (p && p.id != player.id) {
     function hslToRgb(h, s, l) {
@@ -650,7 +650,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
     }
   }
 `);
-    // ChinaHat Module
+    // ChinaHat Module!
     addModification(')&&(p.mesh.visible=this.shouldRenderEntity(p))', `
   if (enabledModules["ChinaHat"] && p && p.id != player.id && p instanceof EntityPlayer) {
     // Only apply ChinaHat to players (not items, mobs, etc.)
@@ -724,7 +724,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
   }
 `);
 
-	// LOGIN BYPASS
+	// LOGIN BYPASS (cleaned up)
     addModification(
   'new SPacketLoginStart({ ' +
     'requestedUuid: localStorage.getItem(REQUESTED_UUID_KEY) ?? void 0, ' +
@@ -858,7 +858,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 
 	// MAIN
 	addModification('document.addEventListener("contextmenu",m=>m.preventDefault());', /*js*/`
-		// my code lol
+		// my code lol!
 		(function() {
 			class Module {
 				constructor(name, func) {
@@ -1180,7 +1180,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				};
 			});
 			flybypass = fly.addoption("Bypass", Boolean, true);
-			flyvalue = fly.addoption("Speed", Number, 0.19);
+			flyvalue = fly.addoption("Speed", Number, 0.18);
 			flyvert = fly.addoption("Vertical", Number, 0.3);
 			
    
@@ -1211,9 +1211,9 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					}
 				}
 			});
-			jetpackvalue = jetpack.addoption("Speed", Number, 2);
+			jetpackvalue = jetpack.addoption("Speed", Number, 0.18);
 			jetpackGlide = jetpack.addoption("Glide", Number, 0.27);
-			jetpackUpMotion = jetpack.addoption("UpMotion", Number, 4);
+			jetpackUpMotion = jetpack.addoption("UpMotion", Number, 0.27);
 			jetpackvert = jetpack.addoption("Vertical", Number, 0.27);
 
 
