@@ -7,6 +7,6 @@
 - [ ] AimBot (Automatically aims at a player)
 - [ ] Nuker (Automatically break blocks around the player)
 - [ ] (Possibly other Disabler methods)
-- [ ] ChinaHat (3d hat on top of the player)
+- [x] ChinaHat (3d hat on top of the player)
 - [ ] ChinaRing (3d ring around the player)
 
