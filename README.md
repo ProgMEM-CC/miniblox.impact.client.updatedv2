@@ -10,6 +10,12 @@ BEFORE USING, Read EULA.md
 
 All notable changes to this project will be documented in this file.
 
+## [v5.8] - 2025-09-23
+### Added or bumped
+- bumped `version` from `v5.7` to `v5.8`
+- New `MODULE` added - `ChinaHat`
+- updated `moduleideas`
+
 ## [v5.7] - 2025-09-23
 ### Added or bumped
 - bumped `version` from `v5.6` to `v5.7`
