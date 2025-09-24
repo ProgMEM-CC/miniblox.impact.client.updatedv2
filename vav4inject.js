@@ -5,7 +5,7 @@ let replacements = {};
 let dumpedVarNames = {};
 const storeName = "a" + crypto.randomUUID().replaceAll("-", "").substring(16);
 const vapeName = crypto.randomUUID().replaceAll("-", "").substring(16);
-const VERSION = "5.7";
+const VERSION = "5.8";
 
 // ANTICHEAT HOOK
 function replaceAndCopyFunction(oldFunc, newFunc) {
@@ -255,6 +255,7 @@ addModification(
   Step: "Vanilla",
   ESP: "Box",
   Fly: "Desync",
+  ChinaHat: "FunnyWarz",
   };
 
         // Draw logo (bottom-right)
@@ -349,8 +350,6 @@ addModification(
     }
 `
 );
-
-	
 	addModification('+=h*y+u*x}', `
 		if (this == player) {
 			for(const [index, func] of Object.entries(tickLoop)) if (func) func();
@@ -480,38 +479,269 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		}
 	`);
 
-	// CHAMS
+	// PLAYER ESP (created by me :D)
 	addModification(')&&(p.mesh.visible=this.shouldRenderEntity(p))', `
-		if (enabledModules["Chams"] && p && p.id != player.id) {
-			for(const mesh in p.mesh.meshes) {
-				p.mesh.meshes[mesh].material.depthTest = false;
-				p.mesh.meshes[mesh].renderOrder = 3;
-			}
+  if (p && p.id != player.id) {
+    function hslToRgb(h, s, l) {
+      let r, g, b;
+      if(s === 0){ r = g = b = l; }
+      else {
+        const hue2rgb = (p, q, t) => {
+          if(t < 0) t += 1;
+          if(t > 1) t -= 1;
+          if(t < 1/6) return p + (q - p) * 6 * t;
+          if(t < 1/2) return q;
+          if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+          return p;
+        };
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const pp = 2 * l - q;
+        r = hue2rgb(pp, q, h + 1/3);
+        g = hue2rgb(pp, q, h);
+        b = hue2rgb(pp, q, h - 1/3);
+      }
+      return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+      };
+    }
 
-			for(const mesh in p.mesh.armorMesh) {
-				p.mesh.armorMesh[mesh].material.depthTest = false;
-				p.mesh.armorMesh[mesh].renderOrder = 4;
-			}
+    function applyOutlineGlow(mesh, colorHex) {
+      if (!mesh || !mesh.material) return;
+      if (!mesh.userData.outlineClone) {
+        const outlineMaterial = mesh.material.clone();
+        outlineMaterial.color.setHex(0x000000);
+        outlineMaterial.emissive.setHex(colorHex);
+        outlineMaterial.emissiveIntensity = 1;
+        outlineMaterial.transparent = true;
+        outlineMaterial.opacity = 0.7;
+        outlineMaterial.depthTest = false;
 
-			if (p.mesh.capeMesh) {
-				p.mesh.capeMesh.children[0].material.depthTest = false;
-				p.mesh.capeMesh.children[0].renderOrder = 5;
-			}
+        const outline = mesh.clone();
+        outline.material = outlineMaterial;
+        outline.scale.multiplyScalar(1.05);
+        outline.renderOrder = mesh.renderOrder + 1;
 
-			if (p.mesh.hatMesh) {
-				for(const mesh of p.mesh.hatMesh.children[0].children) {
-					if (!mesh.material) continue;
-					mesh.material.depthTest = false;
-					mesh.renderOrder = 4;
-				}
-			}
-		}
-	`);
+        mesh.add(outline);
+        mesh.userData.outlineClone = outline;
+      } else {
+        mesh.userData.outlineClone.material.emissive.setHex(colorHex);
+      }
+    }
 
+    if (enabledModules["ESP"]) {
+      const time = Date.now() / 5000;
+      const hue = time % 1;
+      const rgb = hslToRgb(hue, 1, 0.5);
+      const colorHex = (rgb.r << 16) + (rgb.g << 8) + rgb.b;
+
+      if (p.mesh.meshes) {
+        for (const key in p.mesh.meshes) {
+          const mesh = p.mesh.meshes[key];
+          if (!mesh?.material) continue;
+          mesh.material.depthTest = false;
+          mesh.renderOrder = 3;
+          mesh.material.color.setHex(colorHex);
+          mesh.material.emissive.setHex(colorHex);
+          mesh.material.emissiveIntensity = 0.8;
+          applyOutlineGlow(mesh, colorHex);
+        }
+      }
+
+      if (p.mesh.armorMesh) {
+        for (const key in p.mesh.armorMesh) {
+          const mesh = p.mesh.armorMesh[key];
+          if (!mesh?.material) continue;
+          mesh.material.depthTest = false;
+          mesh.renderOrder = 4;
+          mesh.material.color.setHex(colorHex);
+          mesh.material.emissive.setHex(colorHex);
+          mesh.material.emissiveIntensity = 0.8;
+          applyOutlineGlow(mesh, colorHex);
+        }
+      }
+
+      if (p.mesh.capeMesh && p.mesh.capeMesh.children.length > 0) {
+        const cape = p.mesh.capeMesh.children[0];
+        if (cape.material) {
+          cape.material.depthTest = false;
+          cape.renderOrder = 5;
+          cape.material.color.setHex(colorHex);
+          cape.material.emissive.setHex(colorHex);
+          cape.material.emissiveIntensity = 0.8;
+          applyOutlineGlow(cape, colorHex);
+        }
+      }
+
+      if (p.mesh.hatMesh && p.mesh.hatMesh.children.length > 0) {
+        for (const mesh of p.mesh.hatMesh.children[0].children) {
+          if (!mesh.material) continue;
+          mesh.material.depthTest = false;
+          mesh.renderOrder = 4;
+          mesh.material.color.setHex(colorHex);
+          mesh.material.emissive.setHex(colorHex);
+          mesh.material.emissiveIntensity = 0.8;
+          applyOutlineGlow(mesh, colorHex);
+        }
+      }
+    } else {
+      if (p.mesh.meshes) {
+        for (const key in p.mesh.meshes) {
+          const mesh = p.mesh.meshes[key];
+          if (!mesh?.material) continue;
+          mesh.material.depthTest = true;
+          mesh.renderOrder = 0;
+          mesh.material.color.setHex(0xffffff);
+          mesh.material.emissive.setHex(0x000000);
+          mesh.material.emissiveIntensity = 0;
+          if (mesh.userData.outlineClone) {
+            mesh.remove(mesh.userData.outlineClone);
+            mesh.userData.outlineClone = null;
+          }
+        }
+      }
+
+      if (p.mesh.armorMesh) {
+        for (const key in p.mesh.armorMesh) {
+          const mesh = p.mesh.armorMesh[key];
+          if (!mesh?.material) continue;
+          mesh.material.depthTest = true;
+          mesh.renderOrder = 0;
+          mesh.material.color.setHex(0xffffff);
+          mesh.material.emissive.setHex(0x000000);
+          mesh.material.emissiveIntensity = 0;
+          if (mesh.userData.outlineClone) {
+            mesh.remove(mesh.userData.outlineClone);
+            mesh.userData.outlineClone = null;
+          }
+        }
+      }
+
+      if (p.mesh.capeMesh && p.mesh.capeMesh.children.length > 0) {
+        const cape = p.mesh.capeMesh.children[0];
+        if (cape.material) {
+          cape.material.depthTest = true;
+          cape.renderOrder = 0;
+          cape.material.color.setHex(0xffffff);
+          cape.material.emissive.setHex(0x000000);
+          cape.material.emissiveIntensity = 0;
+        }
+        if (cape.userData.outlineClone) {
+          cape.remove(cape.userData.outlineClone);
+          cape.userData.outlineClone = null;
+        }
+      }
+
+      if (p.mesh.hatMesh && p.mesh.hatMesh.children.length > 0) {
+        for (const mesh of p.mesh.hatMesh.children[0].children) {
+          if (!mesh.material) continue;
+          mesh.material.depthTest = true;
+          mesh.renderOrder = 0;
+          mesh.material.color.setHex(0xffffff);
+          mesh.material.emissive.setHex(0x000000);
+          mesh.material.emissiveIntensity = 0;
+          if (mesh.userData.outlineClone) {
+            mesh.remove(mesh.userData.outlineClone);
+            mesh.userData.outlineClone = null;
+          }
+        }
+      }
+    }
+  }
+`);
+    // ChinaHat Module
+    addModification(')&&(p.mesh.visible=this.shouldRenderEntity(p))', `
+  if (enabledModules["ChinaHat"] && p && p.id != player.id && p instanceof EntityPlayer) {
+    // Only apply ChinaHat to players (not items, mobs, etc.)
+    if (!p.mesh.userData.chinaHat) {
+      const brim = new Mesh(new boxGeometryDump(1, 1, 1));
+      brim.material.depthTest = false;
+      brim.material.transparent = true;
+      brim.material.opacity = 0.8;
+      brim.renderOrder = 6;
+
+      const cap = new Mesh(new boxGeometryDump(1, 1, 1));
+      cap.material.depthTest = false;
+      cap.material.transparent = true;
+      cap.material.opacity = 0.8;
+      cap.renderOrder = 7;
+
+      p.mesh.add(brim);
+      p.mesh.add(cap);
+
+      p.mesh.userData.chinaHat = { brim, cap };
+    }
+
+    const { brim, cap } = p.mesh.userData.chinaHat;
+
+    // Animate rainbow color
+    const time = Date.now() / 2000;
+    const hue = (time % 1);
+    const rgb = hslToRgb(hue, 1, 0.5);
+
+    brim.material.color.set(rgb.r, rgb.g, rgb.b);
+    cap.material.color.set(rgb.r, rgb.g, rgb.b);
+
+    // Position + scale
+    brim.position.set(0, 2.2, 0);
+    brim.scale.set(1.8, 0.05, 1.8); // brim disc
+
+    cap.position.set(0, 2.35, 0);
+    cap.scale.set(0.7, 0.2, 0.7);   // cap block
+  } else if (p?.mesh?.userData?.chinaHat) {
+    // Cleanup when disabled
+    const { brim, cap } = p.mesh.userData.chinaHat;
+    p.mesh.remove(brim);
+    p.mesh.remove(cap);
+    delete p.mesh.userData.chinaHat;
+  }
+
+  // === helper ===
+  function hslToRgb(h, s, l) {
+    let r, g, b;
+    if (s === 0) { r = g = b = l; }
+    else {
+      const hue2rgb = (p, q, t) => {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      };
+      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      const pp = 2 * l - q;
+      r = hue2rgb(pp, q, h + 1/3);
+      g = hue2rgb(pp, q, h);
+      b = hue2rgb(pp, q, h - 1/3);
+    }
+    return {
+      r: Math.round(r * 255),
+      g: Math.round(g * 255),
+      b: Math.round(b * 255)
+    };
+  }
+`);
 
 	// LOGIN BYPASS
-	addModification('new SPacketLoginStart({requestedUuid:localStorage.getItem(REQUESTED_UUID_KEY)??void 0,session:localStorage.getItem(SESSION_TOKEN_KEY)??"",hydration:localStorage.getItem("hydration")??"0",metricsId:localStorage.getItem("metrics_id")??"",clientVersion:VERSION$1})', 'new SPacketLoginStart({requestedUuid:void 0,session:(enabledModules["AntiBan"] ? "" : (localStorage.getItem(SESSION_TOKEN_KEY) ?? "")),hydration:"0",metricsId:uuid$1(),clientVersion:VERSION$1})', true);
-
+    addModification(
+  'new SPacketLoginStart({ ' +
+    'requestedUuid: localStorage.getItem(REQUESTED_UUID_KEY) ?? void 0, ' +
+    'session: localStorage.getItem(SESSION_TOKEN_KEY) ?? "", ' +
+    'hydration: localStorage.getItem("hydration") ?? "0", ' +
+    'metricsId: localStorage.getItem("metrics_id") ?? "", ' +
+    'clientVersion: VERSION$1 ' +
+  '})',
+  'new SPacketLoginStart({ ' +
+    'requestedUuid: void 0, ' +
+    'session: enabledModules["AntiBan"] ? "" : (localStorage.getItem(SESSION_TOKEN_KEY) ?? ""), ' +
+    'hydration: "0", ' +
+    'metricsId: uuid$1(), ' +
+    'clientVersion: VERSION$1 ' +
+  '})',
+  true
+);
 	// KEY FIX
 	addModification('Object.assign(keyMap,u)', '; keyMap["Semicolon"] = "semicolon"; keyMap["Apostrophe"] = "apostrophe";');
 
@@ -1045,10 +1275,11 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			const step = new Module("Step", function() {});
 			stepheight = step.addoption("Height", Number, 2);
 
-			new Module("Chams", function() {});
+			new Module("ESP", function() {});
+			new Module("ChinaHat", function() {});
 			const textgui = new Module("TextGUI", function() {});
-			textguifont = textgui.addoption("Font", String, "Arial");
-			textguisize = textgui.addoption("TextSize", Number, 15);
+			textguifont = textgui.addoption("Font", String, "Poppins");
+			textguisize = textgui.addoption("TextSize", Number, 14);
 			textguishadow = textgui.addoption("Shadow", Boolean, true);
 			textgui.toggle();
 			new Module("AutoRespawn", function() {});
@@ -2036,7 +2267,7 @@ ljdesync = longjump.addoption("Desync", Boolean, true);  // toggle desync mode
     searchWrap.style.display = "none";
 
     // === Loading screen startup notification! ===
-    setTimeout(() => { showNotif("[CLickGUI@v5.6] Press \\\\ to open ClickGUI! Enjoy!", "info", 4000); }, 500);
+    setTimeout(() => { showNotif("[CLickGUI@v5.8] Press \\\\ to open ClickGUI! Enjoy!", "info", 4000); }, 500);
 
     // === Toggle ClickGUI ===
     let visible = false;
