@@ -50,9 +50,9 @@ All notable changes to this project will be documented in this file.
 
 # Installation
 
-Copy `tampermonkey.user.js` and paste into your preferred userscript manager. (Tampermonkey, Greasemonkey, Violentmonkey etc)
+Copy `tampermonkey.js` and paste into your preferred userscript manager. (Tampermonkey, Greasemonkey, Violentmonkey etc)
 
-(M0duleMaster64's comment - Or use the `tampermonkey.user.js` and manually put in the `injection.js` after the main)
+(M0duleMaster64's comment - Or use the `tampermonkey.js` and manually put in the `injection.js` after the main)
 
 ## (if you can) pls Join the Discord here
 
