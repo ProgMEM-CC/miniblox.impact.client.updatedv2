@@ -6,15 +6,15 @@
 
 BEFORE USING, Read EULA.md
 
-# Impact Client Changelog (when a commit is pushed)
+# Impact Client Changelog!
 
-All notable changes to this project will be documented in this file.
+All notable changes (over > 20 lines) to this project will be documented here :)
 
 ## [v5.8] - 2025-09-23
 ### Added or bumped
 - bumped `version` from `v5.7` to `v5.8`
 - New `MODULE` added - `ChinaHat`
-- updated `moduleideas`
+- updated `Moduleideas.md`
 
 ## [v5.7] - 2025-09-23
 ### Added or bumped
@@ -67,5 +67,3 @@ Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 - **DO NOT EVER PUBLISH UNSTABLE CHANGES (ie. not working modules) TO THE "/" (ROOT) FOLDER. Please PUBLISH IT TO "beta" FOLDER INSTEAD**
 
 - ProgMEM-CC - when you have time pls rename this to Impact For Miniblox (thanks! - ModuleMaster64/TheM1ddleM1n)
-
-![MinibloxClient Stats](https://gitmystat.vercel.app/repo?theme=dino&username=progmem-cc&repo=miniblox.impact.client.updatedv2)
