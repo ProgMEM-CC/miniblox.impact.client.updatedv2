@@ -8,9 +8,9 @@ BEFORE USING, Read EULA.md
 
 # Impact Client Changelog!
 
-All notable changes (over > 20 lines) to this project will be documented here :)
+All notable changes to this project will be documented here :)
 
-## [v5.8] - 2025-09-23
+## [v5.8] - 2025-09-25
 ### Added or bumped
 - bumped `version` from `v5.7` to `v5.8`
 - New `MODULE` added - `ChinaHat`
