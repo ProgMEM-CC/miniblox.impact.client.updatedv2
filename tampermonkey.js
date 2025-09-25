@@ -2,10 +2,10 @@
 // @name         Impact For Miniblox!
 // @namespace    ProgMEM-CC, ModuleM64, he557, 7GrandDad, BlueDragon7327, DataM0del/RealPacket, ekusos22, whoppps, ispyboy
 // @version      5.8
-// @description  The ultimate MiniBlox hacked client. Built for stealth, speed, and total domination. Fully dark-mode optimized with a modern GUI and high performance guaranteed 
-// @author       7GrandDad, ProgMEM-CC, ModuleMaster64, he557, RealPacket or DataM0del (Codeberg/Github names), BlueDragon7327, whoppps, ispyboy
-// @match        https://miniblox.io/*
-// @match        https://miniblox.org/*
+// @description  The ultimate MiniBlox hacked client. Built for total domination of Miniblox servers! Fully dark-mode optimized with a modern GUI and high performance guaranteed.
+// @author       7GrandDad, ProgMEM-CC, ModuleMaster64, he557, RealPacket/DataM0del (Codeberg/Github names), BlueDragon7327, whoppps, ispyboy
+// @match        https://miniblox.io/
+// @match        https://miniblox.org/
 // @icon         https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/favicon.png
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -35,19 +35,17 @@
 //    7GrandDad, the OG Creator of the Vape v4 hacked client for miniblox!
 //    he557, adding bypasses and and pushing through, making the client work!
 //    ProgMEM-CC, the upgrader and reviver of the client as Impact V4 for miniblox!
-//    ModuleMaster64, the one who never fails to amaze, and also the creator of the new LiquidBounce themed ClickGUI and improving/adding ground-breaking modules!
+//    ModuleMaster64, the one who never fails to amaze, creating a LB themed ClickGUI and creating new modules (ChinaHat latest)
 //    RealPacket, (codeberg: https://codeberg.org/RealPacket), for the inspiration of reviving the hacks and making a genius desync for Fly and Nofall, also creating a 1.7 blocking animation for KillAura (coming soon)
 //    BlueDragon7327, Module Researcher and solver!
 //    dtkiller-jp, Bug reporter!
 //    whoppps
 //    ispyboy
 //
-//
 // ==================================== Extra Credits To! =====================================================
 //    The js.org team, who kindly provided us with the subdomain impactminiblox.js.org for the project site
 //    Vercel.app, which allowed me to have an alternative subdomain at minibloxhacks.vercel.app
 //    Netlify.app, which also allowed me to have an alternative subdomain at minibloxhacks.netlify.app
-//
 //
 // ============================================ LICENSE ======================================================
 // This program is free software: you can redistribute it and/or modify
@@ -63,8 +61,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>,
 // or see the project page of Impact V4 for miniblox.
 //
-//
-// Additional Terms:
+// For Additional Terms:
 // Please refer to EULA.md
 //
 // ==/UserScript==
