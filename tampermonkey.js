@@ -20,7 +20,7 @@
 // =========================================== EULA ==========================================================
 //  Before using, read https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/EULA.md
 //
-// ============================================== The Dev Team: for Impact! ===============================================
+// ============================================== The Developer Team: for Impact For Miniblox! ===============================================
 //  ProgMEM-CC (github.com/ProgMEM-CC)
 //  ModuleMaster64 (github.com/ModuleMaster64)
 //  DataM0del (github.com/datam0del)
@@ -32,11 +32,11 @@
 //  we could need more devs lol.
 //  
 // =============================================== Credits To ================================================
-//    7GrandDad, the OG Creator of the Vape v4 hacked client for miniblox!
+//    7GrandDad, the OG Creator of the Vape V4 hacked client for Miniblox!
 //    he557, adding bypasses and and pushing through, making the client work!
-//    ProgMEM-CC, the upgrader and reviver of the client as Impact V4 for miniblox!
-//    ModuleMaster64, the one who never fails to amaze, creating a LB themed ClickGUI and creating new modules (ChinaHat latest)
-//    RealPacket, (codeberg: https://codeberg.org/RealPacket), for the inspiration of reviving the hacks and making a genius desync for Fly and Nofall, also creating a 1.7 blocking animation for KillAura (coming soon)
+//    ProgMEM-CC, the upgrader and reviver of the client as Impact V4 for Miniblox!
+//    ModuleMaster64, the one who never fails to amaze, creating a LB themed ClickGUI and creating new modules!
+//    RealPacket, (codeberg: https://codeberg.org/RealPacket), for the inspiration of reviving the hacks and making a genius desync for Fly and Nofall, and creating a 1.7 blocking animation for KillAura (coming soon :)
 //    BlueDragon7327, Module Researcher and solver!
 //    dtkiller-jp, Bug reporter!
 //    whoppps
