@@ -58,7 +58,7 @@ Copy `tampermonkey.js` and paste into your preferred userscript manager. (Tamper
 
 Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 
-# Dev Notes
+# Dev Notes!
 
 - Info about index.html : Goto website.md file.
 
