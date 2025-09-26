@@ -20,13 +20,13 @@ All notable changes to this project will be documented here :)
 ## [v5.8] - 2025-09-25
 ### Added or bumped
 - bumped `version` from `v5.7` to `v5.8`
-- New `MODULE` added - `ChinaHat`
+- New `MODULE` added - `ChinaHat` by `TheM1ddleM1n`
 - updated `Moduleideas.md`
 
 ## [v5.7] - 2025-09-23
 ### Added or bumped
 - bumped `version` from `v5.6` to `v5.7`
-- New `MODULE` added - `LongJump`
+- New `MODULE` added - `LongJump` by `TheM1ddleM1n`
 
 
 ## [v5.6] - 2025-09-22
@@ -36,21 +36,21 @@ All notable changes to this project will be documented here :)
 
 ## [v5.6] - 2025-09-21
 ### Improved
-- Minor `TextGUI` overhaul (removed status dot and added modes next to modules)
+- Minor `TextGUI` overhaul (removed status dot and added modes next to modules) created by `TheM1ddleM1n`
 - updated `readme`
 - bumped `version` from `v5.5` to `v5.6`
 
 ## [v5] - 2025-09-08
 ### Added
-- New `filter bypass` for / commands
+- New `filter bypass` for / commands by `RealPacket`
 
 ## [v5] - 2025-09-07
 ### Added
 - `Fly/NoFall exploit with desync mechanics` by `RealPacket`
-- Multi-block `Scaffold bypass` using inventory slots 1–9
-- LB Click GUI injected via `vav4inject.js`
-- Improved inventory handling for Scaffold module
-- Minor UI tweaks in Click GUI
+- Multi-block `Scaffold bypass` using inventory slots 1–9 by `TheM1ddleM1n`
+- LB Click GUI injected via `vav4inject.js` by `TheM1ddleM1n`
+- Improved inventory handling for Scaffold module by `TheM1ddleM1n`
+- Minor UI tweaks in Click GUI by `TheM1ddleM1n`
 
 ### Any Known Issues
 - `.toggle all` command is currently non-functional (fix for this coming soon hopefully.)
@@ -59,7 +59,7 @@ All notable changes to this project will be documented here :)
 
 Copy `tampermonkey.js` and paste into your preferred userscript manager. (Tampermonkey, Greasemonkey, Violentmonkey etc)
 
-(M0duleMaster64's comment - Or use the `tampermonkey.js` and manually put in the `injection.js` after the main)
+(TheM1ddleM1n's comment - Or use the `tampermonkey.js` and manually put in the `injection.js` after the main)
 
 ## (if you can) pls Join the Discord here
 
@@ -73,4 +73,4 @@ Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 
 - **DO NOT EVER PUBLISH UNSTABLE CHANGES (ie. not working modules) TO THE "/" (ROOT) FOLDER. Please PUBLISH IT TO "beta" FOLDER INSTEAD**
 
-- ProgMEM-CC - when you have time pls rename this to Impact For Miniblox (thanks! - ModuleMaster64/TheM1ddleM1n)
+- ProgMEM-CC - when you have time pls rename this to Impact For Miniblox (thanks! - TheM1ddleM1n)
