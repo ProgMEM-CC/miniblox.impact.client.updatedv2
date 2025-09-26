@@ -10,6 +10,12 @@ BEFORE USING, Read EULA.md
 
 All notable changes to this project will be documented here :)
 
+## [v5.8] - 2025-09-26
+### Updated
+- updated `Moduleideas.md`
+- updated `readme.md`
+
+
 ## [v5.8] - 2025-09-25
 ### Added or bumped
 - bumped `version` from `v5.7` to `v5.8`
