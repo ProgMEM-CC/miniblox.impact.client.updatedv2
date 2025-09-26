@@ -14,6 +14,7 @@ All notable changes to this project will be documented here :)
 ### Updated
 - updated `Moduleideas.md`
 - updated `readme.md`
+- updated `tampermonkey.js`
 
 
 ## [v5.8] - 2025-09-25
