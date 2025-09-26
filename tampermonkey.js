@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Impact For Miniblox!
-// @namespace    ProgMEM-CC, ModuleM64, he557, 7GrandDad, BlueDragon7327, DataM0del/RealPacket, ekusos22, whoppps, ispyboy
+// @namespace    ProgMEM-CC, TheM1ddleM1n, he557, 7GrandDad, BlueDragon7327, DataM0del/RealPacket, ekusos22, whoppps, ispyboy
 // @version      5.8
 // @description  The ultimate MiniBlox hacked client. Built for total domination of Miniblox servers! Fully dark-mode optimized with a modern GUI and high performance guaranteed.
-// @author       7GrandDad, ProgMEM-CC, ModuleMaster64, he557, RealPacket/DataM0del (Codeberg/Github names), BlueDragon7327, whoppps, ispyboy
+// @author       7GrandDad, ProgMEM-CC, TheM1ddleM1n, he557, RealPacket/DataM0del (Codeberg/Github names), BlueDragon7327, whoppps, ispyboy
 // @match        https://miniblox.io/
 // @match        https://miniblox.org/
 // @icon         https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/favicon.png
@@ -22,7 +22,7 @@
 //
 // ============================================== The Developer Team: for Impact For Miniblox! ===============================================
 //  ProgMEM-CC (github.com/ProgMEM-CC)
-//  ModuleMaster64 (github.com/ModuleMaster64)
+//  TheM1ddleM1n (github.com/TheM1ddleM1n)
 //  DataM0del (github.com/datam0del)
 //  BlueDragon7327 (github.com/BlueDragon7327) 
 //  dtkiller-jp (github.com/dtkiller-jp)
@@ -35,7 +35,7 @@
 //    7GrandDad, the OG Creator of the Vape V4 hacked client for Miniblox!
 //    he557, adding bypasses and and pushing through, making the client work!
 //    ProgMEM-CC, the upgrader and reviver of the client as Impact V4 for Miniblox!
-//    ModuleMaster64, the one who never fails to amaze, creating a LB themed ClickGUI and creating new modules!
+//    TheM1ddleM1n, the one who never fails to amaze, creating a LB themed ClickGUI and creating new modules!
 //    RealPacket, (codeberg: https://codeberg.org/RealPacket), for the inspiration of reviving the hacks and making a genius desync for Fly and Nofall, and creating a 1.7 blocking animation for KillAura (coming soon :)
 //    BlueDragon7327, Module Researcher and solver!
 //    dtkiller-jp, Bug reporter!
