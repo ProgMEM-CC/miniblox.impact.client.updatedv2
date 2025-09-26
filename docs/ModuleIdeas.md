@@ -6,7 +6,8 @@
 - [ ] AutoEat (Automatically eats food in the inv)
 - [ ] AimBot (Automatically aims at a player)
 - [ ] Nuker (Automatically break blocks around the player)
-- [ ] (Possibly other Disabler methods)
+- [ ] Full Disabler (Possibly other Disabler methods)
 - [x] ChinaHat (3d hat on top of the player)
 - [ ] ChinaRing (3d ring around the player)
+- [ ] TargetHUD (RealPacket will create this soon)
 
