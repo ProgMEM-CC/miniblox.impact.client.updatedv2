@@ -77,5 +77,5 @@ Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 
 - maybe not so soon about the rename because i still have a lot of closed source dependancies that depent on the url staying the same
 ----------------------------------------------
-- TheM1ddleM1n's comment - oh ok!-------------
+- TheM1ddleM1n's comment - oh ok!
 ----------------------------------------------
