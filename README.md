@@ -11,6 +11,10 @@ BEFORE USING, Read EULA.md
 All notable changes to this project will be documented here :)
 
 ## [v5.8] - 2025-09-26
+### Added
+- New MODULE - `TargetHUD` added to `beta folder` - the hardwork payed off!
+
+## [v5.8] - 2025-09-26
 ### Updated
 - updated `Moduleideas.md`
 - updated `readme.md`
