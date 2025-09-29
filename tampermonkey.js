@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Impact For Miniblox!
 // @namespace    ProgMEM-CC, TheM1ddleM1n, he557, 7GrandDad, BlueDragon7327, DataM0del/RealPacket, ekusos22, whoppps, ispyboy
-// @version      5.8
+// @version      5.9
 // @description  The ultimate MiniBlox hacked client. Built for total domination of Miniblox servers! Fully dark-mode optimized with a modern GUI and high performance guaranteed.
 // @author       7GrandDad, ProgMEM-CC, TheM1ddleM1n, he557, RealPacket/DataM0del (Codeberg/Github names), BlueDragon7327, whoppps, ispyboy
 // @match        https://miniblox.io/
