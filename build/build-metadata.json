@@ -1,6 +1,6 @@
 {
   "totalLines": 2275,
-  "totalSize": 89055,
+  "totalSize": 89689,
   "moduleCount": 39,
   "moduleNames": [
     "AntiCheat",
@@ -43,6 +43,6 @@
     "FilterBypass",
     "Timer"
   ],
-  "buildTime": "2025-09-29T09:58:51.536Z",
+  "buildTime": "2025-09-29T10:31:02.428Z",
   "integrationIssues": 1
 }

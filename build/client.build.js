@@ -907,7 +907,7 @@ new Module("AntiCheat", function(callback) {
         if (entity.mode.isCreative() || entity.mode.isSpectator())
             continue; 
     }
-})
+});
 
 // === COMBAT/ANTIFALL MODULE ===
 new Module("AntiFall", function(callback) {
