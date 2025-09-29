@@ -229,7 +229,7 @@ addModification(
   AutoQueue: "Instant",
   ChestSteal: "Hypixel",
   KeepSprint: "All",
-  InvCleaner: "Normal",
+  InvCleaner: "Sigma",
   AutoArmor: "Smart",
   AutoRejoin: "Delay",
   LongJump: "Vanilla",
@@ -1641,6 +1641,7 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
     const bestArmor = {};
     const bestItems = {};
     let lastRun = 0;
+    const seenItems = {};
 
     function getArmorScore(stack) {
         const item = stack.getItem();
@@ -1690,6 +1691,7 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 
         Object.keys(bestArmor).forEach(k => delete bestArmor[k]);
         Object.keys(bestItems).forEach(k => delete bestItems[k]);
+        Object.keys(seenItems).forEach(k => delete seenItems[k]);
 
         const toDrop = [];
 
@@ -1698,7 +1700,7 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
             const stack = slots[i]?.getStack();
             if (stack?.getItem() instanceof ItemArmor) {
                 const armorType = stack.getItem().armorType ?? "unknown";
-                bestArmor["armor_" + armorType] = { stack, index: i };
+                bestArmor["armor_" + armorType] = { stack, index: i, score: getArmorScore(stack) };
             }
         });
 
@@ -1711,30 +1713,24 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 
             if (shouldKeep(stack)) continue;
 
-            if (item instanceof ItemBlock) {
-                if (stack.stackSize < 5) toDrop.push(i);
+            if (item instanceof ItemArmor) {
+                const armorType = item.armorType ?? "unknown";
+                const key = "armor_" + armorType;
+                const score = getArmorScore(stack);
+                const existing = bestArmor[key];
+
+                if (!existing) {
+                    bestArmor[key] = { stack, index: i, score };
+                } else {
+                    if (score > existing.score) {
+                        toDrop.push(existing.index);
+                        bestArmor[key] = { stack, index: i, score };
+                    } else {
+                        toDrop.push(i);
+                    }
+                }
                 continue;
             }
-
-            if (item instanceof ItemArmor) {
-    const armorType = item.armorType ?? "unknown";
-    const key = "armor_" + armorType;
-    const score = getArmorScore(stack);
-    const existing = bestArmor[key];
-
-    if (!existing) {
-        bestArmor[key] = { stack, index: i, score };
-    } else {
-        const existingScore = existing.score;
-        if (score > existingScore) {
-            toDrop.push(existing.index);
-            bestArmor[key] = { stack, index: i, score };
-        } else {
-            toDrop.push(i); // drop lower-score armor
-        }
-    }
-    continue;
-}
 
             if (weaponClasses.has(className)) {
                 const score = getScore(stack, item);
@@ -1744,14 +1740,21 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
                     if (existing && existing.index !== i) toDrop.push(existing.index);
                     bestItems[className] = { stack, score, index: i };
                 } else if (existing && isSameItem(bestItems[className], { stack })) {
-                    toDrop.push(i); // Drop exact duplicate
+                    toDrop.push(i);
                 } else {
                     toDrop.push(i);
                 }
                 continue;
             }
 
-            toDrop.push(i);
+            const name = stack.getDisplayName()?.toLowerCase() ?? "";
+            if (!shouldKeep(stack)) {
+                if (seenItems[name]) {
+                    toDrop.push(i);
+                } else {
+                    seenItems[name] = true;
+                }
+            }
         }
 
         toDrop.forEach(dropSlot);
@@ -1761,7 +1764,7 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 function dropSlot(index) {
     const windowId = player.openContainer.windowId;
     playerControllerDump.windowClickDump(windowId, index, 0, 0, player);
-    playerControllerDump.windowClickDump(windowId, -999, 0, 0, player); // drop outside of the window
+    playerControllerDump.windowClickDump(windowId, -999, 0, 0, player);
 }
 
 let funnyMessages = [
