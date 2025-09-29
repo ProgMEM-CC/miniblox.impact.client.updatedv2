@@ -10,6 +10,12 @@ BEFORE USING, Read EULA.md
 
 All notable changes to this project will be documented here :)
 
+## [v5.9] - 2025-09-29
+### Improved
+- Minor `Invcleaner` overhaul created by `TheM1ddleM1n` (should be no more duplicates i hope w)
+- updated `readme`
+- Bumped version from `v5.8` to `v5.9`
+
 ## [v5.8] - 2025-09-26
 ### Added
 - New MODULE - `TargetHUD` added to `beta folder` - the hardwork payed off!
