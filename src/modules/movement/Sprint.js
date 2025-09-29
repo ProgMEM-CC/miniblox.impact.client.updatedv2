@@ -1,0 +1,1 @@
+new Module("Sprint", function() {});
