@@ -382,7 +382,7 @@ addModification(
 	addModification('ClientSocket.on("CPacketDisconnect",h=>{', `
 		if (enabledModules["AutoRejoin"]) {
 			setTimeout(function() {
-				j.connect(lastJoined);
+				game.connect(lastJoined);
 			}, 400);
 		}
 	`);
