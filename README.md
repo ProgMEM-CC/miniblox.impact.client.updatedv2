@@ -10,6 +10,12 @@ BEFORE USING, Read EULA.md
 
 All notable changes to this project will be documented here :)
 
+## [v6] - 2025-09-30
+### Improved
+- Ported some things from Vape For Miniblox ie. `.friend command`, `antiblind module` etc (`huge credit to @datam0del`)
+- updated `readme`
+- Bumped version from `v5.9` to `v6`!
+
 ## [v5.9] - 2025-09-29
 ### Improved
 - Minor `Invcleaner` overhaul created by `TheM1ddleM1n` (should be no more duplicates i hope w)
