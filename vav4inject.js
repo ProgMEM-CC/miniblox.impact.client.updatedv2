@@ -1108,15 +1108,10 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 
 						const couldCrit = player.ridingEntity == null && !player.inWater
 							&& !player.isOnLadder();
+
 						if (couldCrit) {
-							if (!player.onGround) {
-						 		ClientSocket.sendPacket(new SPacketPlayerPosLook({
-						 			pos: {
-										...player.pos,
-										y: player.pos.y - 4.9E-324
-									},
-									onGround: false
-						 		}));
+							// TODO: off ground crits? idk how to make it also bypass with fly but lol
+							if (!player.onGround || player.fallDistance > 0) {
 								return;
 							}
 							const offsets = [
