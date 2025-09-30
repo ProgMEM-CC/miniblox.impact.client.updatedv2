@@ -12,7 +12,7 @@ All notable changes to this project will be documented here :)
 
 ## [v6] - 2025-09-30
 ### Improved
-- Ported some things from Vape For Miniblox ie. `.friend command`, `antiblind module` etc (`huge credit to @datam0del`)
+- Ported some things from Vape For Miniblox ie. `.friend command`, `antiblind module` etc (`huge credit to @datam0del/RealPacket`)
 - updated `readme`
 - Bumped version from `v5.9` to `v6`!
 
