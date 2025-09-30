@@ -119,6 +119,11 @@ let serverPos = player.pos.clone();
 		let breakStart = Date.now();
 		let noMove = Date.now();
 
+		// a list of miniblox usernames to not attack / ignore
+		/** @type string[] **/
+		const friends = [];
+		let ignoreFriends = false;
+
 		let enabledModules = {};
 		let modules = {};
 
@@ -498,7 +503,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		}
 	`);
 
-	// PLAYER ESP (created by ModuleMaster64 :D)
+	// PLAYER ESP (created by TheM1ddleM1n :D)
 	addModification(')&&(p.mesh.visible=this.shouldRenderEntity(p))', `
   if (p && p.id != player.id) {
     function hslToRgb(h, s, l) {
@@ -859,6 +864,55 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					}
 				}
 				return this.closeInput();
+			case ".friend": {
+				const mode = args[1];
+				if (!mode) {
+					game.chat.addChat({text: "Usage: .friend <add|remove> <username> OR .friend list"});
+					return;
+				}
+				const name = args[2];
+				if (mode !== "list" && !name) {
+					game.chat.addChat({text: "Usage: .friend <add|remove> <username> OR .friend list"});
+					return;
+				}
+				switch (args[1]) {
+					case "add":
+						friends.push(name);
+						game.chat.addChat({text: \`\\\\green\\\\added\\\\reset\\\\ \${name} as a friend \`});
+						break;
+					case "remove": {
+						const idx = friends.indexOf(name);
+						if (idx === -1) {
+							game.chat.addChat({text:
+								\`\\\\red\\\\Unknown\\\\reset\\\\ friend: \${name}\`});
+							break;
+						}
+						friends.splice(idx, 1);
+						break;
+					}
+					case "list":
+						if (friends.length === 0) {
+							game.chat.addChat({text: "You have no friends added yet!", color: "red"});
+							game.chat.addChat({text:
+								\`\\\\green\\\\Add\\\\reset\\\\ing friends using \\\\yellow\\\\.friend add <friend name>\\\\reset\\\\
+								will make KillAura not attack them.\`
+							});
+							game.chat.addChat({text:
+								\`\\\\green\\\\Removing\\\\reset\\\\ friends using
+								\\\\yellow\\\\.friend remove <name>\\\\reset\\\\
+								or toggling the \\\\yellow\\\\NoFriends\\\\reset\\\\ module
+								will make KillAura attack them again.\`
+							});
+							break;
+						}
+						game.chat.addChat({text: "Friends:", color: "yellow"});
+						for (const friend of friends) {
+							game.chat.addChat({text: friend, color: "blue"});
+						}
+						break;
+				}
+				return this.closeInput();
+			}
 		}
 		if (enabledModules["FilterBypass"] && !this.isInputCommandMode) {
 			const words = this.inputValue.split(" ");
@@ -1017,7 +1071,6 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			let didSwing = false;
 			let attacked = 0;
 			let attackedPlayers = {};
-			let attackList = [];
 			let boxMeshes = [];
 			let killaurarange, killaurablock, killaurabox, killauraangle, killaurawall, killauraitem;
 
@@ -1045,6 +1098,43 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 						const hitVec = player.getEyePos().clone().clamp(box.min, box.max);
 						attacked++;
 						playerControllerMP.syncItemDump();
+
+						// this.fallDistance > 0
+						// && !this.onGround
+						// && !this.isOnLadder()
+						// && !this.inWater
+						// && attacked instanceof EntityLivingBase
+						// && this.ridingEntity == null
+
+						const couldCrit = player.ridingEntity == null && !player.inWater
+							&& !player.isOnLadder();
+						if (couldCrit) {
+							if (!player.onGround) {
+						 		ClientSocket.sendPacket(new SPacketPlayerPosLook({
+						 			pos: {
+										...player.pos,
+										y: player.pos.y - 4.9E-324
+									},
+									onGround: false
+						 		}));
+								return;
+							}
+							const offsets = [
+								0.08, -0.07840000152
+							];
+						 	for (const offset of offsets) {
+						 		const pos = {
+						 			x: player.pos.x,
+						 			y: player.pos.y + offset,
+						 			z: player.pos.z
+						 		};
+						 		ClientSocket.sendPacket(new SPacketPlayerPosLook({
+						 			pos,
+									onGround: false
+						 		}));
+						 	}
+						 }
+
 						ClientSocket.sendPacket(new SPacketUseEntity({
 							id: entity.id,
 							action: 1,
@@ -1093,6 +1183,12 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				return entry.color != "white" ? entry.color : undefined;
 			}
 
+			new Module("NoFriends", function(enabled) {
+				ignoreFriends = enabled;
+			})
+
+			let killAuraAttackInvisible;
+			let attackList = [];
 			const killaura = new Module("Killaura", function(callback) {
 				if (callback) {
 					for(let i = 0; i < 10; i++) {
@@ -1112,19 +1208,27 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 						const localTeam = getTeam(player);
 						const entities = game.world.entitiesDump;
 
-						attackList = [];
-						if (!killauraitem[1] || swordCheck()) {
-							for (const entity of entities.values()) {
-								if (entity.id == player.id) continue;
-								const newDist = player.getDistanceSqToEntity(entity);
-								if (newDist < (killaurarange[1] * killaurarange[1]) && entity instanceof EntityPlayer) {
-									if (entity.mode.isSpectator() || entity.mode.isCreative() || entity.isInvisibleDump()) continue;
-									if (localTeam && localTeam == getTeam(entity)) continue;
-									if (killaurawall[1] && !player.canEntityBeSeen(entity)) continue;
-									attackList.push(entity);
-								}
-							}
-						}
+						const sqRange = killaurarange[1] * killaurarange[1];
+						const entities2 = Array.from(entities.values());
+						attackList = entities2.filter(e => {
+							const base = e instanceof EntityPlayer && e.id != player.id;
+							if (!base) return false;
+							const distCheck = player.getDistanceSqToEntity(e) < sqRange;
+							if (!distCheck) return false;
+							const isFriend = friends.includes(e.name);
+							const friendCheck = !ignoreFriends && isFriend;
+							if (friendCheck) return false;
+							// pasted
+							const {mode} = e;
+							if (mode.isSpectator() || mode.isCreative()) return false;
+							const invisCheck = killAuraAttackInvisible[1] || e.isInvisibleDump();
+							if (!invisCheck) return false;
+							const teamCheck = localTeam && localTeam == getTeam(e);
+							if (teamCheck) return false;
+							const wallCheck = killaurawall[1] && !player.canEntityBeSeen(e);
+							if (wallCheck) return false;
+							return true;
+						})
 
 						attackList.sort((a, b) => {
 							return (attackedPlayers[a.id] || 0) > (attackedPlayers[b.id] || 0) ? 1 : -1;
@@ -1166,6 +1270,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			killaurawall = killaura.addoption("Wallcheck", Boolean, false);
 			killaurabox = killaura.addoption("Box", Boolean, true);
 			killauraitem = killaura.addoption("LimitToSword", Boolean, false);
+			killAuraAttackInvisible = killaura.addoption("AttackInvisbles", Boolean, true);
 
 			new Module("FastBreak", function() {});
 
@@ -1242,33 +1347,57 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 
    
 			// InfiniteFly
-			let infiniteFlyVert;
+			let infiniteFlyVert, infiniteFlyLessGlide;
+			let warned = false;
 			const infiniteFly = new Module("InfiniteFly", function(callback) {
 				if (callback) {
+					if (!warned) {
+						game.chat.addChat({text:
+							\`Infinite Fly only works on servers using the old ac
+(KitPvP, Skywars, Eggwars, Bridge Duels,
+Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
+						warned = true;
+					}
 					let ticks = 0;
 					tickLoop["InfiniteFly"] = function() {
+						sendGround = undefined;
 						ticks++;
-						const dir = getMoveDirection(0.2);
+						const dir = getMoveDirection(0.37799);
 						player.motion.x = dir.x;
 						player.motion.z = dir.z;
 						const goUp = keyPressedDump("space");
 						const goDown = keyPressedDump("shift");
+						sendGround = true;
+						if (ticks < 6 && !goUp && !goDown) {
+							player.motion.y = 0;
+							return;
+						}
 						if (goUp || goDown) {
 							player.motion.y = goUp ? infiniteFlyVert[1] : -infiniteFlyVert[1];
-						} else {
-							player.motion.y = 0;
+						} else if (!infiniteFlyLessGlide[1] || ticks % 2 === 0) {
+							player.motion.y = 0.18;
 						}
 					};
 				}
 				else {
 					delete tickLoop["InfiniteFly"];
-					if (player) {
-						player.motion.x = Math.max(Math.min(player.motion.x, 0.3), -0.3);
-						player.motion.z = Math.max(Math.min(player.motion.z, 0.3), -0.3);
+					if (!infiniteFlyLessGlide[1]) return;
+					// due to us not constantly applying the motion y while flying,
+					// we can't instantly stop.
+					// we have to wait a few ticks before allowing the player to move.
+					let ticks = 0;
+					tickLoop["InfiniteFlyStop"] = function() {
+						if (player && ticks < 4) {
+							player.motion.y = 0.18;
+							ticks++;
+						} else {
+							delete tickLoop["InfiniteFlyStop"];
+						}
 					}
 				}
 			});
-			infiniteFlyVert = infiniteFly.addoption("Vertical", Number, 0.3);
+			infiniteFlyVert = infiniteFly.addoption("Vertical", Number, 0.15);  // Wont rubberband this way! same for fly
+			infiniteFlyLessGlide = infiniteFly.addoption("LessGlide", Boolean, true);
 
 			new Module("InvWalk", function() {});
 			new Module("KeepSprint", function() {});
@@ -1904,7 +2033,7 @@ const jesus = new Module("Jesus", function(callback) {
     }
 });
 
-// LongJump (Created by TheM1ddleM1n or ModuleMaster64 lol)
+// LongJump (Created by TheM1ddleM1n)
 let ljpower, ljboost, ljdesync;
 const longjump = new Module("LongJump", function(callback) {
     if (!callback) {
