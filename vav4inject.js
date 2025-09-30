@@ -247,7 +247,7 @@ let serverPos = player.pos.clone();
   AutoRespawn: "Instant",
   ChatDisabler: "Packets",
   NoSlowdown: "Vanilla",
-  FilterBypass: "Unicode",
+  FilterBypass: "\\ character",
   NameTags: "Custom",
   AutoClicker: "RMB",
   AutoQueue: "Instant",
