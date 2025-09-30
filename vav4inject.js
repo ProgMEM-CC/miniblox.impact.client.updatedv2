@@ -2208,11 +2208,11 @@ ljdesync = longjump.addoption("Desync", Boolean, true);  // toggle desync mode
 		const categories = {
 			Combat: ["autoclicker", "killaura", "velocity", "wtap"],
 			Movement: ["scaffold", "jesus", "phase", "nofall", "antifall", "sprint", "keepsprint", "step", "speed", "jetpack", "noslowdown"],
-			RendLayer: ["invcleaner", "invwalk", "autoarmor", "esp", "nametags+", "textgui", "clickgui", "longjump"],
+			Render: ["invcleaner", "invwalk", "autoarmor", "esp", "nametags+", "textgui", "clickgui", "longjump"],
 			World: ["fastbreak", "breaker", "autocraft", "cheststeal", "timer", "creativemode"],
 			Utility: ["autorespawn", "autorejoin", "autoqueue", "autovote", "filterbypass", "anticheat", "autofunnychat", "chatdisabler", "musicfix", "auto-funnychat", "music-fix"]
 		};
-		const catIcons = { Combat: "⚔️", Movement: "🏃", "RendLayer": "🧑👁️", World: "🌍", Utility: "🛠️" };
+		const catIcons = { Combat: "⚔️", Movement: "🏃", Render: "🧑👁️", World: "🌍", Utility: "🛠️" };
 
 		// === Styles ===
 		const style = document.createElement("style");
@@ -2330,7 +2330,7 @@ ljdesync = longjump.addoption("Desync", Boolean, true);  // toggle desync mode
 		let isBinding = false;
 		/** @type {Module | null} */
 		let moduleToBindTo = null;
-		/** @type {(key: string) => void | null} */
+		/** @type {(key: string | undefined) => void | null} */
 		let bindingCompletedCallback = null;
 
 		// === Modules ===
@@ -2362,10 +2362,8 @@ ljdesync = longjump.addoption("Desync", Boolean, true);  // toggle desync mode
 				else if (type === String) { const input = document.createElement("input"); input.type = "text"; input.value = val; input.onchange = () => { opt[1] = input.value; saveModuleState(name, mod); }; line.appendChild(input); }
 				optionsBox.appendChild(line);
 			});
-			const bindLine = document.createElement("label");
-			bindLine.textContent = "Bind:";
 			const bb = document.createElement("button");
-			bb.textContent = "Bind";
+			bb.textContent = "None";
 			bb.addEventListener("click", () => {
 				if (isBinding) {
 					isBinding = false;
@@ -2375,14 +2373,10 @@ ljdesync = longjump.addoption("Desync", Boolean, true);  // toggle desync mode
 				bb.textContent = "Listening for key presses (press ESC to stop)";
 				moduleToBindTo = mod;
 				bindingCompletedCallback = key => {
-					bb.textContent = key;
+					bb.textContent = key ?? "None";
 				}
 			});
-			const bindInput = document.createElement("input");
-			bindInput.type = "text"; bindInput.value = mod.bind;
-			bindInput.style.width = "70px"; bindInput.style.background = "#0a0a0a"; bindInput.style.color = "white"; bindInput.style.border = "1px solid #00aaff"; bindInput.style.fontFamily = '"Poppins", sans-serif'; bindInput.style.fontSize = "12px"; bindInput.style.padding = "2px";
-			bindInput.onchange = (e) => { mod.setbind(e.target.value); showNotif(`${name} bind set to ${e.target.value}`, "info"); saveModuleState(name, mod); };
-			bindLine.appendChild(bindInput); optionsBox.appendChild(bindLine);
+			optionsBox.appendChild(bb);
 
 			panels[cat].querySelector(".lb-content").appendChild(row);
 			panels[cat].querySelector(".lb-content").appendChild(optionsBox);
@@ -2450,13 +2444,14 @@ ljdesync = longjump.addoption("Desync", Boolean, true);  // toggle desync mode
 			// it should stop the bind's listener.
 
 			if (isBinding) {
+				// stop miniblox from trying to close
+				// any game menus we have open
+				e.preventDefault();
+				e.stopPropagation();
 				isBinding = false;
+				bindingCompletedCallback?.(undefined);
 				switch (e.key) {
 					case "Escape":
-						// stop miniblox from trying to close
-						// any game menus we have open
-						e.preventDefault();
-						e.stopPropagation();
 						break;
 					default:
 						if (moduleToBindTo == null) {
@@ -2467,13 +2462,10 @@ ljdesync = longjump.addoption("Desync", Boolean, true);  // toggle desync mode
 						moduleToBindTo.setbind(e.key);
 						break;
 				}
-				// stop miniblox from trying to close
-				// any game menus we have open
-				e.preventDefault();
-				e.stopPropagation();
+				return;
 			}
 
-			if (e.key === "Backslash" || e.key === "Escape") {
+			if (e.key === "\\" || e.key === "Escape") {
 				visible = !visible;
 				Object.values(panels).forEach((p) => (p.style.display = visible ? "block" : "none"));
 				searchWrap.style.display = visible ? "block" : "none";
