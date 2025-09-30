@@ -147,8 +147,27 @@ let serverPos = player.pos.clone();
 		}
 
 		let lastJoined, velocityhori, velocityvert, chatdisablermsg, textguifont, textguisize, textguishadow, attackedEntity, stepheight;
+		let useAccountGen, accountGenEndpoint;
 		let attackTime = Date.now();
 		let chatDelay = Date.now();
+
+		async function generateAccount() {
+			toast({
+				title: "generating miniblox account via integration...",
+				status: "info",
+				duration: 0.3e3
+			});
+			const res = await fetch(accountGenEndpoint[1]);
+			if (!res.ok)
+				throw await res.text();
+			const j = await res.json();
+			toast({
+				title: \`Generated miniblox account! named \${j.name}!\`,
+				status: "success",
+				duration: 1e3
+			});
+			return j;
+		}
 
 		function getModule(str) {
 			for(const [name, module] of Object.entries(modules)) {
@@ -735,7 +754,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
   '})',
   'new SPacketLoginStart({ ' +
     'requestedUuid: void 0, ' +
-    'session: enabledModules["AntiBan"] ? "" : (localStorage.getItem(SESSION_TOKEN_KEY) ?? ""), ' +
+    'session: (enabledModules["AntiBan"] ? useAccountGen[1] ? (await generateAccount()).session : "" : (localStorage.getItem(SESSION_TOKEN_KEY) ?? "")), ' +
     'hydration: "0", ' +
     'metricsId: uuid$1(), ' +
     'clientVersion: VERSION$1 ' +
@@ -856,6 +875,9 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		true
 		);
 
+	// ANTI BLIND
+	addModification("player.isPotionActive(Potions.blindness)", 'player.isPotionActive(Potions.blindness) && !enabledModules["AntiBlind"]', true);
+
 	// MAIN
 	addModification('document.addEventListener("contextmenu",m=>m.preventDefault());', /*js*/`
 		// my code lol!
@@ -907,6 +929,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					}
 				} else delete tickLoop["AutoClicker"];
 			});
+			new Module("AntiBlind", function() {});
 			new Module("AntiCheat", function(callback) {
 				if (!callback)
 					return; 
@@ -1620,6 +1643,9 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 
 			const antiban = new Module("AntiBan", function() {});
 			antiban.toggle();
+
+			useAccountGen = antiban.addoption("AccountGen", Boolean, false);
+			accountGenEndpoint = antiban.addoption("GenServer", String, "http://localhost:8000/generate");
 			new Module("AutoRejoin", function() {});
 			new Module("AutoQueue", function() {});
 			new Module("AutoVote", function() {});
