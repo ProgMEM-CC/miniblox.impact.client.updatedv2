@@ -750,7 +750,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 
 	// LOGIN BYPASS (cleaned up)
     addModification(
-  'new SPacketLoginStart({ ' +
+  'new SPacketLoginStart({' +
     'requestedUuid: localStorage.getItem(REQUESTED_UUID_KEY) ?? void 0,' +
     'session: localStorage.getItem(SESSION_TOKEN_KEY) ?? "",' +
     'hydration: localStorage.getItem("hydration") ?? "0",' +
