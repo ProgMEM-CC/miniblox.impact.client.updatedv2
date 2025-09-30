@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Impact For Miniblox!
 // @namespace    ProgMEM-CC, TheM1ddleM1n, he557, 7GrandDad, BlueDragon7327, DataM0del/RealPacket, ekusos22, whoppps, ispyboy
-// @version      5.9
+// @version      6
 // @description  The ultimate MiniBlox hacked client. Built for total domination of Miniblox servers! Fully dark-mode optimized with a modern GUI and high performance guaranteed.
 // @author       7GrandDad, ProgMEM-CC, TheM1ddleM1n, he557, RealPacket/DataM0del (Codeberg/Github names), BlueDragon7327, whoppps, ispyboy
 // @match        https://miniblox.io/
@@ -29,14 +29,14 @@
 //  whoppps (github.com/whoppps)
 //  ispyboy (github.com/ispyboy)
 //
-//  we could need more devs lol.
+//  i dont think we need anymore devs lol :money_mouth: (unless required tho)
 //  
 // =============================================== Credits To ================================================
 //    7GrandDad, the OG Creator of the Vape V4 hacked client for Miniblox!
 //    he557, adding bypasses and and pushing through, making the client work!
 //    ProgMEM-CC, the upgrader and reviver of the client as Impact V4 for Miniblox!
 //    TheM1ddleM1n, the one who never fails to amaze, creating a LB themed ClickGUI and creating new modules!
-//    RealPacket, (codeberg: https://codeberg.org/RealPacket), for the inspiration of reviving the hacks and making a genius desync for Fly and Nofall, and creating a 1.7 blocking animation for KillAura (coming soon :)
+//    RealPacket, (codeberg: https://codeberg.org/RealPacket) for the inspiration of reviving the hacks and making a genius desync for Fly and Nofall, also making .friend command, Antiblind module etc!
 //    BlueDragon7327, Module Researcher and solver!
 //    dtkiller-jp, Bug reporter!
 //    whoppps
