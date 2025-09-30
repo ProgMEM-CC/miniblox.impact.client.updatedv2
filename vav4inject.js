@@ -2327,6 +2327,12 @@ ljdesync = longjump.addoption("Desync", Boolean, true);  // toggle desync mode
 			document.body.appendChild(panel);
 		});
 
+		let isBinding = false;
+		/** @type {Module | null} */
+		let moduleToBindTo = null;
+		/** @type {(key: string) => void | null} */
+		let bindingCompletedCallback = null;
+
 		// === Modules ===
 		Object.entries(store.modules).forEach(([name, mod]) => {
 			let cat = "Utility";
@@ -2358,6 +2364,20 @@ ljdesync = longjump.addoption("Desync", Boolean, true);  // toggle desync mode
 			});
 			const bindLine = document.createElement("label");
 			bindLine.textContent = "Bind:";
+			const bb = document.createElement("button");
+			bb.textContent = "Bind";
+			bb.addEventListener("click", () => {
+				if (isBinding) {
+					isBinding = false;
+					moduleToBindTo = null;
+				}
+				isBinding = !isBinding;
+				bb.textContent = "Listening for key presses (press ESC to stop)";
+				moduleToBindTo = mod;
+				bindingCompletedCallback = key => {
+					bb.textContent = key;
+				}
+			});
 			const bindInput = document.createElement("input");
 			bindInput.type = "text"; bindInput.value = mod.bind;
 			bindInput.style.width = "70px"; bindInput.style.background = "#0a0a0a"; bindInput.style.color = "white"; bindInput.style.border = "1px solid #00aaff"; bindInput.style.fontFamily = '"Poppins", sans-serif'; bindInput.style.fontSize = "12px"; bindInput.style.padding = "2px";
@@ -2421,15 +2441,43 @@ ljdesync = longjump.addoption("Desync", Boolean, true);  // toggle desync mode
 		searchWrap.style.display = "none";
 
 		// === Loading screen startup notification! ===
-		setTimeout(() => { showNotif("[CLickGUI@v5.8] Press \\\\ to open ClickGUI! Enjoy!", "info", 4000); }, 500);
+		setTimeout(() => { showNotif("[ClickGUI@v5.8] Press \\\\ to open ClickGUI! Enjoy!", "info", 4000); }, 500);
 
 		// === Toggle ClickGUI ===
 		let visible = false;
 		document.addEventListener("keydown", (e) => {
-			if (e.code === "Backslash") {
+			// the ESC key shouldn't close the ClickGUI if we're binding something,
+			// it should stop the bind's listener.
+
+			if (isBinding) {
+				isBinding = false;
+				switch (e.key) {
+					case "Escape":
+						// stop miniblox from trying to close
+						// any game menus we have open
+						e.preventDefault();
+						e.stopPropagation();
+						break;
+					default:
+						if (moduleToBindTo == null) {
+							console.warn("so I'm supposed to bind a null module to this key? ok no.");
+							return;
+						}
+						bindingCompletedCallback?.(e.key);
+						moduleToBindTo.setbind(e.key);
+						break;
+				}
+				// stop miniblox from trying to close
+				// any game menus we have open
+				e.preventDefault();
+				e.stopPropagation();
+			}
+
+			if (e.key === "Backslash" || e.key === "Escape") {
 				visible = !visible;
 				Object.values(panels).forEach((p) => (p.style.display = visible ? "block" : "none"));
 				searchWrap.style.display = visible ? "block" : "none";
+				e.preventDefault();
 			}
 		});
 	}
