@@ -749,23 +749,24 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 `);
 
 	// LOGIN BYPASS (cleaned up)
-    addModification(
-  'new SPacketLoginStart({' +
-    'requestedUuid: localStorage.getItem(REQUESTED_UUID_KEY) ?? void 0,' +
-    'session: localStorage.getItem(SESSION_TOKEN_KEY) ?? "",' +
-    'hydration: localStorage.getItem("hydration") ?? "0",' +
-    'metricsId: localStorage.getItem("metrics_id") ?? "",' +
-    'clientVersion: VERSION$1' +
-  '})',
-  'new SPacketLoginStart({ ' +
-    'requestedUuid: void 0, ' +
-    'session: (enabledModules["AntiBan"] ? useAccountGen[1] ? (await generateAccount()).session : "" : (localStorage.getItem(SESSION_TOKEN_KEY) ?? "")), ' +
-    'hydration: "0", ' +
-    'metricsId: uuid$1(), ' +
-    'clientVersion: VERSION$1' +
-  '})',
-  true
-);
+	addModification(
+		'new SPacketLoginStart({' +
+		'requestedUuid: localStorage.getItem(REQUESTED_UUID_KEY)??void 0,' +
+		'session: localStorage.getItem(SESSION_TOKEN_KEY)??"",' +
+		'hydration: localStorage.getItem("hydration")??"0",' +
+		'metricsId: localStorage.getItem("metrics_id")??"",' +
+		'clientVersion: VERSION$1' +
+		'})',
+		'new SPacketLoginStart({' +
+		'requestedUuid: void 0, ' +
+		'session: (enabledModules["AntiBan"] ? useAccountGen[1] ? (await generateAccount()).session : "" : (localStorage.getItem(SESSION_TOKEN_KEY) ?? "")), ' +
+		'hydration: "0", ' +
+		'metricsId: uuid$1(), ' +
+		'clientVersion: VERSION$1' +
+		'})',
+		true
+	);
+
 	// KEY FIX
 	addModification('Object.assign(keyMap,u)', '; keyMap["Semicolon"] = "semicolon"; keyMap["Apostrophe"] = "apostrophe";');
 
