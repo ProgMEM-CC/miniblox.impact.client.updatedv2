@@ -476,8 +476,8 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	// hook into the reconcileServerPosition
 	// so we know our server pos
 
-	// PREDICTION AC FIXER (make the ac a bit less annoying (e.g. when scaffolding))
-	// ig but this should be done in the desync branch instead lol
+	// PREDICTION AC FIXER (makes the ac a bit less annoying (e.g. when scaffolding))
+	// ig but this should be done in the desync branch instead lol - DataM0del
 // 	addModification("if(h.reset){this.setPosition(h.x,h.y,h.z),this.reset();return}", "", true);
 // 	addModification("this.serverDistance=y", `
 // if (h.reset) {
