@@ -88,6 +88,8 @@ Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 
 - **DO NOT EVER PUBLISH UNSTABLE CHANGES (ie. not working modules) TO THE "/" (ROOT) FOLDER. Please PUBLISH IT TO "beta" FOLDER INSTEAD**
 
+
+## Rename Repo (soon.. when ProgMEM-CC sorts out making the urls the same for the closed src dependancies w :D)
 - ProgMEM-CC - when you have time pls rename this to Impact For Miniblox (thanks! - TheM1ddleM1n)
 
 - maybe not so soon about the rename because i still have a lot of closed source dependancies that depent on the url staying the same
