@@ -10,6 +10,12 @@ BEFORE USING, Read EULA.md
 
 All notable changes to this project will be documented here :)
 
+## [v6] - 2025-10-01
+### idk lol
+- New month new commits
+- `ReadMe` updated
+- added some improvements for `AntiBan` - DataM0del (Ik this was yesterday LOL)
+
 ## [v6] - 2025-09-30
 ### Improved
 - Ported some things from Vape For Miniblox ie. `.friend` command, `antiblind` module etc (huge credit to @DataM0del)
