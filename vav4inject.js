@@ -228,9 +228,9 @@ let serverPos = player.pos.clone();
         if (color) ctx.globalCompositeOperation = "source-over";
     }
 `);
-	// TextGUI (Created by ModuleMaster64)
-	addModification(
-		'(this.drawSelectedItemStack(),this.drawHintBox())',
+// TextGUI (Created by TheM1ddleM1n)
+addModification(
+  '(this.drawSelectedItemStack(),this.drawHintBox())',
   /*js*/`
     if (ctx$5 && enabledModules["TextGUI"]) {
         const colorOffset = Date.now() / 4000;
@@ -475,6 +475,22 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 
 	// hook into the reconcileServerPosition
 	// so we know our server pos
+
+	// PREDICTION AC FIXER (makes the ac a bit less annoying (e.g. when scaffolding))
+	// ig but this should be done in the desync branch instead lol - DataM0del
+// 	addModification("if(h.reset){this.setPosition(h.x,h.y,h.z),this.reset();return}", "", true);
+// 	addModification("this.serverDistance=y", `
+// if (h.reset) {
+// 	if (this.serverDistance >= 4) {
+// 		this.setPosition(h.x, h.y, h.z);
+// 	} else {
+// 		ClientSocket.sendPacket(new SPacketPlayerInput({sequenceNumber: NaN, pos: new PBVector3(g)}));
+// 		ClientSocket.sendPacket(new SPacketPlayerInput({sequenceNumber: NaN, pos: new PBVector3({x: h.x + 8, ...h})}));
+// 	}
+// 	this.reset();
+// 	return;
+// }
+// `);
 
 	// STEP
 	addModification('p.y=this.stepHeight;', 'p.y=(enabledModules["Step"]?Math.max(stepheight[1],this.stepHeight):this.stepHeight);', true);
@@ -1562,7 +1578,7 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 				else delete tickLoop["ChestSteal"];
 			});
 			cheststealblocks = cheststeal.addoption("Blocks", Boolean, true);
-			cheststealtools = cheststeal.addoption("Tools", Boolean, false);
+			cheststealtools = cheststeal.addoption("Tools", Boolean, true);
 
 
 			let scaffoldtower, oldHeld, scaffoldextend, scaffoldcycle;
@@ -1585,14 +1601,19 @@ function switchSlot(slot) {
     game.info.selectedSlot = slot;
 }
 
-const scaffold = new Module("DevScaffold", function(callback) {
+const scaffold = new Module("Scaffold", function(callback) {
     if (callback) {
         if (player) oldHeld = game.info.selectedSlot;
 
-        tickLoop["DevScaffold"] = function() {
+        game.chat.addChat({
+    text: ":money_mouth:",
+    color: "gold"
+});
+
+        tickLoop["Scaffold"] = function() {
             tickCount++;
 
-            // 🔁 Auto-select blocks & cycle between them
+            // Selects blocks from the hotbar & cycles through them until it runs out ofc (1-9)
             let slotsWithBlocks = [];
             for (let i = 0; i < 9; i++) {
                 const item = player.inventory.main[i];
@@ -1610,7 +1631,7 @@ const scaffold = new Module("DevScaffold", function(callback) {
                 const selected = Math.floor(tickCount / scaffoldcycle[1]) % slotsWithBlocks.length;
                 switchSlot(slotsWithBlocks[selected]);
             } else if (slotsWithBlocks.length > 0) {
-                switchSlot(slotsWithBlocks[0]); // fallback
+                switchSlot(slotsWithBlocks[0]); // a fallback lol
             }
 
             const item = player.inventory.getCurrentItem();
@@ -1743,7 +1764,7 @@ const scaffold = new Module("DevScaffold", function(callback) {
                         }
                     }
 
-                    break; // ✅ Stop checking after placing
+                    break; // Stop checks after placing blocks
                 }
             }
         };
@@ -1751,7 +1772,7 @@ const scaffold = new Module("DevScaffold", function(callback) {
         if (player && oldHeld !== undefined) {
             switchSlot(oldHeld);
         }
-        delete tickLoop["DevScaffold"];
+        delete tickLoop["Scaffold"];
     }
 });
 
