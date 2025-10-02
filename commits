@@ -3,7 +3,6 @@ Add "InvWalk" module to allow walking while the inventory screen is open
 Add "KeepSprint" feature to prevent sprint interruption during high-speed movement
 Add "Velocity" module for modifying entity velocity, including both horizontal and vertical components
 Add AJAX-based form submissions to improve page interactivity and speed
-Add InfiniteFly module to allow seamless flight in all directions
 Add KeepSprint feature to maintain sprint state even after movement interruptions
 Add `CHANGELOG.md` to track changes made in each release
 Add ability to sort search results by price, rating, or other filters
@@ -24,7 +23,6 @@ Add custom error page for handling failed API requests with helpful links
 Add custom hover effects to buttons to improve user interaction feedback
 Add custom module for "InvWalk" to allow walking while in inventory mode
 Add custom settings to toggle player speed, jump height, and fall speed independently
-Add enhanced controls for InfiniteFly speed to customize vertical and horizontal movement
 Add fallback mechanism for "Killaura" targeting when multiple valid targets are available
 Add feature to auto-enable KeepSprint during movement for uninterrupted speed
 Add feature to automatically re-enable "KeepSprint" after player velocity changes
