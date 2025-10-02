@@ -14,7 +14,7 @@ All notable changes to this project will be documented here :)
 ### idk lol
 - New month new commits
 - `ReadMe` updated
-- added some improvements for `AntiBan` - DataM0del (Ik this was yesterday LOL)
+- added some improvements for `AntiBan` - DataM0del (Ik this was yesterday LOL) `https://codeberg.org/RealPacket/miniblox-acc-gen`
 
 ## [v6] - 2025-09-30
 ### Improved
