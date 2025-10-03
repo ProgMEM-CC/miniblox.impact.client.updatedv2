@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Impact For Miniblox!
 // @namespace    ProgMEM-CC, TheM1ddleM1n, he557, 7GrandDad, BlueDragon7327, DataM0del/RealPacket, ekusos22, whoppps, ispyboy
-// @version      6
-// @description  The ultimate MiniBlox hacked client. Built for total domination of Miniblox servers! Fully dark-mode optimized with a modern GUI and high performance guaranteed.
+// @version      6.1
+// @description  The ultimate MiniBlox hacked client! Built for total domination of Miniblox servers! Fully dark-mode optimized with a modern GUI and high performance!
 // @author       7GrandDad, ProgMEM-CC, TheM1ddleM1n, he557, RealPacket/DataM0del (Codeberg/Github names), BlueDragon7327, whoppps, ispyboy
 // @match        https://miniblox.io/
 // @match        https://miniblox.org/
@@ -29,7 +29,7 @@
 //  whoppps (github.com/whoppps)
 //  ispyboy (github.com/ispyboy)
 //
-//  i dont think we need anymore devs lol :money_mouth: (unless required tho)
+//  i dont think we need anymore devs lol :trollface: (unless required)
 //  
 // =============================================== Credits To ================================================
 //    7GrandDad, the OG Creator of the Vape V4 hacked client for Miniblox!
