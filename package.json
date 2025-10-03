@@ -1,0 +1,23 @@
+{
+  "name": "miniblox.impact.client.updatedv2",
+  "version": "1.0.0",
+  "description": "[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&duration=2500&pause=1000&color=7179F7&width=435&lines=The+ultimate+MiniBlox+hacked+client!+;Built+for+stealth%2C+speed%2C+and+total+domination.;Fully+dark-mode+optimized+with+a+modern+UI)](https://git.io/typing-svg)",
+  "main": "src/main.js",
+  "directories": {
+    "doc": "docs",
+    "tools": "tools"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "jshint src",
+    "build": "npm run lint && node build.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/parser": "^7.28.4",
+    "diff": "^5.2.0",
+    "jshint": "^2.13.6"
+  }
+}
