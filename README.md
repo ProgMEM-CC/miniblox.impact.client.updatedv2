@@ -14,6 +14,7 @@ All notable changes to this project will be documented here :)
 - `ReadMe` updated
 - added some more improvements for `AntiBan` - thanks again `DataM0del`! `https://codeberg.org/RealPacket/miniblox-acc-gen`
 - added tags to modules - `DataM0del` (i will port it over - `M1ddleM1n`)
+- removed old stuff from `beta` and moved some stuff to `docs`
 
 ## [v6] - 2025-10-01
 ### idk lol
