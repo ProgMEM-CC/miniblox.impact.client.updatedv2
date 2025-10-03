@@ -228,152 +228,90 @@ let serverPos = player.pos.clone();
         if (color) ctx.globalCompositeOperation = "source-over";
     }
 `);
-// TextGUI (Created by TheM1ddleM1n)
-addModification(
-  '(this.drawSelectedItemStack(),this.drawHintBox())',
-  /*js*/`
-    if (ctx$5 && enabledModules["TextGUI"]) {
-        const colorOffset = Date.now() / 4000;
+// TEXT GUI (OG textgui from M1ddleM1n but improved by DataM0del thanks again!)
+	addModification('(this.drawSelectedItemStack(),this.drawHintBox())', /*js*/`
+		if (ctx$5 && enabledModules["TextGUI"]) {
+			const canvasW = ctx$5.canvas.width;
+			const canvasH = ctx$5.canvas.height;
+			const colorOffset = (Date.now() / 4000);
+			const posX = 15;
+			const posY = 17;
+			ctx$5.imageSmoothingEnabled = true;
+			ctx$5.imageSmoothingQuality = "high";
+			drawImage(ctx$5, textureManager.vapeTexture.image, posX, posY, 80, 21, \`HSL(\${(colorOffset % 1) * 360}, 100%, 50%)\`);
+			drawImage(ctx$5, textureManager.v4Texture.image, posX + 81, posY + 1, 33, 18);
 
-        const canvasW = ctx$5.canvas.width;
-        const canvasH = ctx$5.canvas.height;
+			let offset = 0;
+			let filtered = Object.values(modules).filter(m => m.enabled && m.name !== "TextGUI");
 
-        ctx$5.imageSmoothingEnabled = true;
-        ctx$5.imageSmoothingQuality = "high";
+			filtered.sort((a, b) => {
+				const aName = a.name;
+				const bName = b.name;
+				const compA = ctx$5.measureText(aName).width;
+				const compB = ctx$5.measureText(bName).width;
+				return compA < compB ? 1 : -1;
+			});
 
-  // === Mode store if there any more please add to here! ===
-  const moduleModes = {
-  autofunnychat: "Meme",
-  AutoRespawn: "Instant",
-  ChatDisabler: "Packets",
-  NoSlowdown: "Vanilla",
-  FilterBypass: "Unicode",
-  NameTags: "Custom",
-  AutoClicker: "RMB",
-  AutoQueue: "Instant",
-  ChestSteal: "Hypixel",
-  KeepSprint: "All",
-  InvCleaner: "Sigma",
-  AutoArmor: "Smart",
-  AutoRejoin: "Delay",
-  LongJump: "Vanilla",
-  AntiCheat: "Bypass",
-  FastBreak: "Instant",
-  AutoCraft: "Sword",
-  AutoVote: "SkyWars",
-  MusicFix: "Auto",
-  Scaffold: "MultiBlock",
-  Velocity: "Basic",
-  InvWalk: "Normal",
-  AntiBan: "Packet",
-  Breaker: "Egg",
-  Killaura: "Single",
-  AntiFall: "Packet",
-  Speed: "JumpSpeed",
-  NoFall: "Desync",
-  Phase: "Normal",
-  Sprint: "Normal",
-  Jesus: "Vanilla",
-  Timer: "Boost",
-  WTap: "Legit",
-  Step: "Vanilla",
-  ESP: "Box",
-  Fly: "Desync",
-  ChinaHat: "FunnyWarz",
-  };
+			for(const module of filtered) {
+				offset++;
+				
+				const fontStyle = \`\${textguisize[1]}px \${textguifont[1]}\`;
+				ctx$5.font = fontStyle;
 
-        // Draw logo (bottom-right)
-        const logo = textureManager.vapeTexture.image;
-        const scale = 0.9;
-        const logoW = logo.width * scale;
-        const logoH = logo.height * scale;
-        const posX = canvasW - logoW - 15;
-        const posY = canvasH - logoH - 15;
+				// Build strings
+				const rainbowText = module.name;
+				const modeText = module.tag?.trim();
 
-        ctx$5.shadowColor = "rgba(0, 0, 0, 0.6)";
-        ctx$5.shadowBlur = 6;
-        drawImage(ctx$5, logo, posX, posY, logoW, logoH);
-        ctx$5.shadowColor = "transparent";
-        ctx$5.shadowBlur = 0;
+				const fullText = \`\${rainbowText}\${modeText ? " " + modeText : ""}\`;
+				const textWidth = ctx$5.measureText(fullText).width;
+				const x = canvasW - textWidth - posX;
+				const y = posY + (textguisize[1] + 3) * offset;
 
-        let offset = 0;
-        const stringList = [];
+				// Shadow for both parts
+				ctx$5.shadowColor = "black";
+				ctx$5.shadowBlur = 4;
+				ctx$5.shadowOffsetX = 1;
+				ctx$5.shadowOffsetY = 1;
 
-        for (const [module, value] of Object.entries(enabledModules)) {
-            if (!value || module === "TextGUI") continue;
-            stringList.push(module);
-        }
+				// Draw rainbow part
+				drawText(
+					ctx$5,
+					rainbowText,
+					x,
+					y,
+					fontStyle,
+					\`hsl(\${((colorOffset - 0.025 * offset) % 1) * 360},100%,50%)\`,
+					"left",
+					"top",
+					1,
+					textguishadow[1]
+				);
 
-        // Sort by width (desc)
-        stringList.sort(
-          (a, b) => ctx$5.measureText(b).width - ctx$5.measureText(a).width
-        );
+				// Draw grey mode part (after rainbow width)
+				if (modeText) {
+					const rainbowWidth = ctx$5.measureText(rainbowText).width;
+					drawText(
+						ctx$5,
+						modeText,
+						x + rainbowWidth + 4,
+						y,
+						fontStyle,
+						"#bbbbbb",
+						"left",
+						"top",
+						1,
+						textguishadow[1]
+					);
+				}
 
-        // Draw modules on the right
-        const paddingRight = 15;
-        const startY = 27 + 10;
-
-        for (const moduleName of stringList) {
-            offset++;
-
-            const fontStyle = \`\${textguisize[1]}px \${textguifont[1]}\`;
-            ctx$5.font = fontStyle;
-
-            // Build strings
-            const rainbowText = moduleName;
-            const modeText = moduleModes[moduleName] ? " - " + moduleModes[moduleName] : "";
-
-            const fullText = rainbowText + modeText;
-            const textWidth = ctx$5.measureText(fullText).width;
-            const x = canvasW - textWidth - paddingRight;
-            const y = startY + (textguisize[1] + 3) * offset;
-
-            // Shadow for both parts
-            ctx$5.shadowColor = "black";
-            ctx$5.shadowBlur = 4;
-            ctx$5.shadowOffsetX = 1;
-            ctx$5.shadowOffsetY = 1;
-
-            // Draw rainbow part
-            drawText(
-                ctx$5,
-                rainbowText,
-                x,
-                y,
-                fontStyle,
-                \`hsl(\${((colorOffset - 0.025 * offset) % 1) * 360},100%,50%)\`,
-                "left",
-                "top",
-                1,
-                textguishadow[1]
-            );
-
-            // Draw grey mode part (after rainbow width)
-            if (modeText) {
-                const rainbowWidth = ctx$5.measureText(rainbowText).width;
-                drawText(
-                    ctx$5,
-                    modeText,
-                    x + rainbowWidth,
-                    y,
-                    fontStyle,
-                    "#bbbbbb",
-                    "left",
-                    "top",
-                    1,
-                    textguishadow[1]
-                );
-            }
-
-            // Reset shadow
-            ctx$5.shadowColor = "transparent";
-            ctx$5.shadowBlur = 0;
-            ctx$5.shadowOffsetX = 0;
-            ctx$5.shadowOffsetY = 0;
-        }
-    }
-`
-);
+				// Reset shadow
+				ctx$5.shadowColor = "transparent";
+				ctx$5.shadowBlur = 0;
+				ctx$5.shadowOffsetX = 0;
+				ctx$5.shadowOffsetY = 0;
+			}
+		}
+	`);
 	addModification('+=h*y+u*x}', `
 		if (this == player) {
 			for(const [index, func] of Object.entries(tickLoop)) if (func) func();
@@ -519,7 +457,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		}
 	`);
 
-	// PLAYER ESP (created by TheM1ddleM1n :D)
+	// PLAYER ESP (created by TheM1ddleM1n)
 	addModification(')&&(p.mesh.visible=this.shouldRenderEntity(p))', `
   if (p && p.id != player.id) {
     function hslToRgb(h, s, l) {
@@ -764,7 +702,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
   }
 `);
 
-	// LOGIN BYPASS (cleaned up)
+	// LOGIN BYPASS (cleaned up by DataM0del and TheM1ddleM1n)
 	addModification(
 		'new SPacketLoginStart({' +
 		'requestedUuid:localStorage.getItem(REQUESTED_UUID_KEY)??void 0,' +
@@ -951,21 +889,35 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 
 	// MAIN
 	addModification('document.addEventListener("contextmenu",m=>m.preventDefault());', /*js*/`
-		// my code lol!
+		// my code lol
 		(function() {
 			class Module {
-				constructor(name, func) {
+				name;
+				func;
+				enabled = false;
+				bind = "";
+				options = {};
+				/** @type {() => string | undefined} */
+				tagGetter = () => undefined;
+				constructor(name, func, tag = () => undefined) {
 					this.name = name;
 					this.func = func;
 					this.enabled = false;
 					this.bind = "";
 					this.options = {};
+					this.tagGetter = tag;
 					modules[this.name] = this;
 				}
 				toggle() {
-					this.enabled = !this.enabled;
-					enabledModules[this.name] = this.enabled;
-					this.func(this.enabled);
+					this.setEnabled(!this.enabled);
+				}
+				setEnabled(enabled) {
+					this.enabled = enabled;
+					enabledModules[this.name] = enabled;
+					this.func(enabled);
+				}
+				get tag() {
+					return this.tagGetter();
 				}
 				setbind(key, manual) {
 					if (this.bind != "") delete keybindCallbacks[this.bind];
@@ -984,6 +936,8 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					};
 				}
 				addoption(name, typee, defaultt) {
+					// ! the last item in the option array should never be changed.
+					// ! because it is used in the .reset command
 					this.options[name] = [typee, defaultt, name, defaultt];
 					return this.options[name];
 				}
@@ -1022,7 +976,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			}
 
 			new Module("Sprint", function() {});
-			const velocity = new Module("Velocity", function() {});
+			const velocity = new Module("Velocity", function() {}, () => \`\${velocityhori[1]}% \${velocityvert[1]}%\`);
 			velocityhori = velocity.addoption("Horizontal", Number, 0);
 			velocityvert = velocity.addoption("Vertical", Number, 0);
    
@@ -1090,6 +1044,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			let attackedPlayers = {};
 			let boxMeshes = [];
 			let killaurarange, killaurablock, killaurabox, killauraangle, killaurawall, killauraitem;
+			let killauraSwitchDelay;
 
 			function wrapAngleTo180_radians(j) {
 				return j = j % (2 * Math.PI),
@@ -1105,7 +1060,8 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					const checkYaw = wrapAngleTo180_radians(Math.atan2(aimPos.x, aimPos.z) - player.yaw);
 					if (first) sendYaw = Math.abs(checkYaw) > degToRad(30) && Math.abs(checkYaw) < degToRad(killauraangle[1]) ? player.lastReportedYawDump + newYaw : false;
 					if (Math.abs(newYaw) < degToRad(30)) {
-						if ((attackedPlayers[entity.id] || 0) < Date.now()) attackedPlayers[entity.id] = Date.now() + 100;
+						if ((attackedPlayers[entity.id] ?? 0) < Date.now())
+							attackedPlayers[entity.id] = Date.now() + killauraSwitchDelay[1];
 						if (!didSwing) {
 							hud3D.swingArm();
 							ClientSocket.sendPacket(new SPacketClick({}));
@@ -1125,27 +1081,25 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 
 						const couldCrit = player.ridingEntity == null && !player.inWater
 							&& !player.isOnLadder();
-
 						if (couldCrit) {
-							// TODO: off ground crits? idk how to make it also bypass with fly but lol
-							if (!player.onGround || player.fallDistance > 0) {
+							if (!player.onGround) {
 								return;
 							}
 							const offsets = [
 								0.08, -0.07840000152
 							];
-						 	for (const offset of offsets) {
-						 		const pos = {
-						 			x: player.pos.x,
-						 			y: player.pos.y + offset,
-						 			z: player.pos.z
-						 		};
-						 		ClientSocket.sendPacket(new SPacketPlayerPosLook({
-						 			pos,
+							for (const offset of offsets) {
+								const pos = {
+									x: player.pos.x,
+									y: player.pos.y + offset,
+									z: player.pos.z
+								};
+								ClientSocket.sendPacket(new SPacketPlayerPosLook({
+									pos,
 									onGround: false
-						 		}));
-						 	}
-						 }
+								}));
+							}
+						}
 
 						ClientSocket.sendPacket(new SPacketUseEntity({
 							id: entity.id,
@@ -1197,7 +1151,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 
 			new Module("NoFriends", function(enabled) {
 				ignoreFriends = enabled;
-			})
+			}, () => "Ignore");
 
 			let killAuraAttackInvisible;
 			let attackList = [];
@@ -1275,7 +1229,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					sendYaw = false;
 					unblock();
 				}
-			});
+			}, () => \`\${killaurarange[1]} block\${killaurarange[1] == 1 ? "" : "s"} \${killaurablock[1] ? "Auto Block" : ""}\`);
 			killaurarange = killaura.addoption("Range", Number, 9);
 			killauraangle = killaura.addoption("Angle", Number, 360);
 			killaurablock = killaura.addoption("AutoBlock", Boolean, true);
@@ -1283,6 +1237,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			killaurabox = killaura.addoption("Box", Boolean, true);
 			killauraitem = killaura.addoption("LimitToSword", Boolean, false);
 			killAuraAttackInvisible = killaura.addoption("AttackInvisbles", Boolean, true);
+			killauraSwitchDelay = killaura.addoption("SwitchDelay", Number, 100);
 
 			new Module("FastBreak", function() {});
 
@@ -1356,8 +1311,6 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			jetpackUpMotion = jetpack.addoption("UpMotion", Number, 0.27);
 			jetpackvert = jetpack.addoption("Vertical", Number, 0.27);
 
-
-   
 			// InfiniteFly
 			let infiniteFlyVert, infiniteFlyLessGlide;
 			let warned = false;
@@ -1407,13 +1360,13 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 						}
 					}
 				}
-			});
-			infiniteFlyVert = infiniteFly.addoption("Vertical", Number, 0.15);  // Wont rubberband this way! same for fly
+			},  () => \`V \${infiniteFlyVert[1]} \${infiniteFlyLessGlide[1] ? "LessGlide" : "MoreGlide"}\`);
+			infiniteFlyVert = infiniteFly.addoption("Vertical", Number, 0.15);
 			infiniteFlyLessGlide = infiniteFly.addoption("LessGlide", Boolean, true);
 
-			new Module("InvWalk", function() {});
-			new Module("KeepSprint", function() {});
-			new Module("NoSlowdown", function() {});
+			new Module("InvWalk", function() {}, () => "Ignore");
+			new Module("KeepSprint", function() {}, () => "Ignore");
+			new Module("NoSlowdown", function() {}, () => "Ignore");
 
 			// Speed
 			let speedvalue, speedjump, speedauto;
@@ -1427,17 +1380,22 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 						lastjump = player.onGround ? 0 : lastjump;
 						player.motion.x = dir.x;
 						player.motion.z = dir.z;
-						player.motion.y = player.onGround && dir.length() > 0 && speedauto[1] && !keyPressedDump("space") ? speedjump[1] : player.motion.y;
+						const doJump = player.onGround && dir.length() > 0 && speedauto[1] && !keyPressedDump("space");
+						if (doJump) {
+							player.jump();
+							player.motion.y = player.onGround && dir.length() > 0 && speedauto[1] && !keyPressedDump("space") ? speedjump[1] : player.motion.y;
+						}
 					};
 				}
 				else delete tickLoop["Speed"];
-			});
+			}, () => \`V \${speedvalue[1]} J \${speedjump[1]} \${speedauto[1] ? "A" : "M"}\`);
 			speedvalue = speed.addoption("Speed", Number, 0.39);
 			speedjump = speed.addoption("JumpHeight", Number, 0.42);
 			speedauto = speed.addoption("AutoJump", Boolean, true);
 
-			const step = new Module("Step", function() {});
+			const step = new Module("Step", function() {}, () => stepheight[1]);
 			stepheight = step.addoption("Height", Number, 2);
+
 
 			new Module("ESP", function() {});
 			new Module("ChinaHat", function() {});
@@ -1448,28 +1406,69 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 			textgui.toggle();
 			new Module("AutoRespawn", function() {});
 
+			let lbt = -1;
+
+			const blockHandlers = {
+				rightClick(pos) {
+					ClientSocket.sendPacket(new SPacketClick({
+						location: pos
+					}));
+				},
+				breakBlock(pos) {
+					ClientSocket.sendPacket(new SPacketBreakBlock({
+						location: pos,
+						start: false
+					}));
+				}
+			};
+
+			function isAir(b) {
+				return b instanceof BlockAir;
+			}
+			function isSolid(b) {
+				return b.material.isSolid();
+			}
+			const dfltFilter = b => isSolid(b);
+
+			function handleInRange(range, filter = dfltFilter, handler = blockHandlers.rightClick) {
+				const min = new BlockPos(player.pos.x - range, player.pos.y - range, player.pos.z - range);
+				const max = new BlockPos(player.pos.x + range, player.pos.y + range, player.pos.z + range);
+				const blocks = BlockPos.getAllInBoxMutable(min, max);
+				const filtered = filter !== undefined ? blocks.filter(b => {
+					return filter(game.world.getBlock(b));
+				}) : blocks;
+				filtered.forEach(handler);
+				return filtered;
+			}
+
 			// Breaker
 			let breakerrange;
 			const breaker = new Module("Breaker", function(callback) {
 				if (callback) {
-					let attemptDelay = {};
 					tickLoop["Breaker"] = function() {
 						if (breakStart > Date.now()) return;
 						let offset = breakerrange[1];
-						for (const block of BlockPos.getAllInBoxMutable(new BlockPos(player.pos.x - offset, player.pos.y - offset, player.pos.z - offset), new BlockPos(player.pos.x + offset, player.pos.y + offset, player.pos.z + offset))) {
-							if (game.world.getBlockState(block).getBlock() instanceof BlockDragonEgg) {
-								if ((attemptDelay[block] || 0) > Date.now()) continue;
-								attemptDelay[block] = Date.now() + 500;
-								ClientSocket.sendPacket(new SPacketClick({
-									location: block
-								}));
-							}
-						}
+						handleInRange(breakerrange[1], b => b instanceof BlockDragonEgg);
 					}
 				}
 				else delete tickLoop["Breaker"];
-			});
+			}, () => \`\${breakerrange[1]} block\${breakerrange[1] == 1 ? "" : "s"}\`);
 			breakerrange = breaker.addoption("Range", Number, 10);
+
+			// Nuker
+			// TODO: fix kick from sending too many packets,
+			// and also fixes for when the break time isn't instant
+			let nukerRange;
+			const nuker = new Module("Nuker", function(callback) {
+				if (callback) {
+					tickLoop["Nuker"] = function() {
+						let offset = nukerRange[1];
+						handleInRange(nukerRange[1], undefined, blockHandlers.breakBlock);
+					}
+				}
+				else delete tickLoop["Nuker"];
+			}, () => \`\${nukerRange[1]} block\${nukerRange[1] == 1 ? "" : "s"}\`);
+			nukerRange = nuker.addoption("Range", Number, 10);
 
 			function getItemStrength(stack) {
 				if (stack == null) return 0;
@@ -1783,21 +1782,20 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 			let timervalue;
 			const timer = new Module("Timer", function(callback) {
 				reloadTickLoop(callback ? 50 / timervalue[1] : 50);
-			});
+			}, () => \`\${timervalue[1]} MSPT\`);
 			timervalue = timer.addoption("Value", Number, 1.2);
 			new Module("Phase", function() {});
 
-			const antiban = new Module("AntiBan", function() {});
-			antiban.toggle();
-
+			const antiban = new Module("AntiBan", function() {}, () => useAccountGen ? "Gen" : "Non Account");
 			useAccountGen = antiban.addoption("AccountGen", Boolean, false);
 			accountGenEndpoint = antiban.addoption("GenServer", String, "http://localhost:8000/generate");
+			antiban.toggle();
 			new Module("AutoRejoin", function() {});
 			new Module("AutoQueue", function() {});
 			new Module("AutoVote", function() {});
-			const chatdisabler = new Module("ChatDisabler", function() {});
+			const chatdisabler = new Module("ChatDisabler", function() {}, () => "Spam");
 			chatdisablermsg = chatdisabler.addoption("Message", String, "youtube.com/c/7GrandDadVape");
-			new Module("FilterBypass", function() {});
+			new Module("FilterBypass", function() {}, () => "\\\\");
    
     
     const InvCleaner = new Module("InvCleaner", function (callback) {
@@ -2091,6 +2089,13 @@ ljpower  = longjump.addoption("Power", Number, 0.6);   // horizontal boost
 ljboost  = longjump.addoption("BoostTicks", Number, 10); // how long boost lasts
 ljdesync = longjump.addoption("Desync", Boolean, true);  // toggle desync mode
 
+const survival = new Module("SurvivalMode", function(callback) {
+				if (callback) {
+					if (player) player.setGamemode(GameMode.fromId("survival"));
+					survival.toggle();
+				}
+			}, () => "Spoof");
+
 			globalThis.${storeName}.modules = modules;
 			globalThis.${storeName}.profile = "default";
 		})();
@@ -2230,7 +2235,7 @@ ljdesync = longjump.addoption("Desync", Boolean, true);  // toggle desync mode
       Combat: ["autoclicker", "killaura", "velocity", "wtap"],
       Movement: ["scaffold","jesus","phase","nofall","antifall","sprint","keepsprint","step","speed","jetpack","noslowdown"],
       RendLayer: ["invcleaner","invwalk","autoarmor","esp","nametags+","textgui","clickgui","longjump"],
-      World: ["fastbreak","breaker","autocraft","cheststeal","timer","creativemode"],
+      World: ["fastbreak","breaker","autocraft","cheststeal","timer","survivalmode"],
       Utility: ["autorespawn","autorejoin","autoqueue","autovote","filterbypass","anticheat","autofunnychat","chatdisabler","musicfix","auto-funnychat","music-fix"]
     };
     const catIcons = { Combat:"⚔️", Movement:"🏃", "RendLayer":"🧑👁️", World:"🌍", Utility:"🛠️" };
