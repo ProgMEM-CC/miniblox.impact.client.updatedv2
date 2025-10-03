@@ -4,17 +4,23 @@
 
 # EULA
 
-BEFORE USING, Read EULA.md
+BEFORE USING, Please read EULA.md
 
 # Impact Client Changelog!
 
 All notable changes to this project will be documented here :)
 
+## [v6] - 2025-10-03
+### idk lol
+- `ReadMe` updated
+- added some more improvements for `AntiBan` - thanks again `DataM0del`! `https://codeberg.org/RealPacket/miniblox-acc-gen`
+- added tags to modules - `DataM0del` (i will port it over - `M1ddleM1n`)
+
 ## [v6] - 2025-10-01
 ### idk lol
 - New month new commits
 - `ReadMe` updated
-- added some improvements for `AntiBan` - DataM0del (Ik this was yesterday LOL) `https://codeberg.org/RealPacket/miniblox-acc-gen`
+- added some improvements for `AntiBan` - `DataM0del` - `https://codeberg.org/RealPacket/miniblox-acc-gen`
 
 ## [v6] - 2025-09-30
 ### Improved
@@ -76,17 +82,17 @@ All notable changes to this project will be documented here :)
 ### Any Known Issues
 - `.toggle all` command is currently non-functional (fix for this coming soon hopefully.)
 
-# Installation
+# Installation of this
 
 Copy `tampermonkey.js` and paste into your preferred userscript manager. (Tampermonkey, Greasemonkey, Violentmonkey etc)
 
 (TheM1ddleM1n's comment - Or use the `tampermonkey.js` and manually put in the `injection.js` after the main)
 
-## (if you can) pls Join the Discord here
+## (if you can) please Join the Discord here!
 
 Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 
-# Dev Notes!
+# Dev Notes
 
 - Info about index.html : Goto website.md file.
 
@@ -95,7 +101,7 @@ Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 - **DO NOT EVER PUBLISH UNSTABLE CHANGES (ie. not working modules) TO THE "/" (ROOT) FOLDER. Please PUBLISH IT TO "beta" FOLDER INSTEAD**
 
 
-## Rename Repo (soon.. when ProgMEM-CC sorts out making the urls the same for the closed src dependancies w :D)
+## Rename this Repo (soon.. when ProgMEM-CC sorts out making the urls the same for the closed src dependancies)
 - ProgMEM-CC - when you have time pls rename this to Impact For Miniblox (thanks! - TheM1ddleM1n)
 
 - maybe not so soon about the rename because i still have a lot of closed source dependancies that depent on the url staying the same
