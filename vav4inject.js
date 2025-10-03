@@ -107,7 +107,7 @@ function modifyCode(text) {
 	`);
 	addModification('y:this.getEntityBoundingBox().min.y,', 'y:sendY != false ? sendY : this.getEntityBoundingBox().min.y,', true);
 	addModification("const player=new ClientEntityPlayer", `
-// note: when using the desync,
+// note: when using this desync,
 // your position will only update every 20 ticks.
 let serverPos = player.pos.clone();
 `);
@@ -119,7 +119,7 @@ let serverPos = player.pos.clone();
 		let breakStart = Date.now();
 		let noMove = Date.now();
 
-		// a list of miniblox usernames to not attack / ignore
+		// a list of miniblox usernames to not attack / ignore (friends)
 		/** @type string[] **/
 		const friends = [];
 		let ignoreFriends = false;
@@ -287,7 +287,7 @@ let serverPos = player.pos.clone();
 					textguishadow[1]
 				);
 
-				// Draw grey mode part (after rainbow width)
+				// Draw grey text-mode part (after rainbow width)
 				if (modeText) {
 					const rainbowWidth = ctx$5.measureText(rainbowText).width;
 					drawText(
@@ -304,7 +304,7 @@ let serverPos = player.pos.clone();
 					);
 				}
 
-				// Reset shadow
+				// Reset the shadow
 				ctx$5.shadowColor = "transparent";
 				ctx$5.shadowBlur = 0;
 				ctx$5.shadowOffsetX = 0;
@@ -392,7 +392,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		}
 	`, true);
 
-	// KILLAURA
+	// PRE KILLAURA
 	addModification('else player.isBlocking()?', 'else (player.isBlocking() || blocking)?', true);
 	addModification('this.entity.isBlocking()', '(this.entity.isBlocking() || this.entity == player && blocking)', true);
 	addModification('this.yaw-this.', '(sendYaw || this.yaw)-this.', true);
@@ -404,7 +404,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	addModification('updatePlayerMoveState(),this.isUsingItem()', 'updatePlayerMoveState(),(this.isUsingItem() && !enabledModules["NoSlowdown"])', true);
 	addModification('S&&!this.isUsingItem()', 'S&&!(this.isUsingItem() && !enabledModules["NoSlowdown"])', true);
 
-	 // DESYNC
+	 // DESYNC!
 	addModification("this.inputSequenceNumber++", 'desync ? this.inputSequenceNumber : this.inputSequenceNumber++', true);
 	// addModification("new PBVector3({x:this.pos.x,y:this.pos.y,z:this.pos.z})", "desync ? inputPos : inputPos = this.pos", true);
 
@@ -414,8 +414,8 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	// hook into the reconcileServerPosition
 	// so we know our server pos
 
-	// PREDICTION AC FIXER (makes the ac a bit less annoying (e.g. when scaffolding))
-	// ig but this should be done in the desync branch instead lol - DataM0del
+// PREDICTION AC FIXER (makes the ac a bit less annoying (e.g. when scaffolding))
+// ig but this should be done in the desync branch instead lol - DataM0del
 // 	addModification("if(h.reset){this.setPosition(h.x,h.y,h.z),this.reset();return}", "", true);
 // 	addModification("this.serverDistance=y", `
 // if (h.reset) {
@@ -457,7 +457,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		}
 	`);
 
-	// PLAYER ESP (created by TheM1ddleM1n)
+	// PlayerESP (created by TheM1ddleM1n)
 	addModification(')&&(p.mesh.visible=this.shouldRenderEntity(p))', `
   if (p && p.id != player.id) {
     function hslToRgb(h, s, l) {
@@ -702,7 +702,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
   }
 `);
 
-	// LOGIN BYPASS (cleaned up by DataM0del and TheM1ddleM1n)
+	// LOGIN BYPASS (clean up by DataM0del and TheM1ddleM1n)
 	addModification(
 		'new SPacketLoginStart({' +
 		'requestedUuid:localStorage.getItem(REQUESTED_UUID_KEY)??void 0,' +
@@ -727,7 +727,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	// SWING FIX
 	addModification('player.getActiveItemStack().item instanceof', 'null == ', true);
 
-	// COMMANDS
+	// .COMMANDS
 	addModification('submit(u){', `
 		const str = this.inputValue.toLocaleLowerCase();
 		const args = str.split(" ");
@@ -884,7 +884,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		true
 		);
 
-	// ANTI BLIND
+	// ANTIBLIND
 	addModification("player.isPotionActive(Potions.blindness)", 'player.isPotionActive(Potions.blindness) && !enabledModules["AntiBlind"]', true);
 
 	// MAIN
@@ -980,7 +980,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			velocityhori = velocity.addoption("Horizontal", Number, 0);
 			velocityvert = velocity.addoption("Vertical", Number, 0);
    
-			// Nofall beta?
+			// Nofall beta??
    			let noFallExtraYBeta;
 			const NoFallBeta = new Module("NoFallBeta", function(callback) {
 				if (callback) {
@@ -1254,7 +1254,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				return new Vector3$1(0, 0, 0);
 			}
 
-			// Fly
+			// Fly bypasser?! lol
 			let flyvalue, flyvert, flybypass;
 			const fly = new Module("Fly", function(callback) {
 				if (!callback) {
@@ -1277,39 +1277,6 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			flybypass = fly.addoption("Bypass", Boolean, true);
 			flyvalue = fly.addoption("Speed", Number, 0.18);
 			flyvert = fly.addoption("Vertical", Number, 0.3);
-			
-   
-   			let jetpackvalue, jetpackvert, jetpackUpMotion, jetpackGlide;
-			// jetpack
-			const jetpack = new Module("JetPack", function(callback) {
-				if (callback) {
-					let ticks = 0;
-					tickLoop["JetPack"] = function() {
-						ticks++;
-						const dir = getMoveDirection(jetpackvalue[1]);
-						player.motion.x = dir.x;
-						player.motion.z = dir.z;
-						const goUp = keyPressedDump("space");
-						const goDown = false; 		//keyPressedDump("shift"), might not be needed
-						if (goUp || goDown) {
-							player.motion.y = goUp ? jetpackvert[1] : -jetpackvert[1];
-						} else {
-							player.motion.y = (ticks < 18 && ticks % 6 < 4 ? jetpackUpMotion[1] : -jetpackGlide[1]);
-						}
-					};
-				}
-				else {
-					delete tickLoop["JetPack"];
-					if (player) {
-						player.motion.x = Math.max(Math.min(player.motion.x, 0.3), -0.3);
-						player.motion.z = Math.max(Math.min(player.motion.z, 0.3), -0.3);
-					}
-				}
-			});
-			jetpackvalue = jetpack.addoption("Speed", Number, 0.18);
-			jetpackGlide = jetpack.addoption("Glide", Number, 0.27);
-			jetpackUpMotion = jetpack.addoption("UpMotion", Number, 0.27);
-			jetpackvert = jetpack.addoption("Vertical", Number, 0.27);
 
 			// InfiniteFly
 			let infiniteFlyVert, infiniteFlyLessGlide;
@@ -1559,6 +1526,8 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 				else delete tickLoop["AutoCraft"];
 			});
 
+			
+            // ChestStealOP (M1ddleM1n bypasser?!)
 			let cheststealblocks, cheststealtools;
 			const cheststeal = new Module("ChestSteal", function(callback) {
 				if (callback) {
@@ -1579,7 +1548,7 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 			cheststealblocks = cheststeal.addoption("Blocks", Boolean, true);
 			cheststealtools = cheststeal.addoption("Tools", Boolean, true);
 
-
+            // Scaffold (Another M1ddleM1n bypass)
 			let scaffoldtower, oldHeld, scaffoldextend, scaffoldcycle;
 let tickCount = 0;
 
@@ -2048,47 +2017,6 @@ const jesus = new Module("Jesus", function(callback) {
     }
 });
 
-// LongJump (Created by TheM1ddleM1n)
-let ljpower, ljboost, ljdesync;
-const longjump = new Module("LongJump", function(callback) {
-    if (!callback) {
-        delete tickLoop["LongJump"];
-        desync = false;
-        return;
-    }
-
-    desync = ljdesync[1];
-    let jumping = false;
-    let boostTicks = 0;
-
-    tickLoop["LongJump"] = function() {
-        if (!player) return;
-
-        // Detect jump key
-        if (keyPressedDump("space") && player.onGround && !jumping) {
-            jumping = true;
-            boostTicks = ljboost[1];
-            player.motion.y = 0.42; // vanilla mc jump power lol
-        }
-
-        if (jumping) {
-            const dir = getMoveDirection(ljpower[1]);
-            player.motion.x = dir.x;
-            player.motion.z = dir.z;
-
-            boostTicks--;
-            if (boostTicks <= 0 || player.onGround) {
-                jumping = false;
-            }
-        }
-    };
-});
-
-// Options
-ljpower  = longjump.addoption("Power", Number, 0.6);   // horizontal boost
-ljboost  = longjump.addoption("BoostTicks", Number, 10); // how long boost lasts
-ljdesync = longjump.addoption("Desync", Boolean, true);  // toggle desync mode
-
 const survival = new Module("SurvivalMode", function(callback) {
 				if (callback) {
 					if (player) player.setGamemode(GameMode.fromId("survival"));
@@ -2234,7 +2162,7 @@ const survival = new Module("SurvivalMode", function(callback) {
     const categories = {
       Combat: ["autoclicker", "killaura", "velocity", "wtap"],
       Movement: ["scaffold","jesus","phase","nofall","antifall","sprint","keepsprint","step","speed","jetpack","noslowdown"],
-      RendLayer: ["invcleaner","invwalk","autoarmor","esp","nametags+","textgui","clickgui","longjump"],
+      RendLayer: ["invcleaner","invwalk","autoarmor","esp","nametags+","textgui","clickgui"],
       World: ["fastbreak","breaker","autocraft","cheststeal","timer","survivalmode"],
       Utility: ["autorespawn","autorejoin","autoqueue","autovote","filterbypass","anticheat","autofunnychat","chatdisabler","musicfix","auto-funnychat","music-fix"]
     };
