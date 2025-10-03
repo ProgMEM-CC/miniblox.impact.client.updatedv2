@@ -4,7 +4,9 @@
 
 # EULA
 
-BEFORE USING, Please read EULA.md
+BEFORE USING, Please see and read 
+# File Structure
+docs/EULA.md
 
 # Impact Client Changelog!
 
