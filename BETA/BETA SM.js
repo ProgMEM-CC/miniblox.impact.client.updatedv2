@@ -1,4 +1,4 @@
-// Streamer Mode Module
+// Streamer Mode Module (idk if this works)
 var streamerToggle, hideConsole, hideNameUI;
 
 var streamerMode = new Module("StreamerMode", function (enabled) {
