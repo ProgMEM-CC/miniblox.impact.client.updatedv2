@@ -1278,6 +1278,45 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			flyvalue = fly.addoption("Speed", Number, 0.18);
 			flyvert = fly.addoption("Vertical", Number, 0.3);
 
+			let jetpackvalue, jetpackvert, jetpackUpMotion, jetpackGlide;
+
+// Jetpack (Was ProgMEM-CC's idea but put a desync on it)
+const jetpack = new Module("JetPack", function(callback) {
+    if (callback) {
+        desync = true; // enables global desync
+        let ticks = 0;
+        tickLoop["JetPack"] = function() {
+            ticks++;
+            const dir = getMoveDirection(jetpackvalue[1]);
+            player.motion.x = dir.x;
+            player.motion.z = dir.z;
+
+            const goUp = keyPressedDump("space");
+            const goDown = false; // could be keyPressedDump("shift") if you want down control
+
+            if (goUp || goDown) {
+                player.motion.y = goUp ? jetpackvert[1] : -jetpackvert[1];
+            } else {
+                // fake “hover/glide” motion
+                player.motion.y = (ticks < 18 && ticks % 6 < 4 ? jetpackUpMotion[1] : -jetpackGlide[1]);
+            }
+        };
+    } else {
+        desync = false; // disables global desync
+        delete tickLoop["JetPack"];
+        if (player) {
+            player.motion.x = Math.max(Math.min(player.motion.x, 0.3), -0.3);
+            player.motion.z = Math.max(Math.min(player.motion.z, 0.3), -0.3);
+        }
+    }
+});
+
+// === Options ===
+jetpackvalue    = jetpack.addoption("Speed", Number, 0.18);
+jetpackGlide    = jetpack.addoption("Glide", Number, 0.27);
+jetpackUpMotion = jetpack.addoption("UpMotion", Number, 0.27);
+jetpackvert     = jetpack.addoption("Vertical", Number, 0.27);
+
 			// InfiniteFly
 			let infiniteFlyVert, infiniteFlyLessGlide;
 			let warned = false;
