@@ -88,7 +88,7 @@ Copy `tampermonkey.js` and paste into your preferred userscript manager. (Tamper
 
 (TheM1ddleM1n's comment - Or use the `tampermonkey.js` and manually put in the `injection.js` after the main)
 
-## (if you can) please Join the Discord here!
+## (if you can) please Join the Discord here! - ProgMEM-CC
 
 Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 
@@ -96,9 +96,9 @@ Join us on Discord! [here](https://discord.gg/PwpGemYhJx)!
 
 - Info about index.html : Goto website.md file.
 
-- **When updating the version of the script, remember to update VERSIONFILE, tampermonkey.js and injection.js**
+- **When updating the version of the script, please remember to update VERSIONFILE, tampermonkey.js and injection.js** - TheM1ddleM1n
 
-- **DO NOT EVER PUBLISH UNSTABLE CHANGES (ie. not working modules) TO THE "/" (ROOT) FOLDER. Please PUBLISH IT TO "beta" FOLDER INSTEAD**
+- **DO NOT EVER PUBLISH UNSTABLE CHANGES (ie. not working modules) TO THE "/" (ROOT) FOLDER. Please PUBLISH IT TO "beta" FOLDER INSTEAD** - ProgMEM-CC
 
 
 ## Rename this Repo (soon.. when ProgMEM-CC sorts out making the urls the same for the closed src dependancies)
