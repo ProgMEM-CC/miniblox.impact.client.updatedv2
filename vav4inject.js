@@ -1064,6 +1064,10 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 			}/*, () => "Spam Chunk Load"*/);
 
+			serverCrasherStartX = serverCrasher.addoption("Start X", Number, 99e9);
+			serverCrasherStartZ = serverCrasher.addoption("Start Z", Number, 99e9);
+			serverCrasherPacketsPerTick = serverCrasher.addoption("Packets Per Tick", Number, 16);
+
 			// Killaura
 			let attackDelay = Date.now();
 			let didSwing = false;
