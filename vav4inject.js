@@ -2271,11 +2271,12 @@ const survival = new Module("SurvivalMode", function(callback) {
     const categories = {
       Combat: ["autoclicker", "killaura", "velocity", "wtap"],
       Movement: ["scaffold","jesus","phase","nofall","antifall","sprint","keepsprint","step","speed","jetpack","noslowdown","longjump"],
-      RendLayer: ["invcleaner","invwalk","autoarmor","esp","nametags+","textgui","clickgui"],
+      Render: ["invcleaner","invwalk","autoarmor","esp","nametags+","textgui","clickgui"],
       World: ["fastbreak","breaker","autocraft","cheststeal","timer","survivalmode"],
-      Utility: ["autorespawn","autorejoin","autoqueue","autovote","filterbypass","anticheat","autofunnychat","chatdisabler","musicfix","auto-funnychat","music-fix"]
+      Utility: ["autorespawn","autorejoin","autoqueue","autovote","filterbypass","anticheat","autofunnychat","chatdisabler","musicfix","auto-funnychat","music-fix"],
+	  Exploit: ["servercrasher"]
     };
-    const catIcons = { Combat:"⚔️", Movement:"🏃", "RendLayer":"🧑👁️", World:"🌍", Utility:"🛠️" };
+    const catIcons = { Combat:"⚔️", Movement:"🏃", "Render":"🧑👁️", World:"🌍", Utility:"🛠️", Exploit:"⚠" };
 
     // === Styles ===
     const style = document.createElement("style");
