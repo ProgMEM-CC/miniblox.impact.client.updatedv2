@@ -1423,7 +1423,7 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 			speedjump = speed.addoption("JumpHeight", Number, 0.42);
 			speedauto = speed.addoption("AutoJump", Boolean, true);
 
-			const step = new Module("Step", function() {}, () => stepheight[1]);
+			const step = new Module("Step", function() {}, () => \`\${stepheight[1]}\`);
 			stepheight = step.addoption("Height", Number, 2);
 
 
