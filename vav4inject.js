@@ -196,17 +196,10 @@ let serverPos = player.pos.clone();
 	addModification('I(this,"glintTexture");', `
 		I(this, "vapeTexture");
 	`);
-	/**
-	 * @param {string} url
-	 * @returns
-	 */
-	const corsMoment = url => {
-		return new URL(`https://corsproxy.io/?url=${url}`).href;
-	}
 	addModification('skinManager.loadTextures(),', ',this.loadVape(),');
 	addModification('async loadSpritesheet(){', `
 		async loadVape() {
-			this.vapeTexture = await this.loader.loadAsync("${corsMoment("https://raw.githubusercontent.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/main/Logo.png")}");
+			this.vapeTexture = await this.loader.loadAsync("https://raw.githubusercontent.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/main/Logo.png");
 		}
 		async loadSpritesheet(){
 	`, true);
