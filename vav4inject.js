@@ -1502,7 +1502,7 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 					}
 				}
 				else delete tickLoop["Nuker"];
-			}, () => \`\${nukerRange[1]} block\${nukerRange[1] == 1 ? "" : "s"}\`);
+			});
 			nukerRange = nuker.addoption("Range", Number, 10);
 
 			function getItemStrength(stack) {
