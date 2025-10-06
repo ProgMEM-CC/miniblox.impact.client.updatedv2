@@ -1816,7 +1816,7 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 			timervalue = timer.addoption("Value", Number, 1.2);
 			new Module("Phase", function() {});
 
-			const antiban = new Module("AntiBan", function() {}, () => useAccountGen ? "Gen" : "Non Account");
+			const antiban = new Module("AntiBan", function() {}, () => useAccountGen[1] ? "Gen" : "Non Account");
 			useAccountGen = antiban.addoption("AccountGen", Boolean, false);
 			accountGenEndpoint = antiban.addoption("GenServer", String, "http://localhost:8000/generate");
 			antiban.toggle();
