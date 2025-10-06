@@ -239,7 +239,6 @@ let serverPos = player.pos.clone();
 			ctx$5.imageSmoothingEnabled = true;
 			ctx$5.imageSmoothingQuality = "high";
 			drawImage(ctx$5, textureManager.vapeTexture.image, posX, posY, 80, 21, \`HSL(\${(colorOffset % 1) * 360}, 100%, 50%)\`);
-			drawImage(ctx$5, textureManager.v4Texture.image, posX + 81, posY + 1, 33, 18);
 
 			let offset = 0;
 			let filtered = Object.values(modules).filter(m => m.enabled && m.name !== "TextGUI");
@@ -1041,6 +1040,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			// bread (one of the devs behind atmosphere) found it
 			// and later shared it to me when we were talking
 			// about the upcoming bloxd layer.
+			// it's patched on the gamemodes... but not on the planets. I might find another one soon for the ones where this is patched
 
 			let serverCrasherStartX, serverCrasherStartZ;
 			let serverCrasherPacketsPerTick;
@@ -1062,7 +1062,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 						}
 					}
 				}
-			}/*, () => "Spam Chunk Load"*/);
+			}, () => "Spam Chunk Load");
 
 			serverCrasherStartX = serverCrasher.addoption("Start X", Number, 99e9);
 			serverCrasherStartZ = serverCrasher.addoption("Start Z", Number, 99e9);
@@ -1502,7 +1502,7 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 					}
 				}
 				else delete tickLoop["Nuker"];
-			});
+			}, () => \`\${nukerRange[1]} block\${nukerRange[1] == 1 ? "" : "s"}\`);
 			nukerRange = nuker.addoption("Range", Number, 10);
 
 			function getItemStrength(stack) {
