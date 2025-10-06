@@ -957,7 +957,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 						if (entity.mode.isCreative() || entity.mode.isSpectator())
 							continue; 
 				}
-			})
+			});
 
             function reloadTickLoop(value) {
 				if (game.tickLoop) {
