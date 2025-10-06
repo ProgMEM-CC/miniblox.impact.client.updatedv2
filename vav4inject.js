@@ -1362,14 +1362,12 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 					}
 					let ticks = 0;
 					tickLoop["InfiniteFly"] = function() {
-						sendGround = undefined;
 						ticks++;
 						const dir = getMoveDirection(0.37799);
 						player.motion.x = dir.x;
 						player.motion.z = dir.z;
 						const goUp = keyPressedDump("space");
 						const goDown = keyPressedDump("shift");
-						sendGround = true;
 						if (ticks < 6 && !goUp && !goDown) {
 							player.motion.y = 0;
 							return;
