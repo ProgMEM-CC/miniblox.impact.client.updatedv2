@@ -9,6 +9,14 @@ docs/EULA.md (Please see and read)
 
 All notable changes to this project will be documented here :)
 
+## [v6.1] - 2025-10-06
+### idk lol
+- `ReadMe` updated
+- added tags to modules ie. `Step` module - Created by `DataM0del`
+- created a new `ServerCrasher` module (Which is OP) - Created by `DataM0del`
+
+
+
 ## [v6] - 2025-10-03
 ### idk lol
 - `ReadMe` updated
