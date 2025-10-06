@@ -1439,6 +1439,20 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 			textguisize = textgui.addoption("TextSize", Number, 14);
 			textguishadow = textgui.addoption("Shadow", Boolean, true);
 			textgui.toggle();
+			// Nuker
+			// TODO: fix kick from sending too many packets,
+			// and also fixes for when the break time isn't instant
+			let nukerRange;
+			const nuker = new Module("Nuker", function(callback) {
+				if (callback) {
+					tickLoop["Nuker"] = function() {
+						let offset = nukerRange[1];
+						handleInRange(nukerRange[1], undefined, blockHandlers.breakBlock);
+					}
+				}
+				else delete tickLoop["Nuker"];
+			}, () => \`\${nukerRange[1]} block\${nukerRange[1] == 1 ? "" : "s"}\`);
+			nukerRange = nuker.addoption("Range", Number, 10);
 			new Module("AutoRespawn", function() {});
 
 			let lbt = -1;
