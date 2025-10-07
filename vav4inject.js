@@ -222,88 +222,102 @@ let serverPos = player.pos.clone();
     }
 `);
 // TEXT GUI (OG textgui from M1ddleM1n but improved by DataM0del thanks again!)
-	addModification('(this.drawSelectedItemStack(),this.drawHintBox())', /*js*/`
-		if (ctx$5 && enabledModules["TextGUI"]) {
-			const canvasW = ctx$5.canvas.width;
-			const canvasH = ctx$5.canvas.height;
-			const colorOffset = (Date.now() / 4000);
-			const posX = 15;
-			const posY = 17;
-			ctx$5.imageSmoothingEnabled = true;
-			ctx$5.imageSmoothingQuality = "high";
-			drawImage(ctx$5, textureManager.vapeTexture.image, posX, posY, 80, 21, \`HSL(\${(colorOffset % 1) * 360}, 100%, 50%)\`);
+addModification('(this.drawSelectedItemStack(),this.drawHintBox())', /*js*/`
+	if (ctx$5 && enabledModules["TextGUI"]) {
+		const canvasW = ctx$5.canvas.width;
+		const canvasH = ctx$5.canvas.height;
+		const colorOffset = (Date.now() / 4000);
+		const posX = 15;
+		const posY = 17;
+		ctx$5.imageSmoothingEnabled = true;
+		ctx$5.imageSmoothingQuality = "high";
 
-			let offset = 0;
-			let filtered = Object.values(modules).filter(m => m.enabled && m.name !== "TextGUI");
+		let offset = 0;
+		let filtered = Object.values(modules).filter(m => m.enabled && m.name !== "TextGUI");
 
-			filtered.sort((a, b) => {
-				const aName = a.name;
-				const bName = b.name;
-				const compA = ctx$5.measureText(aName).width;
-				const compB = ctx$5.measureText(bName).width;
-				return compA < compB ? 1 : -1;
-			});
+		filtered.sort((a, b) => {
+			const aName = a.name;
+			const bName = b.name;
+			const compA = ctx$5.measureText(aName).width;
+			const compB = ctx$5.measureText(bName).width;
+			return compA < compB ? 1 : -1;
+		});
 
-			for(const module of filtered) {
-				offset++;
-				
-				const fontStyle = \`\${textguisize[1]}px \${textguifont[1]}\`;
-				ctx$5.font = fontStyle;
+		for (const module of filtered) {
+			offset++;
+			
+			const fontStyle = \`\${textguisize[1]}px \${textguifont[1]}\`;
+			ctx$5.font = fontStyle;
 
-				// Build strings
-				const rainbowText = module.name;
-				const modeText = module.tag?.trim();
+			// Build strings
+			const rainbowText = module.name;
+			const modeText = module.tag?.trim();
 
-				const fullText = \`\${rainbowText}\${modeText ? " " + modeText : ""}\`;
-				const textWidth = ctx$5.measureText(fullText).width;
-				const x = canvasW - textWidth - posX;
-				const y = posY + (textguisize[1] + 3) * offset;
+			const fullText = \`\${rainbowText}\${modeText ? " " + modeText : ""}\`;
+			const textWidth = ctx$5.measureText(fullText).width;
+			const x = canvasW - textWidth - posX;
+			const y = posY + (textguisize[1] + 3) * offset;
 
-				// Shadow for both parts
-				ctx$5.shadowColor = "black";
-				ctx$5.shadowBlur = 4;
-				ctx$5.shadowOffsetX = 1;
-				ctx$5.shadowOffsetY = 1;
+			// Shadow for both parts
+			ctx$5.shadowColor = "black";
+			ctx$5.shadowBlur = 4;
+			ctx$5.shadowOffsetX = 1;
+			ctx$5.shadowOffsetY = 1;
 
-				// Draw rainbow part
+			// Draw rainbow part
+			drawText(
+				ctx$5,
+				rainbowText,
+				x,
+				y,
+				fontStyle,
+				\`hsl(\${((colorOffset - 0.025 * offset) % 1) * 360},100%,50%)\`,
+				"left",
+				"top",
+				1,
+				textguishadow[1]
+			);
+
+			// Draw grey text-mode part (after rainbow width)
+			if (modeText) {
+				const rainbowWidth = ctx$5.measureText(rainbowText).width;
 				drawText(
 					ctx$5,
-					rainbowText,
-					x,
+					modeText,
+					x + rainbowWidth + 4,
 					y,
 					fontStyle,
-					\`hsl(\${((colorOffset - 0.025 * offset) % 1) * 360},100%,50%)\`,
+					"#bbbbbb",
 					"left",
 					"top",
 					1,
 					textguishadow[1]
 				);
-
-				// Draw grey text-mode part (after rainbow width)
-				if (modeText) {
-					const rainbowWidth = ctx$5.measureText(rainbowText).width;
-					drawText(
-						ctx$5,
-						modeText,
-						x + rainbowWidth + 4,
-						y,
-						fontStyle,
-						"#bbbbbb",
-						"left",
-						"top",
-						1,
-						textguishadow[1]
-					);
-				}
-
-				// Reset the shadow
-				ctx$5.shadowColor = "transparent";
-				ctx$5.shadowBlur = 0;
-				ctx$5.shadowOffsetX = 0;
-				ctx$5.shadowOffsetY = 0;
 			}
+
+			// Reset the shadow
+			ctx$5.shadowColor = "transparent";
+			ctx$5.shadowBlur = 0;
+			ctx$5.shadowOffsetX = 0;
+			ctx$5.shadowOffsetY = 0;
 		}
-	`);
+
+		// === Draw logo (bottom-right) ===
+		const logo = textureManager.vapeTexture.image;
+		const scale = 0.9;
+		const logoW = logo.width * scale;
+		const logoH = logo.height * scale;
+		const logoX = canvasW - logoW - 15;
+		const logoY = canvasH - logoH - 15;
+
+		ctx$5.shadowColor = "rgba(0, 0, 0, 0.6)";
+		ctx$5.shadowBlur = 6;
+		drawImage(ctx$5, logo, logoX, logoY, logoW, logoH);
+		ctx$5.shadowColor = "transparent";
+		ctx$5.shadowBlur = 0;
+	}
+`);
+
 	addModification('+=h*y+u*x}', `
 		if (this == player) {
 			for(const [index, func] of Object.entries(tickLoop)) if (func) func();
