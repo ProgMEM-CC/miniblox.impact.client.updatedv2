@@ -12,14 +12,15 @@ When the original client was deleted, **TheM1ddleM1n**, **RealPacket (aka DataM0
 
 ---
 
-## Modules
+## Some example modules that are included in this client!
 - Fly / NoFall / Scaffold  
-- AntiBan 2.0  
+- AntiBan 2.0 (with a account gen) 
 - Click GUI + Text GUI  
-- ServerCrasher (in beta)  
+- ServerCrasher (in BETA)  
 - Modular script architecture (stable & beta)  
 - Open changelog and contributor tags
-- 
+- Nuker (in BETA)
+- Jetpack
 
 
 ---
