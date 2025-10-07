@@ -13,12 +13,14 @@ When the original client was deleted, **TheM1ddleM1n**, **RealPacket (aka DataM0
 ---
 
 ## Modules
-✅ Fly / NoFall / Scaffold  
-✅ AntiBan 2.0  
-✅ Click GUI + Text GUI  
-✅ ServerCrasher (beta)  
-✅ Modular script architecture (stable & beta)  
-✅ Open changelog and contributor tags  
+- Fly / NoFall / Scaffold  
+- AntiBan 2.0  
+- Click GUI + Text GUI  
+- ServerCrasher (in beta)  
+- Modular script architecture (stable & beta)  
+- Open changelog and contributor tags
+- 
+
 
 ---
 
@@ -26,14 +28,12 @@ When the original client was deleted, **TheM1ddleM1n**, **RealPacket (aka DataM0
 1. Install a userscript manager (🧩 **Tampermonkey**, **Violentmonkey**, or **Greasemonkey**).  
 2. Copy the contents of `tampermonkey.js` and (`optional`) `injection.js`.
 3. Paste it into a new userscript and enable it.  
-5. Open [MiniBlox.io](https://miniblox.io) — the client will auto-initialize.  
-
-*Tip:* You can inject `vav4inject.js` for the latest GUI modules and HUD extensions.
+5. Open [Miniblox.io](https://miniblox.io) — the client will auto-initialize.  
 
 ---
 
 🧾 Changelog
-All notable changes to this project will be documented here
+All notable changes to this project will be documented here!
 
 [v6.1] - 2025-10-06
 ReadMe updated
@@ -91,7 +91,6 @@ Never publish unstable code to / (root). Use /beta for testing builds.
 Repo rename pending once closed-source dependencies are synced.
 
 👥 Contributors
-Role	Developer	Alias
 Original Creator of the client (Vape for MiniBlox) 7GrandDadPGN
 Core Developer	RealPacket	- DataM0del
 Core Developer / Maintainer	- TheM1ddleM1n
