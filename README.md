@@ -104,6 +104,7 @@ Repo rename pending once closed-source dependencies are synced.
 
 ## 🧷 Links
 🌐 impactminiblox.js.org
+
 💬 Discord Impact Community - https://discord.gg/PwpGemYhJx
 
 ## ⚠️ Disclaimer
