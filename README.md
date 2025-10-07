@@ -92,12 +92,13 @@ Never publish unstable code to / (root). Use /beta for testing builds.
 Repo rename pending once closed-source dependencies are synced.
 
 ## 👥 Contributors
-| Role                             | Contributor            |
-|----------------------------------|------------------------|
-| Original Creator (Vape for MiniBlox) | [7GrandDadPGN](https://github.com/7GrandDadPGN)          |
-| Core Developer                   | [DataM0del](https://github.com/DataM0del) |
-| Core Developer / Maintainer      | [TheM1ddleM1n](https://github.com/TheM1ddleM1n)           |
-| Repo Manager / Infrastructure    | [ProgMEM-CC](https://github.com/ProgMEM-CC)             |
+| Avatar | Role                             | Contributor            |
+|--------|----------------------------------|------------------------|
+| ![7GrandDadPGN](https://github.com/7GrandDadPGN.png?size=40) | Original Creator (Vape for MiniBlox) | [7GrandDadPGN](https://github.com/7GrandDadPGN) |
+| ![DataM0del](https://github.com/DataM0del.png?size=40) | Core Developer                   | [DataM0del](https://github.com/DataM0del) |
+| ![TheM1ddleM1n](https://github.com/TheM1ddleM1n.png?size=40) | Core Developer / Maintainer      | [TheM1ddleM1n](https://github.com/TheM1ddleM1n) |
+| ![ProgMEM-CC](https://github.com/ProgMEM-CC.png?size=40) | Repo Manager / Infrastructure    | [ProgMEM-CC](https://github.com/ProgMEM-CC) |
+
 
 
 ## 🧷 Links
