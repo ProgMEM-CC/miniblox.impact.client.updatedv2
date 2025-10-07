@@ -1436,8 +1436,6 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 			textgui.toggle();
 			new Module("AutoRespawn", function() {});
 
-			let lbt = -1;
-
 			const blockHandlers = {
 				rightClick(pos) {
 					ClientSocket.sendPacket(new SPacketClick({
