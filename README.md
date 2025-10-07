@@ -94,10 +94,11 @@ Repo rename pending once closed-source dependencies are synced.
 ## 👥 Contributors
 | Avatar | Role                             | Contributor            |
 |--------|----------------------------------|------------------------|
-| ![7GrandDadPGN](https://github.com/7GrandDadPGN.png?size=20) | Original Creator (Vape for MiniBlox) | [7GrandDadPGN](https://github.com/7GrandDadPGN) |
-| ![DataM0del](https://github.com/DataM0del.png?size=20) | Core Developer                   | [DataM0del](https://github.com/DataM0del) |
-| ![TheM1ddleM1n](https://github.com/TheM1ddleM1n.png?size=20) | Core Developer / Maintainer      | [TheM1ddleM1n](https://github.com/TheM1ddleM1n) |
-| ![ProgMEM-CC](https://github.com/ProgMEM-CC.png?size=20) | Repo Manager / Infrastructure    | [ProgMEM-CC](https://github.com/ProgMEM-CC) |
+| <img src="https://github.com/7GrandDadPGN.png" width="40" height="40"> | Original Creator (Vape for MiniBlox) | [7GrandDadPGN](https://github.com/7GrandDadPGN) |
+| <img src="https://github.com/DataM0del.png" width="40" height="40"> | Core Developer                   | [DataM0del](https://github.com/DataM0del) |
+| <img src="https://github.com/TheM1ddleM1n.png" width="40" height="40"> | Core Developer / Maintainer      | [TheM1ddleM1n](https://github.com/TheM1ddleM1n) |
+| <img src="https://github.com/ProgMEM-CC.png" width="40" height="40"> | Repo Manager / Infrastructure    | [ProgMEM-CC](https://github.com/ProgMEM-CC) |
+
 
 
 
