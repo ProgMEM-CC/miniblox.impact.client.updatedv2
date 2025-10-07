@@ -6,7 +6,7 @@
 
 ## Overview of Impact for Miniblox
 **Impact Client for Miniblox.io** is a fully standalone continuation of the discontinued **Vape for Miniblox** project by `7GrandDadPGN`.  
-When the original client was deleted, **TheM1ddleM1n**, **RealPacket (aka DataM0del)**, and **ProgMEM-CC** rebuilt it from scratch — creating a modern, modular, and optimized exploit client framework for Miniblox. :trollface:
+When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPacket)**, and **ProgMEM-CC** rebuilt it from scratch — creating a modern, modular, and optimized exploit client framework for Miniblox. :trollface:
 
 > Designed for stealth, speed, and domination — with full dark-mode support and a slick Click GUI.
 
@@ -95,7 +95,7 @@ Repo rename pending once closed-source dependencies are synced.
 | Role                             | Contributor            |
 |----------------------------------|------------------------|
 | Original Creator (Vape for MiniBlox) | [7GrandDadPGN](https://github.com/7GrandDadPGN)          |
-| Core Developer                   | [RealPacket - DataM0del](https://github.com/RealPacket) |
+| Core Developer                   | [DataM0del](https://github.com/DataM0del) |
 | Core Developer / Maintainer      | [TheM1ddleM1n](https://github.com/TheM1ddleM1n)           |
 | Repo Manager / Infrastructure    | [ProgMEM-CC](https://github.com/ProgMEM-CC)             |
 
