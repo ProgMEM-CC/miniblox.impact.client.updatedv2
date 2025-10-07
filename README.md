@@ -33,73 +33,73 @@ When the original client was deleted, **TheM1ddleM1n**, **RealPacket (aka DataM0
 
 ---
 
-🧾 Changelog
+## 🧾 Changelog
 All notable changes to this project will be documented here!
 
 [v6.1] - 2025-10-06
-ReadMe updated
+- ReadMe updated
 
-Added tags to modules (e.g. Step by DataM0del)
+- Added tags to modules (e.g. Step by DataM0del)
 
-Created new ServerCrasher module – by DataM0del
+- Created new ServerCrasher module – by DataM0del
 
 [v6] - 2025-10-03
-Updated ReadMe
+- Updated ReadMe
 
-Improved AntiBan (thanks DataM0del)
+- Improved AntiBan (thanks DataM0del)
 
-Moved outdated content to docs
+- Moved outdated content to docs
 
 [v6] - 2025-09-30
-Ported .friend and antiblind from Vape for MiniBlox (credit DataM0del)
+- Ported .friend and antiblind from Vape for MiniBlox (credit DataM0del)
 
-Version bump v5.9 → v6.0
+- Version bump v5.9 → v6.0
 
 [v5.9] - 2025-09-29
-Invcleaner overhaul by TheM1ddleM1n
+- Invcleaner overhaul by TheM1ddleM1n
 
-Updated documentation
+- Updated documentation
 
 [v5.8] - 2025-09-26
-Added TargetHUD to beta
+- Added TargetHUD to beta
 
-New ChinaHat and LongJump modules
+- New ChinaHat and LongJump modules
 
-Various updates to tampermonkey.js and ModuleIdeas.md
+- Various updates to tampermonkey.js and ModuleIdeas.md
 
 [v5.6–v5.7]
-Overhauled TextGUI visuals
+- Overhauled TextGUI visuals
 
-moduleideas and readme updates
+- moduleideas and readme updates
 
 [v5.0–v5.5]
-Added /command filter bypass
+- Added /command filter bypass
 
-Added Fly, NoFall, Scaffold bypass (slots 1–9)
+- Added Fly, NoFall, Scaffold bypass (slots 1–9)
 
-Click GUI via vav4inject.js
+- Click GUI via vav4inject.js
 
-Improved inventory handling and UI
+- Improved inventory handling and UI
 
-⚠️ Known Issues
+## ⚠️ Known Issues
 .toggle all command currently non-functional (fix planned soon).
 
-🧩 Dev Notes
+## 🧩 Dev Notes
 Always update VERSIONFILE, tampermonkey.js, and injection.js together.
 
 Never publish unstable code to / (root). Use /beta for testing builds.
 
 Repo rename pending once closed-source dependencies are synced.
 
-👥 Contributors
+## 👥 Contributors
 Original Creator of the client (Vape for MiniBlox) 7GrandDadPGN
 Core Developer	RealPacket	- DataM0del
 Core Developer / Maintainer	- TheM1ddleM1n
 Repo Manager / Infrastructure -	ProgMEM-CC
 
-🧷 Links
+## 🧷 Links
 🌐 impactminiblox.js.org
 💬 Discord Impact Community - https://discord.gg/PwpGemYhJx
 
-⚠️ Disclaimer
+## ⚠️ Disclaimer
 Please be aware that the developers are not responsible for any misuse or violations of Miniblox.io’s Terms of Service.
