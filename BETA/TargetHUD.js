@@ -10,7 +10,7 @@
     ) {
         let nearest = null;
         let minDist = Infinity;
-        const maxRange = 6; // How close to the player it is. (ie. HUD shows when player is 7 blocks away)
+        const maxRange = 7; // How close to the player it is. (ie. HUD shows when player is 7 blocks away)
 
         for (const entity of game.world.entitiesDump?.values?.() || []) {
             if (!entity || !entity.name || entity.id == player.id) continue;
