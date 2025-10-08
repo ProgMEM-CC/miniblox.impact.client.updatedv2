@@ -5,7 +5,7 @@ let replacements = {};
 let dumpedVarNames = {};
 const storeName = "a" + crypto.randomUUID().replaceAll("-", "").substring(16);
 const vapeName = crypto.randomUUID().replaceAll("-", "").substring(16);
-const VERSION = "6.1";
+const VERSION = "6.2";
 
 // ANTICHEAT HOOK
 function replaceAndCopyFunction(oldFunc, newFunc) {
@@ -2492,7 +2492,7 @@ const survival = new Module("SurvivalMode", function(callback) {
     searchWrap.style.display = "none";
 
     // === Loading screen startup notification! ===
-    setTimeout(() => { showNotif("[CLickGUI@v6.1] Press \\\\ to open ClickGUI! Enjoy!", "info", 4000); }, 500);
+    setTimeout(() => { showNotif("[TheRealGuiFR@v6.2] Press \\\\ to open ClickGUI! Enjoy!", "info", 4000); }, 500);
 
     // === Toggle ClickGUI ===
     let visible = false;
