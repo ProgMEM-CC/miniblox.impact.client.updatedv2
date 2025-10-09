@@ -1,0 +1,69 @@
+name: 🔄 Auto Sync Version Numbers
+
+on:
+  push:
+    tags:
+      - "v*.*"
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to sync manually (e.g. v6.4)"
+        required: true
+        default: "v6.4"
+
+jobs:
+  version_sync:
+    name: Sync VERSIONFILE + JS versions
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧩 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: 🧠 Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
+            echo "🧩 Manual trigger detected — version set to ${{ github.event.inputs.version }}"
+          else
+            TAG_VERSION="${GITHUB_REF##*/}"
+            echo "VERSION=${TAG_VERSION}" >> $GITHUB_ENV
+            echo "🏷️ Tag push detected — version set to ${TAG_VERSION}"
+          fi
+
+      - name: 🧾 Verify sync_version.py exists
+        run: |
+          if [ ! -f sync_version.py ]; then
+            echo "❌ sync_version.py not found!"
+            exit 1
+          fi
+
+      - name: ⚙️ Run version sync
+        run: |
+          echo "Running sync_version.py for version: ${VERSION}"
+          python3 sync_version.py "${VERSION}"
+
+      - name: 🔒 Configure Git for commit
+        run: |
+          git config user.name "ImpactBot"
+          git config user.email "impactbot@users.noreply.github.com"
+
+      - name: 💾 Commit updated files
+        run: |
+          git add VERSIONFILE tampermonkey.js vav4inject.js
+          git commit -m "🔄 Auto-sync version: ${VERSION}" || echo "No changes to commit"
+
+      - name: 🚀 Push changes back to main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:main
