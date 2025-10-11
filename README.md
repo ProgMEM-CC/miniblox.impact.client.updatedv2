@@ -21,8 +21,6 @@ When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPac
 - Open changelog and contributor tags
 - Nuker (in BETA)
 - Jetpack
-
-
 ---
 
 ## Installation of Impact For Miniblox!
