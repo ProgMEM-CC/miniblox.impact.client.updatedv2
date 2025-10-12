@@ -8,7 +8,7 @@
 **Impact Client for Miniblox.io** is a fully standalone continuation of the discontinued **Vape for Miniblox** project by `7GrandDadPGN`.  
 When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPacket)**, and **ProgMEM-CC** rebuilt it from scratch — creating a modern, modular, and optimized exploit client framework for Miniblox. :trollface:
 
-> Designed for stealth, speed, and domination — with full dark-mode support and a slick Click GUI.
+> Designed for stealth, speed, and domination — with full dark-mode support and with a slick Click GUI.
 
 ---
 
@@ -25,7 +25,7 @@ When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPac
 
 ## Installation of Impact For Miniblox!
 1. Install a userscript manager (🧩 **Tampermonkey**, **Violentmonkey**, or **Greasemonkey**).  
-2. Copy the contents of `tampermonkey.js` and (`optional`) `injection.js`.
+2. Copy the contents of `tampermonkey.js` and (`optional`) `injection.js`. Best option is to copy and paste both `tampermonkey` and `injection` - TheM1ddleM1n
 3. Paste it into a new userscript and enable it.  
 5. Open [Miniblox.io](https://miniblox.io) — the client will auto-initialize.  
 
@@ -34,43 +34,43 @@ When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPac
 ## 🧾 Changelog
 All notable changes to this project will be documented here!
 
-[v6.1] - 2025-10-06
+## [v6.1] - 2025-10-06
 - ReadMe updated
 
-- Added tags to modules (e.g. Step by DataM0del)
+- Added tags to modules (e.g. Step by @DataM0del)
 
-- Created new ServerCrasher module – by DataM0del
+- Created new ServerCrasher module – by @DataM0del
 
-[v6] - 2025-10-03
+## [v6] - 2025-10-03
 - Updated ReadMe
 
-- Improved AntiBan (thanks DataM0del)
+- Improved AntiBan (thanks @DataM0del)
 
 - Moved outdated content to docs
 
-[v6] - 2025-09-30
-- Ported .friend and antiblind from Vape for MiniBlox (credit DataM0del)
+## [v6] - 2025-09-30
+- Ported .friend and antiblind from Vape for MiniBlox (credit to @DataM0del)
 
 - Version bump v5.9 → v6.0
 
-[v5.9] - 2025-09-29
-- Invcleaner overhaul by TheM1ddleM1n
+## [v5.9] - 2025-09-29
+- Invcleaner overhaul by @TheM1ddleM1n
 
 - Updated documentation
 
-[v5.8] - 2025-09-26
+## [v5.8] - 2025-09-26
 - Added TargetHUD to beta
 
 - New ChinaHat and LongJump modules
 
 - Various updates to tampermonkey.js and ModuleIdeas.md
 
-[v5.6–v5.7]
+## [v5.6–v5.7]
 - Overhauled TextGUI visuals
 
 - moduleideas and readme updates
 
-[v5.0–v5.5]
+## [v5.0–v5.5]
 - Added /command filter bypass
 
 - Added Fly, NoFall, Scaffold bypass (slots 1–9)
@@ -79,10 +79,12 @@ All notable changes to this project will be documented here!
 
 - Improved inventory handling and UI
 
-## ⚠️ Known Issues
+## ⚠️ Any Known Issues
+
 .toggle all command currently non-functional (fix planned soon).
 
 ## 🧩 Dev Notes
+
 Always update VERSIONFILE, tampermonkey.js, and injection.js together.
 
 Never publish unstable code to / (root). Use /beta for testing builds.
@@ -98,12 +100,11 @@ Repo rename pending once closed-source dependencies are synced.
 | <img src="https://github.com/ProgMEM-CC.png" width="40" height="40"> | Repo Manager / Infrastructure    | [ProgMEM-CC](https://github.com/ProgMEM-CC) |
 
 
-
-
 ## 🧷 Links
-🌐 impactminiblox.js.org
 
-💬 Discord Impact Community - https://discord.gg/PwpGemYhJx
+## 🌐 impactminiblox.js.org
 
-## ⚠️ Disclaimer
+## 💬 Discord Impact Community - https://discord.gg/PwpGemYhJx
+
+## ⚠️ Disclaimer (PLEASE READ THIS)
 Please be aware that the developers are not responsible for any misuse or violations of Miniblox.io’s Terms of Service.
