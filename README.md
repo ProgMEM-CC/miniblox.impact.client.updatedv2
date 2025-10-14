@@ -6,7 +6,7 @@
 
 ## An Overview of Impact for Miniblox
 **Impact Client for Miniblox.io** is a fully standalone continuation of the discontinued **Vape for Miniblox** project by `7GrandDadPGN`.  
-When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPacket)**, and **ProgMEM-CC** rebuilt it from scratch — creating a modern, modular, and optimized exploit client framework for Miniblox. :trollface:
+When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPacket)**, and **ProgMEM-CC** and other devs rebuilt it from scratch — creating a modern, modular, and optimized exploit client framework for Miniblox. :trollface:
 
 > Designed for stealth, speed, and domination — with full dark-mode support with a slick Click GUI.
 
@@ -28,7 +28,7 @@ First, install a userscript manager (🧩 **Tampermonkey**, **Violentmonkey** or
 Next, copy the contents of `tampermonkey.js` and (`optional`) `injection.js`. The best option imo is to copy and paste both `tampermonkey` and `injection` - TheM1ddleM1n
 Then, paste it into a new userscript and enable it. (u should see it save)
 Finally, open [Miniblox.io](https://miniblox.io) — the client will auto-initialize!
-Enjoy!
+And then enjoy using the client!
 
 ---
 
@@ -43,11 +43,11 @@ All notable changes to this project will be documented here.
 - Created new ServerCrasher module – by @DataM0del
 
 ## [v6] - 2025-10-03
-- Updated ReadMe
+- Updated README
 
 - Improved AntiBan (thanks @DataM0del)
 
-- Moved outdated content to docs
+- Moved outdated content to docs (thanks @TheM1ddleM1n)
 
 ## [v6] - 2025-09-30
 - Ported .friend and antiblind from Vape for MiniBlox (credit to @DataM0del)
@@ -55,7 +55,7 @@ All notable changes to this project will be documented here.
 - Version bump v5.9 → v6.0
 
 ## [v5.9] - 2025-09-29
-- Invcleaner overhaul by @TheM1ddleM1n
+- Invcleaner overhaul by (@TheM1ddleM1n)
 
 - Updated documentation
 
@@ -82,7 +82,7 @@ All notable changes to this project will be documented here.
 
 ## ⚠️ Any Known Issues
 
-.toggle all command currently non-functional (fix planned soon).
+.toggle all command currently non-functional (fix planned soon..).
 
 ## 🧩 Dev Notes
 
@@ -101,7 +101,7 @@ Repo rename pending once closed-source dependencies are synced.
 | <img src="https://github.com/ProgMEM-CC.png" width="40" height="40"> | Repo Manager / Infrastructure    | [ProgMEM-CC](https://github.com/ProgMEM-CC) |
 
 
-## 🧷 Links
+## 🧷 Links for this client
 
 ## 🌐 impactminiblox.js.org
 
