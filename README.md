@@ -25,9 +25,13 @@ When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPac
 
 ## How to Install Impact For Miniblox?
 First, install a userscript manager (🧩 **Tampermonkey**, **Violentmonkey** or **Greasemonkey** via Chrome Web Store or Microsoft Store etc).  
+
 Next, copy the contents of `tampermonkey.js` and (`optional`) `injection.js`. The best option imo is to copy and paste both `tampermonkey` and `injection` - TheM1ddleM1n
+
 Then, paste it into a new userscript and enable it. (u should see it save)
+
 Finally, open [Miniblox.io](https://miniblox.io) — the client will auto-initialize!
+
 And then enjoy using the client!
 
 ---
