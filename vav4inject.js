@@ -21,11 +21,11 @@ function replaceAndCopyFunction(oldFunc, newFunc) {
 	});
 }
 
-Object.getOwnPropertyNames = replaceAndCopyFunction(Object.getOwnPropertyNames, function(list) {
+Object.getOwnPropertyNames = replaceAndCopyFunction(Object.getOwnPropertyNames, function (list) {
 	if (list.indexOf(storeName) != -1) list.splice(list.indexOf(storeName), 1);
 	return list;
 });
-Object.getOwnPropertyDescriptors = replaceAndCopyFunction(Object.getOwnPropertyDescriptors, function(list) {
+Object.getOwnPropertyDescriptors = replaceAndCopyFunction(Object.getOwnPropertyDescriptors, function (list) {
 	delete list[storeName];
 	return list;
 });
@@ -50,10 +50,10 @@ function addDump(replacement, code) {
  */
 function modifyCode(text) {
 	let modifiedText = text;
-	for(const [name, regex] of Object.entries(dumpedVarNames)) {
+	for (const [name, regex] of Object.entries(dumpedVarNames)) {
 		const matched = modifiedText.match(regex);
 		if (matched) {
-			for(const [replacement, code] of Object.entries(replacements)){
+			for (const [replacement, code] of Object.entries(replacements)) {
 				delete replacements[replacement];
 				replacements[replacement.replaceAll(name, matched[1])] = [code[0].replaceAll(name, matched[1]), code[1]];
 			}
@@ -65,7 +65,7 @@ function modifyCode(text) {
 	const unmatchedReplacements = Object.entries(replacements).filter(r => modifiedText.replace(r[0]) === text);
 	if (unmatchedReplacements.length > 0) console.warn("Unmatched replacements:", unmatchedReplacements);
 
-	for(const [replacement, code] of Object.entries(replacements)) {
+	for (const [replacement, code] of Object.entries(replacements)) {
 		modifiedText = modifiedText.replace(replacement, code[1] ? code[0] : replacement + code[0]);
 
 	}
@@ -80,7 +80,7 @@ function modifyCode(text) {
 	newScript.remove();
 }
 
-(function() {
+(function () {
 	'use strict';
 
 	// DUMPING
@@ -221,8 +221,8 @@ let serverPos = player.pos.clone();
         if (color) ctx.globalCompositeOperation = "source-over";
     }
 `);
-// TEXT GUI (OG textgui from M1ddleM1n but improved by DataM0del thanks again!)
-addModification('(this.drawSelectedItemStack(),this.drawHintBox())', /*js*/`
+	// TEXT GUI (OG textgui from M1ddleM1n but improved by DataM0del thanks again!)
+	addModification('(this.drawSelectedItemStack(),this.drawHintBox())', /*js*/`
 	if (ctx$5 && enabledModules["TextGUI"]) {
 		const canvasW = ctx$5.canvas.width;
 		const canvasH = ctx$5.canvas.height;
@@ -410,7 +410,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	addModification('updatePlayerMoveState(),this.isUsingItem()', 'updatePlayerMoveState(),(this.isUsingItem() && !enabledModules["NoSlowdown"])', true);
 	addModification('S&&!this.isUsingItem()', 'S&&!(this.isUsingItem() && !enabledModules["NoSlowdown"])', true);
 
-	 // DESYNC!
+	// DESYNC!
 	addModification("this.inputSequenceNumber++", 'desync ? this.inputSequenceNumber : this.inputSequenceNumber++', true);
 	// addModification("new PBVector3({x:this.pos.x,y:this.pos.y,z:this.pos.z})", "desync ? inputPos : inputPos = this.pos", true);
 
@@ -420,21 +420,21 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	// hook into the reconcileServerPosition
 	// so we know our server pos
 
-// PREDICTION AC FIXER (makes the ac a bit less annoying (e.g. when scaffolding))
-// ig but this should be done in the desync branch instead lol - DataM0del
-// 	addModification("if(h.reset){this.setPosition(h.x,h.y,h.z),this.reset();return}", "", true);
-// 	addModification("this.serverDistance=y", `
-// if (h.reset) {
-// 	if (this.serverDistance >= 4) {
-// 		this.setPosition(h.x, h.y, h.z);
-// 	} else {
-// 		ClientSocket.sendPacket(new SPacketPlayerInput({sequenceNumber: NaN, pos: new PBVector3(g)}));
-// 		ClientSocket.sendPacket(new SPacketPlayerInput({sequenceNumber: NaN, pos: new PBVector3({x: h.x + 8, ...h})}));
-// 	}
-// 	this.reset();
-// 	return;
-// }
-// `);
+	// PREDICTION AC FIXER (makes the ac a bit less annoying (e.g. when scaffolding))
+	// ig but this should be done in the desync branch instead lol - DataM0del
+	// 	addModification("if(h.reset){this.setPosition(h.x,h.y,h.z),this.reset();return}", "", true);
+	// 	addModification("this.serverDistance=y", `
+	// if (h.reset) {
+	// 	if (this.serverDistance >= 4) {
+	// 		this.setPosition(h.x, h.y, h.z);
+	// 	} else {
+	// 		ClientSocket.sendPacket(new SPacketPlayerInput({sequenceNumber: NaN, pos: new PBVector3(g)}));
+	// 		ClientSocket.sendPacket(new SPacketPlayerInput({sequenceNumber: NaN, pos: new PBVector3({x: h.x + 8, ...h})}));
+	// 	}
+	// 	this.reset();
+	// 	return;
+	// }
+	// `);
 
 	// STEP
 	addModification('p.y=this.stepHeight;', 'p.y=(enabledModules["Step"]?Math.max(stepheight[1],this.stepHeight):this.stepHeight);', true);
@@ -634,8 +634,8 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
     }
   }
 `);
-    // ChinaHat Module!
-    addModification(')&&(p.mesh.visible=this.shouldRenderEntity(p))', `
+	// ChinaHat Module!
+	addModification(')&&(p.mesh.visible=this.shouldRenderEntity(p))', `
   if (enabledModules["ChinaHat"] && p && p.id != player.id && p instanceof EntityPlayer) {
     // Only apply ChinaHat to players (not items, mobs, etc.)
     if (!p.mesh.userData.chinaHat) {
@@ -888,7 +888,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		'const m=player.openContainer',
 		`const m = player.openContainer ?? { getLowerChestInventory: () => {getSizeInventory: () => 0} }`,
 		true
-		);
+	);
 
 	// ANTIBLIND
 	addModification("player.isPotionActive(Potions.blindness)", 'player.isPotionActive(Potions.blindness) && !enabledModules["AntiBlind"]', true);
@@ -2148,19 +2148,19 @@ const survival = new Module("SurvivalMode", function(callback) {
 	async function saveVapeConfig(profile) {
 		if (!loadedConfig) return;
 		let saveList = {};
-		for(const [name, module] of Object.entries(unsafeWindow.globalThis[storeName].modules)) {
-			saveList[name] = {enabled: module.enabled, bind: module.bind, options: {}};
-			for(const [option, setting] of Object.entries(module.options)) {
+		for (const [name, module] of Object.entries(unsafeWindow.globalThis[storeName].modules)) {
+			saveList[name] = { enabled: module.enabled, bind: module.bind, options: {} };
+			for (const [option, setting] of Object.entries(module.options)) {
 				saveList[name].options[option] = setting[1];
 			}
 		}
 		GM_setValue("vapeConfig" + (profile ?? unsafeWindow.globalThis[storeName].profile), JSON.stringify(saveList));
-		GM_setValue("mainVapeConfig", JSON.stringify({profile: unsafeWindow.globalThis[storeName].profile}));
+		GM_setValue("mainVapeConfig", JSON.stringify({ profile: unsafeWindow.globalThis[storeName].profile }));
 	};
 
 	async function loadVapeConfig(switched) {
 		loadedConfig = false;
-		const loadedMain = JSON.parse(await GM_getValue("mainVapeConfig", "{}")) ?? {profile: "default"};
+		const loadedMain = JSON.parse(await GM_getValue("mainVapeConfig", "{}")) ?? { profile: "default" };
 		unsafeWindow.globalThis[storeName].profile = switched ?? loadedMain.profile;
 		const loaded = JSON.parse(await GM_getValue("vapeConfig" + unsafeWindow.globalThis[storeName].profile, "{}"));
 		if (!loaded) {
@@ -2168,13 +2168,13 @@ const survival = new Module("SurvivalMode", function(callback) {
 			return;
 		}
 
-		for(const [name, module] of Object.entries(loaded)) {
+		for (const [name, module] of Object.entries(loaded)) {
 			const realModule = unsafeWindow.globalThis[storeName].modules[name];
 			if (!realModule) continue;
 			if (realModule.enabled != module.enabled) realModule.toggle();
 			if (realModule.bind != module.bind) realModule.setbind(module.bind);
 			if (module.options) {
-				for(const [option, setting] of Object.entries(module.options)) {
+				for (const [option, setting] of Object.entries(module.options)) {
 					const realOption = realModule.options[option];
 					if (!realOption) continue;
 					realOption[1] = setting;
@@ -2197,12 +2197,12 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 	let loadedConfig = false;
 	async function execute(src, oldScript) {
-		Object.defineProperty(unsafeWindow.globalThis, storeName, {value: {}, enumerable: false});
+		Object.defineProperty(unsafeWindow.globalThis, storeName, { value: {}, enumerable: false });
 		if (oldScript) oldScript.type = 'javascript/blocked';
 		await fetch(src).then(e => e.text()).then(e => modifyCode(e));
 		if (oldScript) oldScript.type = 'module';
 		await new Promise((resolve) => {
-			const loop = setInterval(async function() {
+			const loop = setInterval(async function () {
 				if (unsafeWindow.globalThis[storeName].modules) {
 					clearInterval(loop);
 					resolve();
@@ -2214,7 +2214,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 		unsafeWindow.globalThis[storeName].exportVapeConfig = exportVapeConfig;
 		unsafeWindow.globalThis[storeName].importVapeConfig = importVapeConfig;
 		loadVapeConfig();
-		setInterval(async function() {
+		setInterval(async function () {
 			saveVapeConfig();
 		}, 10000);
 	}
@@ -2223,7 +2223,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 	// https://stackoverflow.com/questions/22141205/intercept-and-alter-a-sites-javascript-using-greasemonkey
 	if (publicUrl == "scripturl") {
 		if (navigator.userAgent.indexOf("Firefox") != -1) {
-			window.addEventListener("beforescriptexecute", function(e) {
+			window.addEventListener("beforescriptexecute", function (e) {
 				if (e.target.src.includes("https://miniblox.io/assets/index")) {
 					e.preventDefault();
 					e.stopPropagation();
@@ -2254,254 +2254,366 @@ const survival = new Module("SurvivalMode", function(callback) {
 })();
 // Added new Poppins font 
 (async function () {
-  try {
-    const fontLink = document.createElement("link");
-    fontLink.href = "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap";
-    fontLink.rel = "stylesheet";
-    document.head.appendChild(fontLink);
+	try {
+		const fontLink = document.createElement("link");
+		fontLink.href = "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap";
+		fontLink.rel = "stylesheet";
+		document.head.appendChild(fontLink);
 
-    await new Promise((resolve) => {
-      const loop = setInterval(() => {
-        if (unsafeWindow?.globalThis?.[storeName]?.modules) {
-          clearInterval(loop);
-          resolve();
-        }
-      }, 20);
-    });
+		await new Promise((resolve) => {
+			const loop = setInterval(() => {
+				if (unsafeWindow?.globalThis?.[storeName]?.modules) {
+					clearInterval(loop);
+					resolve();
+				}
+			}, 20);
+		});
 
-    injectGUI(unsafeWindow.globalThis[storeName]);
-  } catch (err) {
-    console.error("[Cl1ckGU1] Init failed:", err);
-  }
+		injectGUI(unsafeWindow.globalThis[storeName]);
+	} catch (err) {
+		console.error("[Cl1ckGU1] Init failed:", err);
+	}
 
-  function injectGUI(store) {
-    const categories = {
-      Combat: ["autoclicker", "killaura", "velocity", "wtap"],
-      Movement: ["scaffold","jesus","phase","nofall","antifall","sprint","keepsprint","step","speed","jetpack","noslowdown","longjump"],
-      Render: ["invcleaner","invwalk","autoarmor","esp","nametags+","textgui","clickgui"],
-      World: ["fastbreak","breaker","autocraft","cheststeal","timer","survivalmode"],
-      Utility: ["autorespawn","autorejoin","autoqueue","autovote","filterbypass","anticheat","autofunnychat","chatdisabler","musicfix","auto-funnychat","music-fix"],
-	  Exploit: ["servercrasher"]
-    };
-    const catIcons = { Combat:"⚔️", Movement:"🏃", "Render":"🧑👁️", World:"🌍", Utility:"🛠️", Exploit:"⚠" };
+	function injectGUI(store) {
+		const categoryMap = {
+			Combat: ["autoclicker", "killaura", "velocity", "wtap", "keepsprint"],
+			Movement: ["scaffold", "jesus", "phase", "nofall", "antifall", "sprint", "step", "speed", "jetpack", "noslowdown", "longjump", "fly", "infinitefly"],
+			Player: ["invcleaner", "invwalk", "autoarmor", "autorespawn", "fastbreak"],
+			Render: ["esp", "nametags+", "textgui", "chinahat"],
+			World: ["breaker", "autocraft", "cheststeal", "timer", "survivalmode"],
+			Misc: ["autorejoin", "autoqueue", "autovote", "filterbypass", "anticheat", "autofunnychat", "chatdisabler", "musicfix", "auto-funnychat", "music-fix", "servercrasher", "antiblind", "nofallbeta", "nofall", "antiban"]
+		};
 
-    // === Styles ===
-    const style = document.createElement("style");
-    style.textContent = `
-      @keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}
-      .lb-panel { position:absolute; width:220px; background:#111; border:2px solid #00aaff; font-family:"Poppins", sans-serif; color:white; animation:guiEnter .25s ease-out; z-index:100000; max-height:420px; overflow-x:hidden; }
-      .lb-panel::-webkit-scrollbar { width:6px; }
-      .lb-panel::-webkit-scrollbar-thumb { background:#00aaff; }
-      .lb-panel::-webkit-scrollbar-track { background:#111; }
-      .lb-header { background:#0a0a0a; padding:6px; font-weight:600; cursor:move; text-align:center; border-bottom:1px solid #00aaff; }
-      .lb-module { padding:4px 6px; border-bottom:1px solid #1b1b1b; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
-      .lb-module:hover { background:#151a20; }
-      .lb-module.active { color:#00aaff; }
-      .lb-options { display:none; flex-direction:column; gap:4px; padding:4px 6px; background:#0f0f12; border-top:1px dashed #1e1e1e; }
-      .lb-options.show { display:flex; animation:guiEnter .2s ease-out; }
-      .lb-options label { font-size:12px; display:flex; justify-content:space-between; color:white; }
-      .lb-options input[type="text"], .lb-options input[type="range"] { flex:1; margin-left:4px; font-family:"Poppins", sans-serif; }
+		// === Vape V4 Styles ===
+		const style = document.createElement("style");
+		style.textContent = `
+      @keyframes vapeEnter {0%{opacity:0;transform:translateY(-10px);}100%{opacity:1;transform:translateY(0);}}
+      .vape-panel { position:absolute; background:linear-gradient(180deg, rgba(28,30,32,0.98), rgba(23,25,27,0.98)); border-radius:12px; border:1px solid rgba(255,255,255,0.06); box-shadow:0 12px 30px rgba(0,0,0,0.7); backdrop-filter:blur(8px); font-family:Inter,system-ui,sans-serif; color:#E6E9EA; animation:vapeEnter .2s ease-out; z-index:100000; overflow:hidden; }
+      .vape-header { padding:12px 14px; background:rgba(0,0,0,0.2); border-bottom:1px solid rgba(255,255,255,0.04); font-weight:700; font-size:13px; letter-spacing:0.5px; cursor:move; user-select:none; display:flex; align-items:center; justify-content:space-between; }
+      .vape-content { padding:8px; max-height:500px; overflow-y:auto; }
+      .vape-content::-webkit-scrollbar { width:6px; }
+      .vape-content::-webkit-scrollbar-thumb { background:rgba(15,179,160,0.3); border-radius:10px; }
+      .vape-content::-webkit-scrollbar-track { background:transparent; }
+      .vape-cat-item { display:flex; align-items:center; gap:10px; padding:10px 12px; margin:4px 0; border-radius:8px; cursor:pointer; transition:all 0.15s; user-select:none; }
+      .vape-cat-item:hover { background:linear-gradient(90deg,rgba(15,179,160,0.08),transparent); }
+      .vape-cat-item.active { background:linear-gradient(90deg,rgba(15,179,160,0.12),transparent); border:1px solid rgba(15,179,160,0.12); }
+      .vape-cat-icon { width:18px; height:18px; border-radius:4px; background:linear-gradient(135deg,#0FB3A0,#13a695); box-shadow:0 2px 6px rgba(15,179,160,0.2); }
+      .vape-cat-text { font-weight:600; font-size:13px; }
+      .vape-module-row { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; margin:4px 0; border-radius:8px; background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent); border:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.15s; }
+      .vape-module-row:hover { background:linear-gradient(180deg,rgba(255,255,255,0.05),rgba(15,179,160,0.03)); }
+      .vape-module-left { display:flex; align-items:center; gap:10px; flex:1; }
+      .vape-module-icon { width:32px; height:32px; border-radius:6px; background:linear-gradient(135deg,#2b2d30,#131415); display:flex; align-items:center; justify-content:center; color:#8F9498; font-weight:700; font-size:12px; }
+      .vape-module-title { font-weight:600; font-size:13px; }
+      .vape-module-right { display:flex; align-items:center; gap:8px; }
+      .vape-toggle { width:42px; height:22px; border-radius:20px; background:rgba(255,255,255,0.05); position:relative; transition:all 0.18s; cursor:pointer; }
+      .vape-toggle.on { background:linear-gradient(90deg,#0FB3A0,#13a695); }
+      .vape-toggle-knob { position:absolute; left:3px; top:3px; width:16px; height:16px; border-radius:50%; background:#0d0f10; box-shadow:0 4px 10px rgba(0,0,0,0.6); transition:all 0.18s; }
+      .vape-toggle.on .vape-toggle-knob { left:23px; background:white; }
+      .vape-settings-row { margin:8px 0; }
+      .vape-settings-label { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:12px; }
+      .vape-settings-value { color:#8F9498; }
+      .vape-slider { width:100%; height:6px; border-radius:999px; background:rgba(255,255,255,0.08); outline:none; appearance:none; }
+      .vape-slider::-webkit-slider-thumb { appearance:none; width:16px; height:16px; border-radius:50%; background:#0FB3A0; box-shadow:0 6px 12px rgba(0,0,0,0.4); cursor:pointer; }
+      .vape-bind-row { padding:8px 10px; margin:4px 0; background:rgba(0,0,0,0.2); border-radius:6px; font-size:12px; color:#8F9498; }
+      .vape-bind-change { color:#0FB3A0; cursor:pointer; margin-left:8px; }
+      .vape-bind-change:hover { text-decoration:underline; }
       .notif-wrap { position:fixed; bottom:40px; right:30px; display:flex; flex-direction:column; align-items:flex-end; pointer-events:none; z-index:999999; }
-      .notif { display:flex; align-items:center; gap:8px; background:rgba(20,20,20,0.85); color:white; padding:10px 14px; margin-top:8px; border-radius:10px; font-family:"Poppins", sans-serif; font-size:13px; backdrop-filter:blur(6px); box-shadow:0 4px 12px rgba(0,0,0,0.4); opacity:1; transform:translateX(120%); transition:opacity .3s, transform .3s ease; border-left:4px solid; }
+      .notif { display:flex; align-items:center; gap:8px; background:rgba(20,20,20,0.85); color:white; padding:10px 14px; margin-top:8px; border-radius:10px; font-family:Inter,system-ui,sans-serif; font-size:13px; backdrop-filter:blur(6px); box-shadow:0 4px 12px rgba(0,0,0,0.4); opacity:1; transform:translateX(120%); transition:opacity .3s, transform .3s ease; border-left:4px solid; }
       .notif.info { border-color:#3498db; }
       .notif.success { border-color:#2ecc71; }
       .notif.warn { border-color:#f1c40f; }
       .notif.error { border-color:#e74c3c; }
-      .lb-searchwrap { position:fixed; top:15px; left:50%; transform:translateX(-50%); z-index:100001; background:#0a0a0a; border:2px solid #00aaff; padding:4px 6px; font-family:"Poppins", sans-serif; }
-      .lb-search { background:#111; border:none; outline:none; color:white; font-size:13px; width:180px; font-family:"Poppins", sans-serif; }
-      .lb-search::placeholder { color:#00aaff; opacity:0.6; }
-      .lb-content { overflow: hidden; transition: max-height 0.3s ease; max-height:1000px; }
-      .lb-content.collapsed { max-height:0; }
     `;
-    document.head.appendChild(style);
+		document.head.appendChild(style);
 
-    // === Notifications ===
-    const notifWrap = document.createElement("div");
-    notifWrap.className = "notif-wrap";
-    document.body.appendChild(notifWrap);
-    function showNotif(msg, type = "info", dur = 3000) {
-      const n = document.createElement("div");
-      n.className = `notif ${type}`;
-      let icon = type === "info" ? "ℹ️" : type === "success" ? "✅" : type === "warn" ? "⚠️" : "❌";
-      n.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
-      notifWrap.appendChild(n);
-      setTimeout(() => (n.style.transform = "translateX(0)"), 30);
-      setTimeout(() => { n.style.opacity = "0"; n.style.transform = "translateX(120%)"; }, dur);
-      setTimeout(() => n.remove(), dur + 400);
-    }
+		// === Notifications ===
+		const notifWrap = document.createElement("div");
+		notifWrap.className = "notif-wrap";
+		document.body.appendChild(notifWrap);
+		function showNotif(msg, type = "info", dur = 3000) {
+			const n = document.createElement("div");
+			n.className = `notif ${type}`;
+			let icon = type === "info" ? "ℹ️" : type === "success" ? "✅" : type === "warn" ? "⚠️" : "❌";
+			n.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+			notifWrap.appendChild(n);
+			setTimeout(() => (n.style.transform = "translateX(0)"), 30);
+			setTimeout(() => { n.style.opacity = "0"; n.style.transform = "translateX(120%)"; }, dur);
+			setTimeout(() => n.remove(), dur + 400);
+		}
 
-    // === Persistence helpers with localstorage ===
-    function saveModuleState(name, mod) {
-      const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
-      const opts = {};
-      if (mod.options) Object.entries(mod.options).forEach(([k, opt]) => { opts[k] = opt[1]; });
-      saved[name] = { enabled: mod.enabled, bind: mod.bind, options: opts };
-      localStorage.setItem("lb-mods", JSON.stringify(saved));
-    }
-    function loadModuleState(name, mod) {
-      const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
-      if (saved[name]) {
-        if (saved[name].enabled !== mod.enabled && typeof mod.toggle === "function") mod.toggle();
-        if (saved[name].bind) mod.setbind(saved[name].bind);
-        if (saved[name].options && mod.options) Object.entries(saved[name].options).forEach(([k, v]) => { if (mod.options[k]) mod.options[k][1] = v; });
-      }
-    }
+		// === Vape V4 GUI State ===
+		let categoryPanel = null;
+		let modulePanels = {};
+		let settingsPanel = null;
+		let selectedCategory = null;
+		let bindingModule = null;
 
-    // === Panels with slide collapsible content ===
-    const panels = {};
-    Object.keys(categories).forEach((cat, i) => {
-      const panel = document.createElement("div");
-      panel.className = "lb-panel";
-      panel.style.left = 40 + i * 240 + "px";
-      panel.style.top = "100px";
+		// === Helper: Create draggable panel ===
+		function createPanel(title, x, y, width) {
+			const panel = document.createElement("div");
+			panel.className = "vape-panel";
+			panel.style.position = "absolute";
+			panel.style.left = x + "px";
+			panel.style.top = y + "px";
+			panel.style.width = width + "px";
 
-      const header = document.createElement("div");
-      header.className = "lb-header";
+			const header = document.createElement("div");
+			header.className = "vape-header";
+			header.textContent = title;
+			panel.appendChild(header);
 
-      const collapseBtn = document.createElement("span");
-      collapseBtn.style.float = "right";
-      collapseBtn.style.cursor = "pointer";
+			const content = document.createElement("div");
+			content.className = "vape-content";
+			panel.appendChild(content);
 
-      const titleSpan = document.createElement("span");
-      titleSpan.textContent = `${catIcons[cat]} ${cat}`;
+			// Dragging
+			let dragging = false, offsetX, offsetY;
+			header.addEventListener("mousedown", (e) => {
+				dragging = true;
+				offsetX = e.clientX - panel.offsetLeft;
+				offsetY = e.clientY - panel.offsetTop;
+				panel.style.zIndex = "100001";
+			});
+			document.addEventListener("mousemove", (e) => {
+				if (dragging) {
+					panel.style.left = (e.clientX - offsetX) + "px";
+					panel.style.top = (e.clientY - offsetY) + "px";
+				}
+			});
+			document.addEventListener("mouseup", () => {
+				if (dragging) {
+					dragging = false;
+					panel.style.zIndex = "100000";
+				}
+			});
 
-      header.appendChild(titleSpan);
-      header.appendChild(collapseBtn);
-      panel.appendChild(header);
+			return { panel, content };
+		}
 
-      const saved = localStorage.getItem("lb-pos-" + cat);
-      if (saved) { const { left, top } = JSON.parse(saved); panel.style.left = left; panel.style.top = top; }
+		// === Create Category Panel ===
+		function createCategoryPanel() {
+			const { panel, content } = createPanel("CATEGORIES", 40, 40, 220);
+			const categories = ["Combat", "Movement", "Player", "Render", "World", "Misc"];
 
-      let dragging = false, offsetX, offsetY;
-      header.addEventListener("mousedown", (e) => { dragging = true; offsetX = e.clientX - panel.offsetLeft; offsetY = e.clientY - panel.offsetTop; });
-      document.addEventListener("mousemove", (e) => { if (dragging) { panel.style.left = e.clientX - offsetX + "px"; panel.style.top = e.clientY - offsetY + "px"; } });
-      document.addEventListener("mouseup", () => { if (dragging) { dragging = false; localStorage.setItem("lb-pos-" + cat, JSON.stringify({ left: panel.style.left, top: panel.style.top })); } });
+			categories.forEach(cat => {
+				const item = document.createElement("div");
+				item.className = "vape-cat-item";
 
-      // collapse content
-      const contentWrap = document.createElement("div");
-      contentWrap.className = "lb-content";
-      panel.appendChild(contentWrap);
+				const icon = document.createElement("div");
+				icon.className = "vape-cat-icon";
 
-      let collapsed = localStorage.getItem("lb-collapsed-" + cat) === "true";
-      if (collapsed) contentWrap.classList.add("collapsed");
-      collapseBtn.textContent = collapsed ? "[+]" : "[-]";
+				const text = document.createElement("span");
+				text.className = "vape-cat-text";
+				text.textContent = cat;
 
-      collapseBtn.addEventListener("click", () => {
-        collapsed = !collapsed;
-        if (collapsed) contentWrap.classList.add("collapsed");
-        else contentWrap.classList.remove("collapsed");
-        collapseBtn.textContent = collapsed ? "[+]" : "[-]";
-        localStorage.setItem("lb-collapsed-" + cat, collapsed);
-      });
+				item.appendChild(icon);
+				item.appendChild(text);
+				content.appendChild(item);
 
-      panels[cat] = panel;
-      document.body.appendChild(panel);
-    });
+				item.addEventListener("click", () => {
+					// Remove active from all
+					content.querySelectorAll(".vape-cat-item").forEach(i => i.classList.remove("active"));
+					item.classList.add("active");
+					selectedCategory = cat;
+					openModulePanel(cat);
+				});
+			});
 
-    // === Modules ===
-    Object.entries(store.modules).forEach(([name, mod]) => {
-      let cat = "Utility";
-      for (const [c, keys] of Object.entries(categories)) if (keys.some((k) => name.toLowerCase().includes(k))) { cat = c; break; }
-      loadModuleState(name, mod);
-      const row = document.createElement("div");
-      row.className = "lb-module" + (mod.enabled ? " active" : "");
-      row.innerHTML = `<span>${name}</span><span>${mod.enabled ? "ON" : "OFF"}</span>`;
-      const optionsBox = document.createElement("div");
-      optionsBox.className = "lb-options";
-      row.addEventListener("mousedown", (e) => {
-        if (e.button === 0) {
-          if (typeof mod.toggle === "function") mod.toggle();
-          row.classList.toggle("active", mod.enabled);
-          row.lastChild.textContent = mod.enabled ? "ON" : "OFF";
-          showNotif(`${name} ${mod.enabled ? "enabled" : "disabled"}`, mod.enabled ? "success" : "error");
-          saveModuleState(name, mod);
-        }
-      });
-      row.addEventListener("contextmenu", (e) => { e.preventDefault(); optionsBox.classList.toggle("show"); });
-      if (mod.options) Object.entries(mod.options).forEach(([key, opt]) => {
-        const [type, val, label] = opt;
-        const line = document.createElement("label");
-        line.textContent = label;
-        if (type === Boolean) { const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = val; cb.onchange = () => { opt[1] = cb.checked; saveModuleState(name, mod); }; line.appendChild(cb);}
-        else if (type === Number) { const slider = document.createElement("input"); slider.type = "range"; const [min, max, step] = opt.range ?? [0, 10, 0.1]; slider.min = min; slider.max = max; slider.step = step; slider.value = val; slider.oninput = () => { opt[1] = parseFloat(slider.value); saveModuleState(name, mod); }; line.appendChild(slider);}
-        else if (type === String) { const input = document.createElement("input"); input.type = "text"; input.value = val; input.onchange = () => { opt[1] = input.value; saveModuleState(name, mod); }; line.appendChild(input);}
-        optionsBox.appendChild(line);
-      });
-      const bindLine = document.createElement("label");
-      bindLine.textContent = "Bind:";
-      const bindInput = document.createElement("input");
-      bindInput.type = "text"; bindInput.value = mod.bind;
-      bindInput.style.width = "70px"; bindInput.style.background = "#0a0a0a"; bindInput.style.color = "white"; bindInput.style.border = "1px solid #00aaff"; bindInput.style.fontFamily = '"Poppins", sans-serif'; bindInput.style.fontSize = "12px"; bindInput.style.padding = "2px";
-      bindInput.onchange = (e) => { mod.setbind(e.target.value); showNotif(`${name} bind set to ${e.target.value}`, "info"); saveModuleState(name, mod); };
-      bindLine.appendChild(bindInput); optionsBox.appendChild(bindLine);
+			return panel;
+		}
 
-      panels[cat].querySelector(".lb-content").appendChild(row);
-      panels[cat].querySelector(".lb-content").appendChild(optionsBox);
-    });
+		// === Create Module Row ===
+		function createModuleRow(name, mod) {
+			const row = document.createElement("div");
+			row.className = "vape-module-row";
 
-    // === Reset / Config buttons (Utility panel) ===
-    const resetRow = document.createElement("div");
-    resetRow.className = "lb-module";
-    resetRow.style.color = "#00aaff";
-    resetRow.textContent = "↺ Reset Layout?";
-    resetRow.addEventListener("click", () => {
-      const defaults = {
-        Combat:{left:"40px",top:"100px"},
-        Movement:{left:"280px",top:"100px"},
-        "Player / Render":{left:"520px",top:"100px"},
-        World:{left:"760px",top:"100px"},
-        Utility:{left:"1000px",top:"100px"}
-      };
-      Object.entries(defaults).forEach(([cat,pos])=>{
-        localStorage.setItem("lb-pos-" + cat, JSON.stringify(pos));
-        if (panels[cat]) { panels[cat].style.left=pos.left; panels[cat].style.top=pos.top; }
-      });
-      showNotif("Layout has been reset to default!", "success");
-    });
-    panels["Utility"].querySelector(".lb-content").appendChild(resetRow);
+			const left = document.createElement("div");
+			left.className = "vape-module-left";
 
-    const resetConfigRow = document.createElement("div");
-    resetConfigRow.className = "lb-module";
-    resetConfigRow.style.color = "red";
-    resetConfigRow.textContent = "⛔ Reset Config?";
-    resetConfigRow.addEventListener("click", () => {
-      localStorage.removeItem("lb-mods");
-      Object.keys(localStorage).filter((k) => k.startsWith("lb-pos-")).forEach((k) => localStorage.removeItem(k));
-      Object.keys(localStorage).filter((k) => k.startsWith("lb-collapsed-")).forEach((k) => localStorage.removeItem(k));
-      alert("Config has been reset!");
-      location.reload();
-    });
-    panels["Utility"].querySelector(".lb-content").appendChild(resetConfigRow);
+			const icon = document.createElement("div");
+			icon.className = "vape-module-icon";
+			icon.textContent = name[0];
 
-    // === Search ===
-    const searchWrap = document.createElement("div");
-    searchWrap.className = "lb-searchwrap";
-    searchWrap.innerHTML = `<input type="text" class="lb-search" placeholder="Search...">`;
-    document.body.appendChild(searchWrap);
-    const searchBox = searchWrap.querySelector("input");
-    searchBox.addEventListener("input", () => {
-      const term = searchBox.value.toLowerCase();
-      document.querySelectorAll(".lb-module").forEach((row) => {
-        const name = row.firstChild.textContent.toLowerCase();
-        row.style.display = name.includes(term) ? "flex" : "none";
-      });
-    });
+			const title = document.createElement("div");
+			title.className = "vape-module-title";
+			title.textContent = name;
 
-    // === Hide on load ===
-    Object.values(panels).forEach((p) => (p.style.display = "none"));
-    searchWrap.style.display = "none";
+			left.appendChild(icon);
+			left.appendChild(title);
 
-    // === Loading screen startup notification! ===
-    setTimeout(() => { showNotif("[TheRealGuiFR@v6.2] Press \\\\ to open ClickGUI! Enjoy!", "info", 4000); }, 500);
+			const right = document.createElement("div");
+			right.className = "vape-module-right";
 
-    // === Toggle ClickGUI ===
-    let visible = false;
-    document.addEventListener("keydown", (e) => {
-      if (e.code === "Backslash") {
-        visible = !visible;
-        Object.values(panels).forEach((p)=> (p.style.display=visible?"block":"none"));
-        searchWrap.style.display = visible ? "block":"none";
-      }
-    });
-  }
+			const toggle = document.createElement("div");
+			toggle.className = "vape-toggle" + (mod.enabled ? " on" : "");
+			const knob = document.createElement("div");
+			knob.className = "vape-toggle-knob";
+			toggle.appendChild(knob);
+
+			toggle.addEventListener("click", (e) => {
+				e.stopPropagation();
+				if (typeof mod.toggle === "function") mod.toggle();
+				toggle.classList.toggle("on", mod.enabled);
+				showNotif(name + " " + (mod.enabled ? "enabled" : "disabled"), mod.enabled ? "success" : "error");
+			});
+
+			right.appendChild(toggle);
+			row.appendChild(left);
+			row.appendChild(right);
+
+			// Left click to open settings
+			row.addEventListener("click", (e) => {
+				if (e.target !== toggle && e.target !== knob) {
+					openSettingsPanel(name, mod);
+				}
+			});
+
+			// Right click to bind
+			row.addEventListener("contextmenu", (e) => {
+				e.preventDefault();
+				bindingModule = { name, mod };
+				showNotif("Press a key to bind " + name + " (ESC to cancel)", "info", 2000);
+			});
+
+			return row;
+		}
+
+		// === Open Module Panel ===
+		function openModulePanel(category) {
+			// Close existing module panels
+			Object.values(modulePanels).forEach(p => p.remove());
+			modulePanels = {};
+
+			// Get modules for this category
+			const catKey = categoryMap[category] || [];
+			const modules = Object.entries(store.modules).filter(([name]) =>
+				catKey.some(k => name.toLowerCase().includes(k))
+			);
+
+			if (modules.length === 0) return;
+
+			const { panel, content } = createPanel(category.toUpperCase(), 280, 40, 260);
+			modulePanels[category] = panel;
+			document.body.appendChild(panel);
+
+			modules.forEach(([name, mod]) => {
+				content.appendChild(createModuleRow(name, mod));
+			});
+		}
+
+		// === Open Settings Panel ===
+		function openSettingsPanel(name, mod) {
+			if (settingsPanel) settingsPanel.remove();
+
+			const { panel, content } = createPanel(name + " Settings", 560, 40, 300);
+			settingsPanel = panel;
+			document.body.appendChild(panel);
+
+			// Bind row
+			const bindRow = document.createElement("div");
+			bindRow.className = "vape-bind-row";
+			bindRow.innerHTML = "<strong>Bind:</strong> " + (mod.bind || "None") + '<span class="vape-bind-change" id="change-bind">Change</span>';
+			content.appendChild(bindRow);
+
+			document.getElementById("change-bind").addEventListener("click", () => {
+				bindingModule = { name, mod };
+				showNotif("Press a key to bind " + name + " (ESC to cancel)", "info", 2000);
+			});
+
+			// Options
+			if (mod.options) {
+				Object.entries(mod.options).forEach(([key, opt]) => {
+					const [type, val, label] = opt;
+					const optRow = document.createElement("div");
+					optRow.className = "vape-settings-row";
+
+					const labelDiv = document.createElement("div");
+					labelDiv.className = "vape-settings-label";
+
+					const labelText = document.createElement("span");
+					labelText.textContent = label || key;
+
+					const valueText = document.createElement("span");
+					valueText.className = "vape-settings-value";
+					valueText.textContent = val;
+
+					labelDiv.appendChild(labelText);
+					labelDiv.appendChild(valueText);
+					optRow.appendChild(labelDiv);
+
+					if (type === Number) {
+						const slider = document.createElement("input");
+						slider.type = "range";
+						slider.className = "vape-slider";
+						const [min, max, step] = opt.range ?? [0, 100, 1];
+						slider.min = min;
+						slider.max = max;
+						slider.step = step;
+						slider.value = val;
+						slider.addEventListener("input", () => {
+							opt[1] = parseFloat(slider.value);
+							valueText.textContent = slider.value;
+						});
+						optRow.appendChild(slider);
+					} else if (type === Boolean) {
+						const toggle = document.createElement("div");
+						toggle.className = "vape-toggle" + (val ? " on" : "");
+						const knob = document.createElement("div");
+						knob.className = "vape-toggle-knob";
+						toggle.appendChild(knob);
+						toggle.addEventListener("click", () => {
+							opt[1] = !opt[1];
+							toggle.classList.toggle("on", opt[1]);
+							valueText.textContent = opt[1];
+						});
+						optRow.appendChild(toggle);
+					}
+
+					content.appendChild(optRow);
+				});
+			}
+		}
+
+		// === Toggle GUI ===
+		let visible = false;
+		document.addEventListener("keydown", (e) => {
+			if (e.code === "Backslash") {
+				visible = !visible;
+
+				if (visible) {
+					// Show category panel only
+					if (categoryPanel) categoryPanel.remove();
+					categoryPanel = createCategoryPanel();
+					document.body.appendChild(categoryPanel);
+				} else {
+					// Hide all panels
+					if (categoryPanel) categoryPanel.remove();
+					Object.values(modulePanels).forEach(p => p.remove());
+					if (settingsPanel) settingsPanel.remove();
+					categoryPanel = null;
+					modulePanels = {};
+					settingsPanel = null;
+					selectedCategory = null;
+				}
+			}
+
+			// Handle keybinding
+			if (bindingModule) {
+				if (e.code === "Escape") {
+					bindingModule = null;
+					showNotif("Binding cancelled", "error", 1000);
+				} else {
+					const key = e.code.toLowerCase().replace("key", "").replace("digit", "");
+					if (key && bindingModule.mod.setbind) {
+						bindingModule.mod.setbind(key);
+						showNotif("Bound " + bindingModule.name + " to " + key, "success", 2000);
+						bindingModule = null;
+					}
+				}
+			}
+		});
+
+		// === Startup notification ===
+		setTimeout(() => { showNotif("Press \\\\ to open Vape V4 ClickGUI!", "info", 4000); }, 500);
+	}
 })();
