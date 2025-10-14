@@ -2288,32 +2288,35 @@ const survival = new Module("SurvivalMode", function(callback) {
 		const style = document.createElement("style");
 		style.textContent = `
       @keyframes vapeEnter {0%{opacity:0;transform:translateY(-10px);}100%{opacity:1;transform:translateY(0);}}
-      .vape-panel { position:absolute; background:linear-gradient(180deg, rgba(28,30,32,0.98), rgba(23,25,27,0.98)); border-radius:12px; border:1px solid rgba(255,255,255,0.06); box-shadow:0 12px 30px rgba(0,0,0,0.7); backdrop-filter:blur(8px); font-family:Inter,system-ui,sans-serif; color:#E6E9EA; animation:vapeEnter .2s ease-out; z-index:100000; overflow:hidden; }
+      @keyframes vapeExit {0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-10px);}}
+      .vape-panel { position:absolute; background:linear-gradient(180deg, rgba(28,30,32,0.98), rgba(23,25,27,0.98)); border-radius:12px; border:1px solid rgba(255,255,255,0.06); box-shadow:0 12px 30px rgba(0,0,0,0.7); backdrop-filter:blur(8px); font-family:Inter,system-ui,sans-serif; color:#E6E9EA; animation:vapeEnter .2s ease-out; z-index:100000; overflow:hidden; min-width:260px; }
+      .vape-panel.closing { animation:vapeExit .2s ease-out; }
       .vape-header { padding:12px 14px; background:rgba(0,0,0,0.2); border-bottom:1px solid rgba(255,255,255,0.04); font-weight:700; font-size:13px; letter-spacing:0.5px; cursor:move; user-select:none; display:flex; align-items:center; justify-content:space-between; }
-      .vape-content { padding:8px; max-height:500px; overflow-y:auto; }
+      .vape-content { padding:8px; max-height:500px; overflow-y:auto; overflow-x:hidden; }
       .vape-content::-webkit-scrollbar { width:6px; }
-      .vape-content::-webkit-scrollbar-thumb { background:rgba(15,179,160,0.3); border-radius:10px; }
+      .vape-content::-webkit-scrollbar-thumb { background:var(--vape-accent, #0FB3A0); border-radius:10px; }
       .vape-content::-webkit-scrollbar-track { background:transparent; }
-      .vape-cat-item { display:flex; align-items:center; gap:10px; padding:10px 12px; margin:4px 0; border-radius:8px; cursor:pointer; transition:all 0.15s; user-select:none; }
-      .vape-cat-item:hover { background:linear-gradient(90deg,rgba(15,179,160,0.08),transparent); }
-      .vape-cat-item.active { background:linear-gradient(90deg,rgba(15,179,160,0.12),transparent); border:1px solid rgba(15,179,160,0.12); }
-      .vape-cat-icon { width:18px; height:18px; border-radius:4px; background:linear-gradient(135deg,#0FB3A0,#13a695); box-shadow:0 2px 6px rgba(15,179,160,0.2); }
+      .vape-cat-item { display:flex; align-items:center; gap:10px; padding:10px 12px; margin:4px 0; border-radius:8px; cursor:pointer; transition:all 0.15s; user-select:none; border:1px solid transparent; }
+      .vape-cat-item:hover { background:linear-gradient(90deg,var(--vape-accent-alpha, rgba(15,179,160,0.08)),transparent); }
+      .vape-cat-item.active { background:linear-gradient(90deg,var(--vape-accent-alpha, rgba(15,179,160,0.12)),transparent); border:1px solid var(--vape-accent-alpha, rgba(15,179,160,0.12)); }
+      .vape-cat-icon { width:18px; height:18px; border-radius:4px; background:linear-gradient(135deg,var(--vape-accent, #0FB3A0),var(--vape-accent, #13a695)); box-shadow:0 2px 6px var(--vape-accent-alpha, rgba(15,179,160,0.2)); }
       .vape-cat-text { font-weight:600; font-size:13px; }
       .vape-module-row { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; margin:4px 0; border-radius:8px; background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent); border:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.15s; }
-      .vape-module-row:hover { background:linear-gradient(180deg,rgba(255,255,255,0.05),rgba(15,179,160,0.03)); }
-      .vape-module-left { display:flex; align-items:center; gap:10px; flex:1; }
-      .vape-module-icon { width:32px; height:32px; border-radius:6px; background:linear-gradient(135deg,#2b2d30,#131415); display:flex; align-items:center; justify-content:center; color:#8F9498; font-weight:700; font-size:12px; }
-      .vape-module-title { font-weight:600; font-size:13px; }
-      .vape-module-right { display:flex; align-items:center; gap:8px; }
-      .vape-toggle { width:42px; height:22px; border-radius:20px; background:rgba(255,255,255,0.05); position:relative; transition:all 0.18s; cursor:pointer; }
-      .vape-toggle.on { background:linear-gradient(90deg,#0FB3A0,#13a695); }
+      .vape-module-row:hover { background:linear-gradient(180deg,rgba(255,255,255,0.05),var(--vape-accent-alpha, rgba(15,179,160,0.03))); }
+      .vape-module-left { display:flex; align-items:center; gap:10px; flex:1; min-width:0; }
+      .vape-module-icon { width:32px; height:32px; border-radius:6px; background:linear-gradient(135deg,#2b2d30,#131415); display:flex; align-items:center; justify-content:center; color:#8F9498; font-weight:700; font-size:12px; flex-shrink:0; }
+      .vape-module-title { font-weight:600; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .vape-module-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+      .vape-toggle { width:42px; height:22px; border-radius:20px; background:rgba(255,255,255,0.05); position:relative; transition:all 0.18s; cursor:pointer; flex-shrink:0; }
+      .vape-toggle.on { background:var(--vape-accent, #0FB3A0); }
       .vape-toggle-knob { position:absolute; left:3px; top:3px; width:16px; height:16px; border-radius:50%; background:#0d0f10; box-shadow:0 4px 10px rgba(0,0,0,0.6); transition:all 0.18s; }
       .vape-toggle.on .vape-toggle-knob { left:23px; background:white; }
+      .vape-bind-display { font-size:11px; color:#8F9498; margin-right:8px; min-width:30px; text-align:right; flex-shrink:0; }
       .vape-settings-row { margin:8px 0; }
       .vape-settings-label { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:12px; }
       .vape-settings-value { color:#8F9498; }
       .vape-slider { width:100%; height:6px; border-radius:999px; background:rgba(255,255,255,0.08); outline:none; appearance:none; }
-      .vape-slider::-webkit-slider-thumb { appearance:none; width:16px; height:16px; border-radius:50%; background:#0FB3A0; box-shadow:0 6px 12px rgba(0,0,0,0.4); cursor:pointer; }
+      .vape-slider::-webkit-slider-thumb { appearance:none; width:16px; height:16px; border-radius:50%; background:var(--vape-accent, #0FB3A0); box-shadow:0 6px 12px rgba(0,0,0,0.4); cursor:pointer; }
       .vape-bind-row { padding:8px 10px; margin:4px 0; background:rgba(0,0,0,0.2); border-radius:6px; font-size:12px; color:#8F9498; }
       .vape-bind-change { color:#0FB3A0; cursor:pointer; margin-left:8px; }
       .vape-bind-change:hover { text-decoration:underline; }
@@ -2352,13 +2355,40 @@ const survival = new Module("SurvivalMode", function(callback) {
 		let selectedCategory = null;
 		let bindingModule = null;
 
+		// === Helper: Set Accent Color ===
+		function setAccentColor(color) {
+			document.documentElement.style.setProperty("--vape-accent", color);
+			// Convert hex to rgba for alpha variants
+			const r = parseInt(color.slice(1, 3), 16);
+			const g = parseInt(color.slice(3, 5), 16);
+			const b = parseInt(color.slice(5, 7), 16);
+			document.documentElement.style.setProperty("--vape-accent-alpha", `rgba(${r},${g},${b},0.12)`);
+			// Save to localStorage
+			localStorage.setItem("vape-accent-color", color);
+		}
+
+		// Load saved accent color
+		const savedColor = localStorage.getItem("vape-accent-color");
+		if (savedColor) {
+			setAccentColor(savedColor);
+		}
+
 		// === Helper: Create draggable panel ===
 		function createPanel(title, x, y, width) {
 			const panel = document.createElement("div");
 			panel.className = "vape-panel";
 			panel.style.position = "absolute";
-			panel.style.left = x + "px";
-			panel.style.top = y + "px";
+
+			// Load saved position if exists
+			const savedPos = localStorage.getItem("vape-panel-pos-" + title);
+			if (savedPos) {
+				const pos = JSON.parse(savedPos);
+				panel.style.left = pos.left;
+				panel.style.top = pos.top;
+			} else {
+				panel.style.left = x + "px";
+				panel.style.top = y + "px";
+			}
 			panel.style.width = width + "px";
 
 			const header = document.createElement("div");
@@ -2388,6 +2418,11 @@ const survival = new Module("SurvivalMode", function(callback) {
 				if (dragging) {
 					dragging = false;
 					panel.style.zIndex = "100000";
+					// Save position
+					localStorage.setItem("vape-panel-pos-" + title, JSON.stringify({
+						left: panel.style.left,
+						top: panel.style.top
+					}));
 				}
 			});
 
@@ -2396,12 +2431,13 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 		// === Create Category Panel ===
 		function createCategoryPanel() {
-			const { panel, content } = createPanel("CATEGORIES", 40, 40, 220);
-			const categories = ["Combat", "Movement", "Player", "Render", "World", "Misc"];
+			const { panel, content } = createPanel("VAPE V4", 40, 40, 220);
+			const categories = ["Combat", "Movement", "Player", "Render", "World", "Misc", "Settings"];
 
 			categories.forEach(cat => {
 				const item = document.createElement("div");
 				item.className = "vape-cat-item";
+				item.dataset.category = cat;
 
 				const icon = document.createElement("div");
 				icon.className = "vape-cat-icon";
@@ -2415,15 +2451,30 @@ const survival = new Module("SurvivalMode", function(callback) {
 				content.appendChild(item);
 
 				item.addEventListener("click", () => {
-					// Remove active from all
-					content.querySelectorAll(".vape-cat-item").forEach(i => i.classList.remove("active"));
-					item.classList.add("active");
-					selectedCategory = cat;
-					openModulePanel(cat);
+					if (cat === "Settings") {
+						openSettingsPanel();
+					} else {
+						openModulePanel(cat);
+					}
+					updateCategoryHighlights();
 				});
 			});
 
 			return panel;
+		}
+
+		// === Update category highlights based on open panels ===
+		function updateCategoryHighlights() {
+			if (!categoryPanel) return;
+			const items = categoryPanel.querySelectorAll(".vape-cat-item");
+			items.forEach(item => {
+				const cat = item.dataset.category;
+				if (modulePanels[cat]) {
+					item.classList.add("active");
+				} else {
+					item.classList.remove("active");
+				}
+			});
 		}
 
 		// === Create Module Row ===
@@ -2452,7 +2503,6 @@ const survival = new Module("SurvivalMode", function(callback) {
 			const bindDisplay = document.createElement("span");
 			bindDisplay.className = "vape-bind-display";
 			bindDisplay.textContent = mod.bind || "";
-			bindDisplay.style.cssText = "font-size:11px;color:#8F9498;margin-right:8px;min-width:30px;text-align:right;";
 
 			const toggle = document.createElement("div");
 			toggle.className = "vape-toggle" + (mod.enabled ? " on" : "");
@@ -2498,18 +2548,24 @@ const survival = new Module("SurvivalMode", function(callback) {
 				if (!isVisible && optionsBox.children.length === 0) {
 					// Bind option
 					const bindLine = document.createElement("label");
-					bindLine.textContent = "Bind:";
-					bindLine.style.cssText = "font-size:12px;display:flex;justify-content:space-between;color:white;";
-					const bindInput = document.createElement("input");
-					bindInput.type = "text";
-					bindInput.value = mod.bind || "";
-					bindInput.style.cssText = "flex:1;margin-left:4px;background:#0a0a0a;color:white;border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:2px 4px;font-size:12px;";
-					bindInput.onchange = (e) => {
-						mod.setbind(e.target.value);
-						bindDisplay.textContent = e.target.value || "";
-						showNotif(name + " bind set to " + e.target.value, "info");
-					};
-					bindLine.appendChild(bindInput);
+					bindLine.style.cssText = "font-size:12px;display:flex;justify-content:space-between;color:white;align-items:center;";
+
+					const bindLabel = document.createElement("span");
+					bindLabel.textContent = "Bind:";
+					bindLine.appendChild(bindLabel);
+
+					const bindValueDisplay = document.createElement("span");
+					bindValueDisplay.textContent = mod.bind || "None";
+					bindValueDisplay.style.cssText = "flex:1;margin-left:8px;color:#0FB3A0;cursor:pointer;text-align:right;";
+					bindValueDisplay.title = "Click to change bind";
+
+					bindValueDisplay.addEventListener("click", () => {
+						bindValueDisplay.textContent = "waiting...";
+						bindValueDisplay.style.color = "#f1c40f";
+						bindingModule = { name, mod, bindDisplay, optionBindDisplay: bindValueDisplay };
+					});
+
+					bindLine.appendChild(bindValueDisplay);
 					optionsBox.appendChild(bindLine);
 
 					// Module options
@@ -2517,16 +2573,23 @@ const survival = new Module("SurvivalMode", function(callback) {
 						Object.entries(mod.options).forEach(([key, opt]) => {
 							const [type, val, label] = opt;
 							const line = document.createElement("label");
-							line.textContent = label || key;
-							line.style.cssText = "font-size:12px;display:flex;justify-content:space-between;color:white;";
+							line.style.cssText = "font-size:12px;display:flex;justify-content:space-between;align-items:center;color:white;margin-top:4px;";
+
+							const labelSpan = document.createElement("span");
+							labelSpan.textContent = label || key;
+							line.appendChild(labelSpan);
 
 							if (type === Boolean) {
 								const cb = document.createElement("input");
 								cb.type = "checkbox";
 								cb.checked = val;
+								cb.style.cssText = "cursor:pointer;";
 								cb.onchange = () => { opt[1] = cb.checked; };
 								line.appendChild(cb);
 							} else if (type === Number) {
+								const sliderWrap = document.createElement("div");
+								sliderWrap.style.cssText = "flex:1;margin-left:8px;display:flex;align-items:center;gap:6px;";
+
 								const slider = document.createElement("input");
 								slider.type = "range";
 								const [min, max, step] = opt.range ?? [0, 10, 0.1];
@@ -2534,9 +2597,20 @@ const survival = new Module("SurvivalMode", function(callback) {
 								slider.max = max;
 								slider.step = step;
 								slider.value = val;
-								slider.style.cssText = "flex:1;margin-left:4px;";
-								slider.oninput = () => { opt[1] = parseFloat(slider.value); };
-								line.appendChild(slider);
+								slider.style.cssText = "flex:1;height:4px;border-radius:999px;background:rgba(255,255,255,0.1);outline:none;appearance:none;cursor:pointer;";
+
+								const valueSpan = document.createElement("span");
+								valueSpan.textContent = val;
+								valueSpan.style.cssText = "color:#8F9498;font-size:11px;min-width:30px;text-align:right;";
+
+								slider.oninput = () => {
+									opt[1] = parseFloat(slider.value);
+									valueSpan.textContent = slider.value;
+								};
+
+								sliderWrap.appendChild(slider);
+								sliderWrap.appendChild(valueSpan);
+								line.appendChild(sliderWrap);
 							} else if (type === String) {
 								const input = document.createElement("input");
 								input.type = "text";
@@ -2555,16 +2629,23 @@ const survival = new Module("SurvivalMode", function(callback) {
 			return { row, optionsBox };
 		}
 
+		// === Close Panel with Animation ===
+		function closePanelWithAnimation(panel, callback) {
+			panel.classList.add("closing");
+			setTimeout(() => {
+				panel.remove();
+				if (callback) callback();
+			}, 200);
+		}
+
 		// === Open Module Panel ===
 		function openModulePanel(category) {
-			// Don't close existing panels - allow multiple
-			// Object.values(modulePanels).forEach(p => p.remove());
-			// modulePanels = {};
-
 			// Close if already open
 			if (modulePanels[category]) {
-				modulePanels[category].remove();
-				delete modulePanels[category];
+				closePanelWithAnimation(modulePanels[category], () => {
+					delete modulePanels[category];
+					updateCategoryHighlights();
+				});
 				return;
 			}
 
@@ -2587,6 +2668,106 @@ const survival = new Module("SurvivalMode", function(callback) {
 				content.appendChild(row);
 				content.appendChild(optionsBox);
 			});
+
+			updateCategoryHighlights();
+		}
+
+		// === Open Settings Panel ===
+		function openSettingsPanel() {
+			// Close if already open
+			if (modulePanels["Settings"]) {
+				closePanelWithAnimation(modulePanels["Settings"], () => {
+					delete modulePanels["Settings"];
+					updateCategoryHighlights();
+				});
+				return;
+			}
+
+			const { panel, content } = createPanel("SETTINGS", 280, 40, 300);
+			modulePanels["Settings"] = panel;
+			document.body.appendChild(panel);
+
+			// Config Save/Load
+			const saveConfigBtn = document.createElement("div");
+			saveConfigBtn.className = "vape-module-row";
+			saveConfigBtn.style.cursor = "pointer";
+			saveConfigBtn.innerHTML = '<div class="vape-module-left"><div class="vape-module-icon">💾</div><div class="vape-module-title">Save Config</div></div>';
+			saveConfigBtn.addEventListener("click", () => {
+				const configName = prompt("Enter config name:", "default");
+				if (configName) {
+					globalThis[storeName].saveVapeConfig(configName);
+					showNotif("Config saved: " + configName, "success");
+				}
+			});
+			content.appendChild(saveConfigBtn);
+
+			const loadConfigBtn = document.createElement("div");
+			loadConfigBtn.className = "vape-module-row";
+			loadConfigBtn.style.cursor = "pointer";
+			loadConfigBtn.innerHTML = '<div class="vape-module-left"><div class="vape-module-icon">📂</div><div class="vape-module-title">Load Config</div></div>';
+			loadConfigBtn.addEventListener("click", () => {
+				const configName = prompt("Enter config name to load:", "default");
+				if (configName) {
+					globalThis[storeName].saveVapeConfig();
+					globalThis[storeName].loadVapeConfig(configName);
+					showNotif("Config loaded: " + configName, "success");
+				}
+			});
+			content.appendChild(loadConfigBtn);
+
+			// Reset Layout
+			const resetLayoutBtn = document.createElement("div");
+			resetLayoutBtn.className = "vape-module-row";
+			resetLayoutBtn.style.cursor = "pointer";
+			resetLayoutBtn.innerHTML = '<div class="vape-module-left"><div class="vape-module-icon">🔄</div><div class="vape-module-title">Reset Layout</div></div>';
+			resetLayoutBtn.addEventListener("click", () => {
+				if (confirm("Reset panel positions to default?")) {
+					// Clear all saved positions
+					Object.keys(localStorage).filter(k => k.startsWith("vape-panel-pos-")).forEach(k => {
+						localStorage.removeItem(k);
+					});
+					// Close all panels and reopen category panel
+					Object.values(modulePanels).forEach(p => p.remove());
+					modulePanels = {};
+					if (categoryPanel) categoryPanel.remove();
+					categoryPanel = createCategoryPanel();
+					document.body.appendChild(categoryPanel);
+					showNotif("Layout reset!", "success");
+				}
+			});
+			content.appendChild(resetLayoutBtn);
+
+			// Accent Color Picker
+			const colorRow = document.createElement("div");
+			colorRow.className = "vape-module-row";
+			colorRow.style.flexDirection = "column";
+			colorRow.style.alignItems = "flex-start";
+			colorRow.innerHTML = '<div class="vape-module-left" style="width:100%;margin-bottom:8px;"><div class="vape-module-icon">🎨</div><div class="vape-module-title">Accent Color</div></div>';
+
+			const colorInput = document.createElement("input");
+			colorInput.type = "color";
+			colorInput.value = localStorage.getItem("vape-accent-color") || "#0FB3A0";
+			colorInput.style.cssText = "width:100%;height:40px;border:none;border-radius:6px;cursor:pointer;background:transparent;";
+			colorInput.addEventListener("change", (e) => {
+				setAccentColor(e.target.value);
+				showNotif("Accent color changed!", "success");
+			});
+			colorRow.appendChild(colorInput);
+			content.appendChild(colorRow);
+
+			// Reset Accent Color
+			const resetColorBtn = document.createElement("div");
+			resetColorBtn.className = "vape-module-row";
+			resetColorBtn.style.cursor = "pointer";
+			resetColorBtn.innerHTML = '<div class="vape-module-left"><div class="vape-module-icon">↩️</div><div class="vape-module-title">Reset Accent Color</div></div>';
+			resetColorBtn.addEventListener("click", () => {
+				setAccentColor("#0FB3A0");
+				colorInput.value = "#0FB3A0";
+				showNotif("Accent color reset!", "success");
+			});
+			content.appendChild(resetColorBtn);
+
+			updateCategoryHighlights();
 		}
 
 
@@ -2617,9 +2798,14 @@ const survival = new Module("SurvivalMode", function(callback) {
 			// Handle keybinding
 			if (bindingModule) {
 				if (e.code === "Escape") {
+					// Reset displays
 					if (bindingModule.bindDisplay) {
 						bindingModule.bindDisplay.textContent = bindingModule.mod.bind || "";
 						bindingModule.bindDisplay.style.color = "#8F9498";
+					}
+					if (bindingModule.optionBindDisplay) {
+						bindingModule.optionBindDisplay.textContent = bindingModule.mod.bind || "None";
+						bindingModule.optionBindDisplay.style.color = "#0FB3A0";
 					}
 					bindingModule = null;
 					showNotif("Binding cancelled", "error", 1000);
@@ -2627,9 +2813,14 @@ const survival = new Module("SurvivalMode", function(callback) {
 					const key = e.code.toLowerCase().replace("key", "").replace("digit", "");
 					if (key && bindingModule.mod.setbind) {
 						bindingModule.mod.setbind(key);
+						// Update both displays
 						if (bindingModule.bindDisplay) {
 							bindingModule.bindDisplay.textContent = key;
 							bindingModule.bindDisplay.style.color = "#8F9498";
+						}
+						if (bindingModule.optionBindDisplay) {
+							bindingModule.optionBindDisplay.textContent = key;
+							bindingModule.optionBindDisplay.style.color = "#0FB3A0";
 						}
 						showNotif("Bound " + bindingModule.name + " to " + key, "success", 2000);
 						bindingModule = null;
