@@ -2317,6 +2317,10 @@ const survival = new Module("SurvivalMode", function(callback) {
       .vape-bind-row { padding:8px 10px; margin:4px 0; background:rgba(0,0,0,0.2); border-radius:6px; font-size:12px; color:#8F9498; }
       .vape-bind-change { color:#0FB3A0; cursor:pointer; margin-left:8px; }
       .vape-bind-change:hover { text-decoration:underline; }
+      .vape-options { display:none; flex-direction:column; gap:4px; padding:8px 12px; background:rgba(0,0,0,0.3); border-top:1px solid rgba(255,255,255,0.05); animation:vapeEnter .2s ease-out; }
+      .vape-options.show { display:flex; }
+      .vape-options label { font-size:12px; display:flex; justify-content:space-between; color:white; }
+      .vape-options input[type="text"], .vape-options input[type="range"] { flex:1; margin-left:4px; }
       .notif-wrap { position:fixed; bottom:40px; right:30px; display:flex; flex-direction:column; align-items:flex-end; pointer-events:none; z-index:999999; }
       .notif { display:flex; align-items:center; gap:8px; background:rgba(20,20,20,0.85); color:white; padding:10px 14px; margin-top:8px; border-radius:10px; font-family:Inter,system-ui,sans-serif; font-size:13px; backdrop-filter:blur(6px); box-shadow:0 4px 12px rgba(0,0,0,0.4); opacity:1; transform:translateX(120%); transition:opacity .3s, transform .3s ease; border-left:4px solid; }
       .notif.info { border-color:#3498db; }
@@ -2423,7 +2427,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 		}
 
 		// === Create Module Row ===
-		function createModuleRow(name, mod) {
+		function createModuleRow(name, mod, content) {
 			const row = document.createElement("div");
 			row.className = "vape-module-row";
 
@@ -2444,12 +2448,19 @@ const survival = new Module("SurvivalMode", function(callback) {
 			const right = document.createElement("div");
 			right.className = "vape-module-right";
 
+			// Bind display
+			const bindDisplay = document.createElement("span");
+			bindDisplay.className = "vape-bind-display";
+			bindDisplay.textContent = mod.bind || "";
+			bindDisplay.style.cssText = "font-size:11px;color:#8F9498;margin-right:8px;min-width:30px;text-align:right;";
+
 			const toggle = document.createElement("div");
 			toggle.className = "vape-toggle" + (mod.enabled ? " on" : "");
 			const knob = document.createElement("div");
 			knob.className = "vape-toggle-knob";
 			toggle.appendChild(knob);
 
+			// Left click to toggle
 			toggle.addEventListener("click", (e) => {
 				e.stopPropagation();
 				if (typeof mod.toggle === "function") mod.toggle();
@@ -2457,32 +2468,105 @@ const survival = new Module("SurvivalMode", function(callback) {
 				showNotif(name + " " + (mod.enabled ? "enabled" : "disabled"), mod.enabled ? "success" : "error");
 			});
 
+			right.appendChild(bindDisplay);
 			right.appendChild(toggle);
 			row.appendChild(left);
 			row.appendChild(right);
 
-			// Left click to open settings
-			row.addEventListener("click", (e) => {
-				if (e.target !== toggle && e.target !== knob) {
-					openSettingsPanel(name, mod);
+			// Options box (hidden by default)
+			const optionsBox = document.createElement("div");
+			optionsBox.className = "vape-options";
+			optionsBox.style.display = "none";
+
+			// Middle click to bind
+			row.addEventListener("mousedown", (e) => {
+				if (e.button === 1) { // Middle click
+					e.preventDefault();
+					bindDisplay.textContent = "waiting...";
+					bindDisplay.style.color = "#0FB3A0";
+					bindingModule = { name, mod, bindDisplay };
 				}
 			});
 
-			// Right click to bind
+			// Right click to show options
 			row.addEventListener("contextmenu", (e) => {
 				e.preventDefault();
-				bindingModule = { name, mod };
-				showNotif("Press a key to bind " + name + " (ESC to cancel)", "info", 2000);
+				const isVisible = optionsBox.style.display === "flex";
+				optionsBox.style.display = isVisible ? "none" : "flex";
+
+				// Populate options if first time
+				if (!isVisible && optionsBox.children.length === 0) {
+					// Bind option
+					const bindLine = document.createElement("label");
+					bindLine.textContent = "Bind:";
+					bindLine.style.cssText = "font-size:12px;display:flex;justify-content:space-between;color:white;";
+					const bindInput = document.createElement("input");
+					bindInput.type = "text";
+					bindInput.value = mod.bind || "";
+					bindInput.style.cssText = "flex:1;margin-left:4px;background:#0a0a0a;color:white;border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:2px 4px;font-size:12px;";
+					bindInput.onchange = (e) => {
+						mod.setbind(e.target.value);
+						bindDisplay.textContent = e.target.value || "";
+						showNotif(name + " bind set to " + e.target.value, "info");
+					};
+					bindLine.appendChild(bindInput);
+					optionsBox.appendChild(bindLine);
+
+					// Module options
+					if (mod.options) {
+						Object.entries(mod.options).forEach(([key, opt]) => {
+							const [type, val, label] = opt;
+							const line = document.createElement("label");
+							line.textContent = label || key;
+							line.style.cssText = "font-size:12px;display:flex;justify-content:space-between;color:white;";
+
+							if (type === Boolean) {
+								const cb = document.createElement("input");
+								cb.type = "checkbox";
+								cb.checked = val;
+								cb.onchange = () => { opt[1] = cb.checked; };
+								line.appendChild(cb);
+							} else if (type === Number) {
+								const slider = document.createElement("input");
+								slider.type = "range";
+								const [min, max, step] = opt.range ?? [0, 10, 0.1];
+								slider.min = min;
+								slider.max = max;
+								slider.step = step;
+								slider.value = val;
+								slider.style.cssText = "flex:1;margin-left:4px;";
+								slider.oninput = () => { opt[1] = parseFloat(slider.value); };
+								line.appendChild(slider);
+							} else if (type === String) {
+								const input = document.createElement("input");
+								input.type = "text";
+								input.value = val;
+								input.style.cssText = "flex:1;margin-left:4px;background:#0a0a0a;color:white;border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:2px 4px;font-size:12px;";
+								input.onchange = () => { opt[1] = input.value; };
+								line.appendChild(input);
+							}
+
+							optionsBox.appendChild(line);
+						});
+					}
+				}
 			});
 
-			return row;
+			return { row, optionsBox };
 		}
 
 		// === Open Module Panel ===
 		function openModulePanel(category) {
-			// Close existing module panels
-			Object.values(modulePanels).forEach(p => p.remove());
-			modulePanels = {};
+			// Don't close existing panels - allow multiple
+			// Object.values(modulePanels).forEach(p => p.remove());
+			// modulePanels = {};
+
+			// Close if already open
+			if (modulePanels[category]) {
+				modulePanels[category].remove();
+				delete modulePanels[category];
+				return;
+			}
 
 			// Get modules for this category
 			const catKey = categoryMap[category] || [];
@@ -2492,87 +2576,20 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 			if (modules.length === 0) return;
 
-			const { panel, content } = createPanel(category.toUpperCase(), 280, 40, 260);
+			// Position panels in a cascade
+			const panelCount = Object.keys(modulePanels).length;
+			const { panel, content } = createPanel(category.toUpperCase(), 280 + panelCount * 30, 40 + panelCount * 30, 260);
 			modulePanels[category] = panel;
 			document.body.appendChild(panel);
 
 			modules.forEach(([name, mod]) => {
-				content.appendChild(createModuleRow(name, mod));
+				const { row, optionsBox } = createModuleRow(name, mod, content);
+				content.appendChild(row);
+				content.appendChild(optionsBox);
 			});
 		}
 
-		// === Open Settings Panel ===
-		function openSettingsPanel(name, mod) {
-			if (settingsPanel) settingsPanel.remove();
 
-			const { panel, content } = createPanel(name + " Settings", 560, 40, 300);
-			settingsPanel = panel;
-			document.body.appendChild(panel);
-
-			// Bind row
-			const bindRow = document.createElement("div");
-			bindRow.className = "vape-bind-row";
-			bindRow.innerHTML = "<strong>Bind:</strong> " + (mod.bind || "None") + '<span class="vape-bind-change" id="change-bind">Change</span>';
-			content.appendChild(bindRow);
-
-			document.getElementById("change-bind").addEventListener("click", () => {
-				bindingModule = { name, mod };
-				showNotif("Press a key to bind " + name + " (ESC to cancel)", "info", 2000);
-			});
-
-			// Options
-			if (mod.options) {
-				Object.entries(mod.options).forEach(([key, opt]) => {
-					const [type, val, label] = opt;
-					const optRow = document.createElement("div");
-					optRow.className = "vape-settings-row";
-
-					const labelDiv = document.createElement("div");
-					labelDiv.className = "vape-settings-label";
-
-					const labelText = document.createElement("span");
-					labelText.textContent = label || key;
-
-					const valueText = document.createElement("span");
-					valueText.className = "vape-settings-value";
-					valueText.textContent = val;
-
-					labelDiv.appendChild(labelText);
-					labelDiv.appendChild(valueText);
-					optRow.appendChild(labelDiv);
-
-					if (type === Number) {
-						const slider = document.createElement("input");
-						slider.type = "range";
-						slider.className = "vape-slider";
-						const [min, max, step] = opt.range ?? [0, 100, 1];
-						slider.min = min;
-						slider.max = max;
-						slider.step = step;
-						slider.value = val;
-						slider.addEventListener("input", () => {
-							opt[1] = parseFloat(slider.value);
-							valueText.textContent = slider.value;
-						});
-						optRow.appendChild(slider);
-					} else if (type === Boolean) {
-						const toggle = document.createElement("div");
-						toggle.className = "vape-toggle" + (val ? " on" : "");
-						const knob = document.createElement("div");
-						knob.className = "vape-toggle-knob";
-						toggle.appendChild(knob);
-						toggle.addEventListener("click", () => {
-							opt[1] = !opt[1];
-							toggle.classList.toggle("on", opt[1]);
-							valueText.textContent = opt[1];
-						});
-						optRow.appendChild(toggle);
-					}
-
-					content.appendChild(optRow);
-				});
-			}
-		}
 
 		// === Toggle GUI ===
 		let visible = false;
@@ -2600,12 +2617,20 @@ const survival = new Module("SurvivalMode", function(callback) {
 			// Handle keybinding
 			if (bindingModule) {
 				if (e.code === "Escape") {
+					if (bindingModule.bindDisplay) {
+						bindingModule.bindDisplay.textContent = bindingModule.mod.bind || "";
+						bindingModule.bindDisplay.style.color = "#8F9498";
+					}
 					bindingModule = null;
 					showNotif("Binding cancelled", "error", 1000);
 				} else {
 					const key = e.code.toLowerCase().replace("key", "").replace("digit", "");
 					if (key && bindingModule.mod.setbind) {
 						bindingModule.mod.setbind(key);
+						if (bindingModule.bindDisplay) {
+							bindingModule.bindDisplay.textContent = key;
+							bindingModule.bindDisplay.style.color = "#8F9498";
+						}
 						showNotif("Bound " + bindingModule.name + " to " + key, "success", 2000);
 						bindingModule = null;
 					}
