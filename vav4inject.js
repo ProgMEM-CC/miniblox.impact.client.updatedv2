@@ -2510,12 +2510,9 @@ const survival = new Module("SurvivalMode", function(callback) {
 			knob.className = "vape-toggle-knob";
 			toggle.appendChild(knob);
 
-			// Left click to toggle
+			// Prevent toggle button from triggering row click
 			toggle.addEventListener("click", (e) => {
 				e.stopPropagation();
-				if (typeof mod.toggle === "function") mod.toggle();
-				toggle.classList.toggle("on", mod.enabled);
-				showNotif(name + " " + (mod.enabled ? "enabled" : "disabled"), mod.enabled ? "success" : "error");
 			});
 
 			right.appendChild(bindDisplay);
@@ -2527,6 +2524,22 @@ const survival = new Module("SurvivalMode", function(callback) {
 			const optionsBox = document.createElement("div");
 			optionsBox.className = "vape-options";
 			optionsBox.style.display = "none";
+
+			// Click anywhere on row or options to toggle module
+			const toggleModule = (e) => {
+				// Don't toggle if clicking on interactive elements
+				if (e.target.tagName === "INPUT" || e.target.classList.contains("vape-toggle") ||
+					e.target.classList.contains("vape-toggle-knob") || e.target.classList.contains("vape-bind-key-display")) {
+					return;
+				}
+				if (typeof mod.toggle === "function") {
+					mod.toggle();
+					toggle.classList.toggle("on", mod.enabled);
+					showNotif(name + " " + (mod.enabled ? "enabled" : "disabled"), mod.enabled ? "success" : "error");
+				}
+			};
+
+			row.addEventListener("click", toggleModule);
 
 			// Middle click to bind
 			row.addEventListener("mousedown", (e) => {
@@ -2546,63 +2559,81 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 				// Populate options if first time
 				if (!isVisible && optionsBox.children.length === 0) {
-					// Bind option
-					const bindLine = document.createElement("label");
-					bindLine.style.cssText = "font-size:12px;display:flex;justify-content:space-between;color:white;align-items:center;";
-
-					const bindLabel = document.createElement("span");
-					bindLabel.textContent = "Bind:";
-					bindLine.appendChild(bindLabel);
-
-					const bindValueDisplay = document.createElement("span");
-					bindValueDisplay.textContent = mod.bind || "None";
-					bindValueDisplay.style.cssText = "flex:1;margin-left:8px;color:#0FB3A0;cursor:pointer;text-align:right;";
-					bindValueDisplay.title = "Click to change bind";
-
-					bindValueDisplay.addEventListener("click", () => {
-						bindValueDisplay.textContent = "waiting...";
-						bindValueDisplay.style.color = "#f1c40f";
-						bindingModule = { name, mod, bindDisplay, optionBindDisplay: bindValueDisplay };
-					});
-
-					bindLine.appendChild(bindValueDisplay);
-					optionsBox.appendChild(bindLine);
+					// Bind display at top
+					if (mod.bind) {
+						const bindKeyDisplay = document.createElement("div");
+						bindKeyDisplay.className = "vape-bind-key-display";
+						bindKeyDisplay.textContent = mod.bind.toUpperCase();
+						bindKeyDisplay.style.cssText = "background:rgba(255,255,255,0.08);padding:6px 12px;border-radius:6px;font-weight:700;font-size:11px;text-align:center;margin-bottom:8px;cursor:pointer;";
+						bindKeyDisplay.title = "Click to change bind";
+						bindKeyDisplay.addEventListener("click", (e) => {
+							e.stopPropagation();
+							bindKeyDisplay.textContent = "WAITING...";
+							bindKeyDisplay.style.background = "rgba(241,196,15,0.2)";
+							bindingModule = { name, mod, bindDisplay, optionBindDisplay: bindKeyDisplay };
+						});
+						optionsBox.appendChild(bindKeyDisplay);
+					} else {
+						const bindKeyDisplay = document.createElement("div");
+						bindKeyDisplay.className = "vape-bind-key-display";
+						bindKeyDisplay.textContent = "CLICK TO BIND";
+						bindKeyDisplay.style.cssText = "background:rgba(255,255,255,0.05);padding:6px 12px;border-radius:6px;font-weight:700;font-size:11px;text-align:center;margin-bottom:8px;cursor:pointer;color:#8F9498;";
+						bindKeyDisplay.title = "Click to set bind";
+						bindKeyDisplay.addEventListener("click", (e) => {
+							e.stopPropagation();
+							bindKeyDisplay.textContent = "WAITING...";
+							bindKeyDisplay.style.background = "rgba(241,196,15,0.2)";
+							bindKeyDisplay.style.color = "#f1c40f";
+							bindingModule = { name, mod, bindDisplay, optionBindDisplay: bindKeyDisplay };
+						});
+						optionsBox.appendChild(bindKeyDisplay);
+					}
 
 					// Module options
 					if (mod.options) {
 						Object.entries(mod.options).forEach(([key, opt]) => {
 							const [type, val, label] = opt;
-							const line = document.createElement("label");
-							line.style.cssText = "font-size:12px;display:flex;justify-content:space-between;align-items:center;color:white;margin-top:4px;";
+							const line = document.createElement("div");
+							line.style.cssText = "display:flex;justify-content:space-between;align-items:center;margin-top:8px;";
 
 							const labelSpan = document.createElement("span");
 							labelSpan.textContent = label || key;
+							labelSpan.style.cssText = "font-size:12px;color:#E6E9EA;";
 							line.appendChild(labelSpan);
 
 							if (type === Boolean) {
-								const cb = document.createElement("input");
-								cb.type = "checkbox";
-								cb.checked = val;
-								cb.style.cssText = "cursor:pointer;";
-								cb.onchange = () => { opt[1] = cb.checked; };
-								line.appendChild(cb);
+								const optToggle = document.createElement("div");
+								optToggle.className = "vape-toggle" + (val ? " on" : "");
+								optToggle.style.cssText = "width:38px;height:20px;";
+								const optKnob = document.createElement("div");
+								optKnob.className = "vape-toggle-knob";
+								optKnob.style.cssText = "width:14px;height:14px;";
+								optToggle.appendChild(optKnob);
+								optToggle.addEventListener("click", (e) => {
+									e.stopPropagation();
+									opt[1] = !opt[1];
+									optToggle.classList.toggle("on", opt[1]);
+								});
+								line.appendChild(optToggle);
 							} else if (type === Number) {
 								const sliderWrap = document.createElement("div");
-								sliderWrap.style.cssText = "flex:1;margin-left:8px;display:flex;align-items:center;gap:6px;";
+								sliderWrap.style.cssText = "flex:1;margin-left:12px;display:flex;align-items:center;gap:8px;max-width:150px;";
 
 								const slider = document.createElement("input");
 								slider.type = "range";
+								slider.className = "vape-slider";
 								const [min, max, step] = opt.range ?? [0, 10, 0.1];
 								slider.min = min;
 								slider.max = max;
 								slider.step = step;
 								slider.value = val;
-								slider.style.cssText = "flex:1;height:4px;border-radius:999px;background:rgba(255,255,255,0.1);outline:none;appearance:none;cursor:pointer;";
 
 								const valueSpan = document.createElement("span");
 								valueSpan.textContent = val;
-								valueSpan.style.cssText = "color:#8F9498;font-size:11px;min-width:30px;text-align:right;";
+								valueSpan.style.cssText = "color:#8F9498;font-size:11px;min-width:35px;text-align:right;font-weight:600;";
 
+								slider.addEventListener("click", (e) => e.stopPropagation());
+								slider.addEventListener("mousedown", (e) => e.stopPropagation());
 								slider.oninput = () => {
 									opt[1] = parseFloat(slider.value);
 									valueSpan.textContent = slider.value;
@@ -2615,7 +2646,14 @@ const survival = new Module("SurvivalMode", function(callback) {
 								const input = document.createElement("input");
 								input.type = "text";
 								input.value = val;
-								input.style.cssText = "flex:1;margin-left:4px;background:#0a0a0a;color:white;border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:2px 4px;font-size:12px;";
+								input.style.cssText = "flex:1;margin-left:8px;max-width:150px;background:rgba(255,255,255,0.05);color:#E6E9EA;border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 8px;font-size:12px;outline:none;";
+								input.addEventListener("click", (e) => e.stopPropagation());
+								input.addEventListener("focus", () => {
+									input.style.borderColor = "var(--vape-accent, #0FB3A0)";
+								});
+								input.addEventListener("blur", () => {
+									input.style.borderColor = "rgba(255,255,255,0.1)";
+								});
 								input.onchange = () => { opt[1] = input.value; };
 								line.appendChild(input);
 							}
@@ -2625,6 +2663,9 @@ const survival = new Module("SurvivalMode", function(callback) {
 					}
 				}
 			});
+
+			// Allow clicking on options box to toggle module
+			optionsBox.addEventListener("click", toggleModule);
 
 			return { row, optionsBox };
 		}
@@ -2804,8 +2845,15 @@ const survival = new Module("SurvivalMode", function(callback) {
 						bindingModule.bindDisplay.style.color = "#8F9498";
 					}
 					if (bindingModule.optionBindDisplay) {
-						bindingModule.optionBindDisplay.textContent = bindingModule.mod.bind || "None";
-						bindingModule.optionBindDisplay.style.color = "#0FB3A0";
+						if (bindingModule.mod.bind) {
+							bindingModule.optionBindDisplay.textContent = bindingModule.mod.bind.toUpperCase();
+							bindingModule.optionBindDisplay.style.background = "rgba(255,255,255,0.08)";
+							bindingModule.optionBindDisplay.style.color = "#E6E9EA";
+						} else {
+							bindingModule.optionBindDisplay.textContent = "CLICK TO BIND";
+							bindingModule.optionBindDisplay.style.background = "rgba(255,255,255,0.05)";
+							bindingModule.optionBindDisplay.style.color = "#8F9498";
+						}
 					}
 					bindingModule = null;
 					showNotif("Binding cancelled", "error", 1000);
@@ -2819,8 +2867,9 @@ const survival = new Module("SurvivalMode", function(callback) {
 							bindingModule.bindDisplay.style.color = "#8F9498";
 						}
 						if (bindingModule.optionBindDisplay) {
-							bindingModule.optionBindDisplay.textContent = key;
-							bindingModule.optionBindDisplay.style.color = "#0FB3A0";
+							bindingModule.optionBindDisplay.textContent = key.toUpperCase();
+							bindingModule.optionBindDisplay.style.background = "rgba(255,255,255,0.08)";
+							bindingModule.optionBindDisplay.style.color = "#E6E9EA";
 						}
 						showNotif("Bound " + bindingModule.name + " to " + key, "success", 2000);
 						bindingModule = null;
