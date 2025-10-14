@@ -4,11 +4,11 @@
 
 ---
 
-## Overview of Impact for Miniblox
+## An Overview of Impact for Miniblox
 **Impact Client for Miniblox.io** is a fully standalone continuation of the discontinued **Vape for Miniblox** project by `7GrandDadPGN`.  
 When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPacket)**, and **ProgMEM-CC** rebuilt it from scratch — creating a modern, modular, and optimized exploit client framework for Miniblox. :trollface:
 
-> Designed for stealth, speed, and domination — with full dark-mode support and with a slick Click GUI.
+> Designed for stealth, speed, and domination — with full dark-mode support with a slick Click GUI.
 
 ---
 
@@ -23,16 +23,17 @@ When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPac
 - Jetpack
 ---
 
-## Installation of Impact For Miniblox!
-1. Install a userscript manager (🧩 **Tampermonkey**, **Violentmonkey**, or **Greasemonkey**).  
-2. Copy the contents of `tampermonkey.js` and (`optional`) `injection.js`. Best option is to copy and paste both `tampermonkey` and `injection` - TheM1ddleM1n
-3. Paste it into a new userscript and enable it.  
-5. Open [Miniblox.io](https://miniblox.io) — the client will auto-initialize.  
+## How to Install Impact For Miniblox?
+First, install a userscript manager (🧩 **Tampermonkey**, **Violentmonkey** or **Greasemonkey** via Chrome Web Store or Microsoft Store etc).  
+Next, copy the contents of `tampermonkey.js` and (`optional`) `injection.js`. The best option imo is to copy and paste both `tampermonkey` and `injection` - TheM1ddleM1n
+Then, paste it into a new userscript and enable it. (u should see it save)
+Finally, open [Miniblox.io](https://miniblox.io) — the client will auto-initialize!
+Enjoy!
 
 ---
 
-## 🧾 Changelog
-All notable changes to this project will be documented here!
+## 🧾 Changelog!
+All notable changes to this project will be documented here.
 
 ## [v6.1] - 2025-10-06
 - ReadMe updated
