@@ -3,7 +3,7 @@
 // @namespace    ProgMEM-CC, TheM1ddleM1n, he557, 7GrandDad, BlueDragon7327, DataM0del/RealPacket, ekusos22, whoppps, ispyboy
 // @version      6.5
 // @description  The ultimate MiniBlox hacked client! Built for total domination of Miniblox servers! Fully dark-mode optimized with a modern GUI and high performance!
-// @author       7GrandDad, ProgMEM-CC, TheM1ddleM1n, he557, RealPacket/DataM0del (Codeberg/Github names), BlueDragon7327, whoppps, ispyboy
+// @author       7GrandDad, ProgMEM-CC, TheM1ddleM1n, he557, RealPacket/DataM0del (Codeberg/Github names), BlueDragon7327, whoppps, annepaurush
 // @match        https://miniblox.io/
 // @match        https://miniblox.org/
 // @icon         https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/favicon.png
@@ -27,7 +27,7 @@
 //  BlueDragon7327 (github.com/BlueDragon7327) 
 //  dtkiller-jp (github.com/dtkiller-jp)
 //  whoppps (github.com/whoppps)
-//  ispyboy (github.com/ispyboy)
+//  annepaurush (github.com/annepaurush)
 //
 //  i dont think we need anymore devs lol :trollface: (unless required)
 //  
@@ -38,9 +38,9 @@
 //    TheM1ddleM1n, the one who never fails to amaze, creating a LB themed ClickGUI and creating new modules!
 //    RealPacket, (codeberg: https://codeberg.org/RealPacket) for the inspiration of reviving the hacks and making a genius desync for Fly and Nofall, also making .friend command, Antiblind module etc!
 //    BlueDragon7327, Module Researcher and solver!
-//    dtkiller-jp, Bug reporter!
+//    dtkiller-jp, Bug reporter and solver!
+//    annepaurush, Bug reporter and issue raiser! 😃
 //    whoppps
-//    ispyboy
 //
 // ==================================== Extra Credits To! =====================================================
 //    The js.org team, who kindly provided us with the subdomain impactminiblox.js.org for the project site
