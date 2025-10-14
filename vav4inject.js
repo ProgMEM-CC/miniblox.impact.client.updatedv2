@@ -2289,20 +2289,25 @@ const survival = new Module("SurvivalMode", function(callback) {
 		style.textContent = `
       @keyframes vapeEnter {0%{opacity:0;transform:translateY(-10px);}100%{opacity:1;transform:translateY(0);}}
       @keyframes vapeExit {0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-10px);}}
+      @keyframes glowPulse {0%{box-shadow:0 2px 8px rgba(15,179,160,0);}50%{box-shadow:0 4px 16px rgba(15,179,160,0.4);}100%{box-shadow:0 2px 8px rgba(15,179,160,0);}}
       .vape-panel { position:absolute; background:linear-gradient(180deg, rgba(28,30,32,0.98), rgba(23,25,27,0.98)); border-radius:12px; border:1px solid rgba(255,255,255,0.06); box-shadow:0 12px 30px rgba(0,0,0,0.7); backdrop-filter:blur(8px); font-family:Inter,system-ui,sans-serif; color:#E6E9EA; animation:vapeEnter .2s ease-out; z-index:100000; overflow:hidden; min-width:260px; }
       .vape-panel.closing { animation:vapeExit .2s ease-out; }
       .vape-header { padding:12px 14px; background:rgba(0,0,0,0.2); border-bottom:1px solid rgba(255,255,255,0.04); font-weight:700; font-size:13px; letter-spacing:0.5px; cursor:move; user-select:none; display:flex; align-items:center; justify-content:space-between; }
-      .vape-content { padding:8px; max-height:500px; overflow-y:auto; overflow-x:hidden; }
+      .vape-content { padding:8px; max-height:500px; overflow-y:auto; overflow-x:hidden; transition:max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease; }
+      .vape-content.collapsing { max-height:0; opacity:0; padding-top:0; padding-bottom:0; }
       .vape-content::-webkit-scrollbar { width:6px; }
       .vape-content::-webkit-scrollbar-thumb { background:var(--vape-accent, #0FB3A0); border-radius:10px; }
       .vape-content::-webkit-scrollbar-track { background:transparent; }
-      .vape-cat-item { display:flex; align-items:center; gap:10px; padding:10px 12px; margin:4px 0; border-radius:8px; cursor:pointer; transition:all 0.15s; user-select:none; border:1px solid transparent; }
-      .vape-cat-item:hover { background:linear-gradient(90deg,var(--vape-accent-alpha, rgba(15,179,160,0.08)),transparent); }
+      .vape-cat-item { display:flex; align-items:center; gap:10px; padding:10px 12px; margin:4px 0; border-radius:8px; cursor:pointer; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); user-select:none; border:1px solid transparent; }
+      .vape-cat-item:hover { background:linear-gradient(90deg,var(--vape-accent-alpha, rgba(15,179,160,0.08)),transparent); box-shadow:0 4px 12px var(--vape-accent-shadow, rgba(15,179,160,0.15)); }
       .vape-cat-item.active { background:linear-gradient(90deg,var(--vape-accent-alpha, rgba(15,179,160,0.12)),transparent); border:1px solid var(--vape-accent-alpha, rgba(15,179,160,0.12)); }
-      .vape-cat-icon { width:18px; height:18px; border-radius:4px; background:linear-gradient(135deg,var(--vape-accent, #0FB3A0),var(--vape-accent, #13a695)); box-shadow:0 2px 6px var(--vape-accent-alpha, rgba(15,179,160,0.2)); }
+      .vape-cat-icon { width:18px; height:18px; border-radius:4px; background:linear-gradient(135deg,var(--vape-accent, #0FB3A0),var(--vape-accent, #13a695)); box-shadow:0 2px 6px var(--vape-accent-shadow, rgba(15,179,160,0.2)); transition:all 0.3s ease; }
+      .vape-cat-item:hover .vape-cat-icon { box-shadow:0 4px 12px var(--vape-accent-shadow, rgba(15,179,160,0.4)); transform:scale(1.05); }
       .vape-cat-text { font-weight:600; font-size:13px; }
-      .vape-module-row { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; margin:4px 0; border-radius:8px; background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent); border:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.15s; }
-      .vape-module-row:hover { background:linear-gradient(180deg,rgba(255,255,255,0.05),var(--vape-accent-alpha, rgba(15,179,160,0.03))); }
+      .vape-module-row { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; margin:4px 0; border-radius:8px; background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent); border:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position:relative; }
+      .vape-module-row::after { content:''; position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:0; height:2px; background:var(--vape-accent, #0FB3A0); transition:width 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-radius:2px; }
+      .vape-module-row:hover::after { width:90%; }
+      .vape-module-row:hover { background:linear-gradient(180deg,rgba(255,255,255,0.05),var(--vape-accent-alpha, rgba(15,179,160,0.03))); box-shadow:0 8px 24px var(--vape-accent-shadow, rgba(15,179,160,0.25)); transform:translateY(-2px); }
       .vape-module-left { display:flex; align-items:center; gap:10px; flex:1; min-width:0; }
       .vape-module-icon { width:32px; height:32px; border-radius:6px; background:linear-gradient(135deg,#2b2d30,#131415); display:flex; align-items:center; justify-content:center; color:#8F9498; font-weight:700; font-size:12px; flex-shrink:0; }
       .vape-module-title { font-weight:600; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -2355,6 +2360,24 @@ const survival = new Module("SurvivalMode", function(callback) {
 		let selectedCategory = null;
 		let bindingModule = null;
 
+		// === Save/Load GUI State ===
+		function saveGUIState() {
+			const openPanels = Object.keys(modulePanels);
+			localStorage.setItem("vape-gui-open-panels", JSON.stringify(openPanels));
+		}
+
+		function loadGUIState() {
+			const saved = localStorage.getItem("vape-gui-open-panels");
+			if (saved) {
+				try {
+					return JSON.parse(saved);
+				} catch (e) {
+					return [];
+				}
+			}
+			return [];
+		}
+
 		// === Helper: Set Accent Color ===
 		function setAccentColor(color) {
 			document.documentElement.style.setProperty("--vape-accent", color);
@@ -2363,6 +2386,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 			const g = parseInt(color.slice(3, 5), 16);
 			const b = parseInt(color.slice(5, 7), 16);
 			document.documentElement.style.setProperty("--vape-accent-alpha", `rgba(${r},${g},${b},0.12)`);
+			document.documentElement.style.setProperty("--vape-accent-shadow", `rgba(${r},${g},${b},0.2)`);
 			// Save to localStorage
 			localStorage.setItem("vape-accent-color", color);
 		}
@@ -2374,7 +2398,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 		}
 
 		// === Helper: Create draggable panel ===
-		function createPanel(title, x, y, width) {
+		function createPanel(title, x, y, width, showCollapseButton = false) {
 			const panel = document.createElement("div");
 			panel.className = "vape-panel";
 			panel.style.position = "absolute";
@@ -2393,38 +2417,77 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 			const header = document.createElement("div");
 			header.className = "vape-header";
-			header.textContent = title;
-			panel.appendChild(header);
+
+			const titleSpan = document.createElement("span");
+			titleSpan.textContent = title;
+			titleSpan.style.flex = "1";
+			header.appendChild(titleSpan);
 
 			const content = document.createElement("div");
 			content.className = "vape-content";
+			panel.appendChild(header);
 			panel.appendChild(content);
+
+			// Add collapse button if requested
+			if (showCollapseButton) {
+				const collapseBtn = document.createElement("div");
+				collapseBtn.className = "vape-collapse-btn";
+				collapseBtn.textContent = "−";
+				collapseBtn.style.cssText = "width:20px;height:20px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);border-radius:4px;cursor:pointer;font-size:16px;font-weight:700;transition:all 0.2s;user-select:none;";
+				collapseBtn.title = "Collapse";
+
+				// Load saved collapse state
+				let isCollapsed = localStorage.getItem("vape-panel-collapsed-" + title) === "true";
+
+				if (isCollapsed) {
+					content.classList.add("collapsing");
+					collapseBtn.textContent = "+";
+				}
+
+				collapseBtn.onmouseenter = () => collapseBtn.style.background = "rgba(255,255,255,0.1)";
+				collapseBtn.onmouseleave = () => collapseBtn.style.background = "rgba(255,255,255,0.05)";
+				collapseBtn.onclick = (e) => {
+					e.stopPropagation();
+					isCollapsed = !isCollapsed;
+					if (isCollapsed) {
+						content.classList.add("collapsing");
+						collapseBtn.textContent = "+";
+					} else {
+						content.classList.remove("collapsing");
+						collapseBtn.textContent = "−";
+					}
+					localStorage.setItem("vape-panel-collapsed-" + title, isCollapsed);
+				};
+
+				header.appendChild(collapseBtn);
+			}
 
 			// Dragging
 			let dragging = false, offsetX, offsetY;
-			header.addEventListener("mousedown", (e) => {
+			const onMouseDown = (e) => {
+				if (e.target.classList.contains("vape-collapse-btn")) return;
 				dragging = true;
 				offsetX = e.clientX - panel.offsetLeft;
 				offsetY = e.clientY - panel.offsetTop;
 				panel.style.zIndex = "100001";
-			});
-			document.addEventListener("mousemove", (e) => {
-				if (dragging) {
-					panel.style.left = (e.clientX - offsetX) + "px";
-					panel.style.top = (e.clientY - offsetY) + "px";
-				}
-			});
-			document.addEventListener("mouseup", () => {
-				if (dragging) {
-					dragging = false;
-					panel.style.zIndex = "100000";
-					// Save position
-					localStorage.setItem("vape-panel-pos-" + title, JSON.stringify({
-						left: panel.style.left,
-						top: panel.style.top
-					}));
-				}
-			});
+			};
+			const onMouseMove = (e) => {
+				if (!dragging) return;
+				panel.style.left = (e.clientX - offsetX) + "px";
+				panel.style.top = (e.clientY - offsetY) + "px";
+			};
+			const onMouseUp = () => {
+				if (!dragging) return;
+				dragging = false;
+				panel.style.zIndex = "100000";
+				localStorage.setItem("vape-panel-pos-" + title, JSON.stringify({
+					left: panel.style.left,
+					top: panel.style.top
+				}));
+			};
+			header.addEventListener("mousedown", onMouseDown);
+			document.addEventListener("mousemove", onMouseMove);
+			document.addEventListener("mouseup", onMouseUp);
 
 			return { panel, content };
 		}
@@ -2502,7 +2565,13 @@ const survival = new Module("SurvivalMode", function(callback) {
 			// Bind display
 			const bindDisplay = document.createElement("span");
 			bindDisplay.className = "vape-bind-display";
-			bindDisplay.textContent = mod.bind || "";
+			if (mod.bind) {
+				bindDisplay.textContent = mod.bind.toUpperCase();
+				bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:30px;text-align:center;flex-shrink:0;background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-weight:700;";
+			} else {
+				bindDisplay.textContent = "";
+				bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:0;text-align:center;flex-shrink:0;";
+			}
 
 			const toggle = document.createElement("div");
 			toggle.className = "vape-toggle" + (mod.enabled ? " on" : "");
@@ -2520,36 +2589,31 @@ const survival = new Module("SurvivalMode", function(callback) {
 			row.appendChild(left);
 			row.appendChild(right);
 
-			// Options box (hidden by default)
 			const optionsBox = document.createElement("div");
 			optionsBox.className = "vape-options";
 			optionsBox.style.display = "none";
 
-			// Click anywhere on row or options to toggle module
 			const toggleModule = (e) => {
-				// Don't toggle if clicking on interactive elements
-				if (e.target.tagName === "INPUT" || e.target.classList.contains("vape-toggle") ||
-					e.target.classList.contains("vape-toggle-knob") || e.target.classList.contains("vape-bind-key-display")) {
-					return;
-				}
-				if (typeof mod.toggle === "function") {
+				const t = e.target;
+				if (t.tagName === "INPUT" || t.classList.contains("vape-toggle") ||
+					t.classList.contains("vape-toggle-knob") || t.classList.contains("vape-bind-key-display") ||
+					t.classList.contains("vape-slider")) return;
+				if (mod.toggle) {
 					mod.toggle();
 					toggle.classList.toggle("on", mod.enabled);
 					showNotif(name + " " + (mod.enabled ? "enabled" : "disabled"), mod.enabled ? "success" : "error");
 				}
 			};
 
-			row.addEventListener("click", toggleModule);
-
-			// Middle click to bind
-			row.addEventListener("mousedown", (e) => {
-				if (e.button === 1) { // Middle click
+			row.onclick = toggleModule;
+			row.onmousedown = (e) => {
+				if (e.button === 1) {
 					e.preventDefault();
 					bindDisplay.textContent = "waiting...";
 					bindDisplay.style.color = "#0FB3A0";
 					bindingModule = { name, mod, bindDisplay };
 				}
-			});
+			};
 
 			// Right click to show options
 			row.addEventListener("contextmenu", (e) => {
@@ -2604,15 +2668,26 @@ const survival = new Module("SurvivalMode", function(callback) {
 							if (type === Boolean) {
 								const optToggle = document.createElement("div");
 								optToggle.className = "vape-toggle" + (val ? " on" : "");
-								optToggle.style.cssText = "width:38px;height:20px;";
+								optToggle.style.cssText = "width:42px;height:22px;border-radius:20px;background:rgba(255,255,255,0.05);position:relative;transition:all 0.18s;cursor:pointer;flex-shrink:0;";
+								if (val) {
+									optToggle.style.background = "var(--vape-accent, #0FB3A0)";
+								}
 								const optKnob = document.createElement("div");
 								optKnob.className = "vape-toggle-knob";
-								optKnob.style.cssText = "width:14px;height:14px;";
+								optKnob.style.cssText = "position:absolute;left:" + (val ? "23px" : "3px") + ";top:3px;width:16px;height:16px;border-radius:50%;background:" + (val ? "white" : "#0d0f10") + ";box-shadow:0 4px 10px rgba(0,0,0,0.6);transition:all 0.18s;";
 								optToggle.appendChild(optKnob);
 								optToggle.addEventListener("click", (e) => {
 									e.stopPropagation();
 									opt[1] = !opt[1];
-									optToggle.classList.toggle("on", opt[1]);
+									if (opt[1]) {
+										optToggle.style.background = "var(--vape-accent, #0FB3A0)";
+										optKnob.style.left = "23px";
+										optKnob.style.background = "white";
+									} else {
+										optToggle.style.background = "rgba(255,255,255,0.05)";
+										optKnob.style.left = "3px";
+										optKnob.style.background = "#0d0f10";
+									}
 								});
 								line.appendChild(optToggle);
 							} else if (type === Number) {
@@ -2664,9 +2739,6 @@ const survival = new Module("SurvivalMode", function(callback) {
 				}
 			});
 
-			// Allow clicking on options box to toggle module
-			optionsBox.addEventListener("click", toggleModule);
-
 			return { row, optionsBox };
 		}
 
@@ -2686,6 +2758,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 				closePanelWithAnimation(modulePanels[category], () => {
 					delete modulePanels[category];
 					updateCategoryHighlights();
+					saveGUIState();
 				});
 				return;
 			}
@@ -2700,7 +2773,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 			// Position panels in a cascade
 			const panelCount = Object.keys(modulePanels).length;
-			const { panel, content } = createPanel(category.toUpperCase(), 280 + panelCount * 30, 40 + panelCount * 30, 260);
+			const { panel, content } = createPanel(category.toUpperCase(), 280 + panelCount * 30, 40 + panelCount * 30, 260, true);
 			modulePanels[category] = panel;
 			document.body.appendChild(panel);
 
@@ -2711,6 +2784,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 			});
 
 			updateCategoryHighlights();
+			saveGUIState();
 		}
 
 		// === Open Settings Panel ===
@@ -2720,11 +2794,12 @@ const survival = new Module("SurvivalMode", function(callback) {
 				closePanelWithAnimation(modulePanels["Settings"], () => {
 					delete modulePanels["Settings"];
 					updateCategoryHighlights();
+					saveGUIState();
 				});
 				return;
 			}
 
-			const { panel, content } = createPanel("SETTINGS", 280, 40, 300);
+			const { panel, content } = createPanel("SETTINGS", 280, 40, 300, true);
 			modulePanels["Settings"] = panel;
 			document.body.appendChild(panel);
 
@@ -2809,6 +2884,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 			content.appendChild(resetColorBtn);
 
 			updateCategoryHighlights();
+			saveGUIState();
 		}
 
 
@@ -2820,18 +2896,40 @@ const survival = new Module("SurvivalMode", function(callback) {
 				visible = !visible;
 
 				if (visible) {
-					// Show category panel only
+					// Show category panel
 					if (categoryPanel) categoryPanel.remove();
 					categoryPanel = createCategoryPanel();
 					document.body.appendChild(categoryPanel);
+
+					// Restore previously open panels
+					const openPanels = loadGUIState();
+					openPanels.forEach(panelName => {
+						if (panelName === "Settings") {
+							openSettingsPanel();
+						} else {
+							openModulePanel(panelName);
+						}
+					});
 				} else {
-					// Hide all panels
-					if (categoryPanel) categoryPanel.remove();
-					Object.values(modulePanels).forEach(p => p.remove());
-					if (settingsPanel) settingsPanel.remove();
-					categoryPanel = null;
-					modulePanels = {};
-					settingsPanel = null;
+					// Save state before closing
+					saveGUIState();
+
+					// Hide all panels with animation
+					if (categoryPanel) {
+						closePanelWithAnimation(categoryPanel, () => {
+							categoryPanel = null;
+						});
+					}
+					Object.entries(modulePanels).forEach(([key, panel]) => {
+						closePanelWithAnimation(panel, () => {
+							delete modulePanels[key];
+						});
+					});
+					if (settingsPanel) {
+						closePanelWithAnimation(settingsPanel, () => {
+							settingsPanel = null;
+						});
+					}
 					selectedCategory = null;
 				}
 			}
@@ -2839,32 +2937,27 @@ const survival = new Module("SurvivalMode", function(callback) {
 			// Handle keybinding
 			if (bindingModule) {
 				if (e.code === "Escape") {
-					// Reset displays
+					// Unbind (set to empty)
+					bindingModule.mod.setbind("");
 					if (bindingModule.bindDisplay) {
-						bindingModule.bindDisplay.textContent = bindingModule.mod.bind || "";
-						bindingModule.bindDisplay.style.color = "#8F9498";
+						bindingModule.bindDisplay.textContent = "";
+						bindingModule.bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:0;text-align:center;flex-shrink:0;";
 					}
 					if (bindingModule.optionBindDisplay) {
-						if (bindingModule.mod.bind) {
-							bindingModule.optionBindDisplay.textContent = bindingModule.mod.bind.toUpperCase();
-							bindingModule.optionBindDisplay.style.background = "rgba(255,255,255,0.08)";
-							bindingModule.optionBindDisplay.style.color = "#E6E9EA";
-						} else {
-							bindingModule.optionBindDisplay.textContent = "CLICK TO BIND";
-							bindingModule.optionBindDisplay.style.background = "rgba(255,255,255,0.05)";
-							bindingModule.optionBindDisplay.style.color = "#8F9498";
-						}
+						bindingModule.optionBindDisplay.textContent = "CLICK TO BIND";
+						bindingModule.optionBindDisplay.style.background = "rgba(255,255,255,0.05)";
+						bindingModule.optionBindDisplay.style.color = "#8F9498";
 					}
 					bindingModule = null;
-					showNotif("Binding cancelled", "error", 1000);
+					showNotif("Bind removed", "info", 1000);
 				} else {
 					const key = e.code.toLowerCase().replace("key", "").replace("digit", "");
 					if (key && bindingModule.mod.setbind) {
 						bindingModule.mod.setbind(key);
 						// Update both displays
 						if (bindingModule.bindDisplay) {
-							bindingModule.bindDisplay.textContent = key;
-							bindingModule.bindDisplay.style.color = "#8F9498";
+							bindingModule.bindDisplay.textContent = key.toUpperCase();
+							bindingModule.bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:30px;text-align:center;flex-shrink:0;background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-weight:700;";
 						}
 						if (bindingModule.optionBindDisplay) {
 							bindingModule.optionBindDisplay.textContent = key.toUpperCase();
