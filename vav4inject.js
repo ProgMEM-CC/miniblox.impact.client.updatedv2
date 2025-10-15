@@ -2579,10 +2579,14 @@ const survival = new Module("SurvivalMode", function(callback) {
 			knob.className = "vape-toggle-knob";
 			toggle.appendChild(knob);
 
-			// Prevent toggle button from triggering row click
-			toggle.addEventListener("click", (e) => {
+			toggle.onclick = (e) => {
 				e.stopPropagation();
-			});
+				if (mod.toggle) {
+					mod.toggle();
+					toggle.classList.toggle("on", mod.enabled);
+					showNotif(name + " " + (mod.enabled ? "enabled" : "disabled"), mod.enabled ? "success" : "error");
+				}
+			};
 
 			right.appendChild(bindDisplay);
 			right.appendChild(toggle);
