@@ -86,7 +86,8 @@ All notable changes to this project will be documented here.
 
 ## ⚠️ Any Known Issues
 
-.toggle all command currently non-functional (fix planned soon..).
+- .toggle all command currently non-functional (fix planned soon..).
+- there is a issue with Killaura and Nuker. However, this will be fixed.
 
 ## 🧩 Dev Notes
 
