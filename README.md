@@ -41,6 +41,80 @@ And then enjoy using the client!
 - .toggle all command currently non-functional (fix planned soon..).
 - there is a issue with Killaura and Nuker. However, this will be fixed.
 
+## [v6.5] – 2025-10-16  
+- 🔄 **Auto-sync version:** v6.5  
+- Major README refactor for improved clarity and structure (@TheM1ddleM1n)  
+- Deleted outdated `docs/ModuleIdeas.md` (moved into dev notes)  
+- Multiple incremental README updates and formatting fixes  
+- Repository cleanup and minor internal refactoring
+
+---
+
+## [v6.4] – 2025-10-14  
+- Merged PR #52 into `main` (@TheM1ddleM1n)  
+- Synced branches! (`main` → `main`)  
+- Stability improvements and structure synchronization.
+
+---
+
+## [v6.3] – 2025-10-10  
+- Updated README layout and documentation links.  
+- Polished module descriptions for consistency.
+- Improved formatting for developer credits.  
+
+---
+
+## [v6.2] – 2025-10-07  
+- General cleanup and internal structure improvements.
+- Minor typo fixes and metadata updates.  
+
+---
+
+## [v6.1] – 2025-10-06  
+- Updated README  
+- Added module tags (e.g. `Step` by @DataM0del)  
+- Introduced new **ServerCrasher** module (@DataM0del)  
+
+---
+
+## [v6.0] – 2025-10-03  
+- Updated README  
+- Improved **AntiBan** module (@DataM0del)  
+- Moved outdated content to `docs/` (@TheM1ddleM1n)
+
+---
+
+## [v6.0] – 2025-09-30  
+- Ported `.friend` and `antiblind` features from Vape for MiniBlox (@DataM0del)  
+- Version bump from v5.9 → v6.0
+
+---
+
+## [v5.9] – 2025-09-29  
+- Overhauled **InvCleaner** (@TheM1ddleM1n)  
+- Updated documentation
+
+---
+
+## [v5.8] – 2025-09-26  
+- Added **TargetHUD** (beta)  
+- Added **ChinaHat** and **LongJump** modules  
+- Updated `tampermonkey.js` and `ModuleIdeas.md`
+
+---
+
+## [v5.6 – v5.7]  
+- Overhauled **TextGUI** visuals  
+- Updated `moduleideas` and README
+
+---
+
+## [v5.0 – v5.5]  
+- Added `/command filter bypass`  
+- Added **Fly**, **NoFall**, and **Scaffold** bypass (slots 1–9)  
+- Introduced Click GUI via `vav4inject.js`  
+- Improved inventory handling and user interface
+
 ## Ideas for new modules!
 
 - [ ] Force OP module (gain access to admin commands?!)
