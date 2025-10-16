@@ -89,6 +89,10 @@ All notable changes to this project will be documented here.
 - .toggle all command currently non-functional (fix planned soon..).
 - there is a issue with Killaura and Nuker. However, this will be fixed.
 
+## Next Module Ideas to add to this client
+
+- Command Block Modifier (and access to server settings) (like mod rank in a way) 
+
 ## 🧩 Dev Notes
 
 Always update VERSIONFILE, tampermonkey.js, and injection.js together.
