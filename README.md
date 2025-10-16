@@ -89,9 +89,13 @@ All notable changes to this project will be documented here.
 - .toggle all command currently non-functional (fix planned soon..).
 - there is a issue with Killaura and Nuker. However, this will be fixed.
 
-## Next Module Ideas to add to this client
+## Ideas for new modules!
 
-- Command Block Modifier (and access to server settings) (like mod rank in a way) 
+- [ ] Force OP module (gain access to admin commands?!)
+- [ ] Command Block modification (to change command blocks in survival)
+- [ ] AutoEat (Automatically eats food in the inv)
+- [ ] AimBot (Automatically aims at a player)
+- [ ] Full Disabler (Possibly other Disabler methods)
 
 ## 🧩 Dev Notes
 
