@@ -131,7 +131,7 @@ Never publish unstable code to / (root). Use /beta for testing builds.
 
 Repo rename pending once closed-source dependencies are synced.
 
-## 👥 Contributors
+## 👥 Contributors For Impact For Miniblox!
 | Avatar | Role                             | Contributor            |
 |--------|----------------------------------|------------------------|
 | <img src="https://github.com/7GrandDadPGN.png" width="40" height="40"> | Original Creator (Vape for MiniBlox) | [7GrandDadPGN](https://github.com/7GrandDadPGN) |
