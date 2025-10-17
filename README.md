@@ -121,9 +121,9 @@ And then enjoy using the client!
 - [ ] Command Block modification (to change command blocks in survival)
 - [ ] AutoEat (Automatically eats food in the inv)
 - [ ] AimBot (Automatically aims at a player)
-- [ ] Full Disabler (Possibly other Disabler methods)
+- [ ] Full Disabler (ie. Movement disabler like sigma rebase or smth)
 
-## 🧩 Dev Notes
+## 🧩 Developer Notes
 
 Always update VERSIONFILE, tampermonkey.js, and injection.js together.
 
@@ -140,11 +140,11 @@ Repo rename pending once closed-source dependencies are synced.
 | <img src="https://github.com/ProgMEM-CC.png" width="40" height="40"> | Repo Manager / Infrastructure    | [ProgMEM-CC](https://github.com/ProgMEM-CC) |
 
 
-## 🧷 Links for this client
+## 🧷 Links/Webpages for this client!
 
 ## 🌐 impactminiblox.js.org
 
 ## 💬 Discord Impact Community - https://discord.gg/PwpGemYhJx
 
 ## ⚠️ Disclaimer (PLEASE READ THIS)
-Please be aware that the developers are not responsible for any misuse or violations of Miniblox.io’s Terms of Service.
+Please be aware that the developers are not responsible for any misuse or violations of Miniblox.io’s Terms of Service. So please enjoy and give any feedback we are willing to hear your views!
