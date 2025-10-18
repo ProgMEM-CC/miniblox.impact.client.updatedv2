@@ -5,7 +5,7 @@
 ---
 
 ## An Overview of Impact for Miniblox
-**Impact Client for Miniblox.io** is a fully standalone continuation of the discontinued **Vape for Miniblox** project by `7GrandDadPGN`.  
+**Impact Client for Miniblox.io** is a fully standalone continuation of the discontinued **Vape V4** project by `7GrandDadPGN`.  
 When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPacket)**, and **ProgMEM-CC** and other devs rebuilt it from scratch — creating a modern, modular, and optimized exploit client framework for Miniblox. :trollface:
 
 > Designed for stealth, speed, and domination — with full dark-mode support with a slick Click GUI.
@@ -139,7 +139,7 @@ Repo rename pending once closed-source dependencies are synced.
 ## 👥 Contributors For Impact For Miniblox!
 | Avatar | Role                             | Contributor            |
 |--------|----------------------------------|------------------------|
-| <img src="https://github.com/7GrandDadPGN.png" width="40" height="40"> | Original Creator (Vape for MiniBlox) | [7GrandDadPGN](https://github.com/7GrandDadPGN) |
+| <img src="https://github.com/7GrandDadPGN.png" width="40" height="40"> | Original Creator (Vape V4) | [7GrandDadPGN](https://github.com/7GrandDadPGN) |
 | <img src="https://github.com/DataM0del.png" width="40" height="40"> | Core Dev                   | [DataM0del](https://github.com/DataM0del) |
 | <img src="https://github.com/TheM1ddleM1n.png" width="40" height="40"> | Core Dev / Maintainer      | [TheM1ddleM1n](https://github.com/TheM1ddleM1n) |
 | <img src="https://github.com/ProgMEM-CC.png" width="40" height="40"> | Repo Manager / Infrastructure    | [ProgMEM-CC](https://github.com/ProgMEM-CC) |
