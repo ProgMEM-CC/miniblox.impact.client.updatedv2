@@ -122,6 +122,7 @@ And then enjoy using the client!
 - [ ] AutoEat (Automatically eats food in the inv)
 - [ ] AimBot (Automatically aims at a player)
 - [ ] Full Disabler (ie. Movement disabler like sigma rebase or smth)
+- [ ] !say and !command commands (im creating this rn)
 
 ## 🧩 Developer Notes
 
