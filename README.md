@@ -38,8 +38,13 @@ And then enjoy using the client!
 
 ## ⚠️ Any Known Issues
 
-- .toggle all command currently non-functional (fix planned soon..).
-- there is a issue with Killaura and Nuker. However, this will be fixed.
+- .toggle all command currently non-functional (we are looking into it).
+- There is currently an issue with Killaura and Nuker. However, we are looking into it.
+
+## [v6.6] - 2025-10-18
+- 🔄 **Auto-sync version:** v6.6 (`TheM1ddleM1n`)  and made a PR
+- `tugayozsoy1982-lab` - added a manifest file for the Crazy Games PWA.
+- Updated Readme
 
 ## [v6.5] – 2025-10-16  
 - 🔄 **Auto-sync version:** v6.5  
