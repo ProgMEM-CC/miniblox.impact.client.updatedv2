@@ -143,7 +143,7 @@ Repo rename pending once closed-source dependencies are synced.
 | <img src="https://github.com/DataM0del.png" width="40" height="40"> | Core Dev                   | [DataM0del](https://github.com/DataM0del) |
 | <img src="https://github.com/TheM1ddleM1n.png" width="40" height="40"> | Core Dev / Maintainer      | [TheM1ddleM1n](https://github.com/TheM1ddleM1n) |
 | <img src="https://github.com/ProgMEM-CC.png" width="40" height="40"> | Repo Manager / Infrastructure    | [ProgMEM-CC](https://github.com/ProgMEM-CC) |
-| <img src="https://github.com/tugayozsoy1982-lab.png" width="40" height="40"> | Manifest Creator    | [tugayozsoy1982-lab](https://github.com/tugayozsoy1982-lab) |
+| <img src="https://github.com/tugayozsoy1982-lab.png" width="40" height="40"> | Manifest Creator for CrazyGames    | [tugayozsoy1982-lab](https://github.com/tugayozsoy1982-lab) |
 | <img src="https://github.com/dtkiller-jp.png" width="40" height="40"> | Vape V4 GUI creator and solver!   | [dtkiller-jp](https://github.com/dtkiller-jp) |
 | <img src="https://github.com/annepaurush.png" width="40" height="40"> | Issue raiser    | [annepaurush](https://github.com/annepaurush) |
 
