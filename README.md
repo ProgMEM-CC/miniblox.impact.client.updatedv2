@@ -42,13 +42,13 @@ And then enjoy using the client!
 - There is currently an issue with Killaura and Nuker. However, we are looking into it.
 
 ## [v6.6] - 2025-10-18
-- 🔄 **Auto-sync version:** v6.6 (`TheM1ddleM1n`)  and made a PR
+- 🔄 **Auto-synced version to:** v6.6 (`TheM1ddleM1n`)  and made a PR!
 - `tugayozsoy1982-lab` - added a manifest file for the Crazy Games PWA.
 - Updated Readme
 
 ## [v6.5] – 2025-10-16  
-- 🔄 **Auto-sync version:** v6.5  
-- Major README refactor for improved clarity and structure (@TheM1ddleM1n)  
+- 🔄 **Auto-synced version to:** v6.5  
+- Major README refactor for improved clarity and structure (`TheM1ddleM1n`)  
 - Deleted outdated `docs/ModuleIdeas.md` (moved into dev notes)  
 - Multiple incremental README updates and formatting fixes  
 - Repository cleanup and minor internal refactoring
@@ -56,7 +56,7 @@ And then enjoy using the client!
 ---
 
 ## [v6.4] – 2025-10-14  
-- Merged PR #52 into `main` (@TheM1ddleM1n)  
+- Merged PR #52 into `main` (`TheM1ddleM1n`)  
 - Synced branches! (`main` → `main`)  
 - Stability improvements and structure synchronization.
 
@@ -77,26 +77,26 @@ And then enjoy using the client!
 
 ## [v6.1] – 2025-10-06  
 - Updated README  
-- Added module tags (e.g. `Step` by @DataM0del)  
-- Introduced new **ServerCrasher** module (@DataM0del)  
+- Added module tags (e.g. `Step` by `DataM0del`)  
+- Introduced new **ServerCrasher** module (`DataM0del`)  
 
 ---
 
 ## [v6.0] – 2025-10-03  
 - Updated README  
-- Improved **AntiBan** module (@DataM0del)  
-- Moved outdated content to `docs/` (@TheM1ddleM1n)
+- Improved **AntiBan** module (`DataM0del`)  
+- Moved outdated content to `docs/` (`TheM1ddleM1n`)
 
 ---
 
 ## [v6.0] – 2025-09-30  
-- Ported `.friend` and `antiblind` features from Vape for MiniBlox (@DataM0del)  
+- Ported `.friend` and `antiblind` features from Vape for Miniblox (`DataM0del`)  
 - Version bump from v5.9 → v6.0
 
 ---
 
 ## [v5.9] – 2025-09-29  
-- Overhauled **InvCleaner** (@TheM1ddleM1n)  
+- Overhauled **InvCleaner** (`TheM1ddleM1n`)  
 - Updated documentation
 
 ---
@@ -127,7 +127,6 @@ And then enjoy using the client!
 - [ ] AutoEat (Automatically eats food in the inv)
 - [ ] AimBot (Automatically aims at a player)
 - [ ] Full Disabler (ie. Movement disabler like sigma rebase or smth)
-- [ ] !say and !command commands (im creating this rn)
 
 ## 🧩 Developer Notes
 
@@ -144,6 +143,9 @@ Repo rename pending once closed-source dependencies are synced.
 | <img src="https://github.com/DataM0del.png" width="40" height="40"> | Core Developer                   | [DataM0del](https://github.com/DataM0del) |
 | <img src="https://github.com/TheM1ddleM1n.png" width="40" height="40"> | Core Developer / Maintainer      | [TheM1ddleM1n](https://github.com/TheM1ddleM1n) |
 | <img src="https://github.com/ProgMEM-CC.png" width="40" height="40"> | Repo Manager / Infrastructure    | [ProgMEM-CC](https://github.com/ProgMEM-CC) |
+| <img src="https://github.com/tugayozsoy1982-lab.png" width="40" height="40"> | Manifest Creator    | [tugayozsoy1982-lab](https://github.com/tugayozsoy1982-lab) |
+
+
 
 
 ## 🧷 Links/Webpages for this client!
