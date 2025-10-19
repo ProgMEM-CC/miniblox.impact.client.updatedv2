@@ -14,7 +14,11 @@ When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPac
 
 # IMPORTANT NOTE TO ALL DEVS
 
-An apology here firstly, i dont know why, but my account seems to have github actions disabled @ModuleMaster64 sorry about your CI.
+An apology here firstly, i dont know why, but my account seems to have github actions disabled @TheM1ddleM1n sorry about your CI.
+
+(you can contact github support saying that github actions has been disabled for you to see if they fix it.)
+
+**ok dont worry then i made a PR anyway and its at v6.6 - TheM1ddleM1n**
 
 ## Some example modules that are included in this client!
 - Fly / NoFall / Scaffold  
