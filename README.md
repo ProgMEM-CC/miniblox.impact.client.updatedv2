@@ -53,6 +53,7 @@ And then enjoy using the client!
 - 🔄 **Auto-synced version to:** v6.6 (`TheM1ddleM1n`)  and made a PR!
 - `tugayozsoy1982-lab` - added a manifest file for the Crazy Games PWA.
 - Updated Readme
+- improved my ClickGUI with new css animations
 
 ## [v6.5] – 2025-10-16  
 - 🔄 **Auto-synced version to:** v6.5  
