@@ -2,7 +2,7 @@
 
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&duration=2500&pause=1000&color=abe0e4&width=435&lines=The+ultimate+MiniBlox+hacked+client!+;Built+for+stealth%2C+speed%2C+and+total+domination.;Fully+dark-mode+optimized+with+a+modern+UI)](https://git.io/typing-svg)
 
----
+
 
 ## An Overview of Impact for Miniblox
 **Impact Client for Miniblox.io** is a fully standalone continuation of the discontinued **Vape V4** project by `7GrandDadPGN`.  
