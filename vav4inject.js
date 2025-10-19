@@ -2178,7 +2178,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 		execute(publicUrl);
 	}
 })();
-// Added new Poppins font 
+// Enhanced ClickGUI with Modern Animations! (v6.6 UPDATE)
 (async function () {
   try {
     const fontLink = document.createElement("link");
@@ -2197,47 +2197,329 @@ const survival = new Module("SurvivalMode", function(callback) {
 
     injectGUI(unsafeWindow.globalThis[storeName]);
   } catch (err) {
-    console.error("[Cl1ckGU1] Init failed:", err);
+    console.error("[ImpactGUI] Init failed:", err);
   }
 
   function injectGUI(store) {
+    // === Complete Module Categories (nothing should be missing) ===
     const categories = {
       Combat: ["autoclicker", "killaura", "velocity", "wtap"],
-      Movement: ["scaffold","jesus","phase","nofall","antifall","sprint","keepsprint","step","speed","jetpack","noslowdown","longjump"],
-      Render: ["invcleaner","invwalk","autoarmor","esp","textgui","clickgui"],
-      World: ["fastbreak","breaker","autocraft","cheststeal","timer","survivalmode"],
-      Utility: ["autorespawn","autorejoin","autoqueue","autovote","filterbypass","anticheat","autofunnychat","chatdisabler","musicfix","auto-funnychat","music-fix"],
-	  Exploit: ["servercrasher"]
+      Movement: ["scaffold", "jesus", "phase", "nofall", "nofallbeta", "antifall", "sprint", "keepsprint", "step", "speed", "fly", "jetpack", "infinitefly", "noslowdown", "longjump"],
+      Interface: ["esp", "textgui", "clickgui", "invcleaner", "invwalk", "autoarmor", "autocraft", "cheststeal", "survivalmode", "fastbreak", "breaker", "nuker", "timer"],
+      Utility: ["autorespawn", "autorejoin", "autoqueue", "autovote", "filterbypass", "anticheat", "autofunnychat", "chatdisabler", "antiban", "antiblind", "nofriends"],
+      Exploit: ["servercrasher"]
     };
-    const catIcons = { Combat:"⚔️", Movement:"🏃", "Render":"🧑👁️", World:"🌍", Utility:"🛠️", Exploit:"⚠" };
 
-    // === Styles ===
+    const catIcons = {
+      Combat: "⚔️",
+      Movement: "🏃",
+      Interface: "👁️👤🌍",
+      Utility: "🛠️",
+      Exploit: "⚠️"
+    };
+
+    // === Enhanced Styles with Animations ===
     const style = document.createElement("style");
     style.textContent = `
-      @keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}
-      .lb-panel { position:absolute; width:220px; background:#111; border:2px solid #00aaff; font-family:"Poppins", sans-serif; color:white; animation:guiEnter .25s ease-out; z-index:100000; max-height:420px; overflow-x:hidden; }
-      .lb-panel::-webkit-scrollbar { width:6px; }
-      .lb-panel::-webkit-scrollbar-thumb { background:#00aaff; }
-      .lb-panel::-webkit-scrollbar-track { background:#111; }
-      .lb-header { background:#0a0a0a; padding:6px; font-weight:600; cursor:move; text-align:center; border-bottom:1px solid #00aaff; }
-      .lb-module { padding:4px 6px; border-bottom:1px solid #1b1b1b; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
-      .lb-module:hover { background:#151a20; }
-      .lb-module.active { color:#00aaff; }
-      .lb-options { display:none; flex-direction:column; gap:4px; padding:4px 6px; background:#0f0f12; border-top:1px dashed #1e1e1e; }
-      .lb-options.show { display:flex; animation:guiEnter .2s ease-out; }
-      .lb-options label { font-size:12px; display:flex; justify-content:space-between; color:white; }
-      .lb-options input[type="text"], .lb-options input[type="range"] { flex:1; margin-left:4px; font-family:"Poppins", sans-serif; }
-      .notif-wrap { position:fixed; bottom:40px; right:30px; display:flex; flex-direction:column; align-items:flex-end; pointer-events:none; z-index:999999; }
-      .notif { display:flex; align-items:center; gap:8px; background:rgba(20,20,20,0.85); color:white; padding:10px 14px; margin-top:8px; border-radius:10px; font-family:"Poppins", sans-serif; font-size:13px; backdrop-filter:blur(6px); box-shadow:0 4px 12px rgba(0,0,0,0.4); opacity:1; transform:translateX(120%); transition:opacity .3s, transform .3s ease; border-left:4px solid; }
-      .notif.info { border-color:#3498db; }
-      .notif.success { border-color:#2ecc71; }
-      .notif.warn { border-color:#f1c40f; }
-      .notif.error { border-color:#e74c3c; }
-      .lb-searchwrap { position:fixed; top:15px; left:50%; transform:translateX(-50%); z-index:100001; background:#0a0a0a; border:2px solid #00aaff; padding:4px 6px; font-family:"Poppins", sans-serif; }
-      .lb-search { background:#111; border:none; outline:none; color:white; font-size:13px; width:180px; font-family:"Poppins", sans-serif; }
-      .lb-search::placeholder { color:#00aaff; opacity:0.6; }
-      .lb-content { overflow: hidden; transition: max-height 0.3s ease; max-height:1000px; }
-      .lb-content.collapsed { max-height:0; }
+      @keyframes guiEnter {
+        0% { opacity: 0; transform: translateY(-20px) scale(0.95); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
+      }
+
+      @keyframes slideIn {
+        0% { opacity: 0; transform: translateX(-10px); }
+        100% { opacity: 1; transform: translateX(0); }
+      }
+
+      @keyframes glow {
+        0%, 100% { box-shadow: 0 0 5px #00aaff, 0 0 10px #00aaff; }
+        50% { box-shadow: 0 0 10px #00aaff, 0 0 20px #00aaff, 0 0 30px #0088cc; }
+      }
+
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+
+      @keyframes shimmer {
+        0% { background-position: -100% 0; }
+        100% { background-position: 200% 0; }
+      }
+
+      .lb-panel {
+        position: absolute;
+        width: 238px;
+        background: linear-gradient(135deg, #0a0a0a 0%, #151515 100%);
+        border: 2px solid #00aaff;
+        border-radius: 12px;
+        font-family: "Poppins", sans-serif;
+        color: white;
+        animation: guiEnter 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        z-index: 100000;
+        max-height: 500px;
+        overflow-x: hidden;
+        box-shadow: 0 8px 32px rgba(0, 170, 255, 0.3), 0 0 0 1px rgba(0, 170, 255, 0.1);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+      }
+
+      .lb-panel:hover {
+        box-shadow: 0 12px 40px rgba(0, 170, 255, 0.4), 0 0 0 1px rgba(0, 170, 255, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .lb-panel::-webkit-scrollbar { width: 8px; }
+      .lb-panel::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #00aaff, #0088cc);
+        border-radius: 4px;
+        transition: background 0.3s;
+      }
+      .lb-panel::-webkit-scrollbar-thumb:hover { background: #00ccff; }
+      .lb-panel::-webkit-scrollbar-track { background: #0a0a0a; }
+
+      .lb-header {
+        background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+        padding: 10px;
+        font-weight: 600;
+        cursor: move;
+        text-align: center;
+        border-bottom: 2px solid #00aaff;
+        border-radius: 10px 10px 0 0;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .lb-header:hover {
+        background: linear-gradient(135deg, #161b22 0%, #1c2128 100%);
+      }
+
+      .lb-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #00aaff, transparent);
+        animation: shimmer 2s infinite;
+        background-size: 200% 100%;
+      }
+
+      .lb-module {
+        padding: 8px 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .lb-module::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 3px;
+        background: #00aaff;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .lb-module:hover {
+        background: rgba(0, 170, 255, 0.1);
+        transform: translateX(3px);
+      }
+
+      .lb-module:hover::before {
+        transform: translateX(0);
+      }
+
+      .lb-module.active {
+        color: #00aaff;
+        background: rgba(0, 170, 255, 0.15);
+        font-weight: 600;
+      }
+
+      .lb-module.active::after {
+        content: '●';
+        position: absolute;
+        right: 12px;
+        animation: pulse 1.5s infinite;
+        color: #00ff88;
+        text-shadow: 0 0 10px #00ff88;
+      }
+
+      .lb-options {
+        display: none;
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px;
+        background: linear-gradient(135deg, #0f0f12 0%, #1a1a1f 100%);
+        border-top: 1px dashed rgba(0, 170, 255, 0.3);
+        animation: slideIn 0.3s ease-out;
+      }
+
+      .lb-options.show {
+        display: flex;
+      }
+
+      .lb-options label {
+        font-size: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+        padding: 6px;
+        background: rgba(0, 170, 255, 0.05);
+        border-radius: 6px;
+        transition: all 0.2s;
+      }
+
+      .lb-options label:hover {
+        background: rgba(0, 170, 255, 0.1);
+        transform: translateX(3px);
+      }
+
+      .lb-options input[type="text"],
+      .lb-options input[type="range"] {
+        flex: 1;
+        margin-left: 8px;
+        font-family: "Poppins", sans-serif;
+        background: #0a0a0a;
+        border: 1px solid #00aaff;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: all 0.3s;
+      }
+
+      .lb-options input[type="text"]:focus,
+      .lb-options input[type="range"]:focus {
+        outline: none;
+        border-color: #00ccff;
+        box-shadow: 0 0 8px rgba(0, 170, 255, 0.5);
+      }
+
+      .lb-options input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #00aaff;
+      }
+
+      .notif-wrap {
+        position: fixed;
+        bottom: 40px;
+        right: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        pointer-events: none;
+        z-index: 999999;
+      }
+
+      .notif {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, rgba(20, 20, 20, 0.95), rgba(30, 30, 30, 0.95));
+        color: white;
+        padding: 12px 16px;
+        margin-top: 10px;
+        border-radius: 12px;
+        font-family: "Poppins", sans-serif;
+        font-size: 13px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        opacity: 1;
+        transform: translateX(120%);
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        border-left: 4px solid;
+        animation: glow 2s infinite;
+      }
+
+      .notif.info { border-color: #3498db; }
+      .notif.success { border-color: #2ecc71; }
+      .notif.warn { border-color: #f1c40f; }
+      .notif.error { border-color: #e74c3c; }
+
+      .lb-searchwrap {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100001;
+        background: linear-gradient(135deg, #0a0a0a, #151515);
+        border: 2px solid #00aaff;
+        border-radius: 25px;
+        padding: 8px 16px;
+        font-family: "Poppins", sans-serif;
+        box-shadow: 0 8px 32px rgba(0, 170, 255, 0.3);
+        backdrop-filter: blur(10px);
+        animation: guiEnter 0.4s ease-out;
+      }
+
+      .lb-search {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: white;
+        font-size: 14px;
+        width: 200px;
+        font-family: "Poppins", sans-serif;
+      }
+
+      .lb-search::placeholder {
+        color: #00aaff;
+        opacity: 0.7;
+      }
+
+      .lb-content {
+        overflow: hidden;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+        max-height: 2000px;
+        opacity: 1;
+      }
+
+      .lb-content.collapsed {
+        max-height: 0;
+        opacity: 0;
+      }
+
+      .collapse-btn {
+        float: right;
+        cursor: pointer;
+        font-size: 16px;
+        transition: transform 0.3s ease;
+        user-select: none;
+      }
+
+      .collapse-btn:hover {
+        transform: scale(1.2);
+      }
+
+      .reset-btn {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: white;
+        padding: 10px;
+        text-align: center;
+        cursor: pointer;
+        border-radius: 8px;
+        margin: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+      }
+
+      .reset-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(231, 76, 60, 0.5);
+        animation: pulse 0.5s ease;
+      }
     `;
     document.head.appendChild(style);
 
@@ -2245,48 +2527,66 @@ const survival = new Module("SurvivalMode", function(callback) {
     const notifWrap = document.createElement("div");
     notifWrap.className = "notif-wrap";
     document.body.appendChild(notifWrap);
+
     function showNotif(msg, type = "info", dur = 3000) {
       const n = document.createElement("div");
       n.className = `notif ${type}`;
-      let icon = type === "info" ? "ℹ️" : type === "success" ? "✅" : type === "warn" ? "⚠️" : "❌";
-      n.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+      const icons = { info: "ℹ️", success: "✅", warn: "⚠️", error: "❌" };
+      n.innerHTML = `<span>${icons[type]}</span><span>${msg}</span>`;
       notifWrap.appendChild(n);
       setTimeout(() => (n.style.transform = "translateX(0)"), 30);
-      setTimeout(() => { n.style.opacity = "0"; n.style.transform = "translateX(120%)"; }, dur);
+      setTimeout(() => {
+        n.style.opacity = "0";
+        n.style.transform = "translateX(120%)";
+      }, dur);
       setTimeout(() => n.remove(), dur + 400);
     }
 
-    // === Persistence helpers with localstorage ===
+    // === Persistence ===
     function saveModuleState(name, mod) {
       const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
       const opts = {};
-      if (mod.options) Object.entries(mod.options).forEach(([k, opt]) => { opts[k] = opt[1]; });
+      if (mod.options) {
+        Object.entries(mod.options).forEach(([k, opt]) => { opts[k] = opt[1]; });
+      }
       saved[name] = { enabled: mod.enabled, bind: mod.bind, options: opts };
       localStorage.setItem("lb-mods", JSON.stringify(saved));
     }
+
     function loadModuleState(name, mod) {
       const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
       if (saved[name]) {
-        if (saved[name].enabled !== mod.enabled && typeof mod.toggle === "function") mod.toggle();
+        if (saved[name].enabled !== mod.enabled && typeof mod.toggle === "function") {
+          mod.toggle();
+        }
         if (saved[name].bind) mod.setbind(saved[name].bind);
-        if (saved[name].options && mod.options) Object.entries(saved[name].options).forEach(([k, v]) => { if (mod.options[k]) mod.options[k][1] = v; });
+        if (saved[name].options && mod.options) {
+          Object.entries(saved[name].options).forEach(([k, v]) => {
+            if (mod.options[k]) mod.options[k][1] = v;
+          });
+        }
       }
     }
 
-    // === Panels with slide collapsible content ===
+    // === Panels ===
     const panels = {};
+    const panelWidth = 238;
+    const panelSpacing = 15;
+    const startX = 20;
+    const startY = 80;
+
     Object.keys(categories).forEach((cat, i) => {
       const panel = document.createElement("div");
       panel.className = "lb-panel";
-      panel.style.left = 40 + i * 240 + "px";
-      panel.style.top = "100px";
+
+      panel.style.left = startX + i * (panelWidth + panelSpacing) + "px";
+      panel.style.top = startY + "px";
 
       const header = document.createElement("div");
       header.className = "lb-header";
 
       const collapseBtn = document.createElement("span");
-      collapseBtn.style.float = "right";
-      collapseBtn.style.cursor = "pointer";
+      collapseBtn.className = "collapse-btn";
 
       const titleSpan = document.createElement("span");
       titleSpan.textContent = `${catIcons[cat]} ${cat}`;
@@ -2295,24 +2595,49 @@ const survival = new Module("SurvivalMode", function(callback) {
       header.appendChild(collapseBtn);
       panel.appendChild(header);
 
+      // Load saved position
       const saved = localStorage.getItem("lb-pos-" + cat);
-      if (saved) { const { left, top } = JSON.parse(saved); panel.style.left = left; panel.style.top = top; }
+      if (saved) {
+        const { left, top } = JSON.parse(saved);
+        panel.style.left = left;
+        panel.style.top = top;
+      }
 
+      // Dragging
       let dragging = false, offsetX, offsetY;
-      header.addEventListener("mousedown", (e) => { dragging = true; offsetX = e.clientX - panel.offsetLeft; offsetY = e.clientY - panel.offsetTop; });
-      document.addEventListener("mousemove", (e) => { if (dragging) { panel.style.left = e.clientX - offsetX + "px"; panel.style.top = e.clientY - offsetY + "px"; } });
-      document.addEventListener("mouseup", () => { if (dragging) { dragging = false; localStorage.setItem("lb-pos-" + cat, JSON.stringify({ left: panel.style.left, top: panel.style.top })); } });
+      header.addEventListener("mousedown", (e) => {
+        dragging = true;
+        offsetX = e.clientX - panel.offsetLeft;
+        offsetY = e.clientY - panel.offsetTop;
+      });
+      document.addEventListener("mousemove", (e) => {
+        if (dragging) {
+          panel.style.left = e.clientX - offsetX + "px";
+          panel.style.top = e.clientY - offsetY + "px";
+        }
+      });
+      document.addEventListener("mouseup", () => {
+        if (dragging) {
+          dragging = false;
+          localStorage.setItem("lb-pos-" + cat, JSON.stringify({
+            left: panel.style.left,
+            top: panel.style.top
+          }));
+        }
+      });
 
-      // collapse content
+      // Content wrapper
       const contentWrap = document.createElement("div");
       contentWrap.className = "lb-content";
       panel.appendChild(contentWrap);
 
+      // Collapse functionality
       let collapsed = localStorage.getItem("lb-collapsed-" + cat) === "true";
       if (collapsed) contentWrap.classList.add("collapsed");
       collapseBtn.textContent = collapsed ? "[+]" : "[-]";
 
-      collapseBtn.addEventListener("click", () => {
+      collapseBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
         collapsed = !collapsed;
         if (collapsed) contentWrap.classList.add("collapsed");
         else contentWrap.classList.remove("collapsed");
@@ -2327,89 +2652,175 @@ const survival = new Module("SurvivalMode", function(callback) {
     // === Modules ===
     Object.entries(store.modules).forEach(([name, mod]) => {
       let cat = "Utility";
-      for (const [c, keys] of Object.entries(categories)) if (keys.some((k) => name.toLowerCase().includes(k))) { cat = c; break; }
+      for (const [c, keys] of Object.entries(categories)) {
+        if (keys.some((k) => name.toLowerCase().includes(k))) {
+          cat = c;
+          break;
+        }
+      }
+
       loadModuleState(name, mod);
+
       const row = document.createElement("div");
       row.className = "lb-module" + (mod.enabled ? " active" : "");
-      row.innerHTML = `<span>${name}</span><span>${mod.enabled ? "ON" : "OFF"}</span>`;
+      row.innerHTML = `<span>${name}</span><span style="font-size:11px;opacity:0.8">${mod.enabled ? "ON" : "OFF"}</span>`;
+
       const optionsBox = document.createElement("div");
       optionsBox.className = "lb-options";
+
+      // Left click to toggle
       row.addEventListener("mousedown", (e) => {
         if (e.button === 0) {
           if (typeof mod.toggle === "function") mod.toggle();
           row.classList.toggle("active", mod.enabled);
-          row.lastChild.textContent = mod.enabled ? "ON" : "OFF";
+          row.querySelector("span:last-child").textContent = mod.enabled ? "ON" : "OFF";
           showNotif(`${name} ${mod.enabled ? "enabled" : "disabled"}`, mod.enabled ? "success" : "error");
           saveModuleState(name, mod);
         }
       });
-      row.addEventListener("contextmenu", (e) => { e.preventDefault(); optionsBox.classList.toggle("show"); });
-      if (mod.options) Object.entries(mod.options).forEach(([key, opt]) => {
-        const [type, val, label] = opt;
-        const line = document.createElement("label");
-        line.textContent = label;
-        if (type === Boolean) { const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = val; cb.onchange = () => { opt[1] = cb.checked; saveModuleState(name, mod); }; line.appendChild(cb);}
-        else if (type === Number) { const slider = document.createElement("input"); slider.type = "range"; const [min, max, step] = opt.range ?? [0, 10, 0.1]; slider.min = min; slider.max = max; slider.step = step; slider.value = val; slider.oninput = () => { opt[1] = parseFloat(slider.value); saveModuleState(name, mod); }; line.appendChild(slider);}
-        else if (type === String) { const input = document.createElement("input"); input.type = "text"; input.value = val; input.onchange = () => { opt[1] = input.value; saveModuleState(name, mod); }; line.appendChild(input);}
-        optionsBox.appendChild(line);
+
+      // Right click for options
+      row.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        optionsBox.classList.toggle("show");
       });
+
+      // Options
+      if (mod.options) {
+        Object.entries(mod.options).forEach(([key, opt]) => {
+          const [type, val, label] = opt;
+          const line = document.createElement("label");
+          line.innerHTML = `<span>${label}</span>`;
+
+          if (type === Boolean) {
+            const cb = document.createElement("input");
+            cb.type = "checkbox";
+            cb.checked = val;
+            cb.onchange = () => {
+              opt[1] = cb.checked;
+              saveModuleState(name, mod);
+            };
+            line.appendChild(cb);
+          } else if (type === Number) {
+            const slider = document.createElement("input");
+            slider.type = "range";
+            const [min, max, step] = opt.range ?? [0, 10, 0.1];
+            slider.min = min;
+            slider.max = max;
+            slider.step = step;
+            slider.value = val;
+            const valueDisplay = document.createElement("span");
+            valueDisplay.textContent = val;
+            valueDisplay.style.minWidth = "40px";
+            valueDisplay.style.textAlign = "right";
+            slider.oninput = () => {
+              opt[1] = parseFloat(slider.value);
+              valueDisplay.textContent = slider.value;
+              saveModuleState(name, mod);
+            };
+            line.appendChild(slider);
+            line.appendChild(valueDisplay);
+          } else if (type === String) {
+            const input = document.createElement("input");
+            input.type = "text";
+            input.value = val;
+            input.onchange = () => {
+              opt[1] = input.value;
+              saveModuleState(name, mod);
+            };
+            line.appendChild(input);
+          }
+
+          optionsBox.appendChild(line);
+        });
+      }
+
+      // Bind input
       const bindLine = document.createElement("label");
-      bindLine.textContent = "Bind:";
+      bindLine.innerHTML = `<span>Bind:</span>`;
       const bindInput = document.createElement("input");
-      bindInput.type = "text"; bindInput.value = mod.bind;
-      bindInput.style.width = "70px"; bindInput.style.background = "#0a0a0a"; bindInput.style.color = "white"; bindInput.style.border = "1px solid #00aaff"; bindInput.style.fontFamily = '"Poppins", sans-serif'; bindInput.style.fontSize = "12px"; bindInput.style.padding = "2px";
-      bindInput.onchange = (e) => { mod.setbind(e.target.value); showNotif(`${name} bind set to ${e.target.value}`, "info"); saveModuleState(name, mod); };
-      bindLine.appendChild(bindInput); optionsBox.appendChild(bindLine);
-
-      panels[cat].querySelector(".lb-content").appendChild(row);
-      panels[cat].querySelector(".lb-content").appendChild(optionsBox);
-    });
-
-    // === Reset / Config buttons (Utility panel) ===
-    const resetRow = document.createElement("div");
-    resetRow.className = "lb-module";
-    resetRow.style.color = "#00aaff";
-    resetRow.textContent = "↺ Reset Layout?";
-    resetRow.addEventListener("click", () => {
-      const defaults = {
-        Combat:{left:"40px",top:"100px"},
-        Movement:{left:"280px",top:"100px"},
-        "Player / Render":{left:"520px",top:"100px"},
-        World:{left:"760px",top:"100px"},
-        Utility:{left:"1000px",top:"100px"}
+      bindInput.type = "text";
+      bindInput.value = mod.bind || "none";
+      bindInput.placeholder = "key";
+      bindInput.style.width = "70px";
+      bindInput.onchange = (e) => {
+        const key = e.target.value.toLowerCase();
+        mod.setbind(key === "none" ? "" : key);
+        showNotif(`${name} bind set to ${key}`, "info");
+        saveModuleState(name, mod);
       };
-      Object.entries(defaults).forEach(([cat,pos])=>{
-        localStorage.setItem("lb-pos-" + cat, JSON.stringify(pos));
-        if (panels[cat]) { panels[cat].style.left=pos.left; panels[cat].style.top=pos.top; }
-      });
-      showNotif("Layout has been reset to default!", "success");
-    });
-    panels["Utility"].querySelector(".lb-content").appendChild(resetRow);
+      bindLine.appendChild(bindInput);
+      optionsBox.appendChild(bindLine);
 
-    const resetConfigRow = document.createElement("div");
-    resetConfigRow.className = "lb-module";
-    resetConfigRow.style.color = "red";
-    resetConfigRow.textContent = "⛔ Reset Config?";
-    resetConfigRow.addEventListener("click", () => {
-      localStorage.removeItem("lb-mods");
-      Object.keys(localStorage).filter((k) => k.startsWith("lb-pos-")).forEach((k) => localStorage.removeItem(k));
-      Object.keys(localStorage).filter((k) => k.startsWith("lb-collapsed-")).forEach((k) => localStorage.removeItem(k));
-      alert("Config has been reset!");
-      location.reload();
+      if (panels[cat]) {
+        panels[cat].querySelector(".lb-content").appendChild(row);
+        panels[cat].querySelector(".lb-content").appendChild(optionsBox);
+      }
     });
-    panels["Utility"].querySelector(".lb-content").appendChild(resetConfigRow);
+
+    // === Reset Buttons (Utility panel) ===
+    if (panels["Utility"]) {
+      const resetLayoutBtn = document.createElement("div");
+      resetLayoutBtn.className = "reset-btn";
+      resetLayoutBtn.textContent = "↺ Reset Layout";
+      resetLayoutBtn.addEventListener("click", () => {
+        const panelWidth = 238;
+        const panelSpacing = 15;
+        const startX = 20;
+        const startY = 80;
+
+        const catArray = Object.keys(categories);
+        const defaults = {};
+        catArray.forEach((cat, i) => {
+          defaults[cat] = {
+            left: startX + i * (panelWidth + panelSpacing) + "px",
+            top: startY + "px"
+          };
+        });
+        Object.entries(defaults).forEach(([cat, pos]) => {
+          localStorage.setItem("lb-pos-" + cat, JSON.stringify(pos));
+          if (panels[cat]) {
+            panels[cat].style.left = pos.left;
+            panels[cat].style.top = pos.top;
+          }
+        });
+        showNotif("Layout reset to default!", "success");
+      });
+      panels["Utility"].querySelector(".lb-content").appendChild(resetLayoutBtn);
+
+      const resetConfigBtn = document.createElement("div");
+      resetConfigBtn.className = "reset-btn";
+      resetConfigBtn.textContent = "⛔ Reset Config";
+      resetConfigBtn.addEventListener("click", () => {
+        if (confirm("Are you sure you want to reset all settings?")) {
+          localStorage.removeItem("lb-mods");
+          Object.keys(localStorage).filter(k => k.startsWith("lb-")).forEach(k => localStorage.removeItem(k));
+          showNotif("Config reset! Reloading...", "warn", 2000);
+          setTimeout(() => location.reload(), 2000);
+        }
+      });
+      panels["Utility"].querySelector(".lb-content").appendChild(resetConfigBtn);
+    }
 
     // === Search ===
     const searchWrap = document.createElement("div");
     searchWrap.className = "lb-searchwrap";
-    searchWrap.innerHTML = `<input type="text" class="lb-search" placeholder="Search...">`;
+    searchWrap.innerHTML = `<input type="text" class="lb-search" placeholder="🔍 Search modules...">`;
     document.body.appendChild(searchWrap);
+
     const searchBox = searchWrap.querySelector("input");
     searchBox.addEventListener("input", () => {
       const term = searchBox.value.toLowerCase();
       document.querySelectorAll(".lb-module").forEach((row) => {
         const name = row.firstChild.textContent.toLowerCase();
+        const parent = row.parentElement;
         row.style.display = name.includes(term) ? "flex" : "none";
+
+        // Show parent panel if any module matches
+        if (name.includes(term) && parent) {
+          const panel = parent.closest(".lb-panel");
+          if (panel) panel.style.display = "block";
+        }
       });
     });
 
@@ -2417,16 +2828,21 @@ const survival = new Module("SurvivalMode", function(callback) {
     Object.values(panels).forEach((p) => (p.style.display = "none"));
     searchWrap.style.display = "none";
 
-    // === Loading screen startup notification! ===
-    setTimeout(() => { showNotif("[TheRealGuiFR@v6.2] Press \\\\ to open ClickGUI! Enjoy!", "info", 4000); }, 500);
+    // === Startup notification ===
+    setTimeout(() => {
+      showNotif("Impact v6.6 ClickGUI Loaded! Press \\ to open", "success", 4000);
+    }, 500);
 
     // === Toggle ClickGUI ===
     let visible = false;
     document.addEventListener("keydown", (e) => {
       if (e.code === "Backslash") {
         visible = !visible;
-        Object.values(panels).forEach((p)=> (p.style.display=visible?"block":"none"));
-        searchWrap.style.display = visible ? "block":"none";
+        Object.values(panels).forEach((p) => (p.style.display = visible ? "block" : "none"));
+        searchWrap.style.display = visible ? "block" : "none";
+        if (visible) {
+          showNotif("ClickGUI opened", "info", 1000);
+        }
       }
     });
   }
