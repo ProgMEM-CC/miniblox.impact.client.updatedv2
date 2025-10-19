@@ -158,7 +158,7 @@ An apology here firstly, i dont know why, but my account seems to have github ac
 
 
 
-## 🧷 Links/Webpages for this client!
+## 🧷 Links to discord and a webpage to the client's website!
 
 ## 🌐 impactminiblox.js.org
 
