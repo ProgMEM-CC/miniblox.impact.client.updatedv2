@@ -124,7 +124,7 @@ And then enjoy using the client!
 
 ## [v5.0 – v5.5]  
 - Added `/command filter bypass`  
-- Added **Fly**, **NoFall**, and **Scaffold** bypass (slots 1–9)  
+- Added improvements to **Fly - desync**, **NoFall - desync**, and a **Scaffold** bypass (from slots 1–9 in the hotbar)  
 - Introduced Click GUI via `vav4inject.js`  
 - Improved inventory handling and user interface
 
@@ -138,9 +138,9 @@ And then enjoy using the client!
 
 ## 🧩 Developer Notes
 
-Always update VERSIONFILE, tampermonkey.js, and injection.js together.
+Make sure you **always** update VERSIONFILE, tampermonkey.js, and injection.js together. (as soon as ProgMEM-CC fixes the issue with "Github Actions being disabled")
 
-Never publish unstable code to / (root). Use /beta for testing builds.
+Never publish unstable code to / (root). Use /beta for any test builds you have got.
 
 Repo rename pending once closed-source dependencies are synced.
 
