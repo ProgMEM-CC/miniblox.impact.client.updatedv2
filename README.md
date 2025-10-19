@@ -5,29 +5,21 @@
 
 
 ## An Overview of Impact for Miniblox
-**Impact Client for Miniblox.io** is a fully standalone continuation of the discontinued **Vape V4** project by `7GrandDadPGN`.  
-When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPacket)**, and **ProgMEM-CC** and other devs rebuilt it from scratch — creating a modern, modular, and optimized exploit client framework for Miniblox. :trollface:
+**Impact Client for Miniblox.io** is a fully standalone continuation of the discontinued **Vape V4** project/client by `7GrandDadPGN`.  
+When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPacket)**, and **ProgMEM-CC** and other devs rebuilt it from scratch — creating a modern, modular, and optimized exploit client framework for Miniblox. :trollface: (gl bypassing this vector)
 
 > Designed for stealth, speed, and domination — with full dark-mode support with a slick Click GUI.
 
 ---
 
-# IMPORTANT NOTE TO ALL DEVS
-
-An apology here firstly, i dont know why, but my account seems to have github actions disabled @TheM1ddleM1n sorry about your CI.
-
-(you can contact github support saying that github actions has been disabled for you to see if they fix it.)
-
-**ok dont worry then i made a PR anyway and its at v6.6 - TheM1ddleM1n**
-
 ## Some example modules that are included in this client!
-- Fly / NoFall / Scaffold  
+- Fly / NoFall/NofallBeta / Scaffold  
 - AntiBan 2.0 (with a account gen) 
 - Click GUI + Text GUI  
-- ServerCrasher (in BETA)  
+- ServerCrasher  
 - Modular script architecture (stable & beta)  
 - Open changelog and contributor tags
-- Nuker (in BETA)
+- Nuker (still in BETA)
 - Jetpack
 ---
 
@@ -38,16 +30,18 @@ Next, copy the contents of `tampermonkey.js` and (`optional`) `injection.js`. Th
 
 Then, paste it into a new userscript and enable it. (u should see it save)
 
-Finally, open [Miniblox.io](https://miniblox.io) — the client will auto-initialize!
+Finally, open [miniblox.io](https://miniblox.io) — the client will auto-initialize!
 
-And then enjoy using the client!
+And then enjoy using the client! 
 
 ---
 
-## ⚠️ Any Known Issues
+## ⚠️ Any Known Issues will be commented here:
 
 - .toggle all command currently non-functional (we are looking into it).
 - There is currently an issue with Killaura and Nuker. However, we are looking into it.
+
+## Changelog
 
 ## [v6.6] - 2025-10-18
 - 🔄 **Auto-synced version to:** v6.6 (`TheM1ddleM1n`)  and made a PR!
@@ -129,7 +123,7 @@ And then enjoy using the client!
 - Introduced Click GUI via `vav4inject.js`  
 - Improved inventory handling and user interface
 
-## Ideas for new modules!
+## Ideas for some new modules!
 
 - [ ] Force OP module (gain access to admin commands?!)
 - [ ] Command Block modification (to change command blocks in survival)
@@ -144,6 +138,12 @@ Make sure you **always** update VERSIONFILE, tampermonkey.js, and injection.js t
 Never publish unstable code to / (root). Use /beta for any test builds you have got.
 
 Repo rename pending once closed-source dependencies are synced.
+---
+An apology here firstly, i dont know why, but my account seems to have github actions disabled @TheM1ddleM1n sorry about your CI.
+
+(you can contact github support saying that github actions has been disabled for you to see if they fix it.)
+
+**ok dont worry then i made a PR anyway and its at v6.6 - TheM1ddleM1n**
 
 ## 👥 Contributors For Impact For Miniblox!
 | Avatar | Role                             | Contributor            |
