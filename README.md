@@ -160,9 +160,9 @@ An apology here firstly, i dont know why, but my account seems to have github ac
 
 ## 🧷 Links to discord and a webpage to the client's website!
 
-## 🌐 impactminiblox.js.org
+- 🌐 impactminiblox.js.org
 
-## 💬 Discord Impact Community - https://discord.gg/PwpGemYhJx
+- 💬 Discord Impact Community (please join this if you can) - https://discord.gg/PwpGemYhJx
 
 ## ⚠️ Disclaimer (PLEASE READ THIS)
 Please be aware that the developers are not responsible for any misuse or violations of Miniblox.io’s Terms of Service. So please enjoy and give any feedback we are willing to hear your views!
