@@ -1,9 +1,11 @@
+// you can implement some of this (shout out to authors on here)
+
 // ==UserScript==
 // @name         unverified! with ripples!
 // @namespace    http://tampermonkey.net/
 // @version      2
 // @description  Miniblox client
-// @author       Wytlines, Andreypidd, Fizzy, Loqle, Heythereu, TheM1ddleM1n
+// @author       wytlines100, Andreypidd, Fizzy, Loqle, Heythereu, TheM1ddleM1n
 // @icon         https://cdn.glitch.global/33d72df5-1609-416b-9b20-b2d6f6548081/Untitled%20image%20(1).jpeg?v=1734041345350
 // @match        https://miniblox.io/*
 // @grant        GM_setValue
