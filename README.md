@@ -167,3 +167,7 @@ An apology here firstly, i dont know why, but my account seems to have github ac
 
 ## ⚠️ Disclaimer (PLEASE READ THIS)
 Please be aware that the developers are not responsible for any misuse or violations of Miniblox.io’s Terms of Service. So please enjoy and give any feedback we are willing to hear your views!
+
+## Important (FOR BETA) - Comment from TheM1ddleM1n
+
+You can put out code (if it needs to be tested) without harming the main branches. If you do decide to put anything in BETA i will thoroughly test it and give you feedback on where to improve or if it is good to pull it into main!
