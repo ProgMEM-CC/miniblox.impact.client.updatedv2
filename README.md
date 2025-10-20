@@ -36,18 +36,18 @@ And then enjoy using the client!
 
 ---
 
-## ⚠️ Any Known Issues will be commented here:
+## ⚠️ Any known issues will be commented here:
 
 - .toggle all command currently non-functional (we are looking into it).
 - There is currently an issue with Killaura and Nuker. However, we are looking into it.
 
-## Changelog
+## Changelog of this client!
 
 ## [v6.6] - 2025-10-18
 - 🔄 **Auto-synced version to:** v6.6 (`TheM1ddleM1n`)  and made a PR!
 - `tugayozsoy1982-lab` - added a manifest file for the Crazy Games PWA.
 - Updated Readme
-- improved my ClickGUI with new css animations
+- improved my NEW ClickGUI with new css animations
 
 ## [v6.5] – 2025-10-16  
 - 🔄 **Auto-synced version to:** v6.5  
@@ -125,7 +125,7 @@ And then enjoy using the client!
 
 ## Ideas for some new modules!
 
-- [ ] Force OP module (gain access to admin commands?!)
+- [ ] Force OP module (gain access to admin commands?! funny bypass)
 - [ ] Command Block modification (to change command blocks in survival)
 - [ ] AutoEat (Automatically eats food in the inv)
 - [ ] AimBot (Automatically aims at a player)
@@ -170,4 +170,4 @@ Please be aware that the developers are not responsible for any misuse or violat
 
 ## Important (FOR BETA) - Comment from TheM1ddleM1n
 
-You can put out code (if it needs to be tested) without harming the main branches. If you do decide to put anything in BETA i will thoroughly test it and give you feedback on where to improve or if it is good to pull it into main!
+You can put out code (if it needs to be tested) without harming the main branches. However, if you do decide to put anything in BETA i will thoroughly test it and give you feedback on where to improve or if it is good to pull it into the main injection.js!
