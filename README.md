@@ -170,4 +170,4 @@ Please be aware that the developers are not responsible for any misuse or violat
 
 ## Important (FOR BETA) - Comment from TheM1ddleM1n
 
-You can put out code (if it needs to be tested) without harming the main branches. However, if you do decide to put anything in BETA i will thoroughly test it and give you feedback on where to improve or if it is good to pull it into the main injection.js!
+You can put out code (if it needs to be tested) without harming the main branches. However, if you do decide to put anything in BETA i will thoroughly test it and give you feedback on where to improve or if it is good to pull it into the main v4inject.js!
