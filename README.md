@@ -131,6 +131,8 @@ And then enjoy using the client!
 - [ ] AimBot (Automatically aims at a player)
 - [ ] Full Disabler (ie. a Movement disabler like sigma 5.1 (or rebase) or smth)
 - [ ] Breadcrumbs (particles of a sort trailing behind the player)
+- [ ] AutoTool – Switches to best tool for the job
+- [ ] Inventory Manager – Organizes inventory automatically.
 
 ## 🧩 Developer Notes!
 
