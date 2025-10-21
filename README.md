@@ -16,7 +16,7 @@ When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPac
 - Fly / NoFall/NofallBeta / Scaffold  
 - AntiBan 2.0 (with a account gen) 
 - Click GUI + Text GUI  
-- ServerCrasher  
+- ServerCrasher (works!) 
 - Modular script architecture (stable & beta)  
 - Open changelog and contributor tags
 - Nuker (still in BETA)
@@ -39,7 +39,7 @@ And then enjoy using the client!
 ## ⚠️ Any known issues will be commented here:
 
 - .toggle all command currently non-functional (we are looking into it).
-- There is currently an issue with Killaura and Nuker. However, we are looking into it.
+- There is currently an issue with Killaura and Nuker. (However, we are looking into it.)
 
 ## Changelog of this client!
 
@@ -129,7 +129,7 @@ And then enjoy using the client!
 - [ ] Command Block modification (to change command blocks in survival)
 - [ ] AutoEat (Automatically eats food in the inv)
 - [ ] AimBot (Automatically aims at a player)
-- [ ] Full Disabler (ie. Movement disabler like sigma rebase or smth)
+- [ ] Full Disabler (ie. a Movement disabler like sigma 5.1 (or rebase) or smth)
 - [ ] Breadcrumbs (particles of a sort trailing behind the player)
 
 ## 🧩 Developer Notes!
@@ -141,8 +141,6 @@ Never publish unstable code to / (root). Use /beta for any test builds you have 
 Repo rename pending once closed-source dependencies are synced.
 ---
 An apology here firstly, i dont know why, but my account seems to have github actions disabled @TheM1ddleM1n sorry about your CI.
-
-(you can contact github support saying that github actions has been disabled for you to see if they fix it.)
 
 **ok dont worry then i made a PR anyway and its at v6.6 - TheM1ddleM1n**
 
@@ -170,4 +168,4 @@ Please be aware that the developers are not responsible for any misuse or violat
 
 ## Important (FOR BETA) - Comment from TheM1ddleM1n
 
-You can put out code (if it needs to be tested) without harming the main branches. However, if you do decide to put anything in BETA i will thoroughly test it and give you feedback on where to improve or if it is good to pull it into the main v4inject.js!
+You can put out code (if it needs to be tested) without harming the main branches. However, if you do decide to put anything in BETA i will thoroughly test the module/idea and i will give you feedback based on- where to improve or if it is good to pull it into the main vav4inject.js!
