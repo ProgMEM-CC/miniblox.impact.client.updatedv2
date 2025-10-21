@@ -5,30 +5,33 @@
 
 
 ## An Overview of Impact for Miniblox
-**Impact Client for Miniblox.io** is a fully standalone continuation of the discontinued **Vape V4** project/client by `7GrandDadPGN`.  
-When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPacket)**, and **ProgMEM-CC** and other devs rebuilt it from scratch — creating a modern, modular, and optimized exploit client framework for Miniblox. :trollface: (gl on bypassing this vector lol)
 
-> Designed for stealth, speed, and domination — with full dark-mode support with a slick Click GUI.
+**Impact Client for Miniblox.io** is a fork of the **Vape V4** project by DataM0del
+(which is a continuation of the discontinued **Vape V4** project/client by `7GrandDadPGN`).
+When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPacket)**, and **ProgMEM-CC** and other devs rebuilt it from scratch — creating a modern, modular, and optimized exploit client framework for Miniblox.
+
+Designed for stealth, speed, and domination — with full dark-mode support with a slick Click GUI.
 
 ---
 
 ## Some example modules that are included in this client!
-- Fly / NoFall/NofallBeta / Scaffold  
-- AntiBan 2.0 (with a account gen) 
-- Click GUI + Text GUI  
-- ServerCrasher (works!) 
-- Modular script architecture (stable & beta)  
-- Open changelog and contributor tags
-- Nuker (still in BETA)
-- Jetpack
+
+- Fly, NoFall, NoFallBeta, and Scaffold
+- AntiBan 2.0 (use non accounts OR generate accounts with [miniblox-acc-gen](https://codeberg.org/RealPacket/miniblox-acc-gen)'s integration support!)
+- Click GUI
+- ServerCrasher (works on servers without the new AC, e.g. planets)
+- Nuker (still in BETA, it sends too many block break packets and gets you kicked)
+- Jetpack (this is literally just the old Fly from vape for miniblox, probably still works.)
+
+- AntiBan 2.0 (NEW account generation integration with [miniblox-acc-gen](https://codeberg.org/RealPacket/miniblox-acc-gen))
 ---
 
 ## How to Install Impact For Miniblox?
-First, install a userscript manager (🧩 **Tampermonkey**, **Violentmonkey** or **Greasemonkey** via Chrome Web Store or Microsoft Store etc).  
+First, install a userscript manager (🧩 **Tampermonkey**, **Violentmonkey** or **Greasemonkey** via Chrome Web Store or Microsoft Store etc).
 
-Next, copy the contents of `tampermonkey.js` and (`optional`) `injection.js`. The best option imo is to copy and paste both `tampermonkey` and `injection` - TheM1ddleM1n
+Next, copy the contents of `tampermonkey.js`.
 
-Then, paste it into a new userscript and enable it. (u should see it save)
+Then, paste it into a new userscript and enable it. (you should see it save)
 
 Finally, open [miniblox.io](https://miniblox.io) — the client will auto-initialize!
 
@@ -49,23 +52,22 @@ And then enjoy using the client!
 - Updated Readme
 - improved my NEW ClickGUI with new css animations
 
-## [v6.5] – 2025-10-16  
+## [v6.5] – 2025-10-16
 - 🔄 **Auto-synced version to:** v6.5  
 - Major README refactor for improved clarity and structure (`TheM1ddleM1n`)  
-- Deleted outdated `docs/ModuleIdeas.md` (moved into dev notes)  
+- Deleted outdated `docs/ModuleIdeas.md` (moved into dev notes)
 - Multiple incremental README updates and formatting fixes  
 - Repository cleanup and minor internal refactoring
 
 ---
 
 ## [v6.4] – 2025-10-14  
-- Merged PR #52 into `main` (`TheM1ddleM1n`)  
-- Synced branches! (`main` → `main`)  
+- Merged PR #52 into `main` (`TheM1ddleM1n`)
 - Stability improvements and structure synchronization.
 
 ---
 
-## [v6.3] – 2025-10-10  
+## [v6.3] – 2025-10-10
 - Updated README layout and documentation links.  
 - Polished module descriptions for consistency.
 - Improved formatting for developer credits.  
@@ -93,6 +95,7 @@ And then enjoy using the client!
 ---
 
 ## [v6.0] – 2025-09-30  
+
 - Ported `.friend` and `antiblind` features from Vape for Miniblox (`DataM0del`)  
 - Version bump from v5.9 → v6.0
 
@@ -129,7 +132,7 @@ And then enjoy using the client!
 - [ ] Command Block modification (to change command blocks in survival)
 - [ ] AutoEat (Automatically eats food in the inv)
 - [ ] AimBot (Automatically aims at a player)
-- [ ] Full Disabler (ie. a Movement disabler like sigma 5.1 (or rebase) or smth)
+- [ ] Movement Disabler
 - [ ] Breadcrumbs (particles of a sort trailing behind the player)
 - [ ] AutoTool – Switches to best tool for the job
 - [ ] Inventory Manager – Organizes inventory automatically.
@@ -140,8 +143,8 @@ Make sure you **always** update VERSIONFILE, tampermonkey.js, and injection.js t
 
 Never publish unstable code to / (root). Use /beta for any test builds you have got.
 
-Repo rename pending once closed-source dependencies are synced.
----
+## Repo rename pending once closed-source dependencies are synced.
+
 An apology here firstly, i dont know why, but my account seems to have github actions disabled @TheM1ddleM1n sorry about your CI.
 
 **ok dont worry then i made a PR anyway and its at v6.6 - TheM1ddleM1n**
@@ -153,11 +156,7 @@ An apology here firstly, i dont know why, but my account seems to have github ac
 | <img src="https://github.com/DataM0del.png" width="40" height="40"> | Core Dev                   | [DataM0del](https://github.com/DataM0del) |
 | <img src="https://github.com/TheM1ddleM1n.png" width="40" height="40"> | Core Dev / Maintainer      | [TheM1ddleM1n](https://github.com/TheM1ddleM1n) |
 | <img src="https://github.com/ProgMEM-CC.png" width="40" height="40"> | Repo Manager / Infrastructure    | [ProgMEM-CC](https://github.com/ProgMEM-CC) |
-| <img src="https://github.com/tugayozsoy1982-lab.png" width="40" height="40"> | Manifest Creator for CrazyGames    | [tugayozsoy1982-lab](https://github.com/tugayozsoy1982-lab) |
 | <img src="https://github.com/dtkiller-jp.png" width="40" height="40"> | Vape V4 GUI creator and solver!   | [dtkiller-jp](https://github.com/dtkiller-jp) |
-| <img src="https://github.com/annepaurush.png" width="40" height="40"> | Issue raiser    | [annepaurush](https://github.com/annepaurush) |
-
-
 
 ## 🧷 Links to discord and a webpage to the client's website!
 
@@ -166,6 +165,7 @@ An apology here firstly, i dont know why, but my account seems to have github ac
 - 💬 Discord Impact Community (please join this if you can) - https://discord.gg/PwpGemYhJx
 
 ## ⚠️ Disclaimer (PLEASE READ THIS)
+
 Please be aware that the developers are not responsible for any misuse or violations of Miniblox.io’s Terms of Service. So please enjoy and give any feedback we are willing to hear your views!
 
 ## Important (FOR BETA) - Comment from TheM1ddleM1n
