@@ -6,7 +6,7 @@
 
 ## An Overview of Impact for Miniblox
 **Impact Client for Miniblox.io** is a fully standalone continuation of the discontinued **Vape V4** project/client by `7GrandDadPGN`.  
-When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPacket)**, and **ProgMEM-CC** and other devs rebuilt it from scratch — creating a modern, modular, and optimized exploit client framework for Miniblox. :trollface: (gl on bypassing this vector)
+When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPacket)**, and **ProgMEM-CC** and other devs rebuilt it from scratch — creating a modern, modular, and optimized exploit client framework for Miniblox. :trollface: (gl on bypassing this vector lol)
 
 > Designed for stealth, speed, and domination — with full dark-mode support with a slick Click GUI.
 
