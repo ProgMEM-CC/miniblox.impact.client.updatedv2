@@ -4,9 +4,9 @@
 
 ## An Overview of Impact for Miniblox
 
-**Impact Client for Miniblox.io** is a fork of the **Vape V4** project by DataM0del
+**Impact Client for Miniblox.io** is a fork of the **Vape V4** project by `DataM0del`
 (which is a continuation of the discontinued **Vape V4** project/client by `7GrandDadPGN`).
-When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPacket)**, and **ProgMEM-CC** and other devs rebuilt it from scratch — creating a modern, modular, and optimized exploit client framework for Miniblox.
+When the original client was deleted, `**TheM1ddleM1n**`, `**DataM0del (aka RealPacket)**`, and `**ProgMEM-CC**` and other devs rebuilt it from scratch — creating a modern, modular, and optimized exploit client framework for Miniblox.
 
 Designed for stealth, speed, and domination — with full dark-mode support with a slick Click GUI.
 
@@ -16,8 +16,8 @@ Designed for stealth, speed, and domination — with full dark-mode support with
 - Fly, NoFall, NoFallBeta, and Scaffold
 - Click GUI
 - ServerCrasher (works on servers without the new AC, e.g. planets)
-- Nuker (still in BETA, it sends too many block break packets and gets you kicked)
-- Jetpack (this is literally just the old Fly from vape for miniblox, probably still works.)
+- Nuker (still in BETA, it sends too many block break packets and gets you kicked for this.)
+- Jetpack (this is literally just the old Fly from Vape For Miniblox, this probably still works.)
 
 ## How to Install Impact For Miniblox?
 
@@ -25,7 +25,7 @@ First, install a userscript manager (🧩 **Tampermonkey**, **Violentmonkey** or
 
 Next, copy the contents of `tampermonkey.js`.
 
-Then, paste it into a new userscript and enable it. (you should see it save)
+Then, paste it into a new userscript and enable it. (you should see it save automatically!)
 
 Finally, open [miniblox.io](https://miniblox.io) — the client will auto-initialize!
 
@@ -38,7 +38,7 @@ And then enjoy using the client!
 - .toggle all command currently non-functional (we are looking into it).
 - There is currently an issue with Killaura and Nuker. (However, we are looking into it.)
 
-## Changelog of this client
+## Changelog
 
 ## [v6.6] - 2025-10-18
 
@@ -46,6 +46,7 @@ And then enjoy using the client!
 - `tugayozsoy1982-lab` - added a manifest file for the Crazy Games PWA.
 - Updated Readme
 - improved my NEW ClickGUI with new css animations
+- removed chinahat (ages ago lol cause it would not render as a cone no matter what I did.)
 
 ## [v6.5] – 2025-10-16
 
@@ -83,14 +84,14 @@ And then enjoy using the client!
 
 - Updated README  
 - Added module tags (e.g. `Step` by `DataM0del`)  
-- Introduced new **ServerCrasher** module (`DataM0del`)  
+- Introduced the **ServerCrasher** module (thanks to `DataM0del`)  
 
 ---
 
 ## [v6.0] – 2025-10-03  
 
-- Updated README  
-- Improved **AntiBan** module (`DataM0del`)  
+- Updated the README  
+- Improved **AntiBan 2.0** module (`DataM0del`)  
 - Moved outdated content to `docs/` (`TheM1ddleM1n`)
 
 ---
@@ -104,15 +105,15 @@ And then enjoy using the client!
 
 ## [v5.9] – 2025-09-29  
 
-- Overhauled **InvCleaner** (`TheM1ddleM1n`)  
-- Updated documentation
+- Overhauled the **InvCleaner** module (`TheM1ddleM1n`)  
+- Updated docs
 
 ---
 
 ## [v5.8] – 2025-09-26  
 
-- Added **TargetHUD** (beta)  
-- Added **ChinaHat** and **LongJump** modules  
+- Added the **TargetHUD** module 
+- Added **LongJump** module with a desync (thanks to `TheM1ddleM1n`)  
 - Updated `tampermonkey.js` and `ModuleIdeas.md`
 
 ---
@@ -120,7 +121,7 @@ And then enjoy using the client!
 ## [v5.6 – v5.7]  
 
 - Overhauled **TextGUI** visuals  
-- Updated `moduleideas` and README
+- Updated README
 
 ---
 
@@ -151,8 +152,6 @@ Never publish unstable code to / (root). Use /beta for any test builds you have 
 ## Repo rename pending once closed-source dependencies are synced
 
 An apology here firstly, i dont know why, but my account seems to have github actions disabled @TheM1ddleM1n sorry about your CI.
-
-**ok dont worry then i made a PR anyway and its at v6.6 - TheM1ddleM1n**
 
 ## 👥 Contributors For Impact For Miniblox
 
