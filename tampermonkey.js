@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Impact For Miniblox
+// @name         Impact For Miniblox!
 // @namespace    ProgMEM-CC, TheM1ddleM1n, he557, 7GrandDad, BlueDragon7327, DataM0del/RealPacket, ekusos22, whoppps, annepaurush
-// @version      6.4
-// @description  The ultimate MiniBlox hacked client! Built for total domination of Miniblox servers! Fully dark-mode optimized with a modern GUI and high performance!
+// @version      6.6
+// @description  The ultimate Miniblox hacked client! Built for total domination of Miniblox servers! Fully dark-mode optimized with a modern GUI and high performance!
 // @author       7GrandDad, ProgMEM-CC, TheM1ddleM1n, he557, RealPacket/DataM0del (Codeberg/Github names), BlueDragon7327, whoppps, annepaurush
 // @match        https://miniblox.io/
 // @match        https://miniblox.org/
@@ -40,7 +40,7 @@
 //    BlueDragon7327, Module Researcher and solver!
 //    dtkiller-jp, Bug reporter and solver!
 //    annepaurush, Bug reporter and issue raiser! 😃
-//    whoppps
+//    whoppps, issue raiser
 //
 // ==================================== Extra Credits To! =====================================================
 //    The js.org team, who kindly provided us with the subdomain impactminiblox.js.org for the project site
