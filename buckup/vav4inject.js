@@ -5,7 +5,7 @@ let replacements = {};
 let dumpedVarNames = {};
 const storeName = "a" + crypto.randomUUID().replaceAll("-", "").substring(16);
 const vapeName = crypto.randomUUID().replaceAll("-", "").substring(16);
-const VERSION = "6.6";
+const VERSION = "6.4";
 
 // ANTICHEAT HOOK
 function replaceAndCopyFunction(oldFunc, newFunc) {
@@ -21,11 +21,11 @@ function replaceAndCopyFunction(oldFunc, newFunc) {
 	});
 }
 
-Object.getOwnPropertyNames = replaceAndCopyFunction(Object.getOwnPropertyNames, function (list) {
+Object.getOwnPropertyNames = replaceAndCopyFunction(Object.getOwnPropertyNames, function(list) {
 	if (list.indexOf(storeName) != -1) list.splice(list.indexOf(storeName), 1);
 	return list;
 });
-Object.getOwnPropertyDescriptors = replaceAndCopyFunction(Object.getOwnPropertyDescriptors, function (list) {
+Object.getOwnPropertyDescriptors = replaceAndCopyFunction(Object.getOwnPropertyDescriptors, function(list) {
 	delete list[storeName];
 	return list;
 });
@@ -50,10 +50,10 @@ function addDump(replacement, code) {
  */
 function modifyCode(text) {
 	let modifiedText = text;
-	for (const [name, regex] of Object.entries(dumpedVarNames)) {
+	for(const [name, regex] of Object.entries(dumpedVarNames)) {
 		const matched = modifiedText.match(regex);
 		if (matched) {
-			for (const [replacement, code] of Object.entries(replacements)) {
+			for(const [replacement, code] of Object.entries(replacements)){
 				delete replacements[replacement];
 				replacements[replacement.replaceAll(name, matched[1])] = [code[0].replaceAll(name, matched[1]), code[1]];
 			}
@@ -65,7 +65,7 @@ function modifyCode(text) {
 	const unmatchedReplacements = Object.entries(replacements).filter(r => modifiedText.replace(r[0]) === text);
 	if (unmatchedReplacements.length > 0) console.warn("Unmatched replacements:", unmatchedReplacements);
 
-	for (const [replacement, code] of Object.entries(replacements)) {
+	for(const [replacement, code] of Object.entries(replacements)) {
 		modifiedText = modifiedText.replace(replacement, code[1] ? code[0] : replacement + code[0]);
 
 	}
@@ -80,7 +80,7 @@ function modifyCode(text) {
 	newScript.remove();
 }
 
-(function () {
+(function() {
 	'use strict';
 
 	// DUMPING
@@ -221,8 +221,8 @@ let serverPos = player.pos.clone();
         if (color) ctx.globalCompositeOperation = "source-over";
     }
 `);
-	// TEXT GUI (OG textgui from M1ddleM1n but improved by DataM0del thanks again!)
-	addModification('(this.drawSelectedItemStack(),this.drawHintBox())', /*js*/`
+// TEXT GUI (OG textgui from M1ddleM1n but improved by DataM0del thanks again!)
+addModification('(this.drawSelectedItemStack(),this.drawHintBox())', /*js*/`
 	if (ctx$5 && enabledModules["TextGUI"]) {
 		const canvasW = ctx$5.canvas.width;
 		const canvasH = ctx$5.canvas.height;
@@ -410,7 +410,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	addModification('updatePlayerMoveState(),this.isUsingItem()', 'updatePlayerMoveState(),(this.isUsingItem() && !enabledModules["NoSlowdown"])', true);
 	addModification('S&&!this.isUsingItem()', 'S&&!(this.isUsingItem() && !enabledModules["NoSlowdown"])', true);
 
-	// DESYNC!
+	 // DESYNC!
 	addModification("this.inputSequenceNumber++", 'desync ? this.inputSequenceNumber : this.inputSequenceNumber++', true);
 	// addModification("new PBVector3({x:this.pos.x,y:this.pos.y,z:this.pos.z})", "desync ? inputPos : inputPos = this.pos", true);
 
@@ -420,21 +420,21 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	// hook into the reconcileServerPosition
 	// so we know our server pos
 
-	// PREDICTION AC FIXER (makes the ac a bit less annoying (e.g. when scaffolding))
-	// ig but this should be done in the desync branch instead lol - DataM0del
-	// 	addModification("if(h.reset){this.setPosition(h.x,h.y,h.z),this.reset();return}", "", true);
-	// 	addModification("this.serverDistance=y", `
-	// if (h.reset) {
-	// 	if (this.serverDistance >= 4) {
-	// 		this.setPosition(h.x, h.y, h.z);
-	// 	} else {
-	// 		ClientSocket.sendPacket(new SPacketPlayerInput({sequenceNumber: NaN, pos: new PBVector3(g)}));
-	// 		ClientSocket.sendPacket(new SPacketPlayerInput({sequenceNumber: NaN, pos: new PBVector3({x: h.x + 8, ...h})}));
-	// 	}
-	// 	this.reset();
-	// 	return;
-	// }
-	// `);
+// PREDICTION AC FIXER (makes the ac a bit less annoying (e.g. when scaffolding))
+// ig but this should be done in the desync branch instead lol - DataM0del
+// 	addModification("if(h.reset){this.setPosition(h.x,h.y,h.z),this.reset();return}", "", true);
+// 	addModification("this.serverDistance=y", `
+// if (h.reset) {
+// 	if (this.serverDistance >= 4) {
+// 		this.setPosition(h.x, h.y, h.z);
+// 	} else {
+// 		ClientSocket.sendPacket(new SPacketPlayerInput({sequenceNumber: NaN, pos: new PBVector3(g)}));
+// 		ClientSocket.sendPacket(new SPacketPlayerInput({sequenceNumber: NaN, pos: new PBVector3({x: h.x + 8, ...h})}));
+// 	}
+// 	this.reset();
+// 	return;
+// }
+// `);
 
 	// STEP
 	addModification('p.y=this.stepHeight;', 'p.y=(enabledModules["Step"]?Math.max(stepheight[1],this.stepHeight):this.stepHeight);', true);
@@ -634,6 +634,79 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
     }
   }
 `);
+    // ChinaHat Module!
+    addModification(')&&(p.mesh.visible=this.shouldRenderEntity(p))', `
+  if (enabledModules["ChinaHat"] && p && p.id != player.id && p instanceof EntityPlayer) {
+    // Only apply ChinaHat to players (not items, mobs, etc.)
+    if (!p.mesh.userData.chinaHat) {
+      const brim = new Mesh(new boxGeometryDump(1, 1, 1));
+      brim.material.depthTest = false;
+      brim.material.transparent = true;
+      brim.material.opacity = 0.8;
+      brim.renderOrder = 6;
+
+      const cap = new Mesh(new boxGeometryDump(1, 1, 1));
+      cap.material.depthTest = false;
+      cap.material.transparent = true;
+      cap.material.opacity = 0.8;
+      cap.renderOrder = 7;
+
+      p.mesh.add(brim);
+      p.mesh.add(cap);
+
+      p.mesh.userData.chinaHat = { brim, cap };
+    }
+
+    const { brim, cap } = p.mesh.userData.chinaHat;
+
+    // Animate rainbow color
+    const time = Date.now() / 2000;
+    const hue = (time % 1);
+    const rgb = hslToRgb(hue, 1, 0.5);
+
+    brim.material.color.set(rgb.r, rgb.g, rgb.b);
+    cap.material.color.set(rgb.r, rgb.g, rgb.b);
+
+    // Position + scale
+    brim.position.set(0, 2.2, 0);
+    brim.scale.set(1.8, 0.05, 1.8); // brim disc
+
+    cap.position.set(0, 2.35, 0);
+    cap.scale.set(0.7, 0.2, 0.7);   // cap block
+  } else if (p?.mesh?.userData?.chinaHat) {
+    // Cleanup when disabled
+    const { brim, cap } = p.mesh.userData.chinaHat;
+    p.mesh.remove(brim);
+    p.mesh.remove(cap);
+    delete p.mesh.userData.chinaHat;
+  }
+
+  // === helper ===
+  function hslToRgb(h, s, l) {
+    let r, g, b;
+    if (s === 0) { r = g = b = l; }
+    else {
+      const hue2rgb = (p, q, t) => {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      };
+      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      const pp = 2 * l - q;
+      r = hue2rgb(pp, q, h + 1/3);
+      g = hue2rgb(pp, q, h);
+      b = hue2rgb(pp, q, h - 1/3);
+    }
+    return {
+      r: Math.round(r * 255),
+      g: Math.round(g * 255),
+      b: Math.round(b * 255)
+    };
+  }
+`);
 
 	// LOGIN BYPASS (clean up by DataM0del and TheM1ddleM1n)
 	addModification(
@@ -815,7 +888,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		'const m=player.openContainer',
 		`const m = player.openContainer ?? { getLowerChestInventory: () => {getSizeInventory: () => 0} }`,
 		true
-	);
+		);
 
 	// ANTIBLIND
 	addModification("player.isPotionActive(Potions.blindness)", 'player.isPotionActive(Potions.blindness) && !enabledModules["AntiBlind"]', true);
@@ -1369,6 +1442,7 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 
 
 			new Module("ESP", function() {});
+			new Module("ChinaHat", function() {});
 			const textgui = new Module("TextGUI", function() {});
 			textguifont = textgui.addoption("Font", String, "Poppins");
 			textguisize = textgui.addoption("TextSize", Number, 14);
@@ -2074,19 +2148,19 @@ const survival = new Module("SurvivalMode", function(callback) {
 	async function saveVapeConfig(profile) {
 		if (!loadedConfig) return;
 		let saveList = {};
-		for (const [name, module] of Object.entries(unsafeWindow.globalThis[storeName].modules)) {
-			saveList[name] = { enabled: module.enabled, bind: module.bind, options: {} };
-			for (const [option, setting] of Object.entries(module.options)) {
+		for(const [name, module] of Object.entries(unsafeWindow.globalThis[storeName].modules)) {
+			saveList[name] = {enabled: module.enabled, bind: module.bind, options: {}};
+			for(const [option, setting] of Object.entries(module.options)) {
 				saveList[name].options[option] = setting[1];
 			}
 		}
 		GM_setValue("vapeConfig" + (profile ?? unsafeWindow.globalThis[storeName].profile), JSON.stringify(saveList));
-		GM_setValue("mainVapeConfig", JSON.stringify({ profile: unsafeWindow.globalThis[storeName].profile }));
+		GM_setValue("mainVapeConfig", JSON.stringify({profile: unsafeWindow.globalThis[storeName].profile}));
 	};
 
 	async function loadVapeConfig(switched) {
 		loadedConfig = false;
-		const loadedMain = JSON.parse(await GM_getValue("mainVapeConfig", "{}")) ?? { profile: "default" };
+		const loadedMain = JSON.parse(await GM_getValue("mainVapeConfig", "{}")) ?? {profile: "default"};
 		unsafeWindow.globalThis[storeName].profile = switched ?? loadedMain.profile;
 		const loaded = JSON.parse(await GM_getValue("vapeConfig" + unsafeWindow.globalThis[storeName].profile, "{}"));
 		if (!loaded) {
@@ -2094,13 +2168,13 @@ const survival = new Module("SurvivalMode", function(callback) {
 			return;
 		}
 
-		for (const [name, module] of Object.entries(loaded)) {
+		for(const [name, module] of Object.entries(loaded)) {
 			const realModule = unsafeWindow.globalThis[storeName].modules[name];
 			if (!realModule) continue;
 			if (realModule.enabled != module.enabled) realModule.toggle();
 			if (realModule.bind != module.bind) realModule.setbind(module.bind);
 			if (module.options) {
-				for (const [option, setting] of Object.entries(module.options)) {
+				for(const [option, setting] of Object.entries(module.options)) {
 					const realOption = realModule.options[option];
 					if (!realOption) continue;
 					realOption[1] = setting;
@@ -2123,12 +2197,12 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 	let loadedConfig = false;
 	async function execute(src, oldScript) {
-		Object.defineProperty(unsafeWindow.globalThis, storeName, { value: {}, enumerable: false });
+		Object.defineProperty(unsafeWindow.globalThis, storeName, {value: {}, enumerable: false});
 		if (oldScript) oldScript.type = 'javascript/blocked';
 		await fetch(src).then(e => e.text()).then(e => modifyCode(e));
 		if (oldScript) oldScript.type = 'module';
 		await new Promise((resolve) => {
-			const loop = setInterval(async function () {
+			const loop = setInterval(async function() {
 				if (unsafeWindow.globalThis[storeName].modules) {
 					clearInterval(loop);
 					resolve();
@@ -2140,7 +2214,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 		unsafeWindow.globalThis[storeName].exportVapeConfig = exportVapeConfig;
 		unsafeWindow.globalThis[storeName].importVapeConfig = importVapeConfig;
 		loadVapeConfig();
-		setInterval(async function () {
+		setInterval(async function() {
 			saveVapeConfig();
 		}, 10000);
 	}
@@ -2149,7 +2223,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 	// https://stackoverflow.com/questions/22141205/intercept-and-alter-a-sites-javascript-using-greasemonkey
 	if (publicUrl == "scripturl") {
 		if (navigator.userAgent.indexOf("Firefox") != -1) {
-			window.addEventListener("beforescriptexecute", function (e) {
+			window.addEventListener("beforescriptexecute", function(e) {
 				if (e.target.src.includes("https://miniblox.io/assets/index")) {
 					e.preventDefault();
 					e.stopPropagation();
@@ -2178,730 +2252,256 @@ const survival = new Module("SurvivalMode", function(callback) {
 		execute(publicUrl);
 	}
 })();
-// Enhanced ClickGUI with Modern Animations! (v6.6 UPDATE)
+// Added new Poppins font 
 (async function () {
-	try {
-		const fontLink = document.createElement("link");
-		fontLink.href = "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap";
-		fontLink.rel = "stylesheet";
-		document.head.appendChild(fontLink);
+  try {
+    const fontLink = document.createElement("link");
+    fontLink.href = "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap";
+    fontLink.rel = "stylesheet";
+    document.head.appendChild(fontLink);
 
-		await new Promise((resolve) => {
-			const loop = setInterval(() => {
-				if (unsafeWindow?.globalThis?.[storeName]?.modules) {
-					clearInterval(loop);
-					resolve();
-				}
-			}, 20);
-		});
+    await new Promise((resolve) => {
+      const loop = setInterval(() => {
+        if (unsafeWindow?.globalThis?.[storeName]?.modules) {
+          clearInterval(loop);
+          resolve();
+        }
+      }, 20);
+    });
 
-		injectGUI(unsafeWindow.globalThis[storeName]);
-	} catch (err) {
-		console.error("[Cl1ckGU1] Init failed:", err);
-	}
+    injectGUI(unsafeWindow.globalThis[storeName]);
+  } catch (err) {
+    console.error("[Cl1ckGU1] Init failed:", err);
+  }
 
-	function injectGUI(store) {
-		const categoryMap = {
-			Combat: ["autoclicker", "killaura", "velocity", "wtap", "keepsprint"],
-			Movement: ["scaffold", "jesus", "phase", "nofall", "antifall", "sprint", "step", "speed", "jetpack", "noslowdown", "longjump", "fly", "infinitefly"],
-			Player: ["invcleaner", "invwalk", "autoarmor", "autorespawn", "fastbreak"],
-			Render: ["esp", "nametags+", "textgui", "chinahat"],
-			World: ["breaker", "autocraft", "cheststeal", "timer", "survivalmode"],
-			Misc: ["autorejoin", "autoqueue", "autovote", "filterbypass", "anticheat", "autofunnychat", "chatdisabler", "musicfix", "auto-funnychat", "music-fix", "servercrasher", "antiblind", "nofallbeta", "nofall", "antiban"]
-		};
+  function injectGUI(store) {
+    const categories = {
+      Combat: ["autoclicker", "killaura", "velocity", "wtap"],
+      Movement: ["scaffold","jesus","phase","nofall","antifall","sprint","keepsprint","step","speed","jetpack","noslowdown","longjump"],
+      Render: ["invcleaner","invwalk","autoarmor","esp","nametags+","textgui","clickgui"],
+      World: ["fastbreak","breaker","autocraft","cheststeal","timer","survivalmode"],
+      Utility: ["autorespawn","autorejoin","autoqueue","autovote","filterbypass","anticheat","autofunnychat","chatdisabler","musicfix","auto-funnychat","music-fix"],
+	  Exploit: ["servercrasher"]
+    };
+    const catIcons = { Combat:"⚔️", Movement:"🏃", "Render":"🧑👁️", World:"🌍", Utility:"🛠️", Exploit:"⚠" };
 
-		// === Vape V4 Styles ===
-		const style = document.createElement("style");
-		style.textContent = `
-      @keyframes vapeEnter {0%{opacity:0;transform:translateY(-10px);}100%{opacity:1;transform:translateY(0);}}
-      @keyframes vapeExit {0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-10px);}}
-      @keyframes glowPulse {0%{box-shadow:0 2px 8px rgba(15,179,160,0);}50%{box-shadow:0 4px 16px rgba(15,179,160,0.4);}100%{box-shadow:0 2px 8px rgba(15,179,160,0);}}
-      .vape-panel { position:absolute; background:linear-gradient(180deg, rgba(28,30,32,0.98), rgba(23,25,27,0.98)); border-radius:12px; border:1px solid rgba(255,255,255,0.06); box-shadow:0 12px 30px rgba(0,0,0,0.7); backdrop-filter:blur(8px); font-family:Inter,system-ui,sans-serif; color:#E6E9EA; animation:vapeEnter .2s ease-out; z-index:100000; overflow:hidden; min-width:260px; }
-      .vape-panel.closing { animation:vapeExit .2s ease-out; }
-      .vape-header { padding:12px 14px; background:rgba(0,0,0,0.2); border-bottom:1px solid rgba(255,255,255,0.04); font-weight:700; font-size:13px; letter-spacing:0.5px; cursor:move; user-select:none; display:flex; align-items:center; justify-content:space-between; }
-      .vape-content { padding:8px; max-height:500px; overflow-y:auto; overflow-x:hidden; transition:max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease; }
-      .vape-content.collapsing { max-height:0; opacity:0; padding-top:0; padding-bottom:0; }
-      .vape-content::-webkit-scrollbar { width:6px; }
-      .vape-content::-webkit-scrollbar-thumb { background:var(--vape-accent, #0FB3A0); border-radius:10px; }
-      .vape-content::-webkit-scrollbar-track { background:transparent; }
-      .vape-cat-item { display:flex; align-items:center; gap:10px; padding:10px 12px; margin:4px 0; border-radius:8px; cursor:pointer; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); user-select:none; border:1px solid transparent; }
-      .vape-cat-item:hover { background:linear-gradient(90deg,var(--vape-accent-alpha, rgba(15,179,160,0.08)),transparent); box-shadow:0 4px 12px var(--vape-accent-shadow, rgba(15,179,160,0.15)); }
-      .vape-cat-item.active { background:linear-gradient(90deg,var(--vape-accent-alpha, rgba(15,179,160,0.12)),transparent); border:1px solid var(--vape-accent-alpha, rgba(15,179,160,0.12)); }
-      .vape-cat-icon { width:18px; height:18px; border-radius:4px; background:linear-gradient(135deg,var(--vape-accent, #0FB3A0),var(--vape-accent, #13a695)); box-shadow:0 2px 6px var(--vape-accent-shadow, rgba(15,179,160,0.2)); transition:all 0.3s ease; }
-      .vape-cat-item:hover .vape-cat-icon { box-shadow:0 4px 12px var(--vape-accent-shadow, rgba(15,179,160,0.4)); transform:scale(1.05); }
-      .vape-cat-text { font-weight:600; font-size:13px; }
-      .vape-module-row { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; margin:4px 0; border-radius:8px; background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent); border:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position:relative; }
-      .vape-module-row::after { content:''; position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:0; height:2px; background:var(--vape-accent, #0FB3A0); transition:width 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-radius:2px; }
-      .vape-module-row:hover::after { width:90%; }
-      .vape-module-row:hover { background:linear-gradient(180deg,rgba(255,255,255,0.05),var(--vape-accent-alpha, rgba(15,179,160,0.03))); box-shadow:0 8px 24px var(--vape-accent-shadow, rgba(15,179,160,0.25)); transform:translateY(-2px); }
-      .vape-module-left { display:flex; align-items:center; gap:10px; flex:1; min-width:0; }
-      .vape-module-icon { width:32px; height:32px; border-radius:6px; background:linear-gradient(135deg,#2b2d30,#131415); display:flex; align-items:center; justify-content:center; color:#8F9498; font-weight:700; font-size:12px; flex-shrink:0; }
-      .vape-module-title { font-weight:600; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-      .vape-module-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
-      .vape-toggle { width:42px; height:22px; border-radius:20px; background:rgba(255,255,255,0.05); position:relative; transition:all 0.18s; cursor:pointer; flex-shrink:0; }
-      .vape-toggle.on { background:var(--vape-accent, #0FB3A0); }
-      .vape-toggle-knob { position:absolute; left:3px; top:3px; width:16px; height:16px; border-radius:50%; background:#0d0f10; box-shadow:0 4px 10px rgba(0,0,0,0.6); transition:all 0.18s; }
-      .vape-toggle.on .vape-toggle-knob { left:23px; background:white; }
-      .vape-bind-display { font-size:11px; color:#8F9498; margin-right:8px; min-width:30px; text-align:right; flex-shrink:0; }
-      .vape-settings-row { margin:8px 0; }
-      .vape-settings-label { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:12px; }
-      .vape-settings-value { color:#8F9498; }
-      .vape-slider { width:100%; height:6px; border-radius:999px; background:rgba(255,255,255,0.08); outline:none; appearance:none; }
-      .vape-slider::-webkit-slider-thumb { appearance:none; width:16px; height:16px; border-radius:50%; background:var(--vape-accent, #0FB3A0); box-shadow:0 6px 12px rgba(0,0,0,0.4); cursor:pointer; }
-      .vape-bind-row { padding:8px 10px; margin:4px 0; background:rgba(0,0,0,0.2); border-radius:6px; font-size:12px; color:#8F9498; }
-      .vape-bind-change { color:#0FB3A0; cursor:pointer; margin-left:8px; }
-      .vape-bind-change:hover { text-decoration:underline; }
-      .vape-options { display:none; flex-direction:column; gap:4px; padding:8px 12px; background:rgba(0,0,0,0.3); border-top:1px solid rgba(255,255,255,0.05); animation:vapeEnter .2s ease-out; }
-      .vape-options.show { display:flex; }
-      .vape-options label { font-size:12px; display:flex; justify-content:space-between; color:white; }
-      .vape-options input[type="text"], .vape-options input[type="range"] { flex:1; margin-left:4px; }
+    // === Styles ===
+    const style = document.createElement("style");
+    style.textContent = `
+      @keyframes guiEnter {0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}
+      .lb-panel { position:absolute; width:220px; background:#111; border:2px solid #00aaff; font-family:"Poppins", sans-serif; color:white; animation:guiEnter .25s ease-out; z-index:100000; max-height:420px; overflow-x:hidden; }
+      .lb-panel::-webkit-scrollbar { width:6px; }
+      .lb-panel::-webkit-scrollbar-thumb { background:#00aaff; }
+      .lb-panel::-webkit-scrollbar-track { background:#111; }
+      .lb-header { background:#0a0a0a; padding:6px; font-weight:600; cursor:move; text-align:center; border-bottom:1px solid #00aaff; }
+      .lb-module { padding:4px 6px; border-bottom:1px solid #1b1b1b; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
+      .lb-module:hover { background:#151a20; }
+      .lb-module.active { color:#00aaff; }
+      .lb-options { display:none; flex-direction:column; gap:4px; padding:4px 6px; background:#0f0f12; border-top:1px dashed #1e1e1e; }
+      .lb-options.show { display:flex; animation:guiEnter .2s ease-out; }
+      .lb-options label { font-size:12px; display:flex; justify-content:space-between; color:white; }
+      .lb-options input[type="text"], .lb-options input[type="range"] { flex:1; margin-left:4px; font-family:"Poppins", sans-serif; }
       .notif-wrap { position:fixed; bottom:40px; right:30px; display:flex; flex-direction:column; align-items:flex-end; pointer-events:none; z-index:999999; }
-      .notif { display:flex; align-items:center; gap:8px; background:rgba(20,20,20,0.85); color:white; padding:10px 14px; margin-top:8px; border-radius:10px; font-family:Inter,system-ui,sans-serif; font-size:13px; backdrop-filter:blur(6px); box-shadow:0 4px 12px rgba(0,0,0,0.4); opacity:1; transform:translateX(120%); transition:opacity .3s, transform .3s ease; border-left:4px solid; }
+      .notif { display:flex; align-items:center; gap:8px; background:rgba(20,20,20,0.85); color:white; padding:10px 14px; margin-top:8px; border-radius:10px; font-family:"Poppins", sans-serif; font-size:13px; backdrop-filter:blur(6px); box-shadow:0 4px 12px rgba(0,0,0,0.4); opacity:1; transform:translateX(120%); transition:opacity .3s, transform .3s ease; border-left:4px solid; }
       .notif.info { border-color:#3498db; }
       .notif.success { border-color:#2ecc71; }
       .notif.warn { border-color:#f1c40f; }
       .notif.error { border-color:#e74c3c; }
+      .lb-searchwrap { position:fixed; top:15px; left:50%; transform:translateX(-50%); z-index:100001; background:#0a0a0a; border:2px solid #00aaff; padding:4px 6px; font-family:"Poppins", sans-serif; }
+      .lb-search { background:#111; border:none; outline:none; color:white; font-size:13px; width:180px; font-family:"Poppins", sans-serif; }
+      .lb-search::placeholder { color:#00aaff; opacity:0.6; }
+      .lb-content { overflow: hidden; transition: max-height 0.3s ease; max-height:1000px; }
+      .lb-content.collapsed { max-height:0; }
     `;
-		document.head.appendChild(style);
-
-		// === Notifications ===
-		const notifWrap = document.createElement("div");
-		notifWrap.className = "notif-wrap";
-		document.body.appendChild(notifWrap);
-		function showNotif(msg, type = "info", dur = 3000) {
-			const n = document.createElement("div");
-			n.className = `notif ${type}`;
-			let icon = type === "info" ? "ℹ️" : type === "success" ? "✅" : type === "warn" ? "⚠️" : "❌";
-			n.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
-			notifWrap.appendChild(n);
-			setTimeout(() => (n.style.transform = "translateX(0)"), 30);
-			setTimeout(() => { n.style.opacity = "0"; n.style.transform = "translateX(120%)"; }, dur);
-			setTimeout(() => n.remove(), dur + 400);
-		}
-
-		// === Vape V4 GUI State ===
-		let categoryPanel = null;
-		let modulePanels = {};
-		let settingsPanel = null;
-		let selectedCategory = null;
-		let bindingModule = null;
-
-		// === Save/Load GUI State ===
-		function saveGUIState() {
-			const openPanels = Object.keys(modulePanels);
-			localStorage.setItem("vape-gui-open-panels", JSON.stringify(openPanels));
-		}
-
-		function loadGUIState() {
-			const saved = localStorage.getItem("vape-gui-open-panels");
-			if (saved) {
-				try {
-					return JSON.parse(saved);
-				} catch (e) {
-					return [];
-				}
-			}
-			return [];
-		}
-
-		// === Helper: Set Accent Color ===
-		function setAccentColor(color) {
-			document.documentElement.style.setProperty("--vape-accent", color);
-			// Convert hex to rgba for alpha variants
-			const r = parseInt(color.slice(1, 3), 16);
-			const g = parseInt(color.slice(3, 5), 16);
-			const b = parseInt(color.slice(5, 7), 16);
-			document.documentElement.style.setProperty("--vape-accent-alpha", `rgba(${r},${g},${b},0.12)`);
-			document.documentElement.style.setProperty("--vape-accent-shadow", `rgba(${r},${g},${b},0.2)`);
-			// Save to localStorage
-			localStorage.setItem("vape-accent-color", color);
-		}
-
-		// Load saved accent color
-		const savedColor = localStorage.getItem("vape-accent-color");
-		if (savedColor) {
-			setAccentColor(savedColor);
-		}
-
-		// === Helper: Create draggable panel ===
-		function createPanel(title, x, y, width, showCollapseButton = false) {
-			const panel = document.createElement("div");
-			panel.className = "vape-panel";
-			panel.style.position = "absolute";
-
-			// Load saved position if exists
-			const savedPos = localStorage.getItem("vape-panel-pos-" + title);
-			if (savedPos) {
-				const pos = JSON.parse(savedPos);
-				panel.style.left = pos.left;
-				panel.style.top = pos.top;
-			} else {
-				panel.style.left = x + "px";
-				panel.style.top = y + "px";
-			}
-			panel.style.width = width + "px";
-
-			const header = document.createElement("div");
-			header.className = "vape-header";
-
-			const titleSpan = document.createElement("span");
-			titleSpan.textContent = title;
-			titleSpan.style.flex = "1";
-			header.appendChild(titleSpan);
-
-			const content = document.createElement("div");
-			content.className = "vape-content";
-			panel.appendChild(header);
-			panel.appendChild(content);
-
-			// Add collapse button if requested
-			if (showCollapseButton) {
-				const collapseBtn = document.createElement("div");
-				collapseBtn.className = "vape-collapse-btn";
-				collapseBtn.textContent = "−";
-				collapseBtn.style.cssText = "width:20px;height:20px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);border-radius:4px;cursor:pointer;font-size:16px;font-weight:700;transition:all 0.2s;user-select:none;";
-				collapseBtn.title = "Collapse";
-
-				// Load saved collapse state
-				let isCollapsed = localStorage.getItem("vape-panel-collapsed-" + title) === "true";
-
-				if (isCollapsed) {
-					content.classList.add("collapsing");
-					collapseBtn.textContent = "+";
-				}
-
-				collapseBtn.onmouseenter = () => collapseBtn.style.background = "rgba(255,255,255,0.1)";
-				collapseBtn.onmouseleave = () => collapseBtn.style.background = "rgba(255,255,255,0.05)";
-				collapseBtn.onclick = (e) => {
-					e.stopPropagation();
-					isCollapsed = !isCollapsed;
-					if (isCollapsed) {
-						content.classList.add("collapsing");
-						collapseBtn.textContent = "+";
-					} else {
-						content.classList.remove("collapsing");
-						collapseBtn.textContent = "−";
-					}
-					localStorage.setItem("vape-panel-collapsed-" + title, isCollapsed);
-				};
-
-				header.appendChild(collapseBtn);
-			}
-
-			// Dragging
-			let dragging = false, offsetX, offsetY;
-			const onMouseDown = (e) => {
-				if (e.target.classList.contains("vape-collapse-btn")) return;
-				dragging = true;
-				offsetX = e.clientX - panel.offsetLeft;
-				offsetY = e.clientY - panel.offsetTop;
-				panel.style.zIndex = "100001";
-			};
-			const onMouseMove = (e) => {
-				if (!dragging) return;
-				panel.style.left = (e.clientX - offsetX) + "px";
-				panel.style.top = (e.clientY - offsetY) + "px";
-			};
-			const onMouseUp = () => {
-				if (!dragging) return;
-				dragging = false;
-				panel.style.zIndex = "100000";
-				localStorage.setItem("vape-panel-pos-" + title, JSON.stringify({
-					left: panel.style.left,
-					top: panel.style.top
-				}));
-			};
-			header.addEventListener("mousedown", onMouseDown);
-			document.addEventListener("mousemove", onMouseMove);
-			document.addEventListener("mouseup", onMouseUp);
-
-			return { panel, content };
-		}
-
-		// === Create Category Panel ===
-		function createCategoryPanel() {
-			const { panel, content } = createPanel("VAPE V4", 40, 40, 220);
-			const categories = ["Combat", "Movement", "Player", "Render", "World", "Misc", "Settings"];
-
-			categories.forEach(cat => {
-				const item = document.createElement("div");
-				item.className = "vape-cat-item";
-				item.dataset.category = cat;
-
-				const icon = document.createElement("div");
-				icon.className = "vape-cat-icon";
-
-				const text = document.createElement("span");
-				text.className = "vape-cat-text";
-				text.textContent = cat;
-
-				item.appendChild(icon);
-				item.appendChild(text);
-				content.appendChild(item);
-
-				item.addEventListener("click", () => {
-					if (cat === "Settings") {
-						openSettingsPanel();
-					} else {
-						openModulePanel(cat);
-					}
-					updateCategoryHighlights();
-				});
-			});
-
-			return panel;
-		}
-
-		// === Update category highlights based on open panels ===
-		function updateCategoryHighlights() {
-			if (!categoryPanel) return;
-			const items = categoryPanel.querySelectorAll(".vape-cat-item");
-			items.forEach(item => {
-				const cat = item.dataset.category;
-				if (modulePanels[cat]) {
-					item.classList.add("active");
-				} else {
-					item.classList.remove("active");
-				}
-			});
-		}
-
-		// === Create Module Row ===
-		function createModuleRow(name, mod, content) {
-			const row = document.createElement("div");
-			row.className = "vape-module-row";
-
-			const left = document.createElement("div");
-			left.className = "vape-module-left";
-
-			const icon = document.createElement("div");
-			icon.className = "vape-module-icon";
-			icon.textContent = name[0];
-
-			const title = document.createElement("div");
-			title.className = "vape-module-title";
-			title.textContent = name;
-
-			left.appendChild(icon);
-			left.appendChild(title);
-
-			const right = document.createElement("div");
-			right.className = "vape-module-right";
-
-			// Bind display
-			const bindDisplay = document.createElement("span");
-			bindDisplay.className = "vape-bind-display";
-			if (mod.bind) {
-				bindDisplay.textContent = mod.bind.toUpperCase();
-				bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:30px;text-align:center;flex-shrink:0;background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-weight:700;";
-			} else {
-				bindDisplay.textContent = "";
-				bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:0;text-align:center;flex-shrink:0;";
-			}
-
-			const toggle = document.createElement("div");
-			toggle.className = "vape-toggle" + (mod.enabled ? " on" : "");
-			const knob = document.createElement("div");
-			knob.className = "vape-toggle-knob";
-			toggle.appendChild(knob);
-
-			toggle.onclick = (e) => {
-				e.stopPropagation();
-				if (mod.toggle) {
-					mod.toggle();
-					toggle.classList.toggle("on", mod.enabled);
-					showNotif(name + " " + (mod.enabled ? "enabled" : "disabled"), mod.enabled ? "success" : "error");
-				}
-			};
-
-			right.appendChild(bindDisplay);
-			right.appendChild(toggle);
-			row.appendChild(left);
-			row.appendChild(right);
-
-			const optionsBox = document.createElement("div");
-			optionsBox.className = "vape-options";
-			optionsBox.style.display = "none";
-
-			const toggleModule = (e) => {
-				const t = e.target;
-				if (t.tagName === "INPUT" || t.classList.contains("vape-toggle") ||
-					t.classList.contains("vape-toggle-knob") || t.classList.contains("vape-bind-key-display") ||
-					t.classList.contains("vape-slider")) return;
-				if (mod.toggle) {
-					mod.toggle();
-					toggle.classList.toggle("on", mod.enabled);
-					showNotif(name + " " + (mod.enabled ? "enabled" : "disabled"), mod.enabled ? "success" : "error");
-				}
-			};
-
-			row.onclick = toggleModule;
-			row.onmousedown = (e) => {
-				if (e.button === 1) {
-					e.preventDefault();
-					bindDisplay.textContent = "waiting...";
-					bindDisplay.style.color = "#0FB3A0";
-					bindingModule = { name, mod, bindDisplay };
-				}
-			};
-
-			// Right click to show options
-			row.addEventListener("contextmenu", (e) => {
-				e.preventDefault();
-				const isVisible = optionsBox.style.display === "flex";
-				optionsBox.style.display = isVisible ? "none" : "flex";
-
-				// Populate options if first time
-				if (!isVisible && optionsBox.children.length === 0) {
-					// Bind display at top
-					if (mod.bind) {
-						const bindKeyDisplay = document.createElement("div");
-						bindKeyDisplay.className = "vape-bind-key-display";
-						bindKeyDisplay.textContent = mod.bind.toUpperCase();
-						bindKeyDisplay.style.cssText = "background:rgba(255,255,255,0.08);padding:6px 12px;border-radius:6px;font-weight:700;font-size:11px;text-align:center;margin-bottom:8px;cursor:pointer;";
-						bindKeyDisplay.title = "Click to change bind";
-						bindKeyDisplay.addEventListener("click", (e) => {
-							e.stopPropagation();
-							bindKeyDisplay.textContent = "WAITING...";
-							bindKeyDisplay.style.background = "rgba(241,196,15,0.2)";
-							bindingModule = { name, mod, bindDisplay, optionBindDisplay: bindKeyDisplay };
-						});
-						optionsBox.appendChild(bindKeyDisplay);
-					} else {
-						const bindKeyDisplay = document.createElement("div");
-						bindKeyDisplay.className = "vape-bind-key-display";
-						bindKeyDisplay.textContent = "CLICK TO BIND";
-						bindKeyDisplay.style.cssText = "background:rgba(255,255,255,0.05);padding:6px 12px;border-radius:6px;font-weight:700;font-size:11px;text-align:center;margin-bottom:8px;cursor:pointer;color:#8F9498;";
-						bindKeyDisplay.title = "Click to set bind";
-						bindKeyDisplay.addEventListener("click", (e) => {
-							e.stopPropagation();
-							bindKeyDisplay.textContent = "WAITING...";
-							bindKeyDisplay.style.background = "rgba(241,196,15,0.2)";
-							bindKeyDisplay.style.color = "#f1c40f";
-							bindingModule = { name, mod, bindDisplay, optionBindDisplay: bindKeyDisplay };
-						});
-						optionsBox.appendChild(bindKeyDisplay);
-					}
-
-					// Module options
-					if (mod.options) {
-						Object.entries(mod.options).forEach(([key, opt]) => {
-							const [type, val, label] = opt;
-							const line = document.createElement("div");
-							line.style.cssText = "display:flex;justify-content:space-between;align-items:center;margin-top:8px;";
-
-							const labelSpan = document.createElement("span");
-							labelSpan.textContent = label || key;
-							labelSpan.style.cssText = "font-size:12px;color:#E6E9EA;";
-							line.appendChild(labelSpan);
-
-							if (type === Boolean) {
-								const optToggle = document.createElement("div");
-								optToggle.className = "vape-toggle" + (val ? " on" : "");
-								optToggle.style.cssText = "width:42px;height:22px;border-radius:20px;background:rgba(255,255,255,0.05);position:relative;transition:all 0.18s;cursor:pointer;flex-shrink:0;";
-								if (val) {
-									optToggle.style.background = "var(--vape-accent, #0FB3A0)";
-								}
-								const optKnob = document.createElement("div");
-								optKnob.className = "vape-toggle-knob";
-								optKnob.style.cssText = "position:absolute;left:" + (val ? "23px" : "3px") + ";top:3px;width:16px;height:16px;border-radius:50%;background:" + (val ? "white" : "#0d0f10") + ";box-shadow:0 4px 10px rgba(0,0,0,0.6);transition:all 0.18s;";
-								optToggle.appendChild(optKnob);
-								optToggle.addEventListener("click", (e) => {
-									e.stopPropagation();
-									opt[1] = !opt[1];
-									if (opt[1]) {
-										optToggle.style.background = "var(--vape-accent, #0FB3A0)";
-										optKnob.style.left = "23px";
-										optKnob.style.background = "white";
-									} else {
-										optToggle.style.background = "rgba(255,255,255,0.05)";
-										optKnob.style.left = "3px";
-										optKnob.style.background = "#0d0f10";
-									}
-								});
-								line.appendChild(optToggle);
-							} else if (type === Number) {
-								const sliderWrap = document.createElement("div");
-								sliderWrap.style.cssText = "flex:1;margin-left:12px;display:flex;align-items:center;gap:8px;max-width:150px;";
-
-								const slider = document.createElement("input");
-								slider.type = "range";
-								slider.className = "vape-slider";
-								const [min, max, step] = opt.range ?? [0, 10, 0.1];
-								slider.min = min;
-								slider.max = max;
-								slider.step = step;
-								slider.value = val;
-
-								const valueSpan = document.createElement("span");
-								valueSpan.textContent = val;
-								valueSpan.style.cssText = "color:#8F9498;font-size:11px;min-width:35px;text-align:right;font-weight:600;";
-
-								slider.addEventListener("click", (e) => e.stopPropagation());
-								slider.addEventListener("mousedown", (e) => e.stopPropagation());
-								slider.oninput = () => {
-									opt[1] = parseFloat(slider.value);
-									valueSpan.textContent = slider.value;
-								};
-
-								sliderWrap.appendChild(slider);
-								sliderWrap.appendChild(valueSpan);
-								line.appendChild(sliderWrap);
-							} else if (type === String) {
-								const input = document.createElement("input");
-								input.type = "text";
-								input.value = val;
-								input.style.cssText = "flex:1;margin-left:8px;max-width:150px;background:rgba(255,255,255,0.05);color:#E6E9EA;border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 8px;font-size:12px;outline:none;";
-								input.addEventListener("click", (e) => e.stopPropagation());
-								input.addEventListener("focus", () => {
-									input.style.borderColor = "var(--vape-accent, #0FB3A0)";
-								});
-								input.addEventListener("blur", () => {
-									input.style.borderColor = "rgba(255,255,255,0.1)";
-								});
-								input.onchange = () => { opt[1] = input.value; };
-								line.appendChild(input);
-							}
-
-							optionsBox.appendChild(line);
-						});
-					}
-				}
-			});
-
-			return { row, optionsBox };
-		}
-
-		// === Close Panel with Animation ===
-		function closePanelWithAnimation(panel, callback) {
-			panel.classList.add("closing");
-			setTimeout(() => {
-				panel.remove();
-				if (callback) callback();
-			}, 200);
-		}
-
-		// === Open Module Panel ===
-		function openModulePanel(category) {
-			// Close if already open
-			if (modulePanels[category]) {
-				closePanelWithAnimation(modulePanels[category], () => {
-					delete modulePanels[category];
-					updateCategoryHighlights();
-					saveGUIState();
-				});
-				return;
-			}
-
-			// Get modules for this category
-			const catKey = categoryMap[category] || [];
-			const modules = Object.entries(store.modules).filter(([name]) =>
-				catKey.some(k => name.toLowerCase().includes(k))
-			);
-
-			if (modules.length === 0) return;
-
-			// Position panels in a cascade
-			const panelCount = Object.keys(modulePanels).length;
-			const { panel, content } = createPanel(category.toUpperCase(), 280 + panelCount * 30, 40 + panelCount * 30, 260, true);
-			modulePanels[category] = panel;
-			document.body.appendChild(panel);
-
-			modules.forEach(([name, mod]) => {
-				const { row, optionsBox } = createModuleRow(name, mod, content);
-				content.appendChild(row);
-				content.appendChild(optionsBox);
-			});
-
-			updateCategoryHighlights();
-			saveGUIState();
-		}
-
-		// === Open Settings Panel ===
-		function openSettingsPanel() {
-			// Close if already open
-			if (modulePanels["Settings"]) {
-				closePanelWithAnimation(modulePanels["Settings"], () => {
-					delete modulePanels["Settings"];
-					updateCategoryHighlights();
-					saveGUIState();
-				});
-				return;
-			}
-
-			const { panel, content } = createPanel("SETTINGS", 280, 40, 300, true);
-			modulePanels["Settings"] = panel;
-			document.body.appendChild(panel);
-
-			// Config Save/Load
-			const saveConfigBtn = document.createElement("div");
-			saveConfigBtn.className = "vape-module-row";
-			saveConfigBtn.style.cursor = "pointer";
-			saveConfigBtn.innerHTML = '<div class="vape-module-left"><div class="vape-module-icon">💾</div><div class="vape-module-title">Save Config</div></div>';
-			saveConfigBtn.addEventListener("click", () => {
-				const configName = prompt("Enter config name:", "default");
-				if (configName) {
-					globalThis[storeName].saveVapeConfig(configName);
-					showNotif("Config saved: " + configName, "success");
-				}
-			});
-			content.appendChild(saveConfigBtn);
-
-			const loadConfigBtn = document.createElement("div");
-			loadConfigBtn.className = "vape-module-row";
-			loadConfigBtn.style.cursor = "pointer";
-			loadConfigBtn.innerHTML = '<div class="vape-module-left"><div class="vape-module-icon">📂</div><div class="vape-module-title">Load Config</div></div>';
-			loadConfigBtn.addEventListener("click", () => {
-				const configName = prompt("Enter config name to load:", "default");
-				if (configName) {
-					globalThis[storeName].saveVapeConfig();
-					globalThis[storeName].loadVapeConfig(configName);
-					showNotif("Config loaded: " + configName, "success");
-				}
-			});
-			content.appendChild(loadConfigBtn);
-
-			// Reset Layout
-			const resetLayoutBtn = document.createElement("div");
-			resetLayoutBtn.className = "vape-module-row";
-			resetLayoutBtn.style.cursor = "pointer";
-			resetLayoutBtn.innerHTML = '<div class="vape-module-left"><div class="vape-module-icon">🔄</div><div class="vape-module-title">Reset Layout</div></div>';
-			resetLayoutBtn.addEventListener("click", () => {
-				if (confirm("Reset panel positions to default?")) {
-					// Clear all saved positions
-					Object.keys(localStorage).filter(k => k.startsWith("vape-panel-pos-")).forEach(k => {
-						localStorage.removeItem(k);
-					});
-					// Close all panels and reopen category panel
-					Object.values(modulePanels).forEach(p => p.remove());
-					modulePanels = {};
-					if (categoryPanel) categoryPanel.remove();
-					categoryPanel = createCategoryPanel();
-					document.body.appendChild(categoryPanel);
-					showNotif("Layout reset!", "success");
-				}
-			});
-			content.appendChild(resetLayoutBtn);
-
-			// Accent Color Picker
-			const colorRow = document.createElement("div");
-			colorRow.className = "vape-module-row";
-			colorRow.style.flexDirection = "column";
-			colorRow.style.alignItems = "flex-start";
-			colorRow.innerHTML = '<div class="vape-module-left" style="width:100%;margin-bottom:8px;"><div class="vape-module-icon">🎨</div><div class="vape-module-title">Accent Color</div></div>';
-
-			const colorInput = document.createElement("input");
-			colorInput.type = "color";
-			colorInput.value = localStorage.getItem("vape-accent-color") || "#0FB3A0";
-			colorInput.style.cssText = "width:100%;height:40px;border:none;border-radius:6px;cursor:pointer;background:transparent;";
-			colorInput.addEventListener("change", (e) => {
-				setAccentColor(e.target.value);
-				showNotif("Accent color changed!", "success");
-			});
-			colorRow.appendChild(colorInput);
-			content.appendChild(colorRow);
-
-			// Reset Accent Color
-			const resetColorBtn = document.createElement("div");
-			resetColorBtn.className = "vape-module-row";
-			resetColorBtn.style.cursor = "pointer";
-			resetColorBtn.innerHTML = '<div class="vape-module-left"><div class="vape-module-icon">↩️</div><div class="vape-module-title">Reset Accent Color</div></div>';
-			resetColorBtn.addEventListener("click", () => {
-				setAccentColor("#0FB3A0");
-				colorInput.value = "#0FB3A0";
-				showNotif("Accent color reset!", "success");
-			});
-			content.appendChild(resetColorBtn);
-
-			updateCategoryHighlights();
-			saveGUIState();
-		}
-
-
-
-		// === Toggle GUI ===
-		let visible = false;
-		document.addEventListener("keydown", (e) => {
-			if (e.code === "Backslash") {
-				visible = !visible;
-
-				if (visible) {
-					// Show category panel
-					if (categoryPanel) categoryPanel.remove();
-					categoryPanel = createCategoryPanel();
-					document.body.appendChild(categoryPanel);
-
-					// Restore previously open panels
-					const openPanels = loadGUIState();
-					openPanels.forEach(panelName => {
-						if (panelName === "Settings") {
-							openSettingsPanel();
-						} else {
-							openModulePanel(panelName);
-						}
-					});
-				} else {
-					// Save state before closing
-					saveGUIState();
-
-					// Hide all panels with animation
-					if (categoryPanel) {
-						closePanelWithAnimation(categoryPanel, () => {
-							categoryPanel = null;
-						});
-					}
-					Object.entries(modulePanels).forEach(([key, panel]) => {
-						closePanelWithAnimation(panel, () => {
-							delete modulePanels[key];
-						});
-					});
-					if (settingsPanel) {
-						closePanelWithAnimation(settingsPanel, () => {
-							settingsPanel = null;
-						});
-					}
-					selectedCategory = null;
-				}
-			}
-
-			// Handle keybinding
-			if (bindingModule) {
-				if (e.code === "Escape") {
-					// Unbind (set to empty)
-					bindingModule.mod.setbind("");
-					if (bindingModule.bindDisplay) {
-						bindingModule.bindDisplay.textContent = "";
-						bindingModule.bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:0;text-align:center;flex-shrink:0;";
-					}
-					if (bindingModule.optionBindDisplay) {
-						bindingModule.optionBindDisplay.textContent = "CLICK TO BIND";
-						bindingModule.optionBindDisplay.style.background = "rgba(255,255,255,0.05)";
-						bindingModule.optionBindDisplay.style.color = "#8F9498";
-					}
-					bindingModule = null;
-					showNotif("Bind removed", "info", 1000);
-				} else {
-					const key = e.code.toLowerCase().replace("key", "").replace("digit", "");
-					if (key && bindingModule.mod.setbind) {
-						bindingModule.mod.setbind(key);
-						// Update both displays
-						if (bindingModule.bindDisplay) {
-							bindingModule.bindDisplay.textContent = key.toUpperCase();
-							bindingModule.bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:30px;text-align:center;flex-shrink:0;background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-weight:700;";
-						}
-						if (bindingModule.optionBindDisplay) {
-							bindingModule.optionBindDisplay.textContent = key.toUpperCase();
-							bindingModule.optionBindDisplay.style.background = "rgba(255,255,255,0.08)";
-							bindingModule.optionBindDisplay.style.color = "#E6E9EA";
-						}
-						showNotif("Bound " + bindingModule.name + " to " + key, "success", 2000);
-						bindingModule = null;
-					}
-				}
-			}
-		});
-
-		// === Startup notification ===
-		setTimeout(() => { showNotif("Press \\\\ to open Vape V4 ClickGUI!", "info", 4000); }, 500);
-	}
+    document.head.appendChild(style);
+
+    // === Notifications ===
+    const notifWrap = document.createElement("div");
+    notifWrap.className = "notif-wrap";
+    document.body.appendChild(notifWrap);
+    function showNotif(msg, type = "info", dur = 3000) {
+      const n = document.createElement("div");
+      n.className = `notif ${type}`;
+      let icon = type === "info" ? "ℹ️" : type === "success" ? "✅" : type === "warn" ? "⚠️" : "❌";
+      n.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+      notifWrap.appendChild(n);
+      setTimeout(() => (n.style.transform = "translateX(0)"), 30);
+      setTimeout(() => { n.style.opacity = "0"; n.style.transform = "translateX(120%)"; }, dur);
+      setTimeout(() => n.remove(), dur + 400);
+    }
+
+    // === Persistence helpers with localstorage ===
+    function saveModuleState(name, mod) {
+      const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
+      const opts = {};
+      if (mod.options) Object.entries(mod.options).forEach(([k, opt]) => { opts[k] = opt[1]; });
+      saved[name] = { enabled: mod.enabled, bind: mod.bind, options: opts };
+      localStorage.setItem("lb-mods", JSON.stringify(saved));
+    }
+    function loadModuleState(name, mod) {
+      const saved = JSON.parse(localStorage.getItem("lb-mods") || "{}");
+      if (saved[name]) {
+        if (saved[name].enabled !== mod.enabled && typeof mod.toggle === "function") mod.toggle();
+        if (saved[name].bind) mod.setbind(saved[name].bind);
+        if (saved[name].options && mod.options) Object.entries(saved[name].options).forEach(([k, v]) => { if (mod.options[k]) mod.options[k][1] = v; });
+      }
+    }
+
+    // === Panels with slide collapsible content ===
+    const panels = {};
+    Object.keys(categories).forEach((cat, i) => {
+      const panel = document.createElement("div");
+      panel.className = "lb-panel";
+      panel.style.left = 40 + i * 240 + "px";
+      panel.style.top = "100px";
+
+      const header = document.createElement("div");
+      header.className = "lb-header";
+
+      const collapseBtn = document.createElement("span");
+      collapseBtn.style.float = "right";
+      collapseBtn.style.cursor = "pointer";
+
+      const titleSpan = document.createElement("span");
+      titleSpan.textContent = `${catIcons[cat]} ${cat}`;
+
+      header.appendChild(titleSpan);
+      header.appendChild(collapseBtn);
+      panel.appendChild(header);
+
+      const saved = localStorage.getItem("lb-pos-" + cat);
+      if (saved) { const { left, top } = JSON.parse(saved); panel.style.left = left; panel.style.top = top; }
+
+      let dragging = false, offsetX, offsetY;
+      header.addEventListener("mousedown", (e) => { dragging = true; offsetX = e.clientX - panel.offsetLeft; offsetY = e.clientY - panel.offsetTop; });
+      document.addEventListener("mousemove", (e) => { if (dragging) { panel.style.left = e.clientX - offsetX + "px"; panel.style.top = e.clientY - offsetY + "px"; } });
+      document.addEventListener("mouseup", () => { if (dragging) { dragging = false; localStorage.setItem("lb-pos-" + cat, JSON.stringify({ left: panel.style.left, top: panel.style.top })); } });
+
+      // collapse content
+      const contentWrap = document.createElement("div");
+      contentWrap.className = "lb-content";
+      panel.appendChild(contentWrap);
+
+      let collapsed = localStorage.getItem("lb-collapsed-" + cat) === "true";
+      if (collapsed) contentWrap.classList.add("collapsed");
+      collapseBtn.textContent = collapsed ? "[+]" : "[-]";
+
+      collapseBtn.addEventListener("click", () => {
+        collapsed = !collapsed;
+        if (collapsed) contentWrap.classList.add("collapsed");
+        else contentWrap.classList.remove("collapsed");
+        collapseBtn.textContent = collapsed ? "[+]" : "[-]";
+        localStorage.setItem("lb-collapsed-" + cat, collapsed);
+      });
+
+      panels[cat] = panel;
+      document.body.appendChild(panel);
+    });
+
+    // === Modules ===
+    Object.entries(store.modules).forEach(([name, mod]) => {
+      let cat = "Utility";
+      for (const [c, keys] of Object.entries(categories)) if (keys.some((k) => name.toLowerCase().includes(k))) { cat = c; break; }
+      loadModuleState(name, mod);
+      const row = document.createElement("div");
+      row.className = "lb-module" + (mod.enabled ? " active" : "");
+      row.innerHTML = `<span>${name}</span><span>${mod.enabled ? "ON" : "OFF"}</span>`;
+      const optionsBox = document.createElement("div");
+      optionsBox.className = "lb-options";
+      row.addEventListener("mousedown", (e) => {
+        if (e.button === 0) {
+          if (typeof mod.toggle === "function") mod.toggle();
+          row.classList.toggle("active", mod.enabled);
+          row.lastChild.textContent = mod.enabled ? "ON" : "OFF";
+          showNotif(`${name} ${mod.enabled ? "enabled" : "disabled"}`, mod.enabled ? "success" : "error");
+          saveModuleState(name, mod);
+        }
+      });
+      row.addEventListener("contextmenu", (e) => { e.preventDefault(); optionsBox.classList.toggle("show"); });
+      if (mod.options) Object.entries(mod.options).forEach(([key, opt]) => {
+        const [type, val, label] = opt;
+        const line = document.createElement("label");
+        line.textContent = label;
+        if (type === Boolean) { const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = val; cb.onchange = () => { opt[1] = cb.checked; saveModuleState(name, mod); }; line.appendChild(cb);}
+        else if (type === Number) { const slider = document.createElement("input"); slider.type = "range"; const [min, max, step] = opt.range ?? [0, 10, 0.1]; slider.min = min; slider.max = max; slider.step = step; slider.value = val; slider.oninput = () => { opt[1] = parseFloat(slider.value); saveModuleState(name, mod); }; line.appendChild(slider);}
+        else if (type === String) { const input = document.createElement("input"); input.type = "text"; input.value = val; input.onchange = () => { opt[1] = input.value; saveModuleState(name, mod); }; line.appendChild(input);}
+        optionsBox.appendChild(line);
+      });
+      const bindLine = document.createElement("label");
+      bindLine.textContent = "Bind:";
+      const bindInput = document.createElement("input");
+      bindInput.type = "text"; bindInput.value = mod.bind;
+      bindInput.style.width = "70px"; bindInput.style.background = "#0a0a0a"; bindInput.style.color = "white"; bindInput.style.border = "1px solid #00aaff"; bindInput.style.fontFamily = '"Poppins", sans-serif'; bindInput.style.fontSize = "12px"; bindInput.style.padding = "2px";
+      bindInput.onchange = (e) => { mod.setbind(e.target.value); showNotif(`${name} bind set to ${e.target.value}`, "info"); saveModuleState(name, mod); };
+      bindLine.appendChild(bindInput); optionsBox.appendChild(bindLine);
+
+      panels[cat].querySelector(".lb-content").appendChild(row);
+      panels[cat].querySelector(".lb-content").appendChild(optionsBox);
+    });
+
+    // === Reset / Config buttons (Utility panel) ===
+    const resetRow = document.createElement("div");
+    resetRow.className = "lb-module";
+    resetRow.style.color = "#00aaff";
+    resetRow.textContent = "↺ Reset Layout?";
+    resetRow.addEventListener("click", () => {
+      const defaults = {
+        Combat:{left:"40px",top:"100px"},
+        Movement:{left:"280px",top:"100px"},
+        "Player / Render":{left:"520px",top:"100px"},
+        World:{left:"760px",top:"100px"},
+        Utility:{left:"1000px",top:"100px"}
+      };
+      Object.entries(defaults).forEach(([cat,pos])=>{
+        localStorage.setItem("lb-pos-" + cat, JSON.stringify(pos));
+        if (panels[cat]) { panels[cat].style.left=pos.left; panels[cat].style.top=pos.top; }
+      });
+      showNotif("Layout has been reset to default!", "success");
+    });
+    panels["Utility"].querySelector(".lb-content").appendChild(resetRow);
+
+    const resetConfigRow = document.createElement("div");
+    resetConfigRow.className = "lb-module";
+    resetConfigRow.style.color = "red";
+    resetConfigRow.textContent = "⛔ Reset Config?";
+    resetConfigRow.addEventListener("click", () => {
+      localStorage.removeItem("lb-mods");
+      Object.keys(localStorage).filter((k) => k.startsWith("lb-pos-")).forEach((k) => localStorage.removeItem(k));
+      Object.keys(localStorage).filter((k) => k.startsWith("lb-collapsed-")).forEach((k) => localStorage.removeItem(k));
+      alert("Config has been reset!");
+      location.reload();
+    });
+    panels["Utility"].querySelector(".lb-content").appendChild(resetConfigRow);
+
+    // === Search ===
+    const searchWrap = document.createElement("div");
+    searchWrap.className = "lb-searchwrap";
+    searchWrap.innerHTML = `<input type="text" class="lb-search" placeholder="Search...">`;
+    document.body.appendChild(searchWrap);
+    const searchBox = searchWrap.querySelector("input");
+    searchBox.addEventListener("input", () => {
+      const term = searchBox.value.toLowerCase();
+      document.querySelectorAll(".lb-module").forEach((row) => {
+        const name = row.firstChild.textContent.toLowerCase();
+        row.style.display = name.includes(term) ? "flex" : "none";
+      });
+    });
+
+    // === Hide on load ===
+    Object.values(panels).forEach((p) => (p.style.display = "none"));
+    searchWrap.style.display = "none";
+
+    // === Loading screen startup notification! ===
+    setTimeout(() => { showNotif("[TheRealGuiFR@v6.2] Press \\\\ to open ClickGUI! Enjoy!", "info", 4000); }, 500);
+
+    // === Toggle ClickGUI ===
+    let visible = false;
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Backslash") {
+        visible = !visible;
+        Object.values(panels).forEach((p)=> (p.style.display=visible?"block":"none"));
+        searchWrap.style.display = visible ? "block":"none";
+      }
+    });
+  }
 })();
