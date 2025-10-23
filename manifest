@@ -1,0 +1,52 @@
+{
+    "name": "Crazy Games",
+    "short_name": "Crazy Games",
+    "icons": [
+        {
+            "src": "https://imgs.crazygames.com/favicons/favicon-192x192.png?metadata=none&quality=60&width=192&height=192&format=png",
+            "type": "image/png",
+            "sizes": "192x192",
+            "purpose": "any"
+        },
+        {
+            "src": "https://imgs.crazygames.com/favicons/favicon-512x512.png?metadata=none&quality=60&width=512&height=512&format=png",
+            "type": "image/png",
+            "sizes": "512x512",
+            "purpose": "any"
+        },
+        {
+            "src": "https://imgs.crazygames.com/favicons/favicon-192x192.png?metadata=none&quality=60&width=192&height=192&format=png",
+            "type": "image/png",
+            "sizes": "192x192",
+            "purpose": "maskable"
+        },
+        {
+            "src": "https://imgs.crazygames.com/favicons/favicon-512x512.png?metadata=none&quality=60&width=512&height=512&format=png",
+            "type": "image/png",
+            "sizes": "512x512",
+            "purpose": "maskable"
+        }
+    ],
+    "id": "/pwa/",
+    "start_url": "/",
+    "scope": "/",
+    "background_color": "#0C0D14",
+    "display": "standalone",
+    "theme_color": "#3c1e6e",
+    "categories": [
+        "games",
+        "entertainment"
+    ],
+    "prefer_related_applications": true,
+    "related_applications": [
+        {
+            "platform": "play",
+            "url": "https://play.google.com/store/apps/details?id=com.crazygames.crazygamesapp",
+            "id": "com.crazygames.crazygamesapp"
+        },
+        {
+            "platform": "webapp",
+            "url": "https://www.crazygames.com/manifest"
+        }
+    ]
+}

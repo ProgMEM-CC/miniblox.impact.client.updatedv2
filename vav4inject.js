@@ -5,7 +5,7 @@ let replacements = {};
 let dumpedVarNames = {};
 const storeName = "a" + crypto.randomUUID().replaceAll("-", "").substring(16);
 const vapeName = crypto.randomUUID().replaceAll("-", "").substring(16);
-const VERSION = "6.4";
+const VERSION = "6.6";
 
 // ANTICHEAT HOOK
 function replaceAndCopyFunction(oldFunc, newFunc) {
@@ -632,79 +632,6 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
         }
       }
     }
-  }
-`);
-	// ChinaHat Module!
-	addModification(')&&(p.mesh.visible=this.shouldRenderEntity(p))', `
-  if (enabledModules["ChinaHat"] && p && p.id != player.id && p instanceof EntityPlayer) {
-    // Only apply ChinaHat to players (not items, mobs, etc.)
-    if (!p.mesh.userData.chinaHat) {
-      const brim = new Mesh(new boxGeometryDump(1, 1, 1));
-      brim.material.depthTest = false;
-      brim.material.transparent = true;
-      brim.material.opacity = 0.8;
-      brim.renderOrder = 6;
-
-      const cap = new Mesh(new boxGeometryDump(1, 1, 1));
-      cap.material.depthTest = false;
-      cap.material.transparent = true;
-      cap.material.opacity = 0.8;
-      cap.renderOrder = 7;
-
-      p.mesh.add(brim);
-      p.mesh.add(cap);
-
-      p.mesh.userData.chinaHat = { brim, cap };
-    }
-
-    const { brim, cap } = p.mesh.userData.chinaHat;
-
-    // Animate rainbow color
-    const time = Date.now() / 2000;
-    const hue = (time % 1);
-    const rgb = hslToRgb(hue, 1, 0.5);
-
-    brim.material.color.set(rgb.r, rgb.g, rgb.b);
-    cap.material.color.set(rgb.r, rgb.g, rgb.b);
-
-    // Position + scale
-    brim.position.set(0, 2.2, 0);
-    brim.scale.set(1.8, 0.05, 1.8); // brim disc
-
-    cap.position.set(0, 2.35, 0);
-    cap.scale.set(0.7, 0.2, 0.7);   // cap block
-  } else if (p?.mesh?.userData?.chinaHat) {
-    // Cleanup when disabled
-    const { brim, cap } = p.mesh.userData.chinaHat;
-    p.mesh.remove(brim);
-    p.mesh.remove(cap);
-    delete p.mesh.userData.chinaHat;
-  }
-
-  // === helper ===
-  function hslToRgb(h, s, l) {
-    let r, g, b;
-    if (s === 0) { r = g = b = l; }
-    else {
-      const hue2rgb = (p, q, t) => {
-        if (t < 0) t += 1;
-        if (t > 1) t -= 1;
-        if (t < 1/6) return p + (q - p) * 6 * t;
-        if (t < 1/2) return q;
-        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-        return p;
-      };
-      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-      const pp = 2 * l - q;
-      r = hue2rgb(pp, q, h + 1/3);
-      g = hue2rgb(pp, q, h);
-      b = hue2rgb(pp, q, h - 1/3);
-    }
-    return {
-      r: Math.round(r * 255),
-      g: Math.round(g * 255),
-      b: Math.round(b * 255)
-    };
   }
 `);
 
@@ -1442,7 +1369,6 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 
 
 			new Module("ESP", function() {});
-			new Module("ChinaHat", function() {});
 			const textgui = new Module("TextGUI", function() {});
 			textguifont = textgui.addoption("Font", String, "Poppins");
 			textguisize = textgui.addoption("TextSize", Number, 14);
@@ -2252,7 +2178,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 		execute(publicUrl);
 	}
 })();
-// Added new Poppins font 
+// Enhanced ClickGUI with Modern Animations! (v6.6 UPDATE)
 (async function () {
 	try {
 		const fontLink = document.createElement("link");
