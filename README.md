@@ -40,6 +40,11 @@ And then enjoy using the client!
 
 ## Changelog
 
+## [v6.8.1] - 2025-10-24
+
+- Update milestone to `V7 LTS` (ProgMEM-CC)
+- updated version to `6.8.1`
+
 ## [v6.6] - 2025-10-18
 
 - 🔄 **Auto-synced version to:** v6.6 (`TheM1ddleM1n`)  and made a PR!
@@ -142,6 +147,7 @@ And then enjoy using the client!
 - [ ] Breadcrumbs (particles of a sort trailing behind the player)
 - [ ] AutoTool – Switches to best tool for the job
 - [ ] Inventory Manager – Organizes inventory automatically.
+- [ ] X-Ray (if possible)
 
 ## 🧩 Developer Notes
 
