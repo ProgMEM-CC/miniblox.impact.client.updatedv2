@@ -2,7 +2,7 @@
 
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&duration=2500&pause=1000&color=abe0e4&width=435&lines=The+ultimate+MiniBlox+hacked+client!+;Built+for+stealth%2C+speed%2C+and+total+domination.;Fully+dark-mode+optimized+with+a+modern+UI)](https://git.io/typing-svg)
 
-## An Overview of Impact for Miniblox
+## Overview - Impact for Miniblox!
 
 **Impact Client for Miniblox.io** is a fork of the **Vape V4** project by `DataM0del`
 (which is a continuation of the discontinued **Vape V4** project/client by `7GrandDadPGN`).
@@ -175,10 +175,10 @@ An apology here firstly, i dont know why, but my account seems to have github ac
 
 - 💬 Discord Impact Community (please join this if you can) - <https://discord.gg/PwpGemYhJx>
 
-## ⚠️ Disclaimer (PLEASE READ THIS)
+## ⚠️ Disclaimer (DO READ THIS IF YOU CAN BEFORE INSTALLING PLEASE :D)
 
 Please be aware that the developers are not responsible for any misuse or violations of Miniblox.io’s Terms of Service. So please enjoy and give any feedback we are willing to hear your views!
 
 ## Important (FOR BETA) - Comment from TheM1ddleM1n
 
-You can put out code (if it needs to be tested) without harming the main branches. However, if you do decide to put anything in BETA i will thoroughly test the module/idea and i will give you feedback based on- where to improve or if it is good to pull it into the main vav4inject.js!
+You can put out code (if it needs to be tested) without harming the main branches. However, if you do decide to put anything in BETA i will thoroughly test the module/idea and i will give you feedback based on- where to improve or if it is good to pull it into `vav4inject.js`!
