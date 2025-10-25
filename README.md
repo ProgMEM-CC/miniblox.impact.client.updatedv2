@@ -103,7 +103,7 @@ And then enjoy using the client!
 
 ---
 
-## [v6.0] – 2025-09-30  
+## [v6.0] – 2025-09-30
 
 - Ported `.friend` and `antiblind` features from Vape for Miniblox (`DataM0del`)  
 - Version bump from v5.9 → v6.0
@@ -134,7 +134,7 @@ And then enjoy using the client!
 
 ## [v5.0 – v5.5]  
 
-- Added `/command filter bypass`  
+- Fixed filter bypass operating when running a `/` command
 - Added improvements to **Fly - desync**, **NoFall - desync**, and a **Scaffold** bypass (from slots 1–9 in the hotbar)  
 - Introduced Click GUI via `vav4inject.js`  
 - Improved inventory handling and user interface
@@ -149,7 +149,7 @@ And then enjoy using the client!
 - [ ] Breadcrumbs (particles of a sort trailing behind the player)
 - [ ] AutoTool – Switches to best tool for the job
 - [ ] Inventory Manager – Organizes inventory automatically.
-- [ ] X-Ray (if possible)
+- [ ] X-Ray (possible)
 
 ## 🧩 Developer Notes
 
