@@ -18,6 +18,7 @@ Designed for stealth, speed, and domination — with full dark-mode support with
 - ServerCrasher (works on servers without the new AC, e.g. planets)
 - Nuker (still in BETA, it sends too many block break packets and gets you kicked for this.)
 - Jetpack (this is literally just the old Fly from Vape For Miniblox, this probably still works.)
+- 2ND ClickGUI created by me (TheM1ddleM1n)
 
 ## How to Install Impact For Miniblox?
 
