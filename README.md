@@ -146,6 +146,7 @@ And then enjoy using the client!
 
 - [ ] Force OP module (gain access to admin commands?! funny bypass)
 - [ ] Command Block modification (to change command blocks in survival)
+- [ ] Spoof rank (ProgMEM-CC's idea) (again could be possible)
 - [ ] AutoEat (Automatically eats food in the inv)
 - [ ] AimBot (Automatically aims at a player)
 - [ ] Movement Disabler
