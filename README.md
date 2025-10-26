@@ -40,7 +40,8 @@ And then enjoy using the client!
 
 - `.toggle all` command currently non-functional (we are looking into it).
 - There is currently an issue with `Killaura` and `Nuker`. (However, we are looking into it.)
-- There are issues with `SurvivalMode` and `FastBreak`. (Looking into it) 
+- There are issues with `SurvivalMode` and `FastBreak`. (Looking into it)
+- Reach is limited to 5-6 (same as killaura) due to Vector's goofy ahh anticheat.
 
 ## Changelog
 
