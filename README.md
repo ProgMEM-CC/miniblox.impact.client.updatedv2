@@ -152,9 +152,9 @@ And then enjoy using the client!
 - [ ] AutoTool – Switches to best tool for the job
 - [ ] Inventory Manager – Organizes inventory automatically.
 - [ ] X-Ray (possible)
-- [ ] Freecam
+- [ ] Freecam (like PublicLurker client?)
 - [ ] SkinChanger
-- [ ] Reach fix
+- [ ] Reach fix (possible)
 
 ## 🧩 Developer Notes
 
