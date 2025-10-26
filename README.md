@@ -163,6 +163,7 @@ And then enjoy using the client!
 - [ ] Render miniblox's HUDS (ie. health bar to mc like hearts?!)
 - [ ] ArmorHUD (to improve my targetHUD ) (using exhibition?!)
 - [ ] AutoSword (*should be easy to do*)
+- [ ] New Speed bypass?! (with a desync?)
 
 ## 🧩 Developer Notes
 
