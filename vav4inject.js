@@ -1546,29 +1546,45 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			});
 
 			
-            // ChestStealOP (M1ddleM1n bypasser?!)
+            // ChestSteal OP
 			let cheststealblocks, cheststealtools;
-			const cheststeal = new Module("ChestSteal", function(callback) {
-				if (callback) {
-					tickLoop["ChestSteal"] = function() {
-						if (player.openContainer && player.openContainer instanceof ContainerChest) {
-							for(let i = 0; i < player.openContainer.numRows * 9; i++) {
-								const slot = player.openContainer.inventorySlots[i];
-								const item = slot.getHasStack() ? slot.getStack().getItem() : null;
-								if (item && (item instanceof ItemSword || item instanceof ItemArmor || item instanceof ItemAppleGold || cheststealblocks[1] && item instanceof ItemBlock || cheststealtools[1] && item instanceof ItemTool)) {
-									playerControllerDump.windowClickDump(player.openContainer.windowId, i, 0, 1, player);
-								}
-							}
-						}
-					}
-				}
-				else delete tickLoop["ChestSteal"];
-			});
-			cheststealblocks = cheststeal.addoption("Blocks", Boolean, true);
-			cheststealtools = cheststeal.addoption("Tools", Boolean, true);
+const cheststeal = new Module("ChestSteal", function(callback) {
+    if (callback) {
+        let lastContainer = null;
+        tickLoop["ChestSteal"] = function() {
+            if (
+                player.openContainer &&
+                player.openContainer instanceof ContainerChest &&
+                player.openContainer !== lastContainer
+            ) {
+                lastContainer = player.openContainer;
+                // Instantly steal items and close the GUI before it becomes visible
+                for(let i = 0; i < player.openContainer.numRows * 9; i++) {
+                    const slot = player.openContainer.inventorySlots[i];
+                    const item = slot.getHasStack() ? slot.getStack().getItem() : null;
+                    if (item && (
+                        item instanceof ItemSword ||
+                        item instanceof ItemArmor ||
+                        item instanceof ItemAppleGold ||
+                        (cheststealblocks[1] && item instanceof ItemBlock) ||
+                        (cheststealtools[1] && item instanceof ItemTool)
+                    )) {
+                        playerControllerDump.windowClickDump(player.openContainer.windowId, i, 0, 1, player);
+                    }
+                }
+                player.closeScreen();
+            }
+            // Reset lastContainer when chest GUI is closed
+            if (!player.openContainer && lastContainer) lastContainer = null;
+        }
+    } else {
+        delete tickLoop["ChestSteal"];
+    }
+});
+cheststealblocks = cheststeal.addoption("Blocks", Boolean, true);
+cheststealtools = cheststeal.addoption("Tools", Boolean, true);
 
-            // Scaffold (Another M1ddleM1n bypass)
-			let scaffoldtower, oldHeld, scaffoldextend, scaffoldcycle;
+           let scaffoldtower, oldHeld, scaffoldextend, scaffoldcycle;
 let tickCount = 0;
 
 function getPossibleSides(pos) {
@@ -1594,13 +1610,13 @@ const scaffold = new Module("Scaffold", function(callback) {
 
         game.chat.addChat({
     text: ":money_mouth:",
-    color: "gold"
+    color: "red"
 });
 
         tickLoop["Scaffold"] = function() {
             tickCount++;
 
-            // Selects blocks from the hotbar & cycles through them until it runs out ofc (1-9)
+            // 🔁 Auto-select blocks & cycle between them
             let slotsWithBlocks = [];
             for (let i = 0; i < 9; i++) {
                 const item = player.inventory.main[i];
@@ -1618,7 +1634,7 @@ const scaffold = new Module("Scaffold", function(callback) {
                 const selected = Math.floor(tickCount / scaffoldcycle[1]) % slotsWithBlocks.length;
                 switchSlot(slotsWithBlocks[selected]);
             } else if (slotsWithBlocks.length > 0) {
-                switchSlot(slotsWithBlocks[0]); // a fallback lol
+                switchSlot(slotsWithBlocks[0]); // fallback
             }
 
             const item = player.inventory.getCurrentItem();
@@ -1751,7 +1767,7 @@ const scaffold = new Module("Scaffold", function(callback) {
                         }
                     }
 
-                    break; // Stop checks after placing blocks
+                    break; // ✅ Stop checking after placing
                 }
             }
         };
