@@ -9,7 +9,7 @@ let jetpackvalue, jetpackvert, jetpackUpMotion, jetpackGlide;
 						player.motion.x = dir.x;
 						player.motion.z = dir.z;
 						const goUp = keyPressedDump("space");
-						const goDown = false; 		//keyPressedDump("shift"), might not be needed
+						const goDown = keyPressedDump("shift");
 						if (goUp || goDown) {
 							player.motion.y = goUp ? jetpackvert[1] : -jetpackvert[1];
 						} else {
@@ -26,6 +26,6 @@ let jetpackvalue, jetpackvert, jetpackUpMotion, jetpackGlide;
 				}
 			});
 			jetpackvalue = jetpack.addoption("Speed", Number, 0.18);
-			jetpackGlide = jetpack.addoption("Glide", Number, 0.27);
-			jetpackUpMotion = jetpack.addoption("UpMotion", Number, 0.27);
-			jetpackvert = jetpack.addoption("Vertical", Number, 0.27);
+			jetpackGlide = jetpack.addoption("Glide", Number, 0.19);
+			jetpackUpMotion = jetpack.addoption("UpMotion", Number, 0.19);
+			jetpackvert = jetpack.addoption("Vertical", Number, 0.19);
