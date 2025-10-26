@@ -153,8 +153,8 @@ And then enjoy using the client!
 - [ ] Inventory Manager – Organizes inventory automatically.
 - [ ] X-Ray (possible)
 - [ ] Freecam (like PublicLurker client?)
-- [ ] SkinChanger
-- [ ] Reach fix (possible)
+- [ ] SkinChanger (good idea)
+- [ ] Reach fix (possible but its limited to 5-6 thanks to vector's goofy ahh anticheat)
 - [ ] NoSlow – Prevents slowdown from using items or cobwebs
 - [ ] Fullbright – Always max brightness. (funny)
 - [ ] CustomCape / Wings – Renders client-side cosmetics? (recode possibly?!)
