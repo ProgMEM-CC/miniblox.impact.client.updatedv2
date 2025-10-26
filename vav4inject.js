@@ -1798,7 +1798,7 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 			new Module("AutoQueue", function() {});
 			new Module("AutoVote", function() {});
 			const chatdisabler = new Module("ChatDisabler", function() {}, () => "Spam");
-			chatdisablermsg = chatdisabler.addoption("Message", String, "youtube.com/c/7GrandDadVape");
+			chatdisablermsg = chatdisabler.addoption("Message", String, "Your clients src code offically sucks.");
 			new Module("FilterBypass", function() {}, () => "\\\\");
    
     
@@ -1974,7 +1974,7 @@ var funnyMessages = [
     "Patch notes scared. ACs terrified.",
     "Your client warned you. ACs didn’t listen.",
     "Smooth as silk. ACs still stuck in sandpaper mode.",
-    "using atmosphere3@v6!",
+    "using your custom ahh client? Well one thing: its bad",
     "Stealth so clean, ACs think it's a ghost."
 ];
 const autofunnychat = new Module("autofunnychat", function(callback) {
