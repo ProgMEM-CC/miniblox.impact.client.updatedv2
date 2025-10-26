@@ -2,114 +2,203 @@
 
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&duration=2500&pause=1000&color=abe0e4&width=435&lines=The+ultimate+MiniBlox+hacked+client!+;Built+for+stealth%2C+speed%2C+and+total+domination.;Fully+dark-mode+optimized+with+a+modern+UI)](https://git.io/typing-svg)
 
----
+## Overview - Impact for Miniblox!
 
-## An Overview of Impact for Miniblox
-**Impact Client for Miniblox.io** is a fully standalone continuation of the discontinued **Vape for Miniblox** project by `7GrandDadPGN`.  
-When the original client was deleted, **TheM1ddleM1n**, **DataM0del (aka RealPacket)**, and **ProgMEM-CC** and other devs rebuilt it from scratch — creating a modern, modular, and optimized exploit client framework for Miniblox. :trollface:
+**Impact Client for Miniblox.io** is a fork of the **Vape V4** project by `DataM0del`
+(which is a continuation of the discontinued **Vape V4** project/client by `7GrandDadPGN`).
+When the original client was deleted, `**TheM1ddleM1n**`, `**DataM0del (aka RealPacket)**`, and `**ProgMEM-CC**` and other devs rebuilt it from scratch — creating a modern, modular, and optimized exploit client framework for Miniblox.
 
-> Designed for stealth, speed, and domination — with full dark-mode support with a slick Click GUI.
+Designed for stealth, speed, and domination — with full dark-mode support with a slick Click GUI.
 
----
+Join our [Discord](https://discord.gg/PwpGemYhJx)
 
-## Some example modules that are included in this client!
-- Fly / NoFall / Scaffold  
-- AntiBan 2.0 (with a account gen) 
-- Click GUI + Text GUI  
-- ServerCrasher (in BETA)  
-- Modular script architecture (stable & beta)  
-- Open changelog and contributor tags
-- Nuker (in BETA)
-- Jetpack
----
+## Features
+
+- AntiBan 2.0 (use non accounts OR generate accounts with [miniblox-acc-gen](https://codeberg.org/RealPacket/miniblox-acc-gen)'s integration support!)
+- Fly, NoFall, NoFallBeta, and Scaffold
+- Click GUI
+- ServerCrasher (works on servers without the new AC, e.g. planets)
+- Nuker (still in BETA, it sends too many block break packets and gets you kicked for this.)
+- Jetpack (this is literally just the old Fly from Vape For Miniblox, this probably still works.)
+- 2ND ClickGUI created by me (TheM1ddleM1n)
 
 ## How to Install Impact For Miniblox?
-First, install a userscript manager (🧩 **Tampermonkey**, **Violentmonkey** or **Greasemonkey** via Chrome Web Store or Microsoft Store etc).  
 
-Next, copy the contents of `tampermonkey.js` and (`optional`) `injection.js`. The best option imo is to copy and paste both `tampermonkey` and `injection` - TheM1ddleM1n
+First, install a userscript manager (🧩 **Tampermonkey**, **Violentmonkey** or **Greasemonkey** via Chrome Web Store or Microsoft Store etc).
 
-Then, paste it into a new userscript and enable it. (u should see it save)
+Next, copy the contents of `tampermonkey.js`.
 
-Finally, open [Miniblox.io](https://miniblox.io) — the client will auto-initialize!
+Then, paste it into a new userscript and enable it. (you should see it save automatically!)
+
+Finally, open [miniblox.io](https://miniblox.io) — the client will auto-initialize!
 
 And then enjoy using the client!
 
 ---
 
-## 🧾 Changelog!
-All notable changes to this project will be documented here.
+## ⚠️ Any known issues will be commented here
 
-## [v6.1] - 2025-10-06
-- ReadMe updated
+- `.toggle all` command currently non-functional (we are looking into it).
+- There is currently an issue with `Killaura` and `Nuker`. (However, we are looking into it.)
+- There are issues with `SurvivalMode` and `FastBreak`. (Looking into it)
+- Reach is limited to 5-6 (same as killaura) due to Vector's goofy ahh anticheat.
 
-- Added tags to modules (e.g. Step by @DataM0del)
+## Changelog
 
-- Created new ServerCrasher module – by @DataM0del
+## [v6.8.1] - 2025-10-24
 
-## [v6] - 2025-10-03
+- Update milestone to `V7 LTS` (ProgMEM-CC)
+- updated version to `6.8.1`
+
+## [v6.6] - 2025-10-18
+
+- 🔄 **Auto-synced version to:** v6.6 (`TheM1ddleM1n`)  and made a PR!
+- `tugayozsoy1982-lab` - added a manifest file for the Crazy Games PWA.
+- Updated Readme
+- improved my NEW ClickGUI with new css animations
+- removed chinahat (ages ago lol cause it would not render as a cone no matter what I did.)
+
+## [v6.5] – 2025-10-16
+
+- 🔄 **Auto-synced version to:** v6.5  
+- Major README refactor for improved clarity and structure (`TheM1ddleM1n`)  
+- Deleted outdated `docs/ModuleIdeas.md` (moved into dev notes)
+- Multiple incremental README updates and formatting fixes  
+- Repository cleanup and minor internal refactoring
+
+---
+
+## [v6.4] – 2025-10-14  
+
+- Merged PR #52 into `main` (`TheM1ddleM1n`)
+- Stability improvements and structure synchronization.
+
+---
+
+## [v6.3] – 2025-10-10
+
+- Updated README layout and documentation links.  
+- Polished module descriptions for consistency.
+- Improved formatting for developer credits.  
+
+---
+
+## [v6.2] – 2025-10-07  
+
+- General cleanup and internal structure improvements.
+- Minor typo fixes and metadata updates.  
+
+---
+
+## [v6.1] – 2025-10-06  
+
+- Updated README  
+- Added module tags (e.g. `Step` by `DataM0del`)  
+- Introduced the **ServerCrasher** module (thanks to `DataM0del`)  
+
+---
+
+## [v6.0] – 2025-10-03  
+
+- Updated the README  
+- Improved **AntiBan 2.0** module (`DataM0del`)  
+- Moved outdated content to `docs/` (`TheM1ddleM1n`)
+
+---
+
+## [v6.0] – 2025-09-30
+
+- Ported `.friend` and `antiblind` features from Vape for Miniblox (`DataM0del`)  
+- Version bump from v5.9 → v6.0
+
+---
+
+## [v5.9] – 2025-09-29  
+
+- Overhauled the **InvCleaner** module (`TheM1ddleM1n`)  
+- Updated docs
+
+---
+
+## [v5.8] – 2025-09-26  
+
+- Added the **TargetHUD** module 
+- Added **LongJump** module with a desync (thanks to `TheM1ddleM1n`)  
+- Updated `tampermonkey.js` and `ModuleIdeas.md`
+
+---
+
+## [v5.6 – v5.7]  
+
+- Overhauled **TextGUI** visuals  
 - Updated README
 
-- Improved AntiBan (thanks @DataM0del)
+---
 
-- Moved outdated content to docs (thanks @TheM1ddleM1n)
+## [v5.0 – v5.5]  
 
-## [v6] - 2025-09-30
-- Ported .friend and antiblind from Vape for MiniBlox (credit to @DataM0del)
+- Fixed filter bypass operating when running a `/` command
+- Added improvements to **Fly - desync**, **NoFall - desync**, and a **Scaffold** bypass (from slots 1–9 in the hotbar)  
+- Introduced Click GUI via `vav4inject.js`  
+- Improved inventory handling and user interface
 
-- Version bump v5.9 → v6.0
+## Ideas for some new modules
 
-## [v5.9] - 2025-09-29
-- Invcleaner overhaul by (@TheM1ddleM1n)
+- [ ] Force OP module (gain access to admin commands?! funny bypass)
+- [ ] Command Block modification (to change command blocks in survival)
+- [ ] Spoof rank (ProgMEM-CC's idea) (again could be possible)
+- [ ] AutoEat (Automatically eats food in the inv)
+- [ ] AimBot (Automatically aims at a player)
+- [ ] Movement Disabler
+- [ ] Breadcrumbs (particles of a sort trailing behind the player)
+- [ ] AutoTool – Switches to best tool for the job
+- [ ] Inventory Manager – Organizes inventory automatically.
+- [ ] X-Ray (possible)
+- [ ] Freecam (like PublicLurker client?)
+- [ ] SkinChanger (good idea)
+- [ ] Reach fix (possible but its limited to 5-6 thanks to vector's goofy ahh anticheat)
+- [ ] NoSlow – Prevents slowdown from using items or cobwebs
+- [ ] Fullbright – Always max brightness. (funny)
+- [ ] CustomCape / Wings – Renders client-side cosmetics? (recode possibly?!)
+- [ ] TargetStrafe – Strafes around enemies in combat while attacking.
+- [ ] Small music player (ie. links to spotify) (like JoLean client)
+- [ ] Render miniblox's HUDS (ie. health bar to mc like hearts?!)
+- [ ] ArmorHUD (to improve my targetHUD ) (using exhibition?!)
+- [ ] AutoSword (*should be easy to do*)
+- [ ] New Speed bypass?! (with a desync?)
+- [ ] CustomSky – Applies custom skybox textures.
+- [ ] AutoInsult / ComplimentBot – Randomly sends messages after kills. (improvement to my AutoFunnyChat module?)
 
-- Updated documentation
+## 🧩 Developer Notes
 
-## [v5.8] - 2025-09-26
-- Added TargetHUD to beta
+Make sure you **always** update VERSIONFILE, tampermonkey.js, and injection.js together. (as soon as ProgMEM-CC fixes the issue with "Github Actions being disabled")
 
-- New ChinaHat and LongJump modules
+Never publish unstable code to / (root). Use /beta for any test builds you have got.
 
-- Various updates to tampermonkey.js and ModuleIdeas.md
+## Repo rename pending once closed-source dependencies are synced
 
-## [v5.6–v5.7]
-- Overhauled TextGUI visuals
+An apology here firstly, i dont know why, but my account seems to have github actions disabled @TheM1ddleM1n sorry about your CI.
 
-- moduleideas and readme updates
+## 👥 Contributors For Impact For Miniblox
 
-## [v5.0–v5.5]
-- Added /command filter bypass
-
-- Added Fly, NoFall, Scaffold bypass (slots 1–9)
-
-- Click GUI via vav4inject.js
-
-- Improved inventory handling and UI
-
-## ⚠️ Any Known Issues
-
-.toggle all command currently non-functional (fix planned soon..).
-
-## 🧩 Dev Notes
-
-Always update VERSIONFILE, tampermonkey.js, and injection.js together.
-
-Never publish unstable code to / (root). Use /beta for testing builds.
-
-Repo rename pending once closed-source dependencies are synced.
-
-## 👥 Contributors
 | Avatar | Role                             | Contributor            |
 |--------|----------------------------------|------------------------|
-| <img src="https://github.com/7GrandDadPGN.png" width="40" height="40"> | Original Creator (Vape for MiniBlox) | [7GrandDadPGN](https://github.com/7GrandDadPGN) |
+| <img src="https://github.com/7GrandDadPGN.png" width="40" height="40"> | The OG creator for the first miniblox client (Vape V4) | [7GrandDadPGN](https://github.com/7GrandDadPGN) |
 | <img src="https://github.com/DataM0del.png" width="40" height="40"> | Core Developer                   | [DataM0del](https://github.com/DataM0del) |
 | <img src="https://github.com/TheM1ddleM1n.png" width="40" height="40"> | Core Developer / Maintainer      | [TheM1ddleM1n](https://github.com/TheM1ddleM1n) |
 | <img src="https://github.com/ProgMEM-CC.png" width="40" height="40"> | Repo Manager / Infrastructure    | [ProgMEM-CC](https://github.com/ProgMEM-CC) |
+| <img src="https://github.com/dtkiller-jp.png" width="40" height="40"> | Vape V4 GUI creator and solver!   | [dtkiller-jp](https://github.com/dtkiller-jp) |
 
+## 🧷 Links to discord and a webpage to the client's website
 
-## 🧷 Links for this client
+- 🌐 [ImpactWebsite](https://impactminiblox.js.org)
 
-## 🌐 impactminiblox.js.org
+- 💬 Discord Impact Community (please join this if you can) - <https://discord.gg/PwpGemYhJx>
 
-## 💬 Discord Impact Community - https://discord.gg/PwpGemYhJx
+## ⚠️ Disclaimer (DO READ THIS IF YOU CAN BEFORE INSTALLING PLEASE :D)
 
-## ⚠️ Disclaimer (PLEASE READ THIS)
-Please be aware that the developers are not responsible for any misuse or violations of Miniblox.io’s Terms of Service.
+Please be aware that the developers are not responsible for any misuse or violations of Miniblox.io’s Terms of Service. So please enjoy and give any feedback we are willing to hear your views!
+
+## Important (FOR BETA) - Comment from TheM1ddleM1n
+
+You can put out code (if it needs to be tested) without harming the main branches. However, if you do decide to put anything in BETA i will thoroughly test the module/idea and i will give you feedback based on- where to improve or if it is good to pull it into `vav4inject.js`!
