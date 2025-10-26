@@ -49,6 +49,7 @@ And then enjoy using the client!
 
 - Update milestone to `V7 LTS` (ProgMEM-CC)
 - updated version to `6.8.1`
+- Made new V8, V9 and V10 milestones (ProgMEM-CC and TheM1ddleM1n)
 
 ## [v6.6] - 2025-10-18
 
