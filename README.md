@@ -10,6 +10,8 @@ When the original client was deleted, `**TheM1ddleM1n**`, `**DataM0del (aka Real
 
 Designed for stealth, speed, and domination — with full dark-mode support with a slick Click GUI.
 
+Join our [Discord](https://discord.gg/PwpGemYhJx)
+
 ## Features
 
 - AntiBan 2.0 (use non accounts OR generate accounts with [miniblox-acc-gen](https://codeberg.org/RealPacket/miniblox-acc-gen)'s integration support!)
