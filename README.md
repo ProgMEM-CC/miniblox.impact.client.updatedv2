@@ -191,7 +191,7 @@ An apology here firstly, i dont know why, but my account seems to have github ac
 
 ## 🧷 Links to discord and a webpage to the client's website
 
-- 🌐 impactminiblox.js.org
+- 🌐 [ImpactWebsite](https://impactminiblox.js.org)
 
 - 💬 Discord Impact Community (please join this if you can) - <https://discord.gg/PwpGemYhJx>
 
