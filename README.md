@@ -155,6 +155,14 @@ And then enjoy using the client!
 - [ ] Freecam (like PublicLurker client?)
 - [ ] SkinChanger
 - [ ] Reach fix (possible)
+- [ ] NoSlow – Prevents slowdown from using items or cobwebs
+- [ ] Fullbright – Always max brightness. (funny)
+- [ ] CustomCape / Wings – Renders client-side cosmetics? (recode possibly?!)
+- [ ] TargetStrafe – Strafes around enemies in combat while attacking.
+- [ ] Small music player (ie. links to spotify) (like JoLean client)
+- [ ] Render miniblox's HUDS (ie. health bar to mc like hearts?!)
+- [ ] ArmorHUD (to improve my targetHUD ) (using exhibition?!)
+- [ ] AutoSword (*should be easy to do*)
 
 ## 🧩 Developer Notes
 
