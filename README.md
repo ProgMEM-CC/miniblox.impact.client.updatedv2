@@ -150,6 +150,9 @@ And then enjoy using the client!
 - [ ] AutoTool – Switches to best tool for the job
 - [ ] Inventory Manager – Organizes inventory automatically.
 - [ ] X-Ray (possible)
+- [ ] Freecam
+- [ ] SkinChanger
+- [ ] Reach fix
 
 ## 🧩 Developer Notes
 
