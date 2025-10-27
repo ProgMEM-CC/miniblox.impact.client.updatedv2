@@ -9,3 +9,5 @@ Test **thoroughly** before submitting!
 ### 💬 Need any help?
 
 Raise a issue on GitHub (I usually respond to issues on GitHub) or reach out to the Impact Community on Discord via this link here - `https://discord.gg/PwpGemYhJx`
+
+`Made by TheM1ddleM1n`
