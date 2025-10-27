@@ -1652,11 +1652,6 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					const target = attackList[0];
 					if (!target) return;
 
-					// Calculate distance to target
-					const dx = player.pos.x - target.pos.x;
-					const dz = player.pos.z - target.pos.z;
-					const distanceToTarget = Math.sqrt(dx * dx + dz * dz);
-
 					// Update strafe angle based on direction
 					const angleIncrement = strafeSpeed[1] * (strafeDirection[1] ? 1 : -1);
 					strafeAngle += angleIncrement;
@@ -1671,16 +1666,31 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					const moveDist = Math.sqrt(moveX * moveX + moveZ * moveZ);
 
 					if (moveDist > 0.1) {
-						// Normalize and apply movement
+						// Normalize direction vector
 						const normalizedX = moveX / moveDist;
 						const normalizedZ = moveZ / moveDist;
-
+						
 						// Get current speed (from Speed module if active, otherwise default)
 						let moveSpeed = speedvalue && enabledModules["Speed"] ? speedvalue[1] : 0.2;
-
-						// Apply movement
+						
+						// Apply client-side movement (actual motion)
 						player.motion.x = normalizedX * moveSpeed;
 						player.motion.z = normalizedZ * moveSpeed;
+						
+						// Calculate the angle to the target position
+						const angleToTarget = Math.atan2(moveZ, moveX);
+						
+						// Calculate relative angle to player's yaw
+						const relativeAngle = angleToTarget - player.yaw;
+						
+						// Convert to forward/strafe inputs (-1 to 1)
+						// This sends proper movement input to the server
+						const forward = Math.cos(relativeAngle);
+						const strafe = Math.sin(relativeAngle);
+						
+						// Override player movement inputs (server-side)
+						player.moveForwardDump = forward;
+						player.moveStrafeDump = strafe;
 
 						// Auto jump when on ground
 						if (player.onGround) {
