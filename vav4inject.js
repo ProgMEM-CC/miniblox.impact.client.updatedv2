@@ -801,6 +801,226 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 				return this.closeInput();
 			}
+			case ".report": {
+				if (typeof globalThis.${storeName} === "undefined") globalThis.${storeName} = {};
+				globalThis.${storeName}.openReportModal = function() {
+					const GITHUB_REPO = "progmem-cc/miniblox.impact.client.updatedv2";
+					
+					const modal = document.createElement("div");
+					modal.style.cssText = \`
+						position: fixed;
+						top: 0;
+						left: 0;
+						width: 100%;
+						height: 100%;
+						background: rgba(0, 0, 0, 0.75);
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						z-index: 10000;
+					\`;
+					
+					const form = document.createElement("div");
+					form.style.cssText = \`
+						background: #1a1a2e;
+						border-radius: 8px;
+						padding: 28px;
+						width: 500px;
+						max-width: 90%;
+						box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+						border: 2px solid #2a2a3e;
+					\`;
+					
+					const title = document.createElement("h2");
+					title.textContent = "Report Issue";
+					title.style.cssText = \`
+						margin: 0 0 20px 0;
+						color: #fff;
+						font-size: 22px;
+						font-weight: 600;
+					\`;
+					
+					const typeLabel = document.createElement("label");
+					typeLabel.textContent = "Type";
+					typeLabel.style.cssText = \`
+						display: block;
+						color: #bbb;
+						margin-bottom: 6px;
+						font-size: 13px;
+						font-weight: 500;
+					\`;
+					
+					const typeSelect = document.createElement("select");
+					typeSelect.innerHTML = \`
+						<option value="bug">🐛 Bug Report</option>
+						<option value="feature">✨ Feature Request</option>
+					\`;
+					typeSelect.style.cssText = \`
+						width: 100%;
+						padding: 10px 12px;
+						margin-bottom: 18px;
+						background: #252538;
+						border: 2px solid #3a3a4e;
+						border-radius: 6px;
+						color: #fff;
+						font-size: 15px;
+						box-sizing: border-box;
+						cursor: pointer;
+						outline: none;
+						appearance: none;
+						background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+						background-repeat: no-repeat;
+						background-position: right 10px center;
+						background-size: 18px;
+						padding-right: 40px;
+					\`;
+					typeSelect.onfocus = () => typeSelect.style.borderColor = "#0FB3A0";
+					typeSelect.onblur = () => typeSelect.style.borderColor = "#3a3a4e";
+					
+					const titleLabel = document.createElement("label");
+					titleLabel.textContent = "Title";
+					titleLabel.style.cssText = \`
+						display: block;
+						color: #bbb;
+						margin-bottom: 6px;
+						font-size: 13px;
+						font-weight: 500;
+					\`;
+					
+					const titleInput = document.createElement("input");
+					titleInput.type = "text";
+					titleInput.placeholder = "Brief description of the issue";
+					titleInput.style.cssText = \`
+						width: 100%;
+						padding: 10px 12px;
+						margin-bottom: 18px;
+						background: #252538;
+						border: 2px solid #3a3a4e;
+						border-radius: 6px;
+						color: #fff;
+						font-size: 14px;
+						box-sizing: border-box;
+						outline: none;
+					\`;
+					titleInput.onfocus = () => titleInput.style.borderColor = "#0FB3A0";
+					titleInput.onblur = () => titleInput.style.borderColor = "#3a3a4e";
+					
+					const descLabel = document.createElement("label");
+					descLabel.textContent = "Description";
+					descLabel.style.cssText = \`
+						display: block;
+						color: #bbb;
+						margin-bottom: 6px;
+						font-size: 13px;
+						font-weight: 500;
+					\`;
+					
+					const descInput = document.createElement("textarea");
+					descInput.placeholder = "Detailed description...\\n\\nFor bugs:\\n• Steps to reproduce\\n• Expected behavior\\n• Actual behavior\\n\\nFor features:\\n• What problem does it solve?\\n• How should it work?";
+					descInput.rows = 10;
+					descInput.style.cssText = \`
+						width: 100%;
+						padding: 10px 12px;
+						margin-bottom: 20px;
+						background: #252538;
+						border: 2px solid #3a3a4e;
+						border-radius: 6px;
+						color: #fff;
+						font-size: 14px;
+						resize: vertical;
+						font-family: inherit;
+						box-sizing: border-box;
+						outline: none;
+					\`;
+					descInput.onfocus = () => descInput.style.borderColor = "#0FB3A0";
+					descInput.onblur = () => descInput.style.borderColor = "#3a3a4e";
+					
+					const buttonContainer = document.createElement("div");
+					buttonContainer.style.cssText = \`
+						display: flex;
+						gap: 10px;
+						justify-content: flex-end;
+					\`;
+					
+					const cancelBtn = document.createElement("button");
+					cancelBtn.textContent = "Cancel";
+					cancelBtn.style.cssText = \`
+						padding: 10px 20px;
+						background: #2a2a3e;
+						border: 2px solid #3a3a4e;
+						border-radius: 6px;
+						color: #fff;
+						cursor: pointer;
+						font-size: 14px;
+						font-weight: 600;
+						outline: none;
+					\`;
+					cancelBtn.onmouseover = () => cancelBtn.style.background = "#353548";
+					cancelBtn.onmouseout = () => cancelBtn.style.background = "#2a2a3e";
+					cancelBtn.onclick = () => modal.remove();
+					
+					const submitBtn = document.createElement("button");
+					submitBtn.textContent = "Open in GitHub";
+					submitBtn.style.cssText = \`
+						padding: 10px 20px;
+						background: #0FB3A0;
+						border: none;
+						border-radius: 6px;
+						color: #fff;
+						cursor: pointer;
+						font-size: 14px;
+						font-weight: 700;
+						outline: none;
+					\`;
+					submitBtn.onmouseover = () => submitBtn.style.background = "#0d9a88";
+					submitBtn.onmouseout = () => submitBtn.style.background = "#0FB3A0";
+					submitBtn.onclick = () => {
+						const issueTitle = titleInput.value.trim();
+						if (!issueTitle) {
+							titleInput.style.borderColor = "#ff4444";
+							titleInput.placeholder = "Title is required!";
+							return;
+						}
+						
+						const issueType = typeSelect.value;
+						const label = issueType === "bug" ? "bug" : "enhancement";
+						const prefix = issueType === "bug" ? "[Bug]" : "[Feature]";
+						const fullTitle = \`\${prefix} \${issueTitle}\`;
+						
+						const body = descInput.value.trim() || "No description provided.";
+						const versionInfo = \`\\n\\n---\\n**Version:** \${VERSION}\\n**User Agent:** \${navigator.userAgent}\`;
+						const fullBody = body + versionInfo;
+						
+						const url = \`https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/issues/new?labels=\${label}&title=\${encodeURIComponent(fullTitle)}&body=\${encodeURIComponent(fullBody)}\`;
+						
+						window.open(url, "_blank");
+						modal.remove();
+					};
+					
+					buttonContainer.appendChild(cancelBtn);
+					buttonContainer.appendChild(submitBtn);
+					
+					form.appendChild(title);
+					form.appendChild(typeLabel);
+					form.appendChild(typeSelect);
+					form.appendChild(titleLabel);
+					form.appendChild(titleInput);
+					form.appendChild(descLabel);
+					form.appendChild(descInput);
+					form.appendChild(buttonContainer);
+					
+					modal.appendChild(form);
+					modal.onclick = (e) => {
+						if (e.target === modal) modal.remove();
+					};
+					
+					document.body.appendChild(modal);
+					titleInput.focus();
+				};
+				
+				globalThis.${storeName}.openReportModal();
+				return this.closeInput();
+			}
 		}
 		if (enabledModules["FilterBypass"] && !this.isInputCommandMode) {
 			const words = this.inputValue.split(" ");
