@@ -1042,6 +1042,12 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				globalThis.${storeName}.openReportModal();
 				return this.closeInput();
 			}
+			case ".scriptmanager": {
+				if (!modules["ScriptManager"].enabled) {
+					modules["ScriptManager"].toggle();
+				}
+				return this.closeInput();
+			}
 		}
 		if (enabledModules["FilterBypass"] && !this.isInputCommandMode) {
 			const words = this.inputValue.split(" ");
@@ -1115,6 +1121,107 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					this.options[name] = [typee, defaultt, name, defaultt];
 					return this.options[name];
 				}
+			}
+
+			// === Custom Scripts Storage ===
+			if (typeof globalThis.${storeName} === "undefined") globalThis.${storeName} = {};
+			const customScripts = {};
+			globalThis.${storeName}.customScripts = customScripts;
+			
+			function saveCustomScripts() {
+				const scriptsData = Object.entries(customScripts).map(([name, data]) => ({
+					name: name,
+					code: data.code,
+					source: data.source
+				}));
+				localStorage.setItem("impact_custom_scripts", JSON.stringify(scriptsData));
+			}
+			
+			function loadCustomScripts() {
+				try {
+					const saved = localStorage.getItem("impact_custom_scripts");
+					if (saved) {
+						const scriptsData = JSON.parse(saved);
+						scriptsData.forEach(script => {
+							executeCustomScript(script.name, script.code, script.source, false);
+						});
+					}
+				} catch (e) {
+					console.error("Failed to load custom scripts:", e);
+				}
+			}
+			
+			function executeCustomScript(name, code, source, save = true) {
+				try {
+					// Remove old module if exists
+					if (modules[name]) {
+						if (modules[name].enabled) modules[name].toggle();
+						delete modules[name];
+						delete enabledModules[name];
+					}
+					
+					// Get existing module names before execution
+					const existingModules = new Set(Object.keys(modules));
+					
+					// Simply eval the code in the same scope
+					eval(code);
+					
+					// Find newly created modules
+					const newModules = Object.keys(modules).filter(m => !existingModules.has(m));
+					console.log("New modules created:", newModules);
+					
+					// Store script data with the actual module names
+					customScripts[name] = { 
+						code, 
+						source,
+						moduleNames: newModules // Store the actual module names
+					};
+					
+					if (save) saveCustomScripts();
+					
+					// Update ClickGUI category if needed
+					if (typeof globalThis.${storeName}.updateScriptsCategory === 'function') {
+						globalThis.${storeName}.updateScriptsCategory();
+					}
+					
+					return true;
+				} catch (e) {
+					console.error("Failed to execute script:", e);
+					console.error("Script name:", name);
+					console.error("Script code:", code);
+					alert("Script error: " + e.message + "\\n\\nCheck console for details.");
+					return false;
+				}
+			}
+			
+			function deleteCustomScript(name) {
+				if (modules[name]) {
+					if (modules[name].enabled) modules[name].toggle();
+					delete modules[name];
+					delete enabledModules[name];
+				}
+				delete customScripts[name];
+				saveCustomScripts();
+				
+				// Update Scripts category
+				if (typeof globalThis.${storeName}.updateScriptsCategory === 'function') {
+					globalThis.${storeName}.updateScriptsCategory();
+				}
+			}
+			
+			function duplicateCustomScript(name) {
+				if (!customScripts[name]) return null;
+				
+				let newName = name + "-2";
+				let counter = 2;
+				while (customScripts[newName]) {
+					counter++;
+					newName = name + "-" + counter;
+				}
+				
+				const original = customScripts[name];
+				executeCustomScript(newName, original.code, original.source + " (copy)");
+				return newName;
 			}
 
 			let clickDelay = Date.now();
@@ -1634,6 +1741,409 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			textguishadow = textgui.addoption("Shadow", Boolean, true);
 			textgui.toggle();
 			new Module("AutoRespawn", function() {});
+
+			// === Script Manager Module ===
+			let scriptManagerUI = null;
+			new Module("ScriptManager", function(enabled) {
+				if (enabled) {
+					if (document.pointerLockElement) document.exitPointerLock();
+					
+					// Close ClickGUI if open
+					if (typeof categoryPanel !== "undefined" && categoryPanel) {
+						categoryPanel.remove();
+						categoryPanel = null;
+					}
+					if (typeof modulePanels !== "undefined") {
+						Object.values(modulePanels).forEach(p => p.remove());
+						modulePanels = {};
+					}
+					if (typeof settingsPanel !== "undefined" && settingsPanel) {
+						settingsPanel.remove();
+						settingsPanel = null;
+					}
+					
+					openScriptManagerUI();
+				} else {
+					closeScriptManagerUI();
+					if (game?.canvas) game.canvas.requestPointerLock();
+				}
+			});
+
+			function openScriptManagerUI() {
+				if (scriptManagerUI) return;
+				
+				const modal = document.createElement("div");
+				modal.style.cssText = \`
+					position: fixed;
+					top: 0;
+					left: 0;
+					width: 100%;
+					height: 100%;
+					background: rgba(0, 0, 0, 0.75);
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					z-index: 10000;
+				\`;
+				
+				const container = document.createElement("div");
+				container.style.cssText = \`
+					background: #1a1a2e;
+					border-radius: 8px;
+					padding: 24px;
+					width: 700px;
+					max-width: 90%;
+					max-height: 80vh;
+					box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+					border: 2px solid #2a2a3e;
+					display: flex;
+					flex-direction: column;
+				\`;
+				
+				const title = document.createElement("h2");
+				title.textContent = "Script Manager";
+				title.style.cssText = \`
+					margin: 0 0 20px 0;
+					color: #fff;
+					font-size: 22px;
+					font-weight: 600;
+				\`;
+				
+				const addButtonsContainer = document.createElement("div");
+				addButtonsContainer.style.cssText = \`
+					display: flex;
+					gap: 8px;
+					margin-bottom: 16px;
+				\`;
+				
+				const addFileBtn = createButton("📁 Load File", () => {
+					const input = document.createElement("input");
+					input.type = "file";
+					input.accept = ".js";
+					input.onchange = (e) => {
+						const file = e.target.files[0];
+						if (file) {
+							const reader = new FileReader();
+							reader.onload = (ev) => {
+								const name = file.name.replace(".js", "");
+								const result = executeCustomScript(name, ev.target.result, "file: " + file.name);
+								if (result) {
+									if (typeof game !== 'undefined' && game?.chat) {
+										game.chat.addChat({text: "Loaded script: " + name, color: "lime"});
+									}
+									refreshScriptList();
+								} else {
+									alert("Failed to load script: " + name + "\\nCheck console for errors.");
+								}
+							};
+							reader.readAsText(file);
+						}
+					};
+					input.click();
+				});
+				
+				const addURLBtn = createButton("🌐 Load URL", () => {
+					const url = prompt("Enter script URL:");
+					if (url) {
+						fetch(url)
+							.then(r => r.text())
+							.then(code => {
+								const name = url.split("/").pop().replace(".js", "");
+								const result = executeCustomScript(name, code, "url: " + url);
+								if (result) {
+									if (typeof game !== 'undefined' && game?.chat) {
+										game.chat.addChat({text: "Loaded script: " + name, color: "lime"});
+									}
+									refreshScriptList();
+								} else {
+									alert("Failed to load script: " + name + "\\nCheck console for errors.");
+								}
+							})
+							.catch(e => {
+								alert("Failed to load URL: " + e.message);
+							});
+					}
+				});
+				
+				const addCodeBtn = createButton("✏️ Write Code", () => {
+					openCodeEditor();
+				});
+				
+				addButtonsContainer.appendChild(addFileBtn);
+				addButtonsContainer.appendChild(addURLBtn);
+				addButtonsContainer.appendChild(addCodeBtn);
+				
+				const scriptList = document.createElement("div");
+				scriptList.style.cssText = \`
+					flex: 1;
+					overflow-y: auto;
+					margin-bottom: 16px;
+					border: 2px solid #2a2a3e;
+					border-radius: 6px;
+					padding: 8px;
+					background: #252538;
+				\`;
+				
+				function refreshScriptList() {
+					scriptList.innerHTML = "";
+					
+					// Update Scripts category in ClickGUI
+					if (typeof globalThis.${storeName}.updateScriptsCategory === 'function') {
+						globalThis.${storeName}.updateScriptsCategory();
+					}
+					
+					Object.entries(customScripts).forEach(([name, data]) => {
+						const item = document.createElement("div");
+						item.style.cssText = \`
+							background: #2a2a3e;
+							border: 2px solid #3a3a4e;
+							border-radius: 6px;
+							padding: 12px;
+							margin-bottom: 8px;
+							display: flex;
+							justify-content: space-between;
+							align-items: center;
+						\`;
+						
+						const info = document.createElement("div");
+						info.style.cssText = "flex: 1;";
+						
+						const nameEl = document.createElement("div");
+						nameEl.textContent = name;
+						nameEl.style.cssText = "color: #fff; font-weight: 600; margin-bottom: 4px;";
+						
+						const sourceEl = document.createElement("div");
+						sourceEl.textContent = data.source;
+						sourceEl.style.cssText = "color: #888; font-size: 12px;";
+						
+						info.appendChild(nameEl);
+						info.appendChild(sourceEl);
+						
+						const actions = document.createElement("div");
+						actions.style.cssText = "display: flex; gap: 6px;";
+						
+						const dupBtn = createSmallButton("📋", () => {
+							const newName = duplicateCustomScript(name);
+							if (newName) {
+								if (typeof game !== 'undefined' && game?.chat) {
+									game.chat.addChat({text: "Duplicated: " + newName, color: "lime"});
+								}
+								refreshScriptList();
+							}
+						});
+						
+						const delBtn = createSmallButton("🗑️", () => {
+							if (confirm("Delete script: " + name + "?")) {
+								deleteCustomScript(name);
+								if (typeof game !== 'undefined' && game?.chat) {
+									game.chat.addChat({text: "Deleted: " + name, color: "yellow"});
+								}
+								refreshScriptList();
+							}
+						});
+						
+						actions.appendChild(dupBtn);
+						actions.appendChild(delBtn);
+						
+						item.appendChild(info);
+						item.appendChild(actions);
+						scriptList.appendChild(item);
+					});
+					
+					if (Object.keys(customScripts).length === 0) {
+						const empty = document.createElement("div");
+						empty.textContent = "No custom scripts loaded";
+						empty.style.cssText = "color: #666; text-align: center; padding: 20px;";
+						scriptList.appendChild(empty);
+					}
+				}
+				
+				const closeBtn = createButton("Close", () => {
+					modules["ScriptManager"].toggle();
+				});
+				closeBtn.style.width = "100%";
+				
+				container.appendChild(title);
+				container.appendChild(addButtonsContainer);
+				container.appendChild(scriptList);
+				container.appendChild(closeBtn);
+				modal.appendChild(container);
+				
+				modal.onclick = (e) => {
+					if (e.target === modal) modules["ScriptManager"].toggle();
+				};
+				
+				document.body.appendChild(modal);
+				scriptManagerUI = modal;
+				refreshScriptList();
+			}
+			
+			function closeScriptManagerUI() {
+				if (scriptManagerUI) {
+					scriptManagerUI.remove();
+					scriptManagerUI = null;
+				}
+			}
+			
+			function openCodeEditor(editName = null, editCode = "") {
+				const modal = document.createElement("div");
+				modal.style.cssText = \`
+					position: fixed;
+					top: 0;
+					left: 0;
+					width: 100%;
+					height: 100%;
+					background: rgba(0, 0, 0, 0.85);
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					z-index: 10001;
+				\`;
+				
+				const editor = document.createElement("div");
+				editor.style.cssText = \`
+					background: #1a1a2e;
+					border-radius: 8px;
+					padding: 24px;
+					width: 800px;
+					max-width: 90%;
+					max-height: 90vh;
+					box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+					border: 2px solid #2a2a3e;
+					display: flex;
+					flex-direction: column;
+				\`;
+				
+				const editorTitle = document.createElement("h3");
+				editorTitle.textContent = editName ? "Edit Script" : "New Script";
+				editorTitle.style.cssText = "margin: 0 0 16px 0; color: #fff; font-size: 18px;";
+				
+				const nameInput = document.createElement("input");
+				nameInput.type = "text";
+				nameInput.placeholder = "Script name";
+				nameInput.value = editName || "";
+				nameInput.style.cssText = \`
+					width: 100%;
+					padding: 10px 12px;
+					margin-bottom: 12px;
+					background: #252538;
+					border: 2px solid #3a3a4e;
+					border-radius: 6px;
+					color: #fff;
+					font-size: 14px;
+					box-sizing: border-box;
+					outline: none;
+				\`;
+				
+				const codeArea = document.createElement("textarea");
+				codeArea.placeholder = "// Write your script here\\n// Example:\\nnew Module('MyModule', function(enabled) {\\n  if (enabled) {\\n    tickLoop['MyModule'] = function() {\\n      // Your code here\\n      console.log(player.pos);\\n    };\\n  } else {\\n    delete tickLoop['MyModule'];\\n  }\\n});";
+				codeArea.value = editCode;
+				codeArea.style.cssText = \`
+					width: 100%;
+					height: 400px;
+					padding: 12px;
+					margin-bottom: 16px;
+					background: #252538;
+					border: 2px solid #3a3a4e;
+					border-radius: 6px;
+					color: #fff;
+					font-size: 13px;
+					font-family: 'Courier New', monospace;
+					resize: vertical;
+					box-sizing: border-box;
+					outline: none;
+				\`;
+				
+				const btnContainer = document.createElement("div");
+				btnContainer.style.cssText = "display: flex; gap: 10px; justify-content: flex-end;";
+				
+				const cancelBtn = createButton("Cancel", () => modal.remove());
+				const saveBtn = createButton("Save & Load", () => {
+					const name = nameInput.value.trim();
+					const code = codeArea.value.trim();
+					if (!name) {
+						alert("Please enter a script name");
+						return;
+					}
+					if (!code) {
+						alert("Please enter script code");
+						return;
+					}
+					const result = executeCustomScript(name, code, "custom code");
+					if (result) {
+						if (typeof game !== 'undefined' && game?.chat) {
+							game.chat.addChat({text: "Loaded script: " + name, color: "lime"});
+						}
+						modal.remove();
+						// Trigger refresh by reopening Script Manager
+						if (modules["ScriptManager"]) {
+							modules["ScriptManager"].toggle();
+							setTimeout(() => modules["ScriptManager"].toggle(), 100);
+						}
+					} else {
+						alert("Failed to load script: " + name + "\\nCheck console for errors.");
+					}
+				});
+				saveBtn.style.background = "#0FB3A0";
+				
+				btnContainer.appendChild(cancelBtn);
+				btnContainer.appendChild(saveBtn);
+				
+				editor.appendChild(editorTitle);
+				editor.appendChild(nameInput);
+				editor.appendChild(codeArea);
+				editor.appendChild(btnContainer);
+				modal.appendChild(editor);
+				
+				modal.onclick = (e) => {
+					if (e.target === modal) modal.remove();
+				};
+				
+				document.body.appendChild(modal);
+				nameInput.focus();
+			}
+			
+			function createButton(text, onclick) {
+				const btn = document.createElement("button");
+				btn.textContent = text;
+				btn.style.cssText = \`
+					padding: 10px 16px;
+					background: #2a2a3e;
+					border: 2px solid #3a3a4e;
+					border-radius: 6px;
+					color: #fff;
+					cursor: pointer;
+					font-size: 14px;
+					font-weight: 600;
+					outline: none;
+				\`;
+				btn.onmouseover = () => btn.style.background = "#353548";
+				btn.onmouseout = () => btn.style.background = "#2a2a3e";
+				btn.onclick = onclick;
+				return btn;
+			}
+			
+			function createSmallButton(text, onclick) {
+				const btn = document.createElement("button");
+				btn.textContent = text;
+				btn.style.cssText = \`
+					padding: 6px 10px;
+					background: #2a2a3e;
+					border: 2px solid #3a3a4e;
+					border-radius: 4px;
+					color: #fff;
+					cursor: pointer;
+					font-size: 14px;
+					outline: none;
+				\`;
+				btn.onmouseover = () => btn.style.background = "#353548";
+				btn.onmouseout = () => btn.style.background = "#2a2a3e";
+				btn.onclick = onclick;
+				return btn;
+			}
+			
+			// Load saved scripts on startup
+			setTimeout(() => loadCustomScripts(), 1000);
 
 			const blockHandlers = {
 				rightClick(pos) {
@@ -2482,7 +2992,42 @@ const survival = new Module("SurvivalMode", function(callback) {
 			Player: ["invcleaner", "invwalk", "autoarmor", "autorespawn", "fastbreak"],
 			Render: ["esp", "nametags+", "textgui", "chinahat"],
 			World: ["breaker", "autocraft", "cheststeal", "timer", "survivalmode"],
-			Misc: ["autorejoin", "autoqueue", "autovote", "filterbypass", "anticheat", "autofunnychat", "chatdisabler", "musicfix", "auto-funnychat", "music-fix", "servercrasher", "antiblind", "nofallbeta", "nofall", "antiban"]
+			Misc: ["autorejoin", "autoqueue", "autovote", "filterbypass", "anticheat", "autofunnychat", "chatdisabler", "musicfix", "auto-funnychat", "music-fix", "servercrasher", "antiblind", "nofallbeta", "nofall", "antiban", "scriptmanager"]
+		};
+
+		// Update Scripts category dynamically
+		store.updateScriptsCategory = function () {
+			try {
+				const scripts = store.customScripts || {};
+				// Collect all module names from all scripts
+				const scriptModules = [];
+				Object.values(scripts).forEach(script => {
+					if (script.moduleNames && script.moduleNames.length > 0) {
+						script.moduleNames.forEach(modName => {
+							scriptModules.push(modName.toLowerCase());
+						});
+					}
+				});
+				
+				console.log("Updating Scripts category:", scriptModules);
+				
+				if (scriptModules.length > 0) {
+					categoryMap.Scripts = scriptModules;
+					
+					// Recreate category panel if it exists
+					if (categoryPanel) {
+						const oldPanel = categoryPanel;
+						categoryPanel = null;
+						oldPanel.remove();
+						categoryPanel = createCategoryPanel();
+						document.body.appendChild(categoryPanel);
+					}
+				} else {
+					delete categoryMap.Scripts;
+				}
+			} catch (e) {
+				console.error("Failed to update Scripts category:", e);
+			}
 		};
 
 		// === Vape V4 Styles ===
@@ -2696,7 +3241,18 @@ const survival = new Module("SurvivalMode", function(callback) {
 		// === Create Category Panel ===
 		function createCategoryPanel() {
 			const { panel, content } = createPanel("VAPE V4", 40, 40, 220);
-			const categories = ["Combat", "Movement", "Player", "Render", "World", "Misc", "Settings"];
+			const baseCategories = ["Combat", "Movement", "Player", "Render", "World", "Misc"];
+			const categories = [...baseCategories];
+
+			// Add Scripts category if custom scripts exist
+			console.log("Creating category panel, categoryMap.Scripts:", categoryMap.Scripts);
+			if (categoryMap.Scripts && categoryMap.Scripts.length > 0) {
+				console.log("Adding Scripts category!");
+				categories.push("Scripts");
+			}
+
+			categories.push("Settings");
+			console.log("Final categories:", categories);
 
 			categories.forEach(cat => {
 				const item = document.createElement("div");
@@ -2958,6 +3514,8 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 		// === Open Module Panel ===
 		function openModulePanel(category) {
+			console.log("Opening module panel for category:", category);
+			
 			// Close if already open
 			if (modulePanels[category]) {
 				closePanelWithAnimation(modulePanels[category], () => {
@@ -2970,11 +3528,26 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 			// Get modules for this category
 			const catKey = categoryMap[category] || [];
-			const modules = Object.entries(store.modules).filter(([name]) =>
-				catKey.some(k => name.toLowerCase().includes(k))
-			);
+			console.log("Category keys:", catKey);
+			console.log("Available modules:", Object.keys(store.modules));
+			
+			const modules = Object.entries(store.modules).filter(([name]) => {
+				const nameLower = name.toLowerCase();
+				// For Scripts category, use exact match
+				if (category === "Scripts") {
+					const match = catKey.includes(nameLower);
+					console.log("Checking", name, "->", nameLower, "in", catKey, "=", match);
+					return match;
+				}
+				// For other categories, use includes
+				return catKey.some(k => nameLower.includes(k));
+			});
 
-			if (modules.length === 0) return;
+			console.log("Filtered modules:", modules.length);
+			if (modules.length === 0) {
+				console.log("No modules found for category:", category);
+				return;
+			}
 
 			// Position panels in a cascade
 			const panelCount = Object.keys(modulePanels).length;
