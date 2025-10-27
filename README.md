@@ -39,7 +39,7 @@ And then enjoy using the client!
 ## ⚠️ Any known issues will be commented here
 
 - `.toggle all` command currently non-functional (we are looking into it).
-- There is currently an issue with `Killaura` and `Nuker`. (However, we are looking into it.)
+- There is currently an issue with `Nuker`. (via a lot of packets sent you will get kicked instantly.)
 - There are issues with `SurvivalMode` and `FastBreak`. (Looking into it)
 - Reach is limited to 5-6 (same as killaura) due to Vector's goofy ahh anticheat.
 
