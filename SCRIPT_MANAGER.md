@@ -1,45 +1,53 @@
 # Script Manager Documentation
 
 ## Overview
+
 Script Manager allows you to load and manage custom scripts in Impact for Miniblox. Scripts are executed in the same scope as the main client, giving them full access to all modules, functions, and variables.
 
 ## How to Open Script Manager
 
 ### Via ClickGUI
+
 1. Press `\` (Backslash) to open ClickGUI
 2. Click `Misc` category
 3. Toggle `ScriptManager`
 
-### Via Command
+### Via Command (in miniblox)
+
 Type `.scriptmanager` in chat
 
-## Loading Scripts
+## Loading Scripts!
 
 ### 📁 Load File (Local File)
+
 1. Click "📁 Load File"
 2. Select a `.js` file from your computer
 3. The script will be loaded and executed immediately
 4. Any modules created will appear in the `Scripts` category in ClickGUI
 
 ### 🌐 Load URL
+
 1. Click "🌐 Load URL"
 2. Enter the URL of a JavaScript file
 3. The script will be fetched and executed
 
 ### ✏️ Write Code
+
 1. Click "✏️ Write Code"
 2. Enter a script name (this is just for identification)
 3. Write your code in the editor
 4. Click "Save & Load"
 
-## Managing Scripts
+## Managing these Scripts
 
-### 📋 Duplicate
+### 📋 Duplicate Scripts
+
 - Click the 📋 button next to a script
 - Creates a copy with `-2`, `-3`, etc. appended to the name
 - Useful for testing variations
 
-### 🗑️ Delete
+### 🗑️ Delete Scripts
+
 - Click the 🗑️ button next to a script
 - Confirms before deletion
 - Removes all modules created by the script
@@ -50,6 +58,7 @@ Type `.scriptmanager` in chat
 Scripts are executed using `eval()` in the same scope as the main client. This means you have direct access to all variables and functions.
 
 ### Basic Module Example
+
 ```javascript
 new Module("MyModule", function(enabled) {
   if (enabled) {
@@ -61,6 +70,7 @@ new Module("MyModule", function(enabled) {
 ```
 
 ### Module with Tick Loop
+
 ```javascript
 new Module("TickModule", function(enabled) {
   if (enabled) {
@@ -76,6 +86,7 @@ new Module("TickModule", function(enabled) {
 ```
 
 ### Module with Options
+
 ```javascript
 let jumpHeight, autoJump, message;
 
@@ -101,6 +112,7 @@ message = myModule.addoption("Message", String, "Hello");
 Since scripts run in the same scope, you have access to everything:
 
 ### Core
+
 - `Module` - Module class constructor
 - `modules` - Object containing all modules
 - `enabledModules` - Object containing enabled modules
@@ -109,17 +121,20 @@ Since scripts run in the same scope, you have access to everything:
 - `keybindCallbacks` - Object for keybind callbacks
 
 ### Game Objects
+
 - `player` - Player entity
 - `game` - Game instance
 - `ClientSocket` - Network socket for sending packets
 
 ### Helper Functions
+
 - `keyPressedDump(key)` - Check if a key is pressed (e.g., "space", "shift")
 - `getMoveDirection(speed)` - Get movement direction vector based on input
 - `getModule(name)` - Get a module by name
 - `rayTraceBlocks(start, end, ...)` - Ray trace for blocks
 
 ### World & Blocks
+
 - `BlockPos` - Block position class
 - `Vector3$1` - Vector3 class
 - `Materials` - Block materials
@@ -127,6 +142,7 @@ Since scripts run in the same scope, you have access to everything:
 - `BlockAir` - Air block class
 
 ### Packets
+
 - `SPacketMessage` - Chat message packet
 - `SPacketClick` - Click packet
 - `SPacketBreakBlock` - Break block packet
@@ -137,25 +153,27 @@ Since scripts run in the same scope, you have access to everything:
 - And many more...
 
 ### Items & Entities
+
 - `ItemSword`, `ItemArmor`, `ItemBlock`, `ItemTool`, `ItemAppleGold`
 - `EntityPlayer`
 - `Items` - All items
 - `Enchantments` - All enchantments
 
 ### Other
+
 - `playerControllerMP` - Player controller
 - `hud3D` - 3D HUD
 - `friends` - Friends list array
-- `VERSION` - Client version
+- `VERSION` - The clients version
 
 ## Persistence
 
 - Scripts are automatically saved to LocalStorage
-- They will be loaded automatically on next startup
+- They will be loaded automatically on the next startup (by reload)
 - Deleting a script removes it from storage
 - Modules created by scripts appear in the `Scripts` category in ClickGUI
 
-## Tips
+## 💡 Tips!
 
 ### Clean Up Resources
 Always clean up in the disable function:
@@ -172,6 +190,7 @@ new Module("MyModule", function(enabled) {
 ```
 
 ### Check for Null
+
 Player and game might not be available immediately:
 ```javascript
 tickLoop["MyModule"] = function() {
@@ -181,6 +200,7 @@ tickLoop["MyModule"] = function() {
 ```
 
 ### Use Render Loop for Visual Effects
+
 ```javascript
 new Module("MyVisual", function(enabled) {
   if (enabled) {
@@ -196,19 +216,22 @@ new Module("MyVisual", function(enabled) {
 ## Troubleshooting
 
 ### Script doesn't load
+
 - Check browser console (F12) for errors
-- Verify syntax is correct
+- Verify that your syntax is correct
 - Make sure you're creating a `new Module(...)`
 
-### Module doesn't appear in ClickGUI
+### Module doesn't appear in ClickGUI?
+
 - Check if the module was created successfully
 - Look in the `Scripts` category
 - Reload the page and try again
 
 ### Script error message
+
 - Read the error message in the alert dialog
 - Check console for detailed error with line numbers
-- Fix syntax errors and reload the script
+- Fix these syntax errors and reload the script
 
 ## Example: Complete Module
 
