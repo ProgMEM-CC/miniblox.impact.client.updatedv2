@@ -2,12 +2,14 @@
 
 ## 5-Minute Guide
 
-### Step 1: Open Script Manager
+### Step 1: How to Open `Script Manager`?
+
 - Press `\` (Backslash) to open ClickGUI
 - Click `Misc` → Toggle `ScriptManager`
 - Or type `.scriptmanager` in chat
 
 ### Step 2: Create Your First Script
+
 1. Click "✏️ Write Code"
 2. Enter name: `MyFirstScript`
 3. Paste this code:
@@ -33,7 +35,7 @@ new Module("HelloWorld", function(enabled) {
 6. Open ClickGUI → Click `Scripts` category
 7. Toggle `HelloWorld` module!
 
-### Step 3: Load Existing Scripts
+### Step 3: Load the Existing Scripts
 
 To load scripts from the BETA folder:
 1. Click "📁 Load File"
@@ -42,7 +44,8 @@ To load scripts from the BETA folder:
 
 ## Quick Examples
 
-### Simple Toggle Module
+### A Simple Toggle Module!
+
 ```javascript
 new Module("SimpleModule", function(enabled) {
   if (enabled) {
@@ -53,7 +56,8 @@ new Module("SimpleModule", function(enabled) {
 });
 ```
 
-### Module with Options
+### Module with `addoptions`
+
 ```javascript
 let mySpeed;
 
@@ -74,7 +78,8 @@ const mod = new Module("SpeedModule", function(enabled) {
 mySpeed = mod.addoption("Speed", Number, 0.5);
 ```
 
-### Visual Module (Render Loop)
+### Visual Module (via a `renderTickLoop`)
+
 ```javascript
 new Module("VisualModule", function(enabled) {
   if (enabled) {
@@ -90,15 +95,15 @@ new Module("VisualModule", function(enabled) {
 
 ## Tips
 
-- Always delete your tickLoop/renderTickLoop when disabling
-- Check if `player` exists before using it
-- Use `console.log()` for debugging
-- Scripts are saved automatically and load on restart
-- Check browser console (F12) for errors
+- Always delete your tickLoop/renderTickLoop when disabling.
+- Check if `player` exists before using it.
+- Use `console.log()` for debugging.
+- Scripts are saved automatically and load on restart.
+- Check browser console (F12) for errors.
 
 ## Next Steps
 
 - Read the full [Script Manager Documentation](SCRIPT_MANAGER.md)
-- Explore the BETA folder for more examples
-- Experiment with different modules
-- Share your scripts with the community!
+- Explore the BETA folder for more examples!
+- Experiment with different modules!
+- Share your scripts with the Impact Community - via here or discord!
