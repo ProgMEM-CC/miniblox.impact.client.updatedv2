@@ -806,6 +806,11 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				globalThis.${storeName}.openReportModal = function() {
 					const GITHUB_REPO = "progmem-cc/miniblox.impact.client.updatedv2";
 					
+					// Exit pointer lock when opening modal
+					if (document.pointerLockElement) {
+						document.exitPointerLock();
+					}
+					
 					const modal = document.createElement("div");
 					modal.style.cssText = \`
 						position: fixed;
@@ -957,7 +962,13 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					\`;
 					cancelBtn.onmouseover = () => cancelBtn.style.background = "#353548";
 					cancelBtn.onmouseout = () => cancelBtn.style.background = "#2a2a3e";
-					cancelBtn.onclick = () => modal.remove();
+					cancelBtn.onclick = () => {
+						modal.remove();
+						// Re-request pointer lock when closing modal
+						if (game?.canvas) {
+							game.canvas.requestPointerLock();
+						}
+					};
 					
 					const submitBtn = document.createElement("button");
 					submitBtn.textContent = "Open in GitHub";
@@ -995,6 +1006,10 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 						
 						window.open(url, "_blank");
 						modal.remove();
+						// Re-request pointer lock when closing modal
+						if (game?.canvas) {
+							game.canvas.requestPointerLock();
+						}
 					};
 					
 					buttonContainer.appendChild(cancelBtn);
@@ -1011,7 +1026,13 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					
 					modal.appendChild(form);
 					modal.onclick = (e) => {
-						if (e.target === modal) modal.remove();
+						if (e.target === modal) {
+							modal.remove();
+							// Re-request pointer lock when closing modal
+							if (game?.canvas) {
+								game.canvas.requestPointerLock();
+							}
+						}
 					};
 					
 					document.body.appendChild(modal);
@@ -2430,7 +2451,9 @@ const survival = new Module("SurvivalMode", function(callback) {
 		execute(publicUrl);
 	}
 })();
-// Enhanced ClickGUI with Modern Animations! (v6.6 UPDATE)
+
+
+
 (async function () {
 	try {
 		const fontLink = document.createElement("link");
@@ -3078,6 +3101,11 @@ const survival = new Module("SurvivalMode", function(callback) {
 				visible = !visible;
 
 				if (visible) {
+					// Exit pointer lock when opening GUI
+					if (document.pointerLockElement) {
+						document.exitPointerLock();
+					}
+
 					// Show category panel
 					if (categoryPanel) categoryPanel.remove();
 					categoryPanel = createCategoryPanel();
@@ -3113,6 +3141,11 @@ const survival = new Module("SurvivalMode", function(callback) {
 						});
 					}
 					selectedCategory = null;
+
+					// Re-request pointer lock when closing GUI
+					if (game?.canvas) {
+						game.canvas.requestPointerLock();
+					}
 				}
 			}
 
