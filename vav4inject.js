@@ -1626,6 +1626,76 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			const step = new Module("Step", function() {}, () => \`\${stepheight[1]}\`);
 			stepheight = step.addoption("Height", Number, 2);
 
+			// TargetStrafe
+			let strafeDistance, strafeSpeed, strafeRequireSpeed, strafeDirection;
+			let strafeAngle = 0;
+			const targetStrafe = new Module("TargetStrafe", function(callback) {
+				if (!callback) {
+					delete tickLoop["TargetStrafe"];
+					strafeAngle = 0;
+					return;
+				}
+
+				tickLoop["TargetStrafe"] = function() {
+					// Check if KillAura is enabled
+					if (!enabledModules["Killaura"]) return;
+
+					// Check if Speed requirement is met (if enabled)
+					if (strafeRequireSpeed[1] && !enabledModules["Speed"]) return;
+
+					// Check if any movement key is pressed
+					const isMoving = player.moveStrafeDump !== 0 || player.moveForwardDump !== 0;
+					if (!isMoving) return;
+
+					// Get the first target from attackList (KillAura's target)
+					if (!attackList || attackList.length === 0) return;
+					const target = attackList[0];
+					if (!target) return;
+
+					// Calculate distance to target
+					const dx = player.pos.x - target.pos.x;
+					const dz = player.pos.z - target.pos.z;
+					const distanceToTarget = Math.sqrt(dx * dx + dz * dz);
+
+					// Update strafe angle based on direction
+					const angleIncrement = strafeSpeed[1] * (strafeDirection[1] ? 1 : -1);
+					strafeAngle += angleIncrement;
+
+					// Calculate new position around target
+					const targetX = target.pos.x + Math.cos(strafeAngle) * strafeDistance[1];
+					const targetZ = target.pos.z + Math.sin(strafeAngle) * strafeDistance[1];
+
+					// Calculate direction to strafe position
+					const moveX = targetX - player.pos.x;
+					const moveZ = targetZ - player.pos.z;
+					const moveDist = Math.sqrt(moveX * moveX + moveZ * moveZ);
+
+					if (moveDist > 0.1) {
+						// Normalize and apply movement
+						const normalizedX = moveX / moveDist;
+						const normalizedZ = moveZ / moveDist;
+
+						// Get current speed (from Speed module if active, otherwise default)
+						let moveSpeed = speedvalue && enabledModules["Speed"] ? speedvalue[1] : 0.2;
+
+						// Apply movement
+						player.motion.x = normalizedX * moveSpeed;
+						player.motion.z = normalizedZ * moveSpeed;
+
+						// Auto jump when on ground
+						if (player.onGround) {
+							player.motion.y = speedjump && enabledModules["Speed"] ? speedjump[1] : 0.42;
+						}
+					}
+				};
+			}, () => strafeDistance[1] + "b " + (strafeDirection[1] ? "CW" : "CCW"));
+
+			strafeDistance = targetStrafe.addoption("Distance", Number, 3);
+			strafeDistance.range = [1, 6, 0.1];
+			strafeSpeed = targetStrafe.addoption("Speed", Number, 0.1);
+			strafeSpeed.range = [0.01, 0.3, 0.01];
+			strafeRequireSpeed = targetStrafe.addoption("RequireSpeed", Boolean, false);
+			strafeDirection = targetStrafe.addoption("Clockwise", Boolean, true);
 
 			new Module("ESP", function() {});
 			const textgui = new Module("TextGUI", function() {});
@@ -1633,6 +1703,9 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			textguisize = textgui.addoption("TextSize", Number, 14);
 			textguishadow = textgui.addoption("Shadow", Boolean, true);
 			textgui.toggle();
+
+
+			
 			new Module("AutoRespawn", function() {});
 
 			const blockHandlers = {
@@ -2478,7 +2551,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 	function injectGUI(store) {
 		const categoryMap = {
 			Combat: ["autoclicker", "killaura", "velocity", "wtap", "keepsprint"],
-			Movement: ["scaffold", "jesus", "phase", "nofall", "antifall", "sprint", "step", "speed", "jetpack", "noslowdown", "longjump", "fly", "infinitefly"],
+			Movement: ["scaffold", "jesus", "phase", "nofall", "antifall", "sprint", "step", "speed", "targetstrafe", "jetpack", "noslowdown", "longjump", "fly", "infinitefly"],
 			Player: ["invcleaner", "invwalk", "autoarmor", "autorespawn", "fastbreak"],
 			Render: ["esp", "nametags+", "textgui", "chinahat"],
 			World: ["breaker", "autocraft", "cheststeal", "timer", "survivalmode"],
