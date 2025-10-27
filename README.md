@@ -21,6 +21,7 @@ Join our [Discord](https://discord.gg/PwpGemYhJx)
 - Nuker (still in BETA, it sends too many block break packets and gets you kicked for this.)
 - Jetpack (this is literally just the old Fly from Vape For Miniblox, this probably still works.)
 - 2ND ClickGUI created by me (TheM1ddleM1n)
+- Script manager/Report function in game (Thanks dtkiller-jp!)
 
 ## How to Install Impact For Miniblox?
 
