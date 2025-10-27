@@ -801,6 +801,247 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 				return this.closeInput();
 			}
+			case ".report": {
+				if (typeof globalThis.${storeName} === "undefined") globalThis.${storeName} = {};
+				globalThis.${storeName}.openReportModal = function() {
+					const GITHUB_REPO = "progmem-cc/miniblox.impact.client.updatedv2";
+					
+					const modal = document.createElement("div");
+					modal.style.cssText = \`
+						position: fixed;
+						top: 0;
+						left: 0;
+						width: 100%;
+						height: 100%;
+						background: rgba(0, 0, 0, 0.85);
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						z-index: 10000;
+						backdrop-filter: blur(8px);
+						animation: fadeIn 0.2s ease;
+					\`;
+					
+					const form = document.createElement("div");
+					form.style.cssText = \`
+						background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+						border-radius: 16px;
+						padding: 32px;
+						width: 520px;
+						max-width: 90%;
+						box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+						border: 1px solid rgba(255, 255, 255, 0.15);
+						animation: slideUp 0.3s ease;
+					\`;
+					
+					const title = document.createElement("h2");
+					title.textContent = "Report Issue";
+					title.style.cssText = \`
+						margin: 0 0 24px 0;
+						color: #fff;
+						font-size: 26px;
+						font-weight: 700;
+						text-align: center;
+					\`;
+					
+					const typeLabel = document.createElement("label");
+					typeLabel.textContent = "Type";
+					typeLabel.style.cssText = \`
+						display: block;
+						color: #aaa;
+						margin-bottom: 8px;
+						font-size: 14px;
+						font-weight: 500;
+					\`;
+					
+					const typeSelect = document.createElement("select");
+					typeSelect.innerHTML = \`
+						<option value="bug">🐛 Bug Report</option>
+						<option value="feature">✨ Feature Request</option>
+					\`;
+					typeSelect.style.cssText = \`
+						width: 100%;
+						padding: 12px;
+						margin-bottom: 20px;
+						background: rgba(255, 255, 255, 0.08);
+						border: 1px solid rgba(255, 255, 255, 0.15);
+						border-radius: 8px;
+						color: #fff;
+						font-size: 14px;
+						box-sizing: border-box;
+						cursor: pointer;
+					\`;
+					
+					const titleLabel = document.createElement("label");
+					titleLabel.textContent = "Title";
+					titleLabel.style.cssText = \`
+						display: block;
+						color: #aaa;
+						margin-bottom: 8px;
+						font-size: 14px;
+						font-weight: 500;
+					\`;
+					
+					const titleInput = document.createElement("input");
+					titleInput.type = "text";
+					titleInput.placeholder = "Brief description of the issue";
+					titleInput.style.cssText = \`
+						width: 100%;
+						padding: 12px;
+						margin-bottom: 20px;
+						background: rgba(255, 255, 255, 0.08);
+						border: 1px solid rgba(255, 255, 255, 0.15);
+						border-radius: 8px;
+						color: #fff;
+						font-size: 14px;
+						box-sizing: border-box;
+						transition: border 0.2s;
+					\`;
+					titleInput.onfocus = () => titleInput.style.border = "1px solid #0FB3A0";
+					titleInput.onblur = () => titleInput.style.border = "1px solid rgba(255, 255, 255, 0.15)";
+					
+					const descLabel = document.createElement("label");
+					descLabel.textContent = "Description";
+					descLabel.style.cssText = \`
+						display: block;
+						color: #aaa;
+						margin-bottom: 8px;
+						font-size: 14px;
+						font-weight: 500;
+					\`;
+					
+					const descInput = document.createElement("textarea");
+					descInput.placeholder = "Detailed description...\\n\\nFor bugs:\\n• Steps to reproduce\\n• Expected behavior\\n• Actual behavior\\n\\nFor features:\\n• What problem does it solve?\\n• How should it work?";
+					descInput.rows = 10;
+					descInput.style.cssText = \`
+						width: 100%;
+						padding: 12px;
+						margin-bottom: 24px;
+						background: rgba(255, 255, 255, 0.08);
+						border: 1px solid rgba(255, 255, 255, 0.15);
+						border-radius: 8px;
+						color: #fff;
+						font-size: 14px;
+						resize: vertical;
+						font-family: inherit;
+						box-sizing: border-box;
+						transition: border 0.2s;
+					\`;
+					descInput.onfocus = () => descInput.style.border = "1px solid #0FB3A0";
+					descInput.onblur = () => descInput.style.border = "1px solid rgba(255, 255, 255, 0.15)";
+					
+					const buttonContainer = document.createElement("div");
+					buttonContainer.style.cssText = \`
+						display: flex;
+						gap: 12px;
+						justify-content: flex-end;
+					\`;
+					
+					const cancelBtn = document.createElement("button");
+					cancelBtn.textContent = "Cancel";
+					cancelBtn.style.cssText = \`
+						padding: 12px 24px;
+						background: rgba(255, 255, 255, 0.08);
+						border: 1px solid rgba(255, 255, 255, 0.15);
+						border-radius: 8px;
+						color: #fff;
+						cursor: pointer;
+						font-size: 14px;
+						font-weight: 600;
+						transition: all 0.2s;
+					\`;
+					cancelBtn.onmouseover = () => {
+						cancelBtn.style.background = "rgba(255, 255, 255, 0.12)";
+						cancelBtn.style.transform = "translateY(-1px)";
+					};
+					cancelBtn.onmouseout = () => {
+						cancelBtn.style.background = "rgba(255, 255, 255, 0.08)";
+						cancelBtn.style.transform = "translateY(0)";
+					};
+					cancelBtn.onclick = () => modal.remove();
+					
+					const submitBtn = document.createElement("button");
+					submitBtn.textContent = "Open in GitHub";
+					submitBtn.style.cssText = \`
+						padding: 12px 24px;
+						background: linear-gradient(135deg, #0FB3A0 0%, #0a8a7a 100%);
+						border: none;
+						border-radius: 8px;
+						color: #fff;
+						cursor: pointer;
+						font-size: 14px;
+						font-weight: 700;
+						transition: all 0.2s;
+						box-shadow: 0 4px 12px rgba(15, 179, 160, 0.3);
+					\`;
+					submitBtn.onmouseover = () => {
+						submitBtn.style.transform = "translateY(-2px)";
+						submitBtn.style.boxShadow = "0 6px 16px rgba(15, 179, 160, 0.4)";
+					};
+					submitBtn.onmouseout = () => {
+						submitBtn.style.transform = "translateY(0)";
+						submitBtn.style.boxShadow = "0 4px 12px rgba(15, 179, 160, 0.3)";
+					};
+					submitBtn.onclick = () => {
+						const issueTitle = titleInput.value.trim();
+						if (!issueTitle) {
+							titleInput.style.border = "1px solid #ff4444";
+							titleInput.placeholder = "Title is required!";
+							return;
+						}
+						
+						const issueType = typeSelect.value;
+						const label = issueType === "bug" ? "bug" : "enhancement";
+						const prefix = issueType === "bug" ? "[Bug]" : "[Feature]";
+						const fullTitle = \`\${prefix} \${issueTitle}\`;
+						
+						const body = descInput.value.trim() || "No description provided.";
+						const versionInfo = \`\\n\\n---\\n**Version:** \${VERSION}\\n**User Agent:** \${navigator.userAgent}\`;
+						const fullBody = body + versionInfo;
+						
+						const url = \`https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/issues/new?labels=\${label}&title=\${encodeURIComponent(fullTitle)}&body=\${encodeURIComponent(fullBody)}\`;
+						
+						window.open(url, "_blank");
+						modal.remove();
+					};
+					
+					buttonContainer.appendChild(cancelBtn);
+					buttonContainer.appendChild(submitBtn);
+					
+					form.appendChild(title);
+					form.appendChild(typeLabel);
+					form.appendChild(typeSelect);
+					form.appendChild(titleLabel);
+					form.appendChild(titleInput);
+					form.appendChild(descLabel);
+					form.appendChild(descInput);
+					form.appendChild(buttonContainer);
+					
+					modal.appendChild(form);
+					modal.onclick = (e) => {
+						if (e.target === modal) modal.remove();
+					};
+					
+					const style = document.createElement("style");
+					style.textContent = \`
+						@keyframes fadeIn {
+							from { opacity: 0; }
+							to { opacity: 1; }
+						}
+						@keyframes slideUp {
+							from { transform: translateY(20px); opacity: 0; }
+							to { transform: translateY(0); opacity: 1; }
+						}
+					\`;
+					document.head.appendChild(style);
+					
+					document.body.appendChild(modal);
+					titleInput.focus();
+				};
+				
+				globalThis.${storeName}.openReportModal();
+				return this.closeInput();
+			}
 		}
 		if (enabledModules["FilterBypass"] && !this.isInputCommandMode) {
 			const words = this.inputValue.split(" ");
