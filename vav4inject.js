@@ -813,44 +813,40 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 						left: 0;
 						width: 100%;
 						height: 100%;
-						background: rgba(0, 0, 0, 0.85);
+						background: rgba(0, 0, 0, 0.75);
 						display: flex;
 						align-items: center;
 						justify-content: center;
 						z-index: 10000;
-						backdrop-filter: blur(8px);
-						animation: fadeIn 0.2s ease;
 					\`;
 					
 					const form = document.createElement("div");
 					form.style.cssText = \`
-						background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-						border-radius: 16px;
-						padding: 32px;
-						width: 520px;
+						background: #1a1a2e;
+						border-radius: 8px;
+						padding: 28px;
+						width: 500px;
 						max-width: 90%;
-						box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
-						border: 1px solid rgba(255, 255, 255, 0.15);
-						animation: slideUp 0.3s ease;
+						box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+						border: 2px solid #2a2a3e;
 					\`;
 					
 					const title = document.createElement("h2");
 					title.textContent = "Report Issue";
 					title.style.cssText = \`
-						margin: 0 0 24px 0;
+						margin: 0 0 20px 0;
 						color: #fff;
-						font-size: 26px;
-						font-weight: 700;
-						text-align: center;
+						font-size: 22px;
+						font-weight: 600;
 					\`;
 					
 					const typeLabel = document.createElement("label");
 					typeLabel.textContent = "Type";
 					typeLabel.style.cssText = \`
 						display: block;
-						color: #aaa;
-						margin-bottom: 8px;
-						font-size: 14px;
+						color: #bbb;
+						margin-bottom: 6px;
+						font-size: 13px;
 						font-weight: 500;
 					\`;
 					
@@ -861,24 +857,33 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					\`;
 					typeSelect.style.cssText = \`
 						width: 100%;
-						padding: 12px;
-						margin-bottom: 20px;
-						background: rgba(255, 255, 255, 0.08);
-						border: 1px solid rgba(255, 255, 255, 0.15);
-						border-radius: 8px;
+						padding: 10px 12px;
+						margin-bottom: 18px;
+						background: #252538;
+						border: 2px solid #3a3a4e;
+						border-radius: 6px;
 						color: #fff;
-						font-size: 14px;
+						font-size: 15px;
 						box-sizing: border-box;
 						cursor: pointer;
+						outline: none;
+						appearance: none;
+						background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+						background-repeat: no-repeat;
+						background-position: right 10px center;
+						background-size: 18px;
+						padding-right: 40px;
 					\`;
+					typeSelect.onfocus = () => typeSelect.style.borderColor = "#0FB3A0";
+					typeSelect.onblur = () => typeSelect.style.borderColor = "#3a3a4e";
 					
 					const titleLabel = document.createElement("label");
 					titleLabel.textContent = "Title";
 					titleLabel.style.cssText = \`
 						display: block;
-						color: #aaa;
-						margin-bottom: 8px;
-						font-size: 14px;
+						color: #bbb;
+						margin-bottom: 6px;
+						font-size: 13px;
 						font-weight: 500;
 					\`;
 					
@@ -887,26 +892,26 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					titleInput.placeholder = "Brief description of the issue";
 					titleInput.style.cssText = \`
 						width: 100%;
-						padding: 12px;
-						margin-bottom: 20px;
-						background: rgba(255, 255, 255, 0.08);
-						border: 1px solid rgba(255, 255, 255, 0.15);
-						border-radius: 8px;
+						padding: 10px 12px;
+						margin-bottom: 18px;
+						background: #252538;
+						border: 2px solid #3a3a4e;
+						border-radius: 6px;
 						color: #fff;
 						font-size: 14px;
 						box-sizing: border-box;
-						transition: border 0.2s;
+						outline: none;
 					\`;
-					titleInput.onfocus = () => titleInput.style.border = "1px solid #0FB3A0";
-					titleInput.onblur = () => titleInput.style.border = "1px solid rgba(255, 255, 255, 0.15)";
+					titleInput.onfocus = () => titleInput.style.borderColor = "#0FB3A0";
+					titleInput.onblur = () => titleInput.style.borderColor = "#3a3a4e";
 					
 					const descLabel = document.createElement("label");
 					descLabel.textContent = "Description";
 					descLabel.style.cssText = \`
 						display: block;
-						color: #aaa;
-						margin-bottom: 8px;
-						font-size: 14px;
+						color: #bbb;
+						margin-bottom: 6px;
+						font-size: 13px;
 						font-weight: 500;
 					\`;
 					
@@ -915,77 +920,64 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					descInput.rows = 10;
 					descInput.style.cssText = \`
 						width: 100%;
-						padding: 12px;
-						margin-bottom: 24px;
-						background: rgba(255, 255, 255, 0.08);
-						border: 1px solid rgba(255, 255, 255, 0.15);
-						border-radius: 8px;
+						padding: 10px 12px;
+						margin-bottom: 20px;
+						background: #252538;
+						border: 2px solid #3a3a4e;
+						border-radius: 6px;
 						color: #fff;
 						font-size: 14px;
 						resize: vertical;
 						font-family: inherit;
 						box-sizing: border-box;
-						transition: border 0.2s;
+						outline: none;
 					\`;
-					descInput.onfocus = () => descInput.style.border = "1px solid #0FB3A0";
-					descInput.onblur = () => descInput.style.border = "1px solid rgba(255, 255, 255, 0.15)";
+					descInput.onfocus = () => descInput.style.borderColor = "#0FB3A0";
+					descInput.onblur = () => descInput.style.borderColor = "#3a3a4e";
 					
 					const buttonContainer = document.createElement("div");
 					buttonContainer.style.cssText = \`
 						display: flex;
-						gap: 12px;
+						gap: 10px;
 						justify-content: flex-end;
 					\`;
 					
 					const cancelBtn = document.createElement("button");
 					cancelBtn.textContent = "Cancel";
 					cancelBtn.style.cssText = \`
-						padding: 12px 24px;
-						background: rgba(255, 255, 255, 0.08);
-						border: 1px solid rgba(255, 255, 255, 0.15);
-						border-radius: 8px;
+						padding: 10px 20px;
+						background: #2a2a3e;
+						border: 2px solid #3a3a4e;
+						border-radius: 6px;
 						color: #fff;
 						cursor: pointer;
 						font-size: 14px;
 						font-weight: 600;
-						transition: all 0.2s;
+						outline: none;
 					\`;
-					cancelBtn.onmouseover = () => {
-						cancelBtn.style.background = "rgba(255, 255, 255, 0.12)";
-						cancelBtn.style.transform = "translateY(-1px)";
-					};
-					cancelBtn.onmouseout = () => {
-						cancelBtn.style.background = "rgba(255, 255, 255, 0.08)";
-						cancelBtn.style.transform = "translateY(0)";
-					};
+					cancelBtn.onmouseover = () => cancelBtn.style.background = "#353548";
+					cancelBtn.onmouseout = () => cancelBtn.style.background = "#2a2a3e";
 					cancelBtn.onclick = () => modal.remove();
 					
 					const submitBtn = document.createElement("button");
 					submitBtn.textContent = "Open in GitHub";
 					submitBtn.style.cssText = \`
-						padding: 12px 24px;
-						background: linear-gradient(135deg, #0FB3A0 0%, #0a8a7a 100%);
+						padding: 10px 20px;
+						background: #0FB3A0;
 						border: none;
-						border-radius: 8px;
+						border-radius: 6px;
 						color: #fff;
 						cursor: pointer;
 						font-size: 14px;
 						font-weight: 700;
-						transition: all 0.2s;
-						box-shadow: 0 4px 12px rgba(15, 179, 160, 0.3);
+						outline: none;
 					\`;
-					submitBtn.onmouseover = () => {
-						submitBtn.style.transform = "translateY(-2px)";
-						submitBtn.style.boxShadow = "0 6px 16px rgba(15, 179, 160, 0.4)";
-					};
-					submitBtn.onmouseout = () => {
-						submitBtn.style.transform = "translateY(0)";
-						submitBtn.style.boxShadow = "0 4px 12px rgba(15, 179, 160, 0.3)";
-					};
+					submitBtn.onmouseover = () => submitBtn.style.background = "#0d9a88";
+					submitBtn.onmouseout = () => submitBtn.style.background = "#0FB3A0";
 					submitBtn.onclick = () => {
 						const issueTitle = titleInput.value.trim();
 						if (!issueTitle) {
-							titleInput.style.border = "1px solid #ff4444";
+							titleInput.style.borderColor = "#ff4444";
 							titleInput.placeholder = "Title is required!";
 							return;
 						}
@@ -1021,19 +1013,6 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					modal.onclick = (e) => {
 						if (e.target === modal) modal.remove();
 					};
-					
-					const style = document.createElement("style");
-					style.textContent = \`
-						@keyframes fadeIn {
-							from { opacity: 0; }
-							to { opacity: 1; }
-						}
-						@keyframes slideUp {
-							from { transform: translateY(20px); opacity: 0; }
-							to { transform: translateY(0); opacity: 1; }
-						}
-					\`;
-					document.head.appendChild(style);
 					
 					document.body.appendChild(modal);
 					titleInput.focus();
