@@ -1258,6 +1258,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			new Module("AutoClicker", function(callback) {
 				if (callback) {
 					tickLoop["AutoClicker"] = function() {
+					if (playerControllerDump.objectMouseOver.block) return;
 						if (clickDelay < Date.now() && playerControllerDump.key.leftClick && !player.isUsingItem()) {
 							playerControllerDump.leftClick();
 							clickDelay = Date.now() + 51;
