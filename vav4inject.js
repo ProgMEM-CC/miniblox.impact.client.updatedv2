@@ -1597,20 +1597,33 @@ const speed = new Module("Speed", function(callback) {
 		lastjump++;
 
 		const oldMotion = new Vector3$1(player.motion.x, 0, player.motion.z);
-		const dir = getMoveDirection(Math.max(oldMotion.length(), speedvalue[1]));
+		let moveSpeed = Math.max(oldMotion.length(), speedvalue[1]);
+		
+		if (enabledModules["TargetStrafe"] && enabledModules["Killaura"] && attackList && attackList.length > 0) {
+			const target = attackList[0];
+			const targetYaw = target.yaw || 0;
+			const behindX = target.pos.x - Math.sin(targetYaw) * strafeBehindDistance[1];
+			const behindZ = target.pos.z + Math.cos(targetYaw) * strafeBehindDistance[1];
+			const moveX = behindX - player.pos.x;
+			const moveZ = behindZ - player.pos.z;
+			const moveDist = Math.sqrt(moveX * moveX + moveZ * moveZ);
+			
+			if (moveDist > 0.1) {
+				player.motion.x = (moveX / moveDist) * moveSpeed;
+				player.motion.z = (moveZ / moveDist) * moveSpeed;
+			}
+		} else {
+			const dir = getMoveDirection(moveSpeed);
+			player.motion.x = dir.x;
+			player.motion.z = dir.z;
+		}
+		
 		lastjump = player.onGround ? 0 : lastjump;
 
-		// Base motion
-		player.motion.x = dir.x;
-		player.motion.z = dir.z;
-
-		// Auto-jump
-		const doJump = player.onGround && dir.length() > 0 && speedauto[1] && !keyPressedDump("space");
+		const doJump = player.onGround && speedauto[1] && !keyPressedDump("space");
 		if (doJump) {
 			player.jump();
-			player.motion.y = player.onGround && dir.length() > 0 && speedauto[1] && !keyPressedDump("space")
-				? speedjump[1]
-				: player.motion.y;
+			player.motion.y = speedjump[1];
 		}
 	};
 }, function() {
@@ -1626,53 +1639,10 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			const step = new Module("Step", function() {}, () => \`\${stepheight[1]}\`);
 			stepheight = step.addoption("Height", Number, 2);
 
-			let strafeBehindDistance, strafeMoveSpeed, strafeRequireSpeed;
-			const targetStrafe = new Module("TargetStrafe", function(callback) {
-				if (!callback) {
-					delete tickLoop["TargetStrafe"];
-					return;
-				}
-
-				tickLoop["TargetStrafe"] = function() {
-					if (!enabledModules["Killaura"]) return;
-					if (strafeRequireSpeed[1] && !enabledModules["Speed"]) return;
-					if (player.moveStrafeDump === 0 && player.moveForwardDump === 0) return;
-					if (!attackList || attackList.length === 0) return;
-					const target = attackList[0];
-					if (!target) return;
-
-					let moveSpeed = strafeMoveSpeed[1];
-					if (moveSpeed === 0) {
-						moveSpeed = (speedvalue && enabledModules["Speed"]) ? speedvalue[1] : 0.2;
-					}
-
-					const targetYaw = target.yaw || 0;
-					const behindX = target.pos.x - Math.sin(targetYaw) * strafeBehindDistance[1];
-					const behindZ = target.pos.z + Math.cos(targetYaw) * strafeBehindDistance[1];
-					const moveX = behindX - player.pos.x;
-					const moveZ = behindZ - player.pos.z;
-					const moveDist = Math.sqrt(moveX * moveX + moveZ * moveZ);
-
-					if (moveDist > 0.1) {
-						const moveYaw = Math.atan2(-moveX, moveZ);
-						player.yaw = moveYaw;
-						player.rotationYaw = moveYaw;
-						player.moveForwardDump = 1.0;
-						player.moveStrafeDump = 0;
-						player.motion.x = -Math.sin(moveYaw) * moveSpeed;
-						player.motion.z = Math.cos(moveYaw) * moveSpeed;
-						if (player.onGround) {
-							player.motion.y = (speedjump && enabledModules["Speed"]) ? speedjump[1] : 0.42;
-						}
-					}
-				};
-			}, () => strafeBehindDistance[1] + "b behind");
-
+			let strafeBehindDistance;
+			const targetStrafe = new Module("TargetStrafe", function(callback) {}, () => strafeBehindDistance[1] + "b behind");
 			strafeBehindDistance = targetStrafe.addoption("BehindDistance", Number, 2);
 			strafeBehindDistance.range = [0.5, 5, 0.1];
-			strafeMoveSpeed = targetStrafe.addoption("MoveSpeed", Number, 0);
-			strafeMoveSpeed.range = [0, 1, 0.05];
-			strafeRequireSpeed = targetStrafe.addoption("RequireSpeed", Boolean, false);
 
 			new Module("ESP", function() {});
 			const textgui = new Module("TextGUI", function() {});
