@@ -1107,7 +1107,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				/** @type {() => string | undefined} */
 				tagGetter = () => undefined;
 				category;
-				constructor(name, func, tag = () => undefined) {
+				constructor(name, func, category, tag = () => undefined) {
 					this.name = name;
 					this.func = func;
 					this.enabled = false;
