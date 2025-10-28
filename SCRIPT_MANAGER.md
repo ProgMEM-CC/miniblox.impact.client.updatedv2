@@ -1,7 +1,7 @@
 # Script Manager Documentation
 
 > [!WARNING]
-> BEFORE using this, please note, that (currently) all code is executed through `eval`, which means if the Miniblox site or Impact client can do something, the script can to
+> BEFORE using this, please note, that (currently) all code is executed through `eval`, which means if the Miniblox site or Impact client can do something, the script can too
 > (e.g. loading scripts that grabs your session_v1 token from localStorage and send it off to a webhook, maybe to use in some botting or account takeover)
 > Let us know if you know of ways to sandbox JS code without hassle (try to avoid using iframes).
 
