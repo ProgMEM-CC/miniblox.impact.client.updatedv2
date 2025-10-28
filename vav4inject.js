@@ -1328,6 +1328,9 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				else delete tickLoop["AntiFall"];
 			});
 
+			const criticals = new Module("Criticals", () => {}, () => "Packet");
+			criticals.toggle();
+
 			// this is a very old crash method,
 			// bread (one of the devs behind atmosphere) found it
 			// and later shared it to me when we were talking
@@ -1361,6 +1364,30 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			serverCrasherStartX = serverCrasher.addoption("Start X", Number, 99e9);
 			serverCrasherStartZ = serverCrasher.addoption("Start Z", Number, 99e9);
 			serverCrasherPacketsPerTick = serverCrasher.addoption("Packets Per Tick", Number, 16);
+
+			/** y offset values, that when used before attacking a player, gives a critical hit! **/
+			const CRIT_OFFSETS = [
+				0.08, -0.07840000152
+			];
+
+			/** call this before sending a use entity packet to attack. this makes the player crit **/
+			function crit(when = criticals.enabled && player.onGround) {
+				if (!when) {
+					return;
+				}
+
+				for (const offset of CRIT_OFFSETS) {
+					const pos = {
+						x: player.pos.x,
+						y: player.pos.y + offset,
+						z: player.pos.z
+					};
+					ClientSocket.sendPacket(new SPacketPlayerPosLook({
+						pos,
+						onGround: false
+					}));
+				}
+			}
 
 			// Killaura
 			let attackDelay = Date.now();
@@ -1480,6 +1507,38 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 
 			let killAuraAttackInvisible;
 			let attackList = [];
+
+			function findTarget(range = 6, angle = 360) {
+				const localPos = controls.position.clone();
+				const localTeam = getTeam(player);
+				const entities = game.world.entitiesDump;
+
+				const sqRange = range * range;
+				const entities2 = Array.from(entities.values());
+
+				const targets = entities2.filter(e => {
+					const base = e instanceof EntityPlayer && e.id != player.id;
+					if (!base) return false;
+					const distCheck = player.getDistanceSqToEntity(e) < sqRange;
+					if (!distCheck) return false;
+					const isFriend = friends.includes(e.name);
+					const friendCheck = !ignoreFriends && isFriend;
+					if (friendCheck) return false;
+					// pasted
+					const {mode} = e;
+					if (mode.isSpectator() || mode.isCreative()) return false;
+					const invisCheck = killAuraAttackInvisible[1] || e.isInvisibleDump();
+					if (!invisCheck) return false;
+					const teamCheck = localTeam && localTeam == getTeam(e);
+					if (teamCheck) return false;
+					const wallCheck = killaurawall[1] && !player.canEntityBeSeen(e);
+					if (wallCheck) return false;
+					return true;
+				})
+
+				return targets;
+			}
+
 			const killaura = new Module("Killaura", function(callback) {
 				if (callback) {
 					for(let i = 0; i < 10; i++) {
@@ -1495,31 +1554,8 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					tickLoop["Killaura"] = function() {
 						attacked = 0;
 						didSwing = false;
-						const localPos = controls.position.clone();
-						const localTeam = getTeam(player);
-						const entities = game.world.entitiesDump;
 
-						const sqRange = killaurarange[1] * killaurarange[1];
-						const entities2 = Array.from(entities.values());
-						attackList = entities2.filter(e => {
-							const base = e instanceof EntityPlayer && e.id != player.id;
-							if (!base) return false;
-							const distCheck = player.getDistanceSqToEntity(e) < sqRange;
-							if (!distCheck) return false;
-							const isFriend = friends.includes(e.name);
-							const friendCheck = !ignoreFriends && isFriend;
-							if (friendCheck) return false;
-							// pasted
-							const {mode} = e;
-							if (mode.isSpectator() || mode.isCreative()) return false;
-							const invisCheck = killAuraAttackInvisible[1] || e.isInvisibleDump();
-							if (!invisCheck) return false;
-							const teamCheck = localTeam && localTeam == getTeam(e);
-							if (teamCheck) return false;
-							const wallCheck = killaurawall[1] && !player.canEntityBeSeen(e);
-							if (wallCheck) return false;
-							return true;
-						})
+						attackList = findTarget(killaurarange[1], killauraangle[1]);
 
 						attackList.sort((a, b) => {
 							return (attackedPlayers[a.id] || 0) > (attackedPlayers[b.id] || 0) ? 1 : -1;
