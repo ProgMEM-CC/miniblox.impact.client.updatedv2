@@ -169,9 +169,9 @@ And then enjoy using the client!
 - [ ] Render miniblox's HUDS (ie. health bar to mc like hearts?!)
 - [ ] ArmorHUD (to improve my targetHUD ) (using exhibition?!)
 - [ ] AutoSword (*should be easy to do*)
-- [ ] New Speed bypass?! (with a desync? again should be easy to do)
 - [ ] CustomSky – Applies custom skybox textures.
 - [ ] AutoInsult / ComplimentBot – Randomly sends messages after kills. (improvement to my AutoFunnyChat module?)
+- [x] New Speed bypass?! (with desync)
 
 ## 🧩 Developer Notes
 
