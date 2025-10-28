@@ -670,7 +670,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	// SWING FIX
 	addModification('player.getActiveItemStack().item instanceof', 'null == ', true);
 
-	// .COMMANDS
+	// COMMANDS
 	addModification('submit(u){', `
 		const str = this.inputValue.toLocaleLowerCase();
 		const args = str.split(" ");
@@ -681,6 +681,13 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				if (module) module.setbind(args[2] == "none" ? "" : args[2], true);
 				return this.closeInput();
 			}
+			case "panic":
+				for(const [name, module] of Object.entries(modules)) module.setEnabled(false);
+				game.chat.addChat({
+					text: "Toggled off all modules!",
+					color: "red"
+				});
+				return this.closeInput();
 			case ".t":
 			case ".toggle":
 				if (args.length > 1) {
@@ -699,7 +706,17 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				return this.closeInput();
 			case ".modules":
 				chatString = "Module List\\n";
-				for(const [name, module] of Object.entries(modules)) chatString += "\\n" + name;
+				const modulesByCategory = {};
+				for(const [name, module] of Object.entries(modules)) {
+					if (!modulesByCategory[module.category]) modulesByCategory[module.category] = [];
+					modulesByCategory[module.category].push(name);
+				}
+				for(const [category, moduleNames] of Object.entries(modulesByCategory)) {
+					chatString += "\\n\\n" + category + ":";
+					for (const moduleName of moduleNames) {
+						chatString += "\\n" + moduleName;
+					}
+				}
 				game.chat.addChat({text: chatString});
 				return this.closeInput();
 			case ".binds":
@@ -1096,6 +1113,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					this.bind = "";
 					this.options = {};
 					this.tagGetter = tag;
+					this.category = category;
 					modules[this.name] = this;
 				}
 				toggle() {
@@ -1240,23 +1258,25 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					tickLoop["AutoClicker"] = function() {
 						if (clickDelay < Date.now() && playerControllerDump.key.leftClick && !player.isUsingItem()) {
 							playerControllerDump.leftClick();
-							clickDelay = Date.now() + 60;
+							clickDelay = Date.now() + 51;
 						}
 					}
 				} else delete tickLoop["AutoClicker"];
-			});
-			new Module("AntiBlind", function() {});
+			}, "Combat");
+			new Module("AntiBlind", function() {}, "Render");
 			new Module("AntiCheat", function(callback) {
 				if (!callback)
-					return; 
+					return; // TODO: deinitialization logic
 				const entities = game.world.entitiesDump;
 				for (const entity of entities) {
 						if (!entity instanceof EntityPlayer)
-							continue; 
+							continue; // only go through players
 						if (entity.mode.isCreative() || entity.mode.isSpectator())
-							continue; 
+							continue; // ignore Albert einstein or someone who died
+						// TODO: track the player's position and get the difference from previous position to new position.
 				}
-			});
+			}, "Misc");
+
 
             function reloadTickLoop(value) {
 				if (game.tickLoop) {
@@ -1266,12 +1286,12 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 			}
 
-			new Module("Sprint", function() {});
-			const velocity = new Module("Velocity", function() {}, () => \`\${velocityhori[1]}% \${velocityvert[1]}%\`);
+			new Module("Sprint", function() {}, "Movement");
+			const velocity = new Module("Velocity", function() {}, "Combat", () => \`\${velocityhori[1]}% \${velocityvert[1]}%\`);
 			velocityhori = velocity.addoption("Horizontal", Number, 0);
 			velocityvert = velocity.addoption("Vertical", Number, 0);
    
-			// Nofall beta??
+			// Nofall beta?
    			let noFallExtraYBeta;
 			const NoFallBeta = new Module("NoFallBeta", function(callback) {
 				if (callback) {
@@ -1312,21 +1332,21 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			});
 
 			// WTap
-			new Module("WTap", function() {});
+			new Module("WTap", function() {}, "Movement");
 
-			// AntiFall 
-			new Module("AntiFall", function(callback) {
+			// AntiVoid
+			new Module("AntiVoid", function(callback) {
 				if (callback) {
 					let ticks = 0;
-					tickLoop["AntiFall"] = function() {
+					tickLoop["AntiVoid"] = function() {
         				const ray = rayTraceBlocks(player.getEyePos(), player.getEyePos().clone().setY(0), false, false, false, game.world);
 						if (!ray) {
 							player.motion.y = 0;
 						}
 					};
 				}
-				else delete tickLoop["AntiFall"];
-			});
+				else delete tickLoop["AntiVoid"];
+			}, "Player");
 
 			const criticals = new Module("Criticals", () => {}, () => "Packet");
 			criticals.toggle();
@@ -1335,7 +1355,6 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			// bread (one of the devs behind atmosphere) found it
 			// and later shared it to me when we were talking
 			// about the upcoming bloxd layer.
-			// it's patched on the gamemodes... but not on the planets. I might find another one soon for the ones where this is patched.
 
 			let serverCrasherStartX, serverCrasherStartZ;
 			let serverCrasherPacketsPerTick;
@@ -1357,10 +1376,10 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 						}
 					}
 				} else {
-					delete tickLoop["ServerCrasher"]
+					delete tickLoop["ServerCrasher"];
 				}
-			}, () => "Spam Chunk Load");
-
+			}, "Exploit", () => "Spam Chunk Load");
+			
 			serverCrasherStartX = serverCrasher.addoption("Start X", Number, 99e9);
 			serverCrasherStartZ = serverCrasher.addoption("Start Z", Number, 99e9);
 			serverCrasherPacketsPerTick = serverCrasher.addoption("Packets Per Tick", Number, 16);
@@ -1434,25 +1453,10 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 						const couldCrit = player.ridingEntity == null && !player.inWater
 							&& !player.isOnLadder();
 						if (couldCrit) {
-							if (!player.onGround) {
-								return;
-							}
-							const offsets = [
-								0.08, -0.07840000152
-							];
-							for (const offset of offsets) {
-								const pos = {
-									x: player.pos.x,
-									y: player.pos.y + offset,
-									z: player.pos.z
-								};
-								ClientSocket.sendPacket(new SPacketPlayerPosLook({
-									pos,
-									onGround: false
-								}));
-							}
+							crit();
 						}
 
+						sendYaw = false;
 						ClientSocket.sendPacket(new SPacketUseEntity({
 							id: entity.id,
 							action: 1,
@@ -1503,7 +1507,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 
 			new Module("NoFriends", function(enabled) {
 				ignoreFriends = enabled;
-			}, () => "Ignore");
+			}, "Combat", () => "Ignore");
 
 			let killAuraAttackInvisible;
 			let attackList = [];
@@ -1538,7 +1542,6 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 
 				return targets;
 			}
-
 			const killaura = new Module("Killaura", function(callback) {
 				if (callback) {
 					for(let i = 0; i < 10; i++) {
@@ -1590,7 +1593,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					sendYaw = false;
 					unblock();
 				}
-			}, () => \`\${killaurarange[1]} block\${killaurarange[1] == 1 ? "" : "s"} \${killaurablock[1] ? "Auto Block" : ""}\`);
+			}, "Combat", () => \`\${killaurarange[1]} block\${killaurarange[1] == 1 ? "" : "s"} \${killaurablock[1] ? "Auto Block" : ""}\`);
 			killaurarange = killaura.addoption("Range", Number, 9);
 			killauraangle = killaura.addoption("Angle", Number, 360);
 			killaurablock = killaura.addoption("AutoBlock", Boolean, true);
@@ -1599,8 +1602,8 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			killauraitem = killaura.addoption("LimitToSword", Boolean, false);
 			killAuraAttackInvisible = killaura.addoption("AttackInvisbles", Boolean, true);
 			killauraSwitchDelay = killaura.addoption("SwitchDelay", Number, 100);
-
-			new Module("FastBreak", function() {});
+			
+			new Module("FastBreak", function() {}, "World");
 
 			function getMoveDirection(moveSpeed) {
 				let moveStrafe = player.moveStrafeDump;
@@ -1692,12 +1695,14 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 					}
 					let ticks = 0;
 					tickLoop["InfiniteFly"] = function() {
+						sendGround = undefined;
 						ticks++;
 						const dir = getMoveDirection(0.37799);
 						player.motion.x = dir.x;
 						player.motion.z = dir.z;
 						const goUp = keyPressedDump("space");
 						const goDown = keyPressedDump("shift");
+						sendGround = true;
 						if (ticks < 6 && !goUp && !goDown) {
 							player.motion.y = 0;
 							return;
@@ -1725,7 +1730,7 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 						}
 					}
 				}
-			},  () => \`V \${infiniteFlyVert[1]} \${infiniteFlyLessGlide[1] ? "LessGlide" : "MoreGlide"}\`);
+			}, "Movement",  () => \`V \${infiniteFlyVert[1]} \${infiniteFlyLessGlide[1] ? "LessGlide" : "MoreGlide"}\`);
 			infiniteFlyVert = infiniteFly.addoption("Vertical", Number, 0.15);
 			infiniteFlyLessGlide = infiniteFly.addoption("LessGlide", Boolean, true);
 
@@ -1776,12 +1781,12 @@ speedvalue = speed.addoption("Speed", Number, 0.39);
 speedjump = speed.addoption("JumpHeight", Number, 0.42);
 speedauto = speed.addoption("AutoJump", Boolean, true);
 
-			const step = new Module("Step", function() {}, () => \`\${stepheight[1]}\`);
-			stepheight = step.addoption("Height", Number, 2);
+			const step = new Module("Step", function() {}, "Player", () => \`\${stepheight[1]}\`);
+			stepheight = step.addoption("Height", Number, 0.5);
 
 
-			new Module("ESP", function() {});
-			const textgui = new Module("TextGUI", function() {});
+			new Module("ESP", function() {}, "Render");
+			const textgui = new Module("TextGUI", function() {}, "Render");
 			textguifont = textgui.addoption("Font", String, "Poppins");
 			textguisize = textgui.addoption("TextSize", Number, 14);
 			textguishadow = textgui.addoption("Shadow", Boolean, true);
@@ -2235,7 +2240,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					}
 				}
 				else delete tickLoop["Breaker"];
-			}, () => \`\${breakerrange[1]} block\${breakerrange[1] == 1 ? "" : "s"}\`);
+			}, "Minigames", () => \`\${breakerrange[1]} block\${breakerrange[1] == 1 ? "" : "s"}\`);
 			breakerrange = breaker.addoption("Range", Number, 10);
 
 			// Nuker
@@ -2250,8 +2255,8 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					}
 				}
 				else delete tickLoop["Nuker"];
-			}, () => \`\${nukerRange[1]} block\${nukerRange[1] == 1 ? "" : "s"}\`);
-			nukerRange = nuker.addoption("Range", Number, 10);
+			}, "World", () => \`\${nukerRange[1]} block\${nukerRange[1] == 1 ? "" : "s"}\`);
+			nukerRange = nuker.addoption("Range", Number, 5);
 
 			function getItemStrength(stack) {
 				if (stack == null) return 0;
@@ -2314,7 +2319,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					}
 				}
 				else delete tickLoop["AutoArmor"];
-			});
+			}, "Player");
 
 			function craftRecipe(recipe) {
 				if (canCraftItem(player.inventory, recipe)) {
@@ -2340,7 +2345,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					}
 				}
 				else delete tickLoop["AutoCraft"];
-			});
+			}, "Misc");
 
 			
             // ChestSteal OP
@@ -2376,7 +2381,7 @@ const cheststeal = new Module("ChestSteal", function(callback) {
         }
     } else {
         delete tickLoop["ChestSteal"];
-    }
+    } "World", () => \`\${cheststealblocks[1] ? "B: Y" : "B: Y"} \${cheststealtools[1] ? "T: Y" : "T: Y"}\`);
 });
 cheststealblocks = cheststeal.addoption("Blocks", Boolean, true);
 cheststealtools = cheststeal.addoption("Tools", Boolean, true);
@@ -2583,20 +2588,20 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 			let timervalue;
 			const timer = new Module("Timer", function(callback) {
 				reloadTickLoop(callback ? 50 / timervalue[1] : 50);
-			}, () => \`\${timervalue[1]} MSPT\`);
+			}, "World", () => \`\${timervalue[1]} MSPT\`);
 			timervalue = timer.addoption("Value", Number, 1.2);
-			new Module("Phase", function() {});
+			new Module("Phase", function() {}, "World");
 
-			const antiban = new Module("AntiBan", function() {}, () => useAccountGen[1] ? "Gen" : "Non Account");
+			const antiban = new Module("AntiBan", function() {}, "Misc", () => useAccountGen[1] ? "Gen" : "Non Account");
 			useAccountGen = antiban.addoption("AccountGen", Boolean, false);
 			accountGenEndpoint = antiban.addoption("GenServer", String, "http://localhost:8000/generate");
 			antiban.toggle();
-			new Module("AutoRejoin", function() {});
-			new Module("AutoQueue", function() {});
-			new Module("AutoVote", function() {});
-			const chatdisabler = new Module("ChatDisabler", function() {}, () => "Spam");
-			chatdisablermsg = chatdisabler.addoption("Message", String, "Your clients src code offically sucks.");
-			new Module("FilterBypass", function() {}, () => "\\\\");
+			new Module("AutoRejoin", function() {}, "Misc");
+			new Module("AutoQueue", function() {}, "Minigames");
+			new Module("AutoVote", function() {}, "Minigames");
+			const chatdisabler = new Module("ChatDisabler", function() {}, "Misc", () => "Spam");
+			chatdisablermsg = chatdisabler.addoption("Message", String, "Your src code suc\ks");
+			new Module("FilterBypass", function() {}, "Exploit", () => "\\\\");
    
     
     const InvCleaner = new Module("InvCleaner", function (callback) {
@@ -2893,7 +2898,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 					if (player) player.setGamemode(GameMode.fromId("survival"));
 					survival.toggle();
 				}
-			}, () => "Spoof");
+			}, "Misc", () => "Spoof");
 
 			globalThis.${storeName}.modules = modules;
 			globalThis.${storeName}.profile = "default";
