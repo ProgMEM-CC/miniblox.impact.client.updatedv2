@@ -1626,86 +1626,53 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			const step = new Module("Step", function() {}, () => \`\${stepheight[1]}\`);
 			stepheight = step.addoption("Height", Number, 2);
 
-			// TargetStrafe
-			let strafeDistance, strafeSpeed, strafeRequireSpeed, strafeDirection;
-			let strafeAngle = 0;
+			let strafeBehindDistance, strafeMoveSpeed, strafeRequireSpeed;
 			const targetStrafe = new Module("TargetStrafe", function(callback) {
 				if (!callback) {
 					delete tickLoop["TargetStrafe"];
-					strafeAngle = 0;
 					return;
 				}
 
 				tickLoop["TargetStrafe"] = function() {
-					// Check if KillAura is enabled
 					if (!enabledModules["Killaura"]) return;
-
-					// Check if Speed requirement is met (if enabled)
 					if (strafeRequireSpeed[1] && !enabledModules["Speed"]) return;
-
-					// Check if any movement key is pressed
-					const isMoving = player.moveStrafeDump !== 0 || player.moveForwardDump !== 0;
-					if (!isMoving) return;
-
-					// Get the first target from attackList (KillAura's target)
+					if (player.moveStrafeDump === 0 && player.moveForwardDump === 0) return;
 					if (!attackList || attackList.length === 0) return;
 					const target = attackList[0];
 					if (!target) return;
 
-					// Update strafe angle based on direction
-					const angleIncrement = strafeSpeed[1] * (strafeDirection[1] ? 1 : -1);
-					strafeAngle += angleIncrement;
+					let moveSpeed = strafeMoveSpeed[1];
+					if (moveSpeed === 0) {
+						moveSpeed = (speedvalue && enabledModules["Speed"]) ? speedvalue[1] : 0.2;
+					}
 
-					// Calculate new position around target
-					const targetX = target.pos.x + Math.cos(strafeAngle) * strafeDistance[1];
-					const targetZ = target.pos.z + Math.sin(strafeAngle) * strafeDistance[1];
-
-					// Calculate direction to strafe position
-					const moveX = targetX - player.pos.x;
-					const moveZ = targetZ - player.pos.z;
+					const targetYaw = target.yaw || 0;
+					const behindX = target.pos.x - Math.sin(targetYaw) * strafeBehindDistance[1];
+					const behindZ = target.pos.z + Math.cos(targetYaw) * strafeBehindDistance[1];
+					const moveX = behindX - player.pos.x;
+					const moveZ = behindZ - player.pos.z;
 					const moveDist = Math.sqrt(moveX * moveX + moveZ * moveZ);
 
 					if (moveDist > 0.1) {
-						// Normalize direction vector
-						const normalizedX = moveX / moveDist;
-						const normalizedZ = moveZ / moveDist;
-						
-						// Get current speed (from Speed module if active, otherwise default)
-						let moveSpeed = speedvalue && enabledModules["Speed"] ? speedvalue[1] : 0.2;
-						
-						// Apply client-side movement (actual motion)
-						player.motion.x = normalizedX * moveSpeed;
-						player.motion.z = normalizedZ * moveSpeed;
-						
-						// Calculate the angle to the target position
-						const angleToTarget = Math.atan2(moveZ, moveX);
-						
-						// Calculate relative angle to player's yaw
-						const relativeAngle = angleToTarget - player.yaw;
-						
-						// Convert to forward/strafe inputs (-1 to 1)
-						// This sends proper movement input to the server
-						const forward = Math.cos(relativeAngle);
-						const strafe = Math.sin(relativeAngle);
-						
-						// Override player movement inputs (server-side)
-						player.moveForwardDump = forward;
-						player.moveStrafeDump = strafe;
-
-						// Auto jump when on ground
+						const moveYaw = Math.atan2(-moveX, moveZ);
+						player.yaw = moveYaw;
+						player.rotationYaw = moveYaw;
+						player.moveForwardDump = 1.0;
+						player.moveStrafeDump = 0;
+						player.motion.x = -Math.sin(moveYaw) * moveSpeed;
+						player.motion.z = Math.cos(moveYaw) * moveSpeed;
 						if (player.onGround) {
-							player.motion.y = speedjump && enabledModules["Speed"] ? speedjump[1] : 0.42;
+							player.motion.y = (speedjump && enabledModules["Speed"]) ? speedjump[1] : 0.42;
 						}
 					}
 				};
-			}, () => strafeDistance[1] + "b " + (strafeDirection[1] ? "CW" : "CCW"));
+			}, () => strafeBehindDistance[1] + "b behind");
 
-			strafeDistance = targetStrafe.addoption("Distance", Number, 3);
-			strafeDistance.range = [1, 6, 0.1];
-			strafeSpeed = targetStrafe.addoption("Speed", Number, 0.1);
-			strafeSpeed.range = [0.01, 0.3, 0.01];
+			strafeBehindDistance = targetStrafe.addoption("BehindDistance", Number, 2);
+			strafeBehindDistance.range = [0.5, 5, 0.1];
+			strafeMoveSpeed = targetStrafe.addoption("MoveSpeed", Number, 0);
+			strafeMoveSpeed.range = [0, 1, 0.05];
 			strafeRequireSpeed = targetStrafe.addoption("RequireSpeed", Boolean, false);
-			strafeDirection = targetStrafe.addoption("Clockwise", Boolean, true);
 
 			new Module("ESP", function() {});
 			const textgui = new Module("TextGUI", function() {});
