@@ -1106,6 +1106,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				options = {};
 				/** @type {() => string | undefined} */
 				tagGetter = () => undefined;
+				category;
 				constructor(name, func, tag = () => undefined) {
 					this.name = name;
 					this.func = func;
@@ -1818,7 +1819,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					closeScriptManagerUI();
 					if (game?.canvas) game.canvas.requestPointerLock();
 				}
-			});
+			}, "Client");
 
 			function openScriptManagerUI() {
 				if (scriptManagerUI) return;
@@ -2579,7 +2580,7 @@ const scaffold = new Module("Scaffold", function(callback) {
         }
         delete tickLoop["Scaffold"];
     }
-});
+}, "World");
 
 scaffoldtower = scaffold.addoption("Tower", Boolean, true);
 scaffoldextend = scaffold.addoption("Extend", Number, 1);
@@ -2600,142 +2601,142 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 			new Module("AutoQueue", function() {}, "Minigames");
 			new Module("AutoVote", function() {}, "Minigames");
 			const chatdisabler = new Module("ChatDisabler", function() {}, "Misc", () => "Spam");
-			chatdisablermsg = chatdisabler.addoption("Message", String, "Your src code suc\ks");
+			chatdisablermsg = chatdisabler.addoption("Message", String, "Your src code suc\\\\ks");
 			new Module("FilterBypass", function() {}, "Exploit", () => "\\\\");
    
     
     const InvCleaner = new Module("InvCleaner", function (callback) {
-    if (!callback) {
-        delete tickLoop["InvCleaner"];
-        return;
-    }
+		if (!callback) {
+			delete tickLoop["InvCleaner"];
+			return;
+		}
 
-    const armorPriority = ["leather", "chain", "iron", "diamond"];
-    const weaponClasses = new Set(["ItemSword", "ItemAxe", "ItemBow", "ItemPickaxe"]);
-    const essentials = ["gapple", "golden apple", "ender pearl", "fire charge"];
-    const customKeep = ["god helmet", "legend boots"];
-    const bestArmor = {};
-    const bestItems = {};
-    let lastRun = 0;
-    const seenItems = {};
+		const armorPriority = ["leather", "chain", "iron", "diamond"];
+		const weaponClasses = new Set(["ItemSword", "ItemAxe", "ItemBow", "ItemPickaxe"]);
+		const essentials = ["gapple", "golden apple", "ender pearl", "fire charge"];
+		const customKeep = ["god helmet", "legend boots"];
+		const bestArmor = {};
+		const bestItems = {};
+		let lastRun = 0;
+		const seenItems = {};
 
-    function getArmorScore(stack) {
-        const item = stack.getItem();
-        const material = item.getArmorMaterial?.()?.toLowerCase?.() ?? "unknown";
-        const priority = armorPriority.indexOf(material);
-        const durability = stack.getMaxDamage() - stack.getItemDamage();
-        return (priority === -1 ? -999 : priority * 1000) + durability;
-    }
+		function getArmorScore(stack) {
+			const item = stack.getItem();
+			const material = item.getArmorMaterial?.()?.toLowerCase?.() ?? "unknown";
+			const priority = armorPriority.indexOf(material);
+			const durability = stack.getMaxDamage() - stack.getItemDamage();
+			return (priority === -1 ? -999 : priority * 1000) + durability;
+		}
 
-    function getMaterialScore(name) {
-        name = name.toLowerCase();
-        if (name.includes("diamond")) return 4;
-        if (name.includes("iron")) return 3;
-        if (name.includes("chain")) return 2;
-        if (name.includes("wood")) return 1;
-        return 0;
-    }
+		function getMaterialScore(name) {
+			name = name.toLowerCase();
+			if (name.includes("diamond")) return 4;
+			if (name.includes("iron")) return 3;
+			if (name.includes("chain")) return 2;
+			if (name.includes("wood")) return 1;
+			return 0;
+		}
 
-    function getScore(stack, item) {
-        const damage = item.getDamageVsEntity?.() ?? 0;
-        const enchants = stack.getEnchantmentTagList()?.length ?? 0;
-        const material = getMaterialScore(stack.getDisplayName());
-        return damage + enchants * 1.5 + material * 0.5;
-    }
+		function getScore(stack, item) {
+			const damage = item.getDamageVsEntity?.() ?? 0;
+			const enchants = stack.getEnchantmentTagList()?.length ?? 0;
+			const material = getMaterialScore(stack.getDisplayName());
+			return damage + enchants * 1.5 + material * 0.5;
+		}
 
-    function isSameItem(a, b) {
-        if (!a || !b) return false;
-        const nameA = a.stack.getDisplayName()?.toLowerCase();
-        const nameB = b.stack.getDisplayName()?.toLowerCase();
-        const enchA = a.stack.getEnchantmentTagList()?.toString();
-        const enchB = b.stack.getEnchantmentTagList()?.toString();
-        return nameA === nameB && enchA === enchB;
-    }
+		function isSameItem(a, b) {
+			if (!a || !b) return false;
+			const nameA = a.stack.getDisplayName()?.toLowerCase();
+			const nameB = b.stack.getDisplayName()?.toLowerCase();
+			const enchA = a.stack.getEnchantmentTagList()?.toString();
+			const enchB = b.stack.getEnchantmentTagList()?.toString();
+			return nameA === nameB && enchA === enchB;
+		}
 
-    function shouldKeep(stack) {
-        const name = stack.getDisplayName().toLowerCase();
-        return essentials.some(k => name.includes(k)) || customKeep.some(k => name.includes(k));
-    }
+		function shouldKeep(stack) {
+			const name = stack.getDisplayName().toLowerCase();
+			return essentials.some(k => name.includes(k)) || customKeep.some(k => name.includes(k));
+		}
 
-    tickLoop["InvCleaner"] = function () {
-        const now = Date.now();
-        if (now - lastRun < 100) return;
-        lastRun = now;
+		tickLoop["InvCleaner"] = function () {
+			const now = Date.now();
+			if (now - lastRun < 100) return;
+			lastRun = now;
 
-        const slots = player?.inventoryContainer?.inventorySlots;
-        if (!player.openContainer || player.openContainer !== player.inventoryContainer || !slots || slots.length < 36) return;
+			const slots = player?.inventoryContainer?.inventorySlots;
+			if (!player.openContainer || player.openContainer !== player.inventoryContainer || !slots || slots.length < 36) return;
 
-        Object.keys(bestArmor).forEach(k => delete bestArmor[k]);
-        Object.keys(bestItems).forEach(k => delete bestItems[k]);
-        Object.keys(seenItems).forEach(k => delete seenItems[k]);
+			Object.keys(bestArmor).forEach(k => delete bestArmor[k]);
+			Object.keys(bestItems).forEach(k => delete bestItems[k]);
+			Object.keys(seenItems).forEach(k => delete seenItems[k]);
 
-        const toDrop = [];
+			const toDrop = [];
 
-        // Preload equipped armor
-        [5, 6, 7, 8].forEach(i => {
-            const stack = slots[i]?.getStack();
-            if (stack?.getItem() instanceof ItemArmor) {
-                const armorType = stack.getItem().armorType ?? "unknown";
-                bestArmor["armor_" + armorType] = { stack, index: i, score: getArmorScore(stack) };
-            }
-        });
+			// Preload equipped armor
+			[5, 6, 7, 8].forEach(i => {
+				const stack = slots[i]?.getStack();
+				if (stack?.getItem() instanceof ItemArmor) {
+					const armorType = stack.getItem().armorType ?? "unknown";
+					bestArmor["armor_" + armorType] = { stack, index: i, score: getArmorScore(stack) };
+				}
+			});
 
-        for (let i = 0; i < 36; i++) {
-            const stack = slots[i]?.getStack();
-            if (!stack) continue;
+			for (let i = 0; i < 36; i++) {
+				const stack = slots[i]?.getStack();
+				if (!stack) continue;
 
-            const item = stack.getItem();
-            const className = item.constructor.name;
+				const item = stack.getItem();
+				const className = item.constructor.name;
 
-            if (shouldKeep(stack)) continue;
+				if (shouldKeep(stack)) continue;
 
-            if (item instanceof ItemArmor) {
-                const armorType = item.armorType ?? "unknown";
-                const key = "armor_" + armorType;
-                const score = getArmorScore(stack);
-                const existing = bestArmor[key];
+				if (item instanceof ItemArmor) {
+					const armorType = item.armorType ?? "unknown";
+					const key = "armor_" + armorType;
+					const score = getArmorScore(stack);
+					const existing = bestArmor[key];
 
-                if (!existing) {
-                    bestArmor[key] = { stack, index: i, score };
-                } else {
-                    if (score > existing.score) {
-                        toDrop.push(existing.index);
-                        bestArmor[key] = { stack, index: i, score };
-                    } else {
-                        toDrop.push(i);
-                    }
-                }
-                continue;
-            }
+					if (!existing) {
+						bestArmor[key] = { stack, index: i, score };
+					} else {
+						if (score > existing.score) {
+							toDrop.push(existing.index);
+							bestArmor[key] = { stack, index: i, score };
+						} else {
+							toDrop.push(i);
+						}
+					}
+					continue;
+				}
 
-            if (weaponClasses.has(className)) {
-                const score = getScore(stack, item);
-                const existing = bestItems[className];
+				if (weaponClasses.has(className)) {
+					const score = getScore(stack, item);
+					const existing = bestItems[className];
 
-                if (!existing || score > existing.score) {
-                    if (existing && existing.index !== i) toDrop.push(existing.index);
-                    bestItems[className] = { stack, score, index: i };
-                } else if (existing && isSameItem(bestItems[className], { stack })) {
-                    toDrop.push(i);
-                } else {
-                    toDrop.push(i);
-                }
-                continue;
-            }
+					if (!existing || score > existing.score) {
+						if (existing && existing.index !== i) toDrop.push(existing.index);
+						bestItems[className] = { stack, score, index: i };
+					} else if (existing && isSameItem(bestItems[className], { stack })) {
+						toDrop.push(i);
+					} else {
+						toDrop.push(i);
+					}
+					continue;
+				}
 
-            const name = stack.getDisplayName()?.toLowerCase() ?? "";
-            if (!shouldKeep(stack)) {
-                if (seenItems[name]) {
-                    toDrop.push(i);
-                } else {
-                    seenItems[name] = true;
-                }
-            }
-        }
+				const name = stack.getDisplayName()?.toLowerCase() ?? "";
+				if (!shouldKeep(stack)) {
+					if (seenItems[name]) {
+						toDrop.push(i);
+					} else {
+						seenItems[name] = true;
+					}
+				}
+			}
 
-        toDrop.forEach(dropSlot);
-    };
-});
+			toDrop.forEach(dropSlot);
+		};
+}, "Player");
 
 function dropSlot(index) {
     const windowId = player.openContainer.windowId;
@@ -2850,7 +2851,7 @@ const jesus = new Module("Jesus", function(callback) {
     } else {
         delete tickLoop["Jesus"];
     }
-});
+}, "Movement");
 
 // LongJump
 let ljpower, ljboost, ljdesync;
@@ -2886,7 +2887,7 @@ const longjump = new Module("LongJump", function(callback) {
             }
         }
     };
-});
+}, "Movement");
 
 // Options
 ljpower  = longjump.addoption("Power", Number, 0.6);   // horizontal boost
@@ -3037,33 +3038,22 @@ const survival = new Module("SurvivalMode", function(callback) {
 	}
 
 	function injectGUI(store) {
-		const categoryMap = {
-			Combat: ["autoclicker", "killaura", "velocity", "wtap", "keepsprint"],
-			Movement: ["scaffold", "jesus", "phase", "nofall", "antifall", "sprint", "step", "speed", "jetpack", "noslowdown", "longjump", "fly", "infinitefly"],
-			Player: ["invcleaner", "invwalk", "autoarmor", "autorespawn", "fastbreak"],
-			Render: ["esp", "nametags+", "textgui", "chinahat"],
-			World: ["breaker", "autocraft", "cheststeal", "timer", "survivalmode"],
-			Misc: ["autorejoin", "autoqueue", "autovote", "filterbypass", "anticheat", "autofunnychat", "chatdisabler", "musicfix", "auto-funnychat", "music-fix", "servercrasher", "antiblind", "nofallbeta", "nofall", "antiban", "scriptmanager"]
-		};
-
+		const scripts = [];
 		// Update Scripts category dynamically
 		store.updateScriptsCategory = function () {
 			try {
 				const scripts = store.customScripts || {};
-				// Collect all module names from all scripts
-				const scriptModules = [];
 				Object.values(scripts).forEach(script => {
 					if (script.moduleNames && script.moduleNames.length > 0) {
 						script.moduleNames.forEach(modName => {
-							scriptModules.push(modName.toLowerCase());
+							scripts.push(modName.toLowerCase());
 						});
 					}
 				});
 				
-				console.log("Updating Scripts category:", scriptModules);
+				console.log("Updating Scripts category:", scripts);
 				
-				if (scriptModules.length > 0) {
-					categoryMap.Scripts = scriptModules;
+				if (scripts.length > 0) {
 					
 					// Recreate category panel if it exists
 					if (categoryPanel) {
@@ -3074,7 +3064,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 						document.body.appendChild(categoryPanel);
 					}
 				} else {
-					delete categoryMap.Scripts;
+					scripts.clear();
 				}
 			} catch (e) {
 				console.error("Failed to update Scripts category:", e);
@@ -3295,9 +3285,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 			const baseCategories = ["Combat", "Movement", "Player", "Render", "World", "Misc"];
 			const categories = [...baseCategories];
 
-			// Add Scripts category if custom scripts exist
-			console.log("Creating category panel, categoryMap.Scripts:", categoryMap.Scripts);
-			if (categoryMap.Scripts && categoryMap.Scripts.length > 0) {
+			if (scripts > 0) {
 				console.log("Adding Scripts category!");
 				categories.push("Scripts");
 			}
@@ -3578,23 +3566,10 @@ const survival = new Module("SurvivalMode", function(callback) {
 			}
 
 			// Get modules for this category
-			const catKey = categoryMap[category] || [];
-			console.log("Category keys:", catKey);
-			console.log("Available modules:", Object.keys(store.modules));
-			
-			const modules = Object.entries(store.modules).filter(([name]) => {
-				const nameLower = name.toLowerCase();
-				// For Scripts category, use exact match
-				if (category === "Scripts") {
-					const match = catKey.includes(nameLower);
-					console.log("Checking", name, "->", nameLower, "in", catKey, "=", match);
-					return match;
-				}
-				// For other categories, use includes
-				return catKey.some(k => nameLower.includes(k));
-			});
+			const modules = Object.values(store.modules).filter((mod) => mod.category == category);
 
 			console.log("Filtered modules:", modules.length);
+
 			if (modules.length === 0) {
 				console.log("No modules found for category:", category);
 				return;
