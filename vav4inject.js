@@ -691,7 +691,8 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			case ".t":
 			case ".toggle":
 				if (args.length > 1) {
-					const module = args.length > 1 && getModule(args[1]);
+					const mName = args[1];
+					const module = args.length > 1 && getModule(mName);
 					if (module) {
 						module.toggle();
 						game.chat.addChat({
@@ -699,7 +700,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 							color: module.enabled ? "lime" : "red"
 						});
 					}
-					else if (args[1] == "all") {
+					else if (mName == "all") {
 						for(const [name, module] of Object.entries(modules)) module.toggle();
 					}
 				}
