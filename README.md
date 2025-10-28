@@ -143,7 +143,7 @@ And then enjoy using the client!
 
 - Fixed filter bypass operating when running a `/` command
 - Added improvements to **Fly - desync**, **NoFall - desync**, and a **Scaffold** bypass (from slots 1–9 in the hotbar)  
-- Introduced Click GUI via `vav4inject.js`  
+- Introduced ClickGUI via `vav4inject.js`  
 - Improved inventory handling and user interface
 
 ## Ideas for some new modules
