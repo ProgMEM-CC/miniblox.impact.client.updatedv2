@@ -3581,7 +3581,8 @@ const survival = new Module("SurvivalMode", function(callback) {
 			modulePanels[category] = panel;
 			document.body.appendChild(panel);
 
-			modules.forEach(([name, mod]) => {
+			modules.forEach((mod) => {
+				const { name } = mod;
 				const { row, optionsBox } = createModuleRow(name, mod, content);
 				content.appendChild(row);
 				content.appendChild(optionsBox);
