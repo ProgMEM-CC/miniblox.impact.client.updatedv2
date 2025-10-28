@@ -2384,7 +2384,7 @@ const cheststeal = new Module("ChestSteal", function(callback) {
     } else {
         delete tickLoop["ChestSteal"];
     };
-}, "World", () => \`\${cheststealblocks[1] ? "B: Y" : "B: Y"} \${cheststealtools[1] ? "T: Y" : "T: Y"}\`);
+}, "World", () => \`\${cheststealblocks[1] ? "B: Y" : "B: N"} \${cheststealtools[1] ? "T: Y" : "T: N"}\`);
 cheststealblocks = cheststeal.addoption("Blocks", Boolean, true);
 cheststealtools = cheststeal.addoption("Tools", Boolean, true);
 
