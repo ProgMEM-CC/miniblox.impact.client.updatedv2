@@ -1609,6 +1609,10 @@ const speed = new Module("Speed", function(callback) {
 			const moveDist = Math.sqrt(moveX * moveX + moveZ * moveZ);
 			
 			if (moveDist > 0.1) {
+				const moveAngle = Math.atan2(-moveX, moveZ);
+				const relativeAngle = moveAngle - player.yaw;
+				player.moveForwardDump = Math.cos(relativeAngle);
+				player.moveStrafeDump = Math.sin(relativeAngle);
 				player.motion.x = (moveX / moveDist) * moveSpeed;
 				player.motion.z = (moveZ / moveDist) * moveSpeed;
 			}
