@@ -5,12 +5,12 @@
 ## An Overview for Impact for Miniblox!
 
 **Impact Client for Miniblox.io** is a fork of the **Vape V4** project by `DataM0del`
-(which is a continuation of the discontinued **Vape V4** project/client by `7GrandDadPGN`).
-When the original client was deleted, `**TheM1ddleM1n**`, `**DataM0del (aka RealPacket)**`, and `**ProgMEM-CC**` and other devs rebuilt it from scratch — creating a modern, modular, and optimized exploit client framework for Miniblox.
+(which is a continuation of the discontinued **Vape V4** project by `7GrandDadPGN`).
+When the original client was deleted, `**TheM1ddleM1n**`, `**DataM0del (aka RealPacket)**`, and `**ProgMEM-CC**` and other devs rebuilt it from scratch — creating a modern, modular, and optimized exploitation client framework for Miniblox.
 
-Designed for stealth, speed, and domination — with full dark-mode support with a slick Click GUI.
+It is designed for stealth, speed, and domination — with full dark-mode support with a slick Click GUI.
 
-Join our [Discord](https://discord.gg/PwpGemYhJx)
+Please join our [Discord](https://discord.gg/PwpGemYhJx)
 
 ## Features
 
@@ -146,7 +146,7 @@ And then enjoy using the client!
 - Introduced ClickGUI via `vav4inject.js`  
 - Improved inventory handling and user interface
 
-## Ideas for some new modules
+## Ideas for some new modules (please look at this for a next step on making this client better!)
 
 - [ ] Force OP module (gain access to admin commands?! funny bypass)
 - [ ] Command Block modification (to change command blocks in survival)
@@ -205,4 +205,4 @@ Please be aware that the developers are not responsible for any misuse or violat
 
 ## Important (FOR BETA) - Comment from TheM1ddleM1n
 
-You can put out code (if it needs to be tested) without harming the main branches. However, if you do decide to put anything in BETA i will thoroughly test the module/idea and i will give you feedback based on- where to improve or if it is good to pull it into `vav4inject.js`!
+You can put out code (if it needs to be tested) without harming the main branch. However, if you do decide to put anything in BETA I will thoroughly test the idea and I will then give you feedback based on:- Where to improve or if it is good to pull it into `vav4inject.js`!
