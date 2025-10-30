@@ -108,7 +108,7 @@
         }
     }
 
-    // === MAIN EXECUTION ===
+    // === MAIN EXECUTION OF THIS CODE ===
     verifyImage(wallpaperUrl).then((verifiedUrl) => {
         wallpaperUrl = verifiedUrl;
 
