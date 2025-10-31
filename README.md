@@ -10,11 +10,11 @@ When the original client was deleted, `**TheM1ddleM1n**`, `**DataM0del (aka Real
 
 It is designed for stealth, speed, and domination — with full dark-mode support with a slick Click GUI.
 
-Please join our [Discord](https://discord.gg/PwpGemYhJx)
+Please join our **[Discord](https://discord.gg/PwpGemYhJx)**
 
 ## Features
 
-- AntiBan 2.0 (use non accounts OR generate accounts with [miniblox-acc-gen](https://codeberg.org/RealPacket/miniblox-acc-gen)'s integration support!)
+- AntiBan 2.0 (use non accounts OR generate accounts with **[miniblox-acc-gen](https://codeberg.org/RealPacket/miniblox-acc-gen)'s** integration support!)
 - Fly, NoFall, NoFallBeta, and Scaffold
 - Click GUI
 - ServerCrasher (works on servers without the new AC, e.g. planets)
@@ -31,7 +31,7 @@ Next, copy the contents of `tampermonkey.js`.
 
 Then, paste it into a new userscript and enable it. (you should see it save automatically!)
 
-Finally, open [miniblox.io](https://miniblox.io) — the client will auto-initialize!
+Finally, open **[miniblox.io](https://miniblox.io)** — the client will auto-initialize!
 
 And then enjoy using the client!
 
@@ -171,7 +171,6 @@ And then enjoy using the client!
 - [ ] AutoSword (*should be easy to do*)
 - [ ] CustomSky – Applies custom skybox textures.
 - [ ] AutoInsult / ComplimentBot – Randomly sends messages after kills. (improvement to my AutoFunnyChat module?)
-- [x] New Speed bypass?! (with desync)
 
 ## 🧩 Developer Notes
 
@@ -195,9 +194,9 @@ An apology here firstly, i dont know why, but my account seems to have github ac
 
 ## 🧷 Links to discord and a webpage to the client's website
 
-- 🌐 [ImpactWebsite](https://impactminiblox.js.org)
+- 🌐 **[ImpactWebsite](https://impactminiblox.js.org)**
 
-- 💬 Discord Impact Community (please join this if you can) - <https://discord.gg/PwpGemYhJx>
+- 💬 Discord Impact Community (please join this if you can) - **<https://discord.gg/PwpGemYhJx>**
 
 ## ⚠️ Disclaimer (DO READ THIS IF YOU CAN BEFORE INSTALLING PLEASE :D)
 
