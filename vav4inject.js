@@ -3283,8 +3283,8 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 		// === Create Category Panel ===
 		function createCategoryPanel() {
-			const { panel, content } = createPanel("VAPE V4", 40, 40, 220);
-			const baseCategories = ["Combat", "Movement", "Player", "Render", "World", "Misc"];
+			const { panel, content } = createPanel("Impact V6", 40, 40, 220);
+			const baseCategories = ["Combat", "Movement", "Player", "Render", "World", "Misc","Exploit"];
 			const categories = [...baseCategories];
 
 			if (scripts > 0) {
@@ -3789,6 +3789,6 @@ const survival = new Module("SurvivalMode", function(callback) {
 		});
 
 		// === Startup notification ===
-		setTimeout(() => { showNotif("Press \\\\ to open Vape V4 ClickGUI!", "info", 4000); }, 500);
+		setTimeout(() => { showNotif("Press \\\\ to open Impact V6 ClickGUI!", "info", 4000); }, 500);
 	}
 })();
