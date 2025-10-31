@@ -5,7 +5,7 @@ let replacements = {};
 let dumpedVarNames = {};
 const storeName = "a" + crypto.randomUUID().replaceAll("-", "").substring(16);
 const vapeName = crypto.randomUUID().replaceAll("-", "").substring(16);
-const VERSION = "6.8.1";
+const VERSION = "6.8.3";
 
 // ANTICHEAT HOOK
 function replaceAndCopyFunction(oldFunc, newFunc) {
@@ -1258,11 +1258,16 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			new Module("AutoClicker", function(callback) {
 				if (callback) {
 					tickLoop["AutoClicker"] = function() {
+					if (clickDelay < Date.now() && playerControllerDump.key.rightClick) {
+							playerControllerDump.rightClick();
+							clickDelay = Date.now() + 51;
+					} else {
 					if (playerControllerDump.objectMouseOver.block) return;
 						if (clickDelay < Date.now() && playerControllerDump.key.leftClick && !player.isUsingItem()) {
 							playerControllerDump.leftClick();
 							clickDelay = Date.now() + 51;
 						}
+					}
 					}
 				} else delete tickLoop["AutoClicker"];
 			}, "Combat");
@@ -1645,44 +1650,6 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			flyvalue = fly.addoption("Speed", Number, 0.18);
 			flyvert = fly.addoption("Vertical", Number, 0.3);
 
-			let jetpackvalue, jetpackvert, jetpackUpMotion, jetpackGlide;
-
-// Jetpack (Was ProgMEM-CC's idea but put a desync on it)
-const jetpack = new Module("JetPack", function(callback) {
-    if (callback) {
-        desync = true; // enables global desync
-        let ticks = 0;
-        tickLoop["JetPack"] = function() {
-            ticks++;
-            const dir = getMoveDirection(jetpackvalue[1]);
-            player.motion.x = dir.x;
-            player.motion.z = dir.z;
-
-            const goUp = keyPressedDump("space");
-            const goDown = false; // could be keyPressedDump("shift") if you want down control
-
-            if (goUp || goDown) {
-                player.motion.y = goUp ? jetpackvert[1] : -jetpackvert[1];
-            } else {
-                // fake “hover/glide” motion
-                player.motion.y = (ticks < 18 && ticks % 6 < 4 ? jetpackUpMotion[1] : -jetpackGlide[1]);
-            }
-        };
-    } else {
-        desync = false; // disables global desync
-        delete tickLoop["JetPack"];
-        if (player) {
-            player.motion.x = Math.max(Math.min(player.motion.x, 0.3), -0.3);
-            player.motion.z = Math.max(Math.min(player.motion.z, 0.3), -0.3);
-        }
-    }
-});
-
-// === Options ===
-jetpackvalue    = jetpack.addoption("Speed", Number, 0.18);
-jetpackGlide    = jetpack.addoption("Glide", Number, 0.27);
-jetpackUpMotion = jetpack.addoption("UpMotion", Number, 0.27);
-jetpackvert     = jetpack.addoption("Vertical", Number, 0.27);
 
 			// InfiniteFly
 			let infiniteFlyVert, infiniteFlyLessGlide;
@@ -3283,8 +3250,8 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 		// === Create Category Panel ===
 		function createCategoryPanel() {
-			const { panel, content } = createPanel("VAPE V4", 40, 40, 220);
-			const baseCategories = ["Combat", "Movement", "Player", "Render", "World", "Misc"];
+			const { panel, content } = createPanel("Impact V6", 40, 40, 220);
+			const baseCategories = ["Combat", "Movement", "Player", "Render", "World", "Misc","Exploit"];
 			const categories = [...baseCategories];
 
 			if (scripts > 0) {
@@ -3789,6 +3756,6 @@ const survival = new Module("SurvivalMode", function(callback) {
 		});
 
 		// === Startup notification ===
-		setTimeout(() => { showNotif("Press \\\\ to open Vape V4 ClickGUI!", "info", 4000); }, 500);
+		setTimeout(() => { showNotif("Press \\\\ to open Impact V6 ClickGUI!", "info", 4000); }, 500);
 	}
 })();
