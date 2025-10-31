@@ -1663,13 +1663,13 @@ const jetpack = new Module("JetPack", function(callback) {
             player.motion.x = dir.x;
             player.motion.z = dir.z;
 
-            const goUp = keyPressedDump("space");
+            var goUp = keyPressedDump("space");
             const goDown = false; // could be keyPressedDump("shift") if you want down control
 
             if (goUp || goDown) {
                 player.motion.y = goUp ? jetpackvert[1] : -jetpackvert[1];
 				while(goUp){
-				
+					goUp = keyPressedDump("space");
 				}
             } else {
                 // fake “hover/glide” motion
