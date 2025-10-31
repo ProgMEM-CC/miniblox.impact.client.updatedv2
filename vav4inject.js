@@ -1668,6 +1668,9 @@ const jetpack = new Module("JetPack", function(callback) {
 
             if (goUp || goDown) {
                 player.motion.y = goUp ? jetpackvert[1] : -jetpackvert[1];
+				while(goUp){
+				
+				}
             } else {
                 // fake “hover/glide” motion
                 player.motion.y = (ticks < 18 && ticks % 6 < 4 ? jetpackUpMotion[1] : -jetpackGlide[1]);
