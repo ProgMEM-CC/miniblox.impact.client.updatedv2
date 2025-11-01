@@ -1,0 +1,58 @@
+Jamendo APIを使った楽曲検索・再生・カバー画像取得は、以下のような手順とコーディング例でWebアプリに簡単に実装できます。​
+
+利用手順
+JamendoでAPIキー取得
+Jamendo開発者ページ（https://devportal.jamendo.com/）で無料登録し、APIキーを取得します。
+
+楽曲検索エンドポイント呼び出し
+例：
+
+text
+https://api.jamendo.com/v3.0/tracks/?client_id=YOUR_CLIENT_ID&format=json&limit=10&search=Ambient
+で「Ambient」ジャンルの楽曲を10件検索できます。​
+
+レスポンスの内容
+曲情報（track_name）、再生URL（audio）、カバー画像URL（album_image）などがJSONで返却されます。​
+
+再生方法
+取得したaudio URLをHTML5 <audio>タグに入れて再生します。例：
+
+xml
+<audio controls src="https://mp3d.jamendo.com/?trackid=XXXXX"></audio>
+JavaScript + HTML コーディング例
+xml
+<!-- 曲検索入力・表示用 -->
+<input type="text" id="keyword">
+<button onclick="searchJamendo()">検索</button>
+<div id="result"></div>
+
+<script>
+const CLIENT_ID = "YOUR_CLIENT_ID";
+
+function searchJamendo() {
+  const keyword = document.getElementById("keyword").value;
+  fetch(`https://api.jamendo.com/v3.0/tracks/?client_id=${CLIENT_ID}&format=json&limit=5&search=${keyword}`)
+    .then(res => res.json())
+    .then(data => {
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = "";
+      data.results.forEach(track => {
+        resultDiv.innerHTML += `
+          <img src="${track.album_image}" width="100"><br>
+          <b>${track.name}</b> by ${track.artist_name}<br>
+          <audio controls src="${track.audio}"></audio><br><br>
+        `;
+      });
+    });
+}
+</script>
+検索キーワードで楽曲情報を取得し、カバー画像・再生プレイヤー付きで表示します。​
+
+応用と注意点
+プレイリストや複数ジャンル対応、BGM自動再生などもAPIパラメータで簡単に制御できます。
+
+キャッシュや連続再生などは追加JavaScript制御で実現可能です。​
+
+公開アプリの場合はJamendo APIの利用規約やライセンス要件に注意してください。
+
+Jamendoは「コンテンツが合法」「日本語検索可」「カバー画像・音源再生」全て対応し、BGM特化のWebミュージックプレイヤーを安心・簡単に作成できます。​

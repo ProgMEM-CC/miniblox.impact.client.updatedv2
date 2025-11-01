@@ -3251,7 +3251,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 		// === Create Category Panel ===
 		function createCategoryPanel() {
 			const { panel, content } = createPanel("Impact V6", 40, 40, 220);
-			const baseCategories = ["Combat", "Movement", "Player", "Render", "World", "Misc","Exploit"];
+			const baseCategories = ["Combat", "Movement", "Player", "Render", "World", "Misc","Exploit", "Music"];
 			const categories = [...baseCategories];
 
 			if (scripts > 0) {
@@ -3281,6 +3281,8 @@ const survival = new Module("SurvivalMode", function(callback) {
 				item.addEventListener("click", () => {
 					if (cat === "Settings") {
 						openSettingsPanel();
+					} else if (cat === "Music") {
+						openMusicPlayerPanel();
 					} else {
 						openModulePanel(cat);
 					}
@@ -3561,6 +3563,675 @@ const survival = new Module("SurvivalMode", function(callback) {
 			saveGUIState();
 		}
 
+
+//MARK: music player
+
+		// === Music Player State ===
+		const DEFAULT_JAMENDO_API_KEY = "0c5e9d9e";
+		let musicPlayerState = {
+			audio: null,
+			currentTrack: null,
+			playlist: [],
+			currentPlaylistIndex: 0,
+			isPlaying: false,
+			volume: 0.7,
+			analyser: null,
+			audioContext: null,
+			audioSource: null,
+			dataArray: null,
+			visualizerElement: null,
+			favorites: JSON.parse(localStorage.getItem("music-favorites") || "[]"),
+			currentTab: "search",
+			repeat: false,
+			shuffle: false
+		};
+
+		// Initialize audio element once
+		musicPlayerState.audio = new Audio();
+		musicPlayerState.audio.volume = 0.7;
+
+		// === Open Music Player Panel ===
+		function openMusicPlayerPanel() {
+			// Close if already open
+			if (modulePanels["Music"]) {
+				closePanelWithAnimation(modulePanels["Music"], () => {
+					delete modulePanels["Music"];
+					updateCategoryHighlights();
+					saveGUIState();
+				});
+				return;
+			}
+
+			const { panel, content } = createPanel("MUSIC PLAYER", 280, 40, 500, true);
+			panel.style.width = "500px";
+			panel.style.height = "500px";
+			modulePanels["Music"] = panel;
+			document.body.appendChild(panel);
+
+			// Main container with flex layout
+			content.style.cssText = "display:flex;height:calc(100% - 100px);padding:0;overflow:hidden;";
+
+			// Left sidebar for tabs
+			const sidebar = document.createElement("div");
+			sidebar.style.cssText = "width:80px;background:rgba(0,0,0,0.3);display:flex;flex-direction:column;gap:8px;padding:12px 8px;border-right:1px solid rgba(255,255,255,0.05);";
+
+			const tabs = [
+				{ id: "search", icon: "🔍", label: "Search" },
+				{ id: "random", icon: "🎲", label: "Random" },
+				{ id: "favorites", icon: "⭐", label: "Favorites" }
+			];
+
+			tabs.forEach(tab => {
+				const tabBtn = document.createElement("div");
+				tabBtn.className = "music-tab";
+				tabBtn.dataset.tab = tab.id;
+				tabBtn.style.cssText = `
+					padding:12px 8px;
+					background:${musicPlayerState.currentTab === tab.id ? "rgba(15,179,160,0.2)" : "rgba(255,255,255,0.02)"};
+					border:1px solid ${musicPlayerState.currentTab === tab.id ? "rgba(15,179,160,0.3)" : "rgba(255,255,255,0.05)"};
+					border-radius:8px;
+					cursor:pointer;
+					text-align:center;
+					transition:all 0.2s;
+					font-size:24px;
+				`;
+				tabBtn.innerHTML = `<div>${tab.icon}</div><div style="font-size:9px;color:#8F9498;margin-top:4px;">${tab.label}</div>`;
+				
+				tabBtn.onmouseenter = () => {
+					if (musicPlayerState.currentTab !== tab.id) {
+						tabBtn.style.background = "rgba(255,255,255,0.05)";
+					}
+				};
+				tabBtn.onmouseleave = () => {
+					if (musicPlayerState.currentTab !== tab.id) {
+						tabBtn.style.background = "rgba(255,255,255,0.02)";
+					}
+				};
+				tabBtn.onclick = () => switchTab(tab.id);
+				
+				sidebar.appendChild(tabBtn);
+			});
+
+			content.appendChild(sidebar);
+
+			// Main content area
+			const mainContent = document.createElement("div");
+			mainContent.id = "music-main-content";
+			mainContent.style.cssText = "flex:1;display:flex;flex-direction:column;overflow:hidden;";
+
+			// Tab content area
+			const tabContent = document.createElement("div");
+			tabContent.id = "music-tab-content";
+			tabContent.style.cssText = "flex:1;overflow-y:auto;padding:12px;";
+
+			mainContent.appendChild(tabContent);
+			content.appendChild(mainContent);
+
+			// Bottom player controls (fixed at bottom)
+			const playerControls = document.createElement("div");
+			playerControls.id = "music-player-controls";
+			playerControls.style.cssText = `
+				position:absolute;
+				bottom:0;
+				left:0;
+				right:0;
+				height:100px;
+				background:rgba(0,0,0,0.4);
+				border-top:1px solid rgba(255,255,255,0.1);
+				display:flex;
+				align-items:center;
+				padding:12px;
+				gap:12px;
+			`;
+
+			// Album art (left)
+			const albumArt = document.createElement("img");
+			albumArt.id = "music-album-art";
+			albumArt.style.cssText = "width:76px;height:76px;border-radius:8px;object-fit:cover;background:rgba(255,255,255,0.05);";
+			albumArt.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='76' height='76'%3E%3Crect fill='%23333' width='76' height='76'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23666' font-size='24'%3E♪%3C/text%3E%3C/svg%3E";
+
+			// Controls container
+			const controlsContainer = document.createElement("div");
+			controlsContainer.style.cssText = "flex:1;display:flex;flex-direction:column;gap:8px;";
+
+			// Track info
+			const trackInfo = document.createElement("div");
+			trackInfo.id = "music-track-info";
+			trackInfo.style.cssText = "display:flex;justify-content:space-between;align-items:center;";
+			trackInfo.innerHTML = `
+				<div>
+					<div id="music-track-name" style="font-weight:600;font-size:13px;color:#E6E9EA;">No track playing</div>
+					<div id="music-track-artist" style="font-size:11px;color:#8F9498;">Select a track to play</div>
+				</div>
+				<button id="music-favorite-btn" style="background:none;border:none;font-size:20px;cursor:pointer;opacity:0.5;">☆</button>
+			`;
+
+			// Seek bar
+			const seekBar = document.createElement("input");
+			seekBar.id = "music-seek-bar";
+			seekBar.type = "range";
+			seekBar.min = "0";
+			seekBar.max = "100";
+			seekBar.value = "0";
+			seekBar.className = "vape-slider";
+			seekBar.style.cssText = "width:100%;";
+
+			// Control buttons
+			const controlButtons = document.createElement("div");
+			controlButtons.style.cssText = "display:flex;align-items:center;gap:8px;";
+
+			const btnStyle = "width:32px;height:32px;background:rgba(255,255,255,0.1);border:none;border-radius:50%;color:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;";
+			
+			const shuffleBtn = document.createElement("button");
+			shuffleBtn.id = "music-shuffle-btn";
+			shuffleBtn.textContent = "🔀";
+			shuffleBtn.style.cssText = btnStyle;
+			shuffleBtn.title = "Shuffle";
+
+			const prevBtn = document.createElement("button");
+			prevBtn.id = "music-prev-btn";
+			prevBtn.textContent = "⏮";
+			prevBtn.style.cssText = btnStyle;
+
+			const playPauseBtn = document.createElement("button");
+			playPauseBtn.id = "music-play-pause-btn";
+			playPauseBtn.textContent = "▶";
+			playPauseBtn.style.cssText = "width:40px;height:40px;background:var(--vape-accent,#0FB3A0);border:none;border-radius:50%;color:#fff;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;";
+
+			const nextBtn = document.createElement("button");
+			nextBtn.id = "music-next-btn";
+			nextBtn.textContent = "⏭";
+			nextBtn.style.cssText = btnStyle;
+
+			const repeatBtn = document.createElement("button");
+			repeatBtn.id = "music-repeat-btn";
+			repeatBtn.textContent = "🔁";
+			repeatBtn.style.cssText = btnStyle;
+			repeatBtn.title = "Repeat";
+
+			const volumeSlider = document.createElement("input");
+			volumeSlider.id = "music-volume-slider";
+			volumeSlider.type = "range";
+			volumeSlider.min = "0";
+			volumeSlider.max = "100";
+			volumeSlider.value = "70";
+			volumeSlider.className = "vape-slider";
+			volumeSlider.style.cssText = "width:80px;margin-left:8px;";
+
+			controlButtons.appendChild(shuffleBtn);
+			controlButtons.appendChild(prevBtn);
+			controlButtons.appendChild(playPauseBtn);
+			controlButtons.appendChild(nextBtn);
+			controlButtons.appendChild(repeatBtn);
+			controlButtons.appendChild(volumeSlider);
+
+			controlsContainer.appendChild(trackInfo);
+			controlsContainer.appendChild(seekBar);
+			controlsContainer.appendChild(controlButtons);
+
+			playerControls.appendChild(albumArt);
+			playerControls.appendChild(controlsContainer);
+			panel.appendChild(playerControls);
+
+			// Setup event listeners
+			setupMusicPlayerEvents();
+
+			// Initialize with search tab
+			switchTab("search");
+
+			updateCategoryHighlights();
+			saveGUIState();
+		}
+
+		function setupMusicPlayerEvents() {
+			const playPauseBtn = document.getElementById("music-play-pause-btn");
+			const prevBtn = document.getElementById("music-prev-btn");
+			const nextBtn = document.getElementById("music-next-btn");
+			const shuffleBtn = document.getElementById("music-shuffle-btn");
+			const repeatBtn = document.getElementById("music-repeat-btn");
+			const volumeSlider = document.getElementById("music-volume-slider");
+			const seekBar = document.getElementById("music-seek-bar");
+			const favoriteBtn = document.getElementById("music-favorite-btn");
+
+			if (playPauseBtn) playPauseBtn.onclick = () => togglePlayPause();
+			if (prevBtn) prevBtn.onclick = () => playPreviousTrack();
+			if (nextBtn) nextBtn.onclick = () => playNextTrack();
+			if (shuffleBtn) shuffleBtn.onclick = () => toggleShuffle();
+			if (repeatBtn) repeatBtn.onclick = () => toggleRepeat();
+			if (volumeSlider) volumeSlider.oninput = (e) => {
+				musicPlayerState.volume = e.target.value / 100;
+				if (musicPlayerState.audio) musicPlayerState.audio.volume = musicPlayerState.volume;
+			};
+			if (seekBar) {
+				seekBar.oninput = (e) => {
+					if (musicPlayerState.audio) {
+						const seekTime = (e.target.value / 100) * musicPlayerState.audio.duration;
+						musicPlayerState.audio.currentTime = seekTime;
+					}
+				};
+			}
+			if (favoriteBtn) favoriteBtn.onclick = () => toggleFavorite();
+		}
+
+		function switchTab(tabId) {
+			musicPlayerState.currentTab = tabId;
+			
+			// Update tab buttons
+			document.querySelectorAll(".music-tab").forEach(tab => {
+				const isActive = tab.dataset.tab === tabId;
+				tab.style.background = isActive ? "rgba(15,179,160,0.2)" : "rgba(255,255,255,0.02)";
+				tab.style.borderColor = isActive ? "rgba(15,179,160,0.3)" : "rgba(255,255,255,0.05)";
+			});
+
+			const tabContent = document.getElementById("music-tab-content");
+			if (!tabContent) return;
+
+			switch (tabId) {
+				case "search":
+					showSearchTab(tabContent);
+					break;
+				case "random":
+					showRandomTab(tabContent);
+					break;
+				case "favorites":
+					showFavoritesTab(tabContent);
+					break;
+			}
+		}
+
+		function showSearchTab(container) {
+			container.innerHTML = `
+				<div style="margin-bottom:12px;">
+					<input type="text" id="music-search-input" placeholder="Search music..." style="width:100%;padding:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:#E6E9EA;font-size:13px;outline:none;box-sizing:border-box;">
+				</div>
+				<div id="music-search-results" style="display:flex;flex-direction:column;gap:8px;"></div>
+			`;
+
+			const searchInput = document.getElementById("music-search-input");
+			if (searchInput) {
+				searchInput.onkeypress = (e) => {
+					if (e.key === "Enter") searchMusic(searchInput.value);
+				};
+				searchInput.focus();
+			}
+		}
+
+		function showRandomTab(container) {
+			container.innerHTML = '<div style="text-align:center;color:#8F9498;padding:20px;">Loading random tracks...</div>';
+			
+			const genres = ["rock", "pop", "electronic", "jazz", "classical", "ambient", "indie"];
+			const randomGenre = genres[Math.floor(Math.random() * genres.length)];
+			
+			loadRandomTracks(randomGenre);
+		}
+
+		function showFavoritesTab(container) {
+			if (musicPlayerState.favorites.length === 0) {
+				container.innerHTML = '<div style="text-align:center;color:#8F9498;padding:40px;">No favorites yet<br><span style="font-size:11px;">Click ⭐ to add tracks to favorites</span></div>';
+				return;
+			}
+
+			container.innerHTML = '<div id="music-favorites-list" style="display:flex;flex-direction:column;gap:8px;"></div>';
+			const listContainer = document.getElementById("music-favorites-list");
+			
+			musicPlayerState.favorites.forEach((track, index) => {
+				const trackItem = createTrackItem(track, index, true);
+				listContainer.appendChild(trackItem);
+			});
+		}
+
+		function loadRandomTracks(genre) {
+			const apiKey = DEFAULT_JAMENDO_API_KEY;
+			const resultsDiv = document.getElementById("music-tab-content");
+			
+			fetch(`https://api.jamendo.com/v3.0/tracks/?client_id=${apiKey}&format=json&limit=20&tags=${genre}&order=random`)
+				.then(res => res.json())
+				.then(data => {
+					resultsDiv.innerHTML = '<div id="music-random-results" style="display:flex;flex-direction:column;gap:8px;"></div>';
+					const container = document.getElementById("music-random-results");
+					
+					if (!data.results || data.results.length === 0) {
+						container.innerHTML = '<div style="text-align:center;color:#8F9498;padding:20px;">No tracks found</div>';
+						return;
+					}
+
+					musicPlayerState.playlist = data.results;
+					data.results.forEach((track, index) => {
+						const trackItem = createTrackItem(track, index);
+						container.appendChild(trackItem);
+					});
+				})
+				.catch(err => {
+					resultsDiv.innerHTML = '<div style="text-align:center;color:#e74c3c;padding:20px;">Error loading tracks</div>';
+					console.error("Jamendo API error:", err);
+				});
+		}
+
+		function searchMusic(keyword) {
+			const apiKey = DEFAULT_JAMENDO_API_KEY;
+			const resultsDiv = document.getElementById("music-search-results");
+			if (!resultsDiv) return;
+			
+			resultsDiv.innerHTML = '<div style="text-align:center;color:#8F9498;padding:20px;">Searching...</div>';
+
+			fetch(`https://api.jamendo.com/v3.0/tracks/?client_id=${apiKey}&format=json&limit=20&search=${encodeURIComponent(keyword)}`)
+				.then(res => res.json())
+				.then(data => {
+					resultsDiv.innerHTML = "";
+					if (!data.results || data.results.length === 0) {
+						resultsDiv.innerHTML = '<div style="text-align:center;color:#8F9498;padding:20px;">No results found</div>';
+						return;
+					}
+
+					musicPlayerState.playlist = data.results;
+					data.results.forEach((track, index) => {
+						const trackItem = createTrackItem(track, index);
+						resultsDiv.appendChild(trackItem);
+					});
+				})
+				.catch(err => {
+					resultsDiv.innerHTML = '<div style="text-align:center;color:#e74c3c;padding:20px;">Error loading tracks</div>';
+					console.error("Jamendo API error:", err);
+				});
+		}
+
+		function createTrackItem(track, index, isFavorite = false) {
+			const trackItem = document.createElement("div");
+			trackItem.style.cssText = "display:flex;align-items:center;gap:10px;padding:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:8px;cursor:pointer;transition:all 0.2s;";
+			trackItem.onmouseenter = () => trackItem.style.background = "rgba(255,255,255,0.05)";
+			trackItem.onmouseleave = () => trackItem.style.background = "rgba(255,255,255,0.02)";
+			
+			const albumArt = document.createElement("img");
+			albumArt.src = track.album_image;
+			albumArt.style.cssText = "width:45px;height:45px;border-radius:6px;object-fit:cover;flex-shrink:0;";
+			
+			const trackInfo = document.createElement("div");
+			trackInfo.style.cssText = "flex:1;min-width:0;";
+			trackInfo.innerHTML = `
+				<div style="font-weight:600;font-size:12px;color:#E6E9EA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${track.name}</div>
+				<div style="font-size:10px;color:#8F9498;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${track.artist_name}</div>
+			`;
+			
+			const playBtn = document.createElement("button");
+			playBtn.textContent = "▶";
+			playBtn.style.cssText = "width:32px;height:32px;background:var(--vape-accent,#0FB3A0);border:none;border-radius:50%;color:#fff;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;";
+			playBtn.onclick = (e) => {
+				e.stopPropagation();
+				playTrackFromPlaylist(index);
+			};
+			
+			trackItem.appendChild(albumArt);
+			trackItem.appendChild(trackInfo);
+			trackItem.appendChild(playBtn);
+			trackItem.onclick = () => playTrackFromPlaylist(index);
+			
+			return trackItem;
+		}
+
+		function playTrackFromPlaylist(index) {
+			if (!musicPlayerState.playlist || musicPlayerState.playlist.length === 0) return;
+			
+			musicPlayerState.currentPlaylistIndex = index;
+			const track = musicPlayerState.playlist[index];
+			playTrack(track);
+		}
+
+		function playTrack(track) {
+			// Setup audio context (only once)
+			if (!musicPlayerState.audioContext) {
+				try {
+					musicPlayerState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+					musicPlayerState.analyser = musicPlayerState.audioContext.createAnalyser();
+					musicPlayerState.analyser.fftSize = 64;
+					const bufferLength = musicPlayerState.analyser.frequencyBinCount;
+					musicPlayerState.dataArray = new Uint8Array(bufferLength);
+					
+					musicPlayerState.audioSource = musicPlayerState.audioContext.createMediaElementSource(musicPlayerState.audio);
+					musicPlayerState.audioSource.connect(musicPlayerState.analyser);
+					musicPlayerState.analyser.connect(musicPlayerState.audioContext.destination);
+				} catch (err) {
+					console.error("Audio context setup error:", err);
+				}
+			}
+
+			// Remove old event listeners
+			musicPlayerState.audio.removeEventListener("ended", onTrackEnded);
+			musicPlayerState.audio.removeEventListener("timeupdate", updateSeekBar);
+
+			// Set new track
+			musicPlayerState.audio.src = track.audio;
+			musicPlayerState.audio.volume = musicPlayerState.volume;
+			musicPlayerState.currentTrack = track;
+			musicPlayerState.isPlaying = true;
+
+			// Add event listeners
+			musicPlayerState.audio.addEventListener("ended", onTrackEnded);
+			musicPlayerState.audio.addEventListener("timeupdate", updateSeekBar);
+
+			// Play audio
+			musicPlayerState.audio.play().then(() => {
+				console.log("Playing:", track.name);
+				showVisualizer();
+			}).catch(err => {
+				console.error("Audio play error:", err);
+				showNotif("Failed to play track", "error");
+			});
+
+			// Update UI
+			updatePlayerUI();
+			showNotif("Now playing: " + track.name, "success");
+		}
+
+		function updatePlayerUI() {
+			const track = musicPlayerState.currentTrack;
+			if (!track) return;
+
+			const albumArt = document.getElementById("music-album-art");
+			const trackName = document.getElementById("music-track-name");
+			const trackArtist = document.getElementById("music-track-artist");
+			const playPauseBtn = document.getElementById("music-play-pause-btn");
+			const favoriteBtn = document.getElementById("music-favorite-btn");
+
+			if (albumArt) albumArt.src = track.album_image;
+			if (trackName) trackName.textContent = track.name;
+			if (trackArtist) trackArtist.textContent = track.artist_name;
+			if (playPauseBtn) playPauseBtn.textContent = musicPlayerState.isPlaying ? "⏸" : "▶";
+			
+			if (favoriteBtn) {
+				const isFav = musicPlayerState.favorites.some(f => f.id === track.id);
+				favoriteBtn.textContent = isFav ? "★" : "☆";
+				favoriteBtn.style.opacity = isFav ? "1" : "0.5";
+			}
+		}
+
+		function updateSeekBar() {
+			const seekBar = document.getElementById("music-seek-bar");
+			if (seekBar && musicPlayerState.audio) {
+				const progress = (musicPlayerState.audio.currentTime / musicPlayerState.audio.duration) * 100;
+				seekBar.value = progress || 0;
+			}
+		}
+
+		function onTrackEnded() {
+			if (musicPlayerState.repeat) {
+				musicPlayerState.audio.currentTime = 0;
+				musicPlayerState.audio.play();
+			} else {
+				playNextTrack();
+			}
+		}
+
+		function togglePlayPause() {
+			if (!musicPlayerState.audio) return;
+			
+			if (musicPlayerState.isPlaying) {
+				musicPlayerState.audio.pause();
+				musicPlayerState.isPlaying = false;
+			} else {
+				musicPlayerState.audio.play();
+				musicPlayerState.isPlaying = true;
+			}
+			updatePlayerUI();
+		}
+
+		function playNextTrack() {
+			if (!musicPlayerState.playlist || musicPlayerState.playlist.length === 0) return;
+			
+			let nextIndex;
+			if (musicPlayerState.shuffle) {
+				nextIndex = Math.floor(Math.random() * musicPlayerState.playlist.length);
+			} else {
+				nextIndex = (musicPlayerState.currentPlaylistIndex + 1) % musicPlayerState.playlist.length;
+			}
+			
+			playTrackFromPlaylist(nextIndex);
+		}
+
+		function playPreviousTrack() {
+			if (!musicPlayerState.playlist || musicPlayerState.playlist.length === 0) return;
+			
+			let prevIndex;
+			if (musicPlayerState.shuffle) {
+				prevIndex = Math.floor(Math.random() * musicPlayerState.playlist.length);
+			} else {
+				prevIndex = (musicPlayerState.currentPlaylistIndex - 1 + musicPlayerState.playlist.length) % musicPlayerState.playlist.length;
+			}
+			
+			playTrackFromPlaylist(prevIndex);
+		}
+
+		function toggleShuffle() {
+			musicPlayerState.shuffle = !musicPlayerState.shuffle;
+			const shuffleBtn = document.getElementById("music-shuffle-btn");
+			if (shuffleBtn) {
+				shuffleBtn.style.background = musicPlayerState.shuffle ? "var(--vape-accent,#0FB3A0)" : "rgba(255,255,255,0.1)";
+			}
+			showNotif("Shuffle " + (musicPlayerState.shuffle ? "ON" : "OFF"), "info", 1000);
+		}
+
+		function toggleRepeat() {
+			musicPlayerState.repeat = !musicPlayerState.repeat;
+			const repeatBtn = document.getElementById("music-repeat-btn");
+			if (repeatBtn) {
+				repeatBtn.style.background = musicPlayerState.repeat ? "var(--vape-accent,#0FB3A0)" : "rgba(255,255,255,0.1)";
+			}
+			showNotif("Repeat " + (musicPlayerState.repeat ? "ON" : "OFF"), "info", 1000);
+		}
+
+		function toggleFavorite() {
+			if (!musicPlayerState.currentTrack) return;
+			
+			const track = musicPlayerState.currentTrack;
+			const index = musicPlayerState.favorites.findIndex(f => f.id === track.id);
+			
+			if (index !== -1) {
+				musicPlayerState.favorites.splice(index, 1);
+				showNotif("Removed from favorites", "info", 1000);
+			} else {
+				musicPlayerState.favorites.push(track);
+				showNotif("Added to favorites", "success", 1000);
+			}
+			
+			localStorage.setItem("music-favorites", JSON.stringify(musicPlayerState.favorites));
+			updatePlayerUI();
+			
+			// Refresh favorites tab if it's open
+			if (musicPlayerState.currentTab === "favorites") {
+				const tabContent = document.getElementById("music-tab-content");
+				if (tabContent) showFavoritesTab(tabContent);
+			}
+		}
+
+		function showVisualizer() {
+			// Remove existing visualizer
+			if (musicPlayerState.visualizerElement) {
+				musicPlayerState.visualizerElement.remove();
+			}
+
+			// Create visualizer element
+			const visualizer = document.createElement("div");
+			visualizer.id = "music-visualizer";
+			visualizer.style.cssText = `
+				position:fixed;
+				bottom:20px;
+				left:20px;
+				display:flex;
+				align-items:flex-end;
+				gap:4px;
+				padding:12px;
+				background:rgba(20,20,20,0.85);
+				border-radius:12px;
+				backdrop-filter:blur(8px);
+				box-shadow:0 4px 12px rgba(0,0,0,0.4);
+				z-index:99999;
+			`;
+
+			// Album art
+			const albumArt = document.createElement("img");
+			albumArt.src = musicPlayerState.currentTrack.album_image;
+			albumArt.style.cssText = "width:60px;height:60px;border-radius:8px;object-fit:cover;margin-right:8px;";
+			visualizer.appendChild(albumArt);
+
+			// Visualizer bars container
+			const barsContainer = document.createElement("div");
+			barsContainer.id = "visualizer-bars";
+			barsContainer.style.cssText = "display:flex;align-items:flex-end;gap:3px;height:60px;";
+			visualizer.appendChild(barsContainer);
+
+			// Create bars
+			const barCount = 16;
+			for (let i = 0; i < barCount; i++) {
+				const bar = document.createElement("div");
+				bar.className = "visualizer-bar";
+				bar.style.cssText = `
+					width:4px;
+					height:4px;
+					background:linear-gradient(to top, var(--vape-accent,#0FB3A0), #13a695);
+					border-radius:2px;
+					transition:height 0.1s ease;
+				`;
+				barsContainer.appendChild(bar);
+			}
+
+			document.body.appendChild(visualizer);
+			musicPlayerState.visualizerElement = visualizer;
+
+			// Animate visualizer
+			animateVisualizer();
+		}
+
+		function animateVisualizer() {
+			if (!musicPlayerState.isPlaying || !musicPlayerState.analyser) {
+				if (musicPlayerState.visualizerElement) {
+					musicPlayerState.visualizerElement.remove();
+					musicPlayerState.visualizerElement = null;
+				}
+				return;
+			}
+
+			musicPlayerState.analyser.getByteFrequencyData(musicPlayerState.dataArray);
+			const bars = document.querySelectorAll(".visualizer-bar");
+			
+			bars.forEach((bar, i) => {
+				const value = musicPlayerState.dataArray[i * 2] || 0;
+				const height = Math.max(4, (value / 255) * 60);
+				bar.style.height = height + "px";
+			});
+
+			requestAnimationFrame(animateVisualizer);
+		}
+
+		// Hide visualizer when audio ends
+		if (musicPlayerState.audio) {
+			musicPlayerState.audio.onended = () => {
+				musicPlayerState.isPlaying = false;
+				if (musicPlayerState.visualizerElement) {
+					musicPlayerState.visualizerElement.remove();
+					musicPlayerState.visualizerElement = null;
+				}
+			};
+		}
+
 		// === Open Settings Panel ===
 		function openSettingsPanel() {
 			// Close if already open
@@ -3685,6 +4356,8 @@ const survival = new Module("SurvivalMode", function(callback) {
 					openPanels.forEach(panelName => {
 						if (panelName === "Settings") {
 							openSettingsPanel();
+						} else if (panelName === "Music") {
+							openMusicPlayerPanel();
 						} else {
 							openModulePanel(panelName);
 						}
