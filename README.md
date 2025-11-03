@@ -8,7 +8,7 @@ m
 (which is a continuation of the discontinued **Vape V4** project by `7GrandDadPGN`).
 When the original client was deleted, `**TheM1ddleM1n**`, `**DataM0del (aka RealPacket)**`, and `**ProgMEM-CC**` and other devs rebuilt it from scratch — creating a modern, modular, and optimized exploitation client framework for Miniblox.
 
-It is designed for stealth, speed, and domination — with full dark-mode support with a slick Click GUI.
+It is designed for stealth, speed, and total domination — with full dark-mode support with a slick Click GUI.
 
 Please join our **[Discord](https://discord.gg/PwpGemYhJx)**
 
