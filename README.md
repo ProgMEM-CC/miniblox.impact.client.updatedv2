@@ -9,7 +9,7 @@ When the original client was deleted, `**TheM1ddleM1n**`, `**DataM0del (aka Real
 
 It is designed for stealth, speed, and total domination — with full dark-mode support with a slick Click GUI.
 
-Please join our **[Discord](https://discord.gg/PwpGemYhJx)**
+Please join our **[Discord](https://discord.gg/PwpGemYhJx)**!
 
 ## Features
 
