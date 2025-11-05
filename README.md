@@ -197,10 +197,10 @@ An apology here firstly, i dont know why, but my account seems to have github ac
 
 - 💬 Discord Impact Community (please join this if you can) - **<https://discord.gg/PwpGemYhJx>**
 
-## ⚠️ Disclaimer (DO READ THIS IF YOU CAN BEFORE INSTALLING PLEASE :D)
+## ⚠️ Disclaimer (DO READ THIS IF YOU CAN BEFORE INSTALLING PLEASE.)
 
 Please be aware that the developers are not responsible for any misuse or violations of Miniblox.io’s Terms of Service. So please enjoy and give any feedback we are willing to hear your views!
 
 ## Important (FOR BETA) - Comment from TheM1ddleM1n
 
-You can put out code (if it needs to be tested) without harming the main branch. However, if you do decide to put anything in BETA I will thoroughly test the idea and I will then give you feedback based on:- Where to improve or if it is good to pull it into `vav4inject.js`!
+You can put out code (if it needs to be tested) without harming the main branch. However, if you do decide to put anything in BETA I will thoroughly test the idea and I will then give you feedback based on:- where to improve or if it is good to pull it into `vav4inject.js`!
