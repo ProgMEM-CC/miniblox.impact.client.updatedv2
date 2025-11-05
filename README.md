@@ -154,7 +154,6 @@ And then enjoy using the client!
 - [ ] **AutoEat (Automatically eats food in the inv)**
 - [ ] AimBot (Automatically aims at a player)
 - [ ] Breadcrumbs (particles of a sort trailing behind the player)
-- [ ] **AutoTool – Switches to best tool for the job**
 - [ ] Inventory Manager – Organizes inventory automatically.
 - [ ] X-Ray (possible)
 - [ ] Freecam (like PublicLurker client?)
