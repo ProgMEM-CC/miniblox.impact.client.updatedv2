@@ -1,9 +1,9 @@
 # [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=2500&pause=1000&color=FF0000&width=435&lines=Impact+Client+for+Miniblox.io!)](https://git.io/typing-svg)
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&duration=2500&pause=1000&color=abe0e4&width=435&lines=The+ultimate+MiniBlox+hacked+client!+;Built+for+stealth%2C+speed%2C+and+total+domination.;Fully+dark-mode+optimized+with+a+modern+UI)](https://git.io/typing-svg)
 
-## An Overview for Impact for Miniblox!
+## An Overview for Impact For Miniblox!
 
-**Impact Client for Miniblox.io** is a fork of the **Vape V4** project by `DataM0del`
+**Impact For Miniblox** is a fork of the **Vape V4** project by `DataM0del`
 (which is a continuation of the discontinued **Vape V4** project by `7GrandDadPGN`).
 When the original client was deleted, `**TheM1ddleM1n**`, `**DataM0del (aka RealPacket)**`, and `**ProgMEM-CC**` and other devs rebuilt it from scratch — creating a modern, modular, and optimized exploitation client framework for Miniblox.
 
@@ -42,6 +42,7 @@ And then enjoy using the client!
 - There is currently an issue with `Nuker`. (via a lot of packets sent you will get kicked instantly.)
 - There are issues with `SurvivalMode` and `FastBreak`. (Looking into it)
 - Reach is limited to 5-6 (same as killaura) due to Vector's goofy ahh anticheat.
+- linking to killaura sometimes in the air hits will not register (however, (this is a miniblox anticheat problem - thanks vector) and not our client))
 
 ## Changelog
 
@@ -50,8 +51,8 @@ And then enjoy using the client!
 - Update milestone to `V7 LTS` (ProgMEM-CC)
 - updated version to `6.8.1`
 - Made new V8, V9 and V10 milestones (ProgMEM-CC and TheM1ddleM1n)
-- Made a new report command in game (dtkiller-jp thanks!)
-- added a script system (thanks again dtkiller-jp!)
+- Made a new report command in game (dtkiller-jp thanks!) `.report` in miniblox chat
+- added a script system for clickGUI it goes into `scripts` for the GUI (thanks again dtkiller-jp!)
 
 ## [v6.6] - 2025-10-18
 
@@ -150,32 +151,31 @@ And then enjoy using the client!
 - [ ] Force OP module (gain access to admin commands?! funny bypass)
 - [ ] Command Block modification (to change command blocks in survival)
 - [ ] Spoof rank (ProgMEM-CC's idea) (again could be possible)
-- [ ] AutoEat (Automatically eats food in the inv)
+- [ ] **AutoEat (Automatically eats food in the inv)**
 - [ ] AimBot (Automatically aims at a player)
-- [ ] Movement Disabler
 - [ ] Breadcrumbs (particles of a sort trailing behind the player)
-- [ ] AutoTool – Switches to best tool for the job
+- [ ] **AutoTool – Switches to best tool for the job**
 - [ ] Inventory Manager – Organizes inventory automatically.
 - [ ] X-Ray (possible)
 - [ ] Freecam (like PublicLurker client?)
-- [ ] SkinChanger (good idea)
+- [ ] SkinChanger in game (good idea)
 - [ ] Reach fix (possible but its limited to 5-6 thanks to vector's goofy ahh anticheat)
-- [ ] NoSlow – Prevents slowdown from using items or cobwebs
+- [ ] **NoSlow – Prevents slowdown from using items or cobwebs**
 - [ ] Fullbright – Always max brightness. (funny)
 - [ ] CustomCape / Wings – Renders client-side cosmetics? (recode possibly?!)
 - [ ] TargetStrafe – Strafes around enemies in combat while attacking.
 - [ ] Small music player (ie. links to spotify) (like JoLean client)
 - [ ] Render miniblox's HUDS (ie. health bar to mc like hearts?!)
 - [ ] ArmorHUD (to improve my targetHUD ) (using exhibition?!)
-- [ ] AutoSword (*should be easy to do*)
+- [ ] **AutoSword (*should be easy to do*)**
 - [ ] CustomSky – Applies custom skybox textures.
 - [ ] AutoInsult / ComplimentBot – Randomly sends messages after kills. (improvement to my AutoFunnyChat module?)
 
 ## 🧩 Developer Notes
 
-Make sure you **always** update VERSIONFILE, tampermonkey.js, and injection.js together. (as soon as ProgMEM-CC fixes the issue with "Github Actions being disabled")
+Make sure you **always** update VERSIONFILE, tampermonkey.js, and injection.js together. (as soon as ProgMEM-CC fixes the issue with "Github Actions being disabled!")
 
-Never publish unstable code to / (root). Use /beta for any test builds you have got.
+Never publish unstable code to / (root). Use `/` `beta` for any test builds you have got.
 
 ## Repo rename pending once closed-source dependencies are synced
 
@@ -191,7 +191,7 @@ An apology here firstly, i dont know why, but my account seems to have github ac
 | <img src="https://github.com/ProgMEM-CC.png" width="40" height="40"> | Repo Manager / Infrastructure    | [ProgMEM-CC](https://github.com/ProgMEM-CC) |
 | <img src="https://github.com/dtkiller-jp.png" width="40" height="40"> | Vape V4 GUI creator and solver!   | [dtkiller-jp](https://github.com/dtkiller-jp) |
 
-## 🧷 Links to discord and a webpage to the client's website
+## 🧷 Links
 
 - 🌐 **[ImpactWebsite](https://impactminiblox.js.org)**
 
