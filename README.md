@@ -5,9 +5,12 @@
 
 **Impact For Miniblox** is a fork of the **Vape V4** project by `DataM0del`
 (which is a continuation of the discontinued **Vape V4** project by `7GrandDadPGN`).
-When the original client was deleted, `**TheM1ddleM1n**`, `**DataM0del (aka RealPacket)**`, and `**ProgMEM-CC**` and other devs rebuilt it from scratch — creating a modern, modular, and optimized exploitation client framework for Miniblox.
+Before the original client was deleted ([xylex fake quit moment](https://github.com/7GrandDadPGN/7granddadpgn/commit/46a3b9e9afea226f730b9d9eaf10788b993d43ee#commitcomment-152355396)),
+<!-- why am I adding all of these dates, this isn't history class LOL -->
+`**DataM0del (aka RealPacket)**` started updating it 13 days before that comment, and then stopped 2 days after.
+But it was fully useable 3 days after that comment, and then, the first updated version of Vape, 3.0.0, was released.
 
-It is designed for stealth, speed, and total domination — with full dark-mode support with a slick Click GUI.
+It is designed for stealth (from anticheats), speed, and total domination — with full dark-mode support with a slick Click GUI.
 
 Please join our **[Discord](https://discord.gg/PwpGemYhJx)**!
 
@@ -20,7 +23,7 @@ Please join our **[Discord](https://discord.gg/PwpGemYhJx)**!
 - Nuker (still in BETA, it sends too many block break packets and gets you kicked for this.)
 - Jetpack (this is literally just the old Fly from Vape For Miniblox, this probably still works.)
 - 2ND ClickGUI created by me (TheM1ddleM1n)
-- Script manager/Report function in game (Thanks dtkiller-jp!)
+- Script manager/Bug Report function in game (Thanks dtkiller-jp!)
 
 ## How to Install Impact For Miniblox?
 
@@ -40,10 +43,11 @@ And then enjoy using the client!
 
 - `.toggle all` command currently non-functional (we are looking into it).
 - There is currently an issue with `Nuker`. (via a lot of packets sent you will get kicked instantly.)
-- There are issues with `SurvivalMode` and `FastBreak`. (Looking into it)
-- Reach is limited to 5-6 (same as killaura) due to Vector's goofy ahh anticheat.
+- `FastBreak` doesn't work (Looking into it)
+- Reach is limited to 6 (same as killaura) due to Vector's goofy ahh anticheat.
 - linking to killaura sometimes in the air hits will not register (however, (this is a miniblox anticheat problem - thanks vector) and not our client))
-- Scaffold works 99% of the time (but sometimes you can get voided) (again another vector issue)
+- Scaffold works 99% of the time, but sometimes you can get voided because of their new AntiLegit-I mean anticheat (again another vector issue)
+
 ## Changelog
 
 ## [v6.8.1] - 2025-10-24
@@ -97,22 +101,22 @@ And then enjoy using the client!
 ## [v6.1] – 2025-10-06  
 
 - Updated README  
-- Added module tags (e.g. `Step` by `DataM0del`)  
+- Added module "tags" instead of hardcoded "modes" (e.g. `Step` with value set to 2.0 displays as `Step` `2.0`)  
 - Introduced the **ServerCrasher** module (thanks to `DataM0del`)  
 
 ---
 
 ## [v6.0] – 2025-10-03  
 
-- Updated the README  
-- Improved **AntiBan 2.0** module (`DataM0del`)  
+- Updated the README
+- Added an `AccountGen` option to the **AntiBan** module to play on account only servers and auto generate disposable accounts (`DataM0del`)
 - Moved outdated content to `docs/` (`TheM1ddleM1n`)
 
 ---
 
 ## [v6.0] – 2025-09-30
 
-- Ported `.friend` and `antiblind` features from Vape for Miniblox (`DataM0del`)  
+- Ported `.friend` and `antiblind` features from Vape for Miniblox (`DataM0del`)
 - Version bump from v5.9 → v6.0
 
 ---
@@ -161,7 +165,7 @@ And then enjoy using the client!
 - [ ] Reach fix (possible but its limited to 5-6 thanks to vector's goofy ahh anticheat)
 - [ ] **NoSlow – Prevents slowdown from using items or cobwebs**
 - [ ] Fullbright – Always max brightness. (funny)
-- [ ] CustomCape / Wings – Renders client-side cosmetics? (recode possibly?!)
+- [ ] CustomCape / Wings – Renders client-side cosmetics? (would be annoying with the current system to hook the game, but is still possible, because it's a render module)
 - [ ] TargetStrafe – Strafes around enemies in combat while attacking.
 - [ ] Small music player (ie. links to spotify) (like JoLean client)
 - [ ] Render miniblox's HUDS (ie. health bar to mc like hearts?!)
@@ -176,7 +180,7 @@ Make sure you **always** update VERSIONFILE, tampermonkey.js, and injection.js t
 
 Never publish unstable code to / (root). Use `/` `beta` for any test builds you have got.
 
-## Repo rename pending once closed-source dependencies are synced
+## Repo rename pending once (the literally none) closed-source dependencies are synced
 
 An apology here firstly, i dont know why, but my account seems to have github actions disabled @TheM1ddleM1n sorry about your CI.
 
