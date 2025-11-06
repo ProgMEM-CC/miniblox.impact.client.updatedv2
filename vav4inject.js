@@ -3778,6 +3778,21 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 			// Initialize with search tab
 			switchTab("search");
+			
+			// Restore player state if music is playing
+			if (musicPlayerState.currentTrack) {
+				updatePlayerUI();
+				
+				// Restore button states
+				const shuffleBtn = document.getElementById("music-shuffle-btn");
+				const repeatBtn = document.getElementById("music-repeat-btn");
+				if (shuffleBtn) {
+					shuffleBtn.style.background = musicPlayerState.shuffle ? "var(--vape-accent,#0FB3A0)" : "rgba(255,255,255,0.1)";
+				}
+				if (repeatBtn) {
+					repeatBtn.style.background = musicPlayerState.repeat ? "var(--vape-accent,#0FB3A0)" : "rgba(255,255,255,0.1)";
+				}
+			}
 
 			updateCategoryHighlights();
 			saveGUIState();
@@ -3793,16 +3808,22 @@ const survival = new Module("SurvivalMode", function(callback) {
 			const seekBar = document.getElementById("music-seek-bar");
 			const favoriteBtn = document.getElementById("music-favorite-btn");
 
-			if (playPauseBtn) playPauseBtn.onclick = () => togglePlayPause();
-			if (prevBtn) prevBtn.onclick = () => playPreviousTrack();
-			if (nextBtn) nextBtn.onclick = () => playNextTrack();
-			if (shuffleBtn) shuffleBtn.onclick = () => toggleShuffle();
-			if (repeatBtn) repeatBtn.onclick = () => toggleRepeat();
-			if (volumeSlider) volumeSlider.oninput = (e) => {
-				musicPlayerState.volume = e.target.value / 100;
-				if (musicPlayerState.audio) musicPlayerState.audio.volume = musicPlayerState.volume;
-			};
+			if (playPauseBtn) playPauseBtn.onclick = (e) => { e.stopPropagation(); togglePlayPause(); };
+			if (prevBtn) prevBtn.onclick = (e) => { e.stopPropagation(); playPreviousTrack(); };
+			if (nextBtn) nextBtn.onclick = (e) => { e.stopPropagation(); playNextTrack(); };
+			if (shuffleBtn) shuffleBtn.onclick = (e) => { e.stopPropagation(); toggleShuffle(); };
+			if (repeatBtn) repeatBtn.onclick = (e) => { e.stopPropagation(); toggleRepeat(); };
+			if (volumeSlider) {
+				volumeSlider.onclick = (e) => e.stopPropagation();
+				volumeSlider.onmousedown = (e) => e.stopPropagation();
+				volumeSlider.oninput = (e) => {
+					musicPlayerState.volume = e.target.value / 100;
+					if (musicPlayerState.audio) musicPlayerState.audio.volume = musicPlayerState.volume;
+				};
+			}
 			if (seekBar) {
+				seekBar.onclick = (e) => e.stopPropagation();
+				seekBar.onmousedown = (e) => e.stopPropagation();
 				seekBar.oninput = (e) => {
 					if (musicPlayerState.audio) {
 						const seekTime = (e.target.value / 100) * musicPlayerState.audio.duration;
@@ -3810,7 +3831,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 					}
 				};
 			}
-			if (favoriteBtn) favoriteBtn.onclick = () => toggleFavorite();
+			if (favoriteBtn) favoriteBtn.onclick = (e) => { e.stopPropagation(); toggleFavorite(); };
 		}
 
 		function switchTab(tabId) {
@@ -3849,6 +3870,9 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 			const searchInput = document.getElementById("music-search-input");
 			if (searchInput) {
+				searchInput.onkeydown = (e) => {
+					e.stopPropagation();
+				};
 				searchInput.onkeypress = (e) => {
 					if (e.key === "Enter") searchMusic(searchInput.value);
 				};
@@ -4062,13 +4086,16 @@ const survival = new Module("SurvivalMode", function(callback) {
 		}
 
 		function togglePlayPause() {
-			if (!musicPlayerState.audio) return;
+			if (!musicPlayerState.audio || !musicPlayerState.currentTrack) return;
 			
 			if (musicPlayerState.isPlaying) {
 				musicPlayerState.audio.pause();
 				musicPlayerState.isPlaying = false;
 			} else {
-				musicPlayerState.audio.play();
+				musicPlayerState.audio.play().catch(err => {
+					console.error("Play error:", err);
+					showNotif("Failed to play", "error", 1000);
+				});
 				musicPlayerState.isPlaying = true;
 			}
 			updatePlayerUI();
@@ -4338,6 +4365,14 @@ const survival = new Module("SurvivalMode", function(callback) {
 		let visible = false;
 		document.addEventListener("keydown", (e) => {
 			if (e.code === "Backslash") {
+				e.preventDefault();
+				
+				// Prevent input if search box is focused
+				const searchInput = document.getElementById("music-search-input");
+				if (searchInput && document.activeElement === searchInput) {
+					return;
+				}
+				
 				visible = !visible;
 
 				if (visible) {
