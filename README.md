@@ -43,7 +43,7 @@ And then enjoy using the client!
 - There are issues with `SurvivalMode` and `FastBreak`. (Looking into it)
 - Reach is limited to 5-6 (same as killaura) due to Vector's goofy ahh anticheat.
 - linking to killaura sometimes in the air hits will not register (however, (this is a miniblox anticheat problem - thanks vector) and not our client))
-
+- Scaffold works 99% of the time (but sometimes you can get voided) (again another vector issue)
 ## Changelog
 
 ## [v6.8.1] - 2025-10-24
