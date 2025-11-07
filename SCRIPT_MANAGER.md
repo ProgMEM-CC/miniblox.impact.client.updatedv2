@@ -3,40 +3,40 @@
 > [!WARNING]
 > BEFORE using this, please note, that (currently) all code is executed through `eval`, which means if the Miniblox site or Impact client can do something, the script can too
 > (e.g. loading scripts that grabs your session_v1 token from localStorage and send it off to a webhook, maybe to use in some botting or account takeover)
-> Let us know if you know of ways to sandbox JS code without hassle (try to avoid using iframes).
+> Let us know if you know of ways to sandbox JS code without hassle (try to avoid using `iframes`).
 
 ## Overview
 
-Script Manager allows you to load and manage custom scripts in Impact for Miniblox. Scripts are executed in the same scope as the main client, giving them full access to all modules, functions, and variables.
+Script Manager allows you to load and manage custom scripts in Impact for Miniblox. Scripts are executed in the same scope as the main client, giving them full access to all of the modules, functions and variables.
 
-## How to Open Script Manager
+## How to Open Script Manager?
 
-### Via ClickGUI
+### 1. Via ClickGUI
 
 1. Press `\` (Backslash) to open ClickGUI
 2. Click `Misc` category
 3. Toggle `ScriptManager`
 
-### Via Command (in miniblox)
+### 2. Via Command (in miniblox)
 
 Type `.scriptmanager` in chat
 
 ## Loading Scripts!
 
-### 📁 Load File (Local File)
+### 📁 Load Local File
 
 1. Click "📁 Load File"
 2. Select a `.js` file from your computer
 3. The script will be loaded and executed immediately
 4. Any modules created will appear in the `Scripts` category in ClickGUI
 
-### 🌐 Load URL
+### 🌐 Load A (Custom Javascript) URL
 
 1. Click "🌐 Load URL"
 2. Enter the URL of a JavaScript file
 3. The script will be fetched and executed
 
-### ✏️ Write Code
+### ✏️ To Write Your Own Code
 
 1. Click "✏️ Write Code"
 2. Enter a script name (this is just for identification)
@@ -58,7 +58,7 @@ Type `.scriptmanager` in chat
 - Removes all modules created by the script
 - Clears saved data from LocalStorage
 
-## Script Format
+## Scripting Format
 
 Scripts are executed using `eval()` in the same scope as the main client. This means you have direct access to all variables and functions.
 
@@ -155,7 +155,7 @@ Since scripts run in the same scope, you have access to everything:
 - `SPacketUseItem` - Use item packet
 - `SPacketPlayerAction` - Player action packet
 - `SPacketPlayerPosLook` - Position/look packet
-- And many more...
+- etc...
 
 ### Items & Entities
 
@@ -181,6 +181,7 @@ Since scripts run in the same scope, you have access to everything:
 ## 💡 Tips!
 
 ### Clean Up Resources
+
 Always clean up in the disable function:
 ```javascript
 new Module("MyModule", function(enabled) {
@@ -226,11 +227,11 @@ new Module("MyVisual", function(enabled) {
 - Verify that your syntax is correct
 - Make sure you're creating a `new Module(...)`
 
-### Module doesn't appear in ClickGUI?
+### Module does not appear in ClickGUI?
 
 - Check if the module was created successfully
 - Look in the `Scripts` category
-- Reload the page and try again
+- Refresh the page and try again
 
 ### Script error message
 
@@ -276,14 +277,16 @@ const myModule = new Module("CustomFly", function(enabled) {
 });
 
 // Add options
-speed = myModule.addoption("Speed", Number, 0.5);
-jumpHeight = myModule.addoption("JumpHeight", Number, 0.42);
+speed = myModule.addoption("Speed", Number, 0.18);
+jumpHeight = myModule.addoption("JumpHeight", Number, 0.18);
 autoJump = myModule.addoption("AutoHover", Boolean, true);
 ```
 
 ## Notes
 
 - Scripts have full access to the client's scope
-- Be careful with what scripts you load from untrusted sources
-- Scripts persist across sessions via LocalStorage
-- You can have multiple modules in one script file
+- Be very careful with what scripts you load from untrusted sources
+- Scripts will persist across sessions via a `localStorage` element
+- You can have multiple modules in one script file!
+
+Enjoy! 
