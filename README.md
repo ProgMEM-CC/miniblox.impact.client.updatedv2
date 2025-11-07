@@ -17,9 +17,9 @@ Please join our **[Discord](https://discord.gg/PwpGemYhJx)**!
 ## Features
 
 - AntiBan 2.0 (use non accounts OR generate accounts with **[miniblox-acc-gen](https://codeberg.org/RealPacket/miniblox-acc-gen)'s** integration support!)
-- Fly, NoFall, NoFallBeta, and Scaffold
-- Click GUI
-- ServerCrasher (works on servers without the new AC, e.g. planets)
+- Fly, NoFall, NoFallBeta, and Scaffold!
+- A Useable Click GUI
+- ServerCrasher (this works on servers without the new AC, e.g. planets)
 - Nuker (still in BETA, it sends too many block break packets and gets you kicked for this.)
 - Jetpack (this is literally just the old Fly from Vape For Miniblox, this probably still works.)
 - 2ND ClickGUI created by me (TheM1ddleM1n)
@@ -46,7 +46,7 @@ And then enjoy using the client!
 - `FastBreak` doesn't work (Looking into it)
 - Reach is limited to 6 (same as killaura) due to Vector's goofy ahh anticheat.
 - linking to killaura sometimes in the air hits will not register (however, (this is a miniblox anticheat problem - thanks vector) and not our client))
-- Scaffold works 99% of the time, but sometimes you can get voided because of their new AntiLegit-I mean anticheat (again another vector issue)
+- Scaffold works 99% of the time, but sometimes you can get voided because of their new AntiLegit-I mean anticheat (again this is another vector issue 🥀)
 
 ## Changelog
 
@@ -146,11 +146,12 @@ And then enjoy using the client!
 ## [v5.0 – v5.5]  
 
 - Fixed filter bypass operating when running a `/` command
-- Added improvements to **Fly - desync**, **NoFall - desync**, and a **Scaffold** bypass (from slots 1–9 in the hotbar)  
-- Introduced ClickGUI via `vav4inject.js`  
+- Added improvements to **Fly - desync**, **NoFall - desync**, and a **Scaffold** bypass 
+- Introduced a working ClickGUI via the `vav4inject.js` file  
 - Improved inventory handling and user interface
 
 ## Ideas for some new modules (please look at this for a next step on making this client better!)
+<!-- things in **bold** we will implement before V7 gets released !--> - TheM1ddleM1n
 
 - [ ] Force OP module (gain access to admin commands?! funny bypass)
 - [ ] Command Block modification (to change command blocks in survival)
@@ -158,21 +159,20 @@ And then enjoy using the client!
 - [ ] **AutoEat (Automatically eats food in the inv)**
 - [ ] AimBot (Automatically aims at a player)
 - [ ] Breadcrumbs (particles of a sort trailing behind the player)
-- [ ] Inventory Manager – Organizes inventory automatically.
+- [ ] Inventory Manager – Organizes inventory automatically
 - [ ] X-Ray (possible)
-- [ ] Freecam (like PublicLurker client?)
+- [ ] Freecam (like PublicLurker client)
 - [ ] SkinChanger in game (good idea)
 - [ ] Reach fix (possible but its limited to 5-6 thanks to vector's goofy ahh anticheat)
 - [ ] **NoSlow – Prevents slowdown from using items or cobwebs**
 - [ ] Fullbright – Always max brightness. (funny)
-- [ ] CustomCape / Wings – Renders client-side cosmetics? (would be annoying with the current system to hook the game, but is still possible, because it's a render module)
-- [ ] TargetStrafe – Strafes around enemies in combat while attacking.
+- [ ] CustomCape / Wings – Renders client-side cosmetics (it would be annoying with the current system to hook the game, but is still possible, because it's a render module)
 - [ ] Small music player (ie. links to spotify) (like JoLean client)
-- [ ] Render miniblox's HUDS (ie. health bar to mc like hearts?!)
-- [ ] ArmorHUD (to improve my targetHUD ) (using exhibition?!)
+- [ ] Render miniblox's HUDS (ie. health bar to mc like hearts)
+- [ ] ArmorHUD (to improve my targetHUD ) (using exhibition)
 - [ ] **AutoSword (*should be easy to do*)**
-- [ ] CustomSky – Applies custom skybox textures.
-- [ ] AutoInsult / ComplimentBot – Randomly sends messages after kills. (improvement to my AutoFunnyChat module?)
+- [ ] CustomSky – Applies custom skybox textures
+- [ ] AutoInsult / ComplimentBot – Randomly sends messages after kills (improvement to my AutoFunnyChat module) (like any mc client for example: Rise 7.4)
 
 ## 🧩 Developer Notes
 
@@ -200,7 +200,7 @@ An apology here firstly, i dont know why, but my account seems to have github ac
 
 - 💬 Discord Impact Community (please join this if you can) - **<https://discord.gg/PwpGemYhJx>**
 
-## ⚠️ Disclaimer (DO READ THIS IF YOU CAN BEFORE INSTALLING PLEASE.)
+## ⚠️ Disclaimer (DO READ THIS IF YOU CAN BEFORE INSTALLING PLEASE)
 
 Please be aware that the developers are not responsible for any misuse or violations of Miniblox.io’s Terms of Service. So please enjoy and give any feedback we are willing to hear your views!
 
