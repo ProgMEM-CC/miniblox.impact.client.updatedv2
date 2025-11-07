@@ -151,7 +151,7 @@ And then enjoy using the client!
 - Improved inventory handling and user interface
 
 ## Ideas for some new modules (please look at this for a next step on making this client better!)
-<!-- things in **bold** we will implement before V7 gets released !--> - TheM1ddleM1n
+<!-- things in **bold** we will implement before V7 gets released - TheM1ddleM1n !-->
 
 - [ ] Force OP module (gain access to admin commands?! funny bypass)
 - [ ] Command Block modification (to change command blocks in survival)
