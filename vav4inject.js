@@ -83,7 +83,7 @@ function modifyCode(text) {
 (function () {
 	'use strict';
 
-	// DUMPING
+	// DUMPS
 	addDump('moveStrafeDump', 'this\\.([a-zA-Z]+)=\\([a-zA-Z]+\\.right');
 	addDump('moveForwardDump', 'this\\.([a-zA-Z]+)=\\([a-zA-Z]+\\.(up|down)');
 	addDump('keyPressedDump', 'function ([a-zA-Z]*)\\([a-zA-Z]*\\)\{return keyPressed\\([a-zA-Z]*\\)');
@@ -158,7 +158,7 @@ let serverPos = player.pos.clone();
 
 		async function generateAccount() {
 			toast({
-				title: "generating miniblox account via integration...",
+				title: "Generating Miniblox Account Via Integration...",
 				status: "info",
 				duration: 0.3e3
 			});
@@ -167,7 +167,7 @@ let serverPos = player.pos.clone();
 				throw await res.text();
 			const j = await res.json();
 			toast({
-				title: \`Generated miniblox account! named \${j.name}!\`,
+				title: \`Generated a miniblox account! named \${j.name}!\`,
 				status: "success",
 				duration: 1e3
 			});
@@ -221,7 +221,7 @@ let serverPos = player.pos.clone();
         if (color) ctx.globalCompositeOperation = "source-over";
     }
 `);
-	// TEXT GUI (OG textgui from M1ddleM1n but improved by DataM0del thanks again!)
+	// TEXT GUI
 	addModification('(this.drawSelectedItemStack(),this.drawHintBox())', /*js*/`
 	if (ctx$5 && enabledModules["TextGUI"]) {
 		const canvasW = ctx$5.canvas.width;
@@ -359,7 +359,7 @@ let serverPos = player.pos.clone();
 	addModification('ClientSocket.on("CPacketUpdateStatus",h=>{', `
 		if (h.rank && h.rank != "" && RANK.LEVEL[h.rank].permLevel > 2) {
 			game.chat.addChat({
-				text: "STAFF DETECTED : " + h.rank + "\\n".repeat(10),
+				text: "STAFF HAS BEEN DETECTED : " + h.rank + "\\n".repeat(10),
 				color: "red"
 			});
 		}
@@ -473,7 +473,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		}
 	`);
 
-	// PlayerESP (created by TheM1ddleM1n)
+	// PlayerESP
 	addModification(')&&(p.mesh.visible=this.shouldRenderEntity(p))', `
   if (p && p.id != player.id) {
     function hslToRgb(h, s, l) {
@@ -645,7 +645,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
   }
 `);
 
-	// LOGIN BYPASS (clean up by DataM0del and TheM1ddleM1n)
+	// LOGIN BYPASS (clean up by DataM0del and TheM1ddleM1n!)
 	addModification(
 		'new SPacketLoginStart({' +
 		'requestedUuid:localStorage.getItem(REQUESTED_UUID_KEY)??void 0,' +
@@ -670,7 +670,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	// SWING FIX
 	addModification('player.getActiveItemStack().item instanceof', 'null == ', true);
 
-	// COMMANDS
+	// COMMAND
 	addModification('submit(u){', `
 		const str = this.inputValue.toLocaleLowerCase();
 		const args = str.split(" ");
@@ -1183,20 +1183,20 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			
 			function executeCustomScript(name, code, source, save = true) {
 				try {
-					// Remove old module if exists
+					// Try to remove the old module if it exists.
 					if (modules[name]) {
 						if (modules[name].enabled) modules[name].toggle();
 						delete modules[name];
 						delete enabledModules[name];
 					}
 					
-					// Get existing module names before execution
+					// To get the existing module names before execution
 					const existingModules = new Set(Object.keys(modules));
 					
 					// Simply eval the code in the same scope
 					eval(code);
 					
-					// Find newly created modules
+					// Find the newly created modules
 					const newModules = Object.keys(modules).filter(m => !existingModules.has(m));
 					console.log("New modules created:", newModules);
 					
@@ -1271,7 +1271,9 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					}
 				} else delete tickLoop["AutoClicker"];
 			}, "Combat");
+			
 			new Module("AntiBlind", function() {}, "Render");
+			
 			new Module("AntiCheat", function(callback) {
 				if (!callback)
 					return; // TODO: deinitialization logic
@@ -1299,7 +1301,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			velocityhori = velocity.addoption("Horizontal", Number, 0);
 			velocityvert = velocity.addoption("Vertical", Number, 0);
    
-			// Nofall beta?
+			// NoFall BETA
    			let noFallExtraYBeta;
 			const NoFallBeta = new Module("NoFallBeta", function(callback) {
 				if (callback) {
@@ -1362,7 +1364,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			// this is a very old crash method,
 			// bread (one of the devs behind atmosphere) found it
 			// and later shared it to me when we were talking
-			// about the upcoming bloxd layer.
+			// about the upcoming bloxd layer. ooh.
 
 			let serverCrasherStartX, serverCrasherStartZ;
 			let serverCrasherPacketsPerTick;
@@ -1416,7 +1418,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 			}
 
-			// Killaura
+			// Killaura!
 			let attackDelay = Date.now();
 			let didSwing = false;
 			let attacked = 0;
@@ -1602,7 +1604,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					unblock();
 				}
 			}, "Combat", () => \`\${killaurarange[1]} block\${killaurarange[1] == 1 ? "" : "s"} \${killaurablock[1] ? "Auto Block" : ""}\`);
-			killaurarange = killaura.addoption("Range", Number, 9);
+			killaurarange = killaura.addoption("Range", Number, 6);
 			killauraangle = killaura.addoption("Angle", Number, 360);
 			killaurablock = killaura.addoption("AutoBlock", Boolean, true);
 			killaurawall = killaura.addoption("Wallcheck", Boolean, false);
@@ -1626,7 +1628,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				return new Vector3$1(0, 0, 0);
 			}
 
-			// Fly bypasser?! lol
+			// OP_Fly
 			let flyvalue, flyvert, flybypass;
 			const fly = new Module("Fly", function(callback) {
 				if (!callback) {
@@ -1651,7 +1653,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			flyvert = fly.addoption("Vertical", Number, 0.3);
 
 
-			// InfiniteFly
+			// InfinityFly
 			let infiniteFlyVert, infiniteFlyLessGlide;
 			let warned = false;
 			const infiniteFly = new Module("InfiniteFly", function(callback) {
@@ -1708,7 +1710,7 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 			new Module("KeepSprint", function() {}, () => "Ignore");
 			new Module("NoSlowdown", function() {}, () => "Ignore");
 
-			// Speed
+// WSpeed
 let speedvalue, speedjump, speedauto, speedbypass;
 
 const speed = new Module("Speed", function(callback) {
@@ -1758,7 +1760,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			new Module("ESP", function() {}, "Render");
 			const textgui = new Module("TextGUI", function() {}, "Render");
 			textguifont = textgui.addoption("Font", String, "Poppins");
-			textguisize = textgui.addoption("TextSize", Number, 14);
+			textguisize = textgui.addoption("TextSize", Number, 15);
 			textguishadow = textgui.addoption("Shadow", Boolean, true);
 			textgui.toggle();
 			new Module("AutoRespawn", function() {});
@@ -2214,8 +2216,8 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			breakerrange = breaker.addoption("Range", Number, 10);
 
 			// Nuker
-			// TODO: fix kick from sending too many packets,
-			// and also fixes for when the break time isn't instant
+			// TODO: fix kick from sending too many packets at once,
+			// and also to fix for when the break time isn't instant.
 			let nukerRange;
 			const nuker = new Module("Nuker", function(callback) {
 				if (callback) {
@@ -2318,7 +2320,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			}, "Misc");
 
 			
-            // ChestSteal OP
+            // ChestSteal
 			let cheststealblocks, cheststealtools;
 const cheststeal = new Module("ChestSteal", function(callback) {
     if (callback) {
@@ -2356,6 +2358,7 @@ const cheststeal = new Module("ChestSteal", function(callback) {
 cheststealblocks = cheststeal.addoption("Blocks", Boolean, true);
 cheststealtools = cheststeal.addoption("Tools", Boolean, true);
 
+           // Scaffold :)
            let scaffoldtower, oldHeld, scaffoldextend, scaffoldcycle;
 let tickCount = 0;
 
