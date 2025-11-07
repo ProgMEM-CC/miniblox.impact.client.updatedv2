@@ -1,4 +1,4 @@
-// 2nd ClickGUI - You can use this here or use @dtkiller-jp's one on injection.js!
+// 2nd ClickGUI - You can use this here or use @dtkiller-jp's one!
 (async function () {
   try {
     const fontLink = document.createElement("link");
