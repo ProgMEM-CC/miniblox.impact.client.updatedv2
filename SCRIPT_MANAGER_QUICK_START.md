@@ -5,13 +5,13 @@
 ### Step 1: How to Open `Script Manager`?
 
 - Press `\` (Backslash) to open ClickGUI
-- Click `Misc` → Toggle `ScriptManager`
-- Or type `.scriptmanager` in chat
+- Click `Misc` → Toggle `ScriptManager` on!
+- Or you can type `.scriptmanager` in chat
 
 ### Step 2: Create Your First Script
 
-1. Click "✏️ Write Code"
-2. Enter name: `MyFirstScript`
+1. Click on "✏️ Write Code"
+2. Enter a name: `MyFirstScript`
 3. Paste this code:
 
 ```javascript
@@ -30,10 +30,10 @@ new Module("HelloWorld", function(enabled) {
 });
 ```
 
-4. Click "Save & Load"
-5. Close Script Manager
-6. Open ClickGUI → Click `Scripts` category
-7. Toggle `HelloWorld` module!
+4. Click on "Save & Load"
+5. Close the Script Manager UI
+6. And open the ClickGUI → And click on the `Scripts` category
+7. Finally, toggle the `HelloWorld` module!
 
 ### Step 3: Load the Existing Scripts
 
@@ -106,4 +106,4 @@ new Module("VisualModule", function(enabled) {
 - Read the full [Script Manager Documentation](SCRIPT_MANAGER.md)
 - Explore the BETA folder for more examples!
 - Experiment with different modules!
-- Share your scripts with the Impact Community - via here or discord!
+- Share your scripts with the Impact Community - via here or discord!!
