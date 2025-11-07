@@ -2384,14 +2384,14 @@ const scaffold = new Module("Scaffold", function(callback) {
         if (player) oldHeld = game.info.selectedSlot;
 
         game.chat.addChat({
-    text: ":money_mouth:",
-    color: "red"
+    text: "funny bypass.",
+    color: "royalblue"
 });
 
         tickLoop["Scaffold"] = function() {
             tickCount++;
 
-            // 🔁 Auto-select blocks & cycle between them
+            // Auto-select blocks & cycle between them
             let slotsWithBlocks = [];
             for (let i = 0; i < 9; i++) {
                 const item = player.inventory.main[i];
@@ -2542,7 +2542,7 @@ const scaffold = new Module("Scaffold", function(callback) {
                         }
                     }
 
-                    break; // ✅ Stop checking after placing
+                    break; // Stop checks after placing.
                 }
             }
         };
@@ -2558,6 +2558,7 @@ scaffoldtower = scaffold.addoption("Tower", Boolean, true);
 scaffoldextend = scaffold.addoption("Extend", Number, 1);
 scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 
+            // Timer
 			let timervalue;
 			const timer = new Module("Timer", function(callback) {
 				reloadTickLoop(callback ? 50 / timervalue[1] : 50);
@@ -2576,7 +2577,7 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 			chatdisablermsg = chatdisabler.addoption("Message", String, "Your src code suc\\\\ks");
 			new Module("FilterBypass", function() {}, "Exploit", () => "\\\\");
    
-    
+    // InvCleaner
     const InvCleaner = new Module("InvCleaner", function (callback) {
 		if (!callback) {
 			delete tickLoop["InvCleaner"];
@@ -2716,6 +2717,7 @@ function dropSlot(index) {
     playerControllerDump.windowClickDump(windowId, -999, 0, 0, player);
 }
 
+// AutoFunnyChat
 var funnyMessages = [
     "Prediction ACs: great at guessing wrong.",
     "Lag spikes? Blame the AC trying to play psychic.",
@@ -2794,6 +2796,7 @@ const autofunnychat = new Module("autofunnychat", function(callback) {
     }
 });
 
+// Jesus
 const jesus = new Module("Jesus", function(callback) {
     if (callback) {
         tickLoop["Jesus"] = function() {
@@ -2825,7 +2828,7 @@ const jesus = new Module("Jesus", function(callback) {
     }
 }, "Movement");
 
-// LongJump
+// Longjump
 let ljpower, ljboost, ljdesync;
 const longjump = new Module("LongJump", function(callback) {
     if (!callback) {
@@ -3666,7 +3669,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 
 
-		// === Toggle GUI ===
+		// === Toggle ClickGUI ===
 		let visible = false;
 		document.addEventListener("keydown", (e) => {
 			if (e.code === "Backslash") {
