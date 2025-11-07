@@ -4,7 +4,6 @@ Add "KeepSprint" feature to prevent sprint interruption during high-speed moveme
 Add "Velocity" module for modifying entity velocity, including both horizontal and vertical components
 Add AJAX-based form submissions to improve page interactivity and speed
 Add KeepSprint feature to maintain sprint state even after movement interruptions
-Add `CHANGELOG.md` to track changes made in each release
 Add ability to sort search results by price, rating, or other filters
 Add ability to toggle auto-jump feature within the Speed module for better control
 Add additional details to `README.md` about contributing to the documentation
@@ -15,7 +14,6 @@ Add config files for easier user adjustments to keybinds and module settings
 Add configurable flight mode options for InfiniteFly, including vertical speed control
 Add configurable keybinds for core features in hacked client
 Add configuration for customizing Killaura’s targeting range and attack frequency
-Add contribution guidelines to README.md to encourage community involvement
 Add custom CSS overrides for smoother animations on page load
 Add custom animations to page transitions for smoother user experience
 Add custom breadcrumb navigation for better user flow across deep pages
@@ -40,11 +38,8 @@ Add new player motion handling logic to reduce lag when switching between speed 
 Add new section to `README.md` for "Frequently Asked Questions" (FAQ)
 Add new sorting mechanism for Killaura attacks to improve entity prioritization
 Add option to disable player collision during flight mode for smoother movement
-Add option to toggle "UnlimitedJump" in Speed module for continuous jumping
 Add progress bar to indicate loading state on content-heavy pages
 Add screenshot to README.md to demonstrate the interface of the tool
-Add section in `README.md` for reporting issues and requesting features
-Add section to README.md for contributing guidelines
 Add smooth scrolling feature to anchor links for better user experience
 Add smooth transitions for page elements when navigating between sections
 Add speed boost options with customizable horizontal and vertical movement adjustments
