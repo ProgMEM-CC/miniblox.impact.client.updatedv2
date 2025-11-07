@@ -5,7 +5,7 @@
 
 **Impact For Miniblox** is a fork of the **Vape V4** project by `DataM0del`
 (which is a continuation of the discontinued **Vape V4** project by `7GrandDadPGN`).
-Before the original client was deleted ([xylex fake quit moment](https://github.com/7GrandDadPGN/7granddadpgn/commit/46a3b9e9afea226f730b9d9eaf10788b993d43ee#commitcomment-152355396)),
+Before the original client was deleted ([xylex fake quit moment](https://github.com/7GrandDadPGN/7granddadpgn/commit/46a3b9e9afea226f730b9d9eaf10788b993d43ee#commitcomment-152355396)) 🥀
 <!-- why am I adding all of these dates, this isn't history class LOL -->
 `**DataM0del (aka RealPacket)**` started updating it 13 days before that comment, and then stopped 2 days after.
 But it was fully useable 3 days after that comment, and then, the first updated version of Vape, 3.0.0, was released.
