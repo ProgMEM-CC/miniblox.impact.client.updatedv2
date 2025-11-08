@@ -55,11 +55,12 @@ And then enjoy using the client!
 - Constant updates from @TheM1ddleM1n, @dtkiller-jp and @DataM0del
 - Updated README (@TheM1ddleM1n and @DataM0del)
 - Updated the Music Player branch (@dtkiller-jp)
+- Auto synced version to `v6.8.5`
 
 ## [v6.8.1] - 2025-10-24
 
 - Update milestone to `V7 LTS` (ProgMEM-CC)
-- updated version to `6.8.1`
+- synced version to `6.8.1`
 - Made new V8, V9 and V10 milestones (ProgMEM-CC and TheM1ddleM1n)
 - Made a new report command in game (dtkiller-jp thanks!) `.report` in miniblox chat
 - added a script system for clickGUI it goes into `scripts` for the GUI (thanks again dtkiller-jp!)
