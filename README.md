@@ -25,7 +25,7 @@ Please join our **[Discord](https://discord.gg/PwpGemYhJx)**!
 - 2ND ClickGUI created by me (TheM1ddleM1n)
 - Script manager/Bug Report function in game (Thanks dtkiller-jp!)
 
-## How to Install Impact For Miniblox?
+## How to install our client?
 
 First, install a userscript manager (🧩 **Tampermonkey**, **Violentmonkey** or **Greasemonkey** via Chrome Web Store or Microsoft Store etc).
 
@@ -46,9 +46,15 @@ And then enjoy using the client!
 - `FastBreak` doesn't work (Looking into it)
 - Reach is limited to 6 (same as killaura) due to Vector's goofy ahh anticheat.
 - linking to killaura sometimes in the air hits will not register (however, (this is a miniblox anticheat problem - thanks vector) and not our client))
-- Scaffold works 99% of the time, but sometimes you can get voided because of their new AntiLegit-I mean anticheat (again this is another vector issue 🥀)
+- Scaffold does work 99% of the time, but sometimes you can get voided because of their new AntiLegit-I mean anticheat (again this is another vector issue 🥀)
 
 ## Changelog
+
+## [v6.8.5] - 2025-11-8
+
+- Constant updates from @TheM1ddleM1n, @dtkiller-jp and @DataM0del
+- Updated README (@TheM1ddleM1n and @DataM0del)
+- Updated the Music Player branch (@dtkiller-jp)
 
 ## [v6.8.1] - 2025-10-24
 
@@ -158,15 +164,14 @@ And then enjoy using the client!
 - [ ] Spoof rank (ProgMEM-CC's idea) (again could be possible)
 - [ ] **AutoEat (Automatically eats food in the inv)**
 - [ ] AimBot (Automatically aims at a player)
-- [ ] Breadcrumbs (particles of a sort trailing behind the player)
 - [ ] Inventory Manager – Organizes inventory automatically
 - [ ] X-Ray (possible)
 - [ ] Freecam (like PublicLurker client)
 - [ ] SkinChanger in game (good idea)
 - [ ] Reach fix (possible but its limited to 5-6 thanks to vector's goofy ahh anticheat)
 - [ ] **NoSlow – Prevents slowdown from using items or cobwebs**
-- [ ] Fullbright – Always max brightness. (funny)
-- [ ] CustomCape / Wings – Renders client-side cosmetics (it would be annoying with the current system to hook the game, but is still possible, because it's a render module)
+- [ ] Fullbright – Always max brightness. (funny mc client thing.)
+- [ ] CustomCape / Wings / Breadcrumbs – Renders client-side cosmetics (it would be annoying with this current system to hook the game's API, but is still possible, because it's a render module)
 - [ ] Small music player (ie. links to spotify) (like JoLean client)
 - [ ] Render miniblox's HUDS (ie. health bar to mc like hearts)
 - [ ] ArmorHUD (to improve my targetHUD ) (using exhibition)
