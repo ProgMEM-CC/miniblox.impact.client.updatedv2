@@ -2717,83 +2717,158 @@ function dropSlot(index) {
     playerControllerDump.windowClickDump(windowId, -999, 0, 0, player);
 }
 
-// AutoFunnyChat
-var funnyMessages = [
-    "Prediction ACs: great at guessing wrong.",
-    "Lag spikes? Blame the AC trying to play psychic.",
-    "Jesus walked on water. ACs still trip over puddles.",
-    "Walking on air? ACs call it a glitch. We call it precision.",
-    "Prediction ACs eat packets. Too bad they choke on velocity.",
-    "Gravity is a suggestion. ACs treat it like gospel.",
-    "Scaffold smoother than your AC’s excuses.",
-    "Tick-perfect bridging. ACs still counting frames.",
-    "Snapped into water? ACs thought you were a fish.",
-    "Water-walking? ACs still learning to swim.",
-    "Falling? Nah. Just descending with style while ACs panic.",
-    "Patch notes say 'fixed.' Reality says 'still broken.'",
-    "Bypass? No. ACs just forgot how to detect.",
-    "Modules adapt. ACs react — poorly.",
-    "Silent movement. Loud AC confusion.",
-    "Prediction? Velocity? ACs still buffering.",
-    "No permission asked. ACs weren’t invited.",
-    "Every module is a flex. ACs just fold.",
-    "No config needed. ACs still reading the manual.",
-    "ACs don’t detect. They guess and hope.",
-    "Unleashed. ACs unleashed their incompetence.",
-    "No drama. Just rise above everyone with rise 6.0 W!",
-    "ACs patch. We evolve.",
-    "Cheating? No. Just outperforming your AC.",
-    "Toggle scaffold. Build legacy. ACs build logs no one reads.",
-    "Flinch? ACs do. We don’t.",
-    "ACs call it daddy. We call it Tuesday.",
-    "Still undetected. Still undefeated. ACs still confused.",
-    "Toggle one module. Server cries. ACs sob.",
-    "Patch notes scared. ACs terrified.",
-    "Your client warned you. ACs didn’t listen.",
-    "Smooth as silk. ACs still stuck in sandpaper mode.",
-    "using your custom ahh client? Well one thing: its bad",
-    "Stealth so clean, ACs think it's a ghost."
+// Kill messages with {name} placeholder
+var killMessages = [
+    "{name} get better next time. Get rise 6.0!",
+    "{name} really thought they had a chance lol",
+    "{name} should try rise 6.0 instead",
+    "GG {name}, but rise 6.0 hits different",
+    "{name} got outplayed by rise 6.0",
+    "Better luck next time {name}. Try rise 6.0!",
+    "{name} just met their match",
+    "{name} needs an upgrade. Rise 6.0 recommended.",
+    "Too easy {name}. Rise 6.0 on top!",
+    "{name} couldn't handle the pressure",
+    "Nice try {name}, but rise 6.0 built different",
+    "{name} got clapped. Rise 6.0 stays undefeated.",
+    "{name} thought they could win? Cute.",
+    "{name} needs to practice more. Or get rise 6.0.",
+    "Sit down {name}. Rise 6.0 speaking.",
+    "{name} experienced rise 6.0 firsthand",
+    "{name} just became a statistic",
+    "L for {name}. W for rise 6.0.",
+    "{name} got deleted - Rise 6.0.",
+    "{name} stood no chance. Rise 6.0 supremacy.",
+    "{name} got folded. Rise 6.0 unmatched.",
+    "{name} tried their best. Still lost to rise 6.0.",
+    "{name} got humbled by rise 6.0",
+    "Skill issue {name}. Rise 6.0 never misses.",
+    "{name} = eliminated. Rise 6.0 = dominant.",
+    "{name} got sent back to spawn. Courtesy of rise 6.0.",
+    "{name} got diffed. Rise 6.0 unstoppable.",
+    "Outskilled {name}. Rise 6.0 remains king.",
+    "{name} couldn't keep up with rise 6.0",
+    "{name} got packed. Rise 6.0 too clean.",
+    "RIP {name}. Rise 6.0 showed no mercy.",
+    "{name} thought they were safe. Rise 6.0 said no.",
+    "{name} got bodied. Rise 6.0 built for this.",
+    "Ez kill on {name}. Rise 6.0 on another level.",
+    "{name} got demolished by rise 6.0",
+    "{name} tried running. Rise 6.0 caught up.",
+    "No contest {name}. Rise 6.0 too strong.",
+    "{name} got wiped. Rise 6.0 stays winning.",
+    "{name} got smoked. Rise 6.0 precision.",
+    "Imagine losing to rise 6.0, right {name}?",
+    "{name} found out why rise 6.0 is #1",
+    "{name} got styled on. Rise 6.0 flawless.",
+    "{name} couldn't touch me. Rise 6.0 untouchable.",
+    "{name} got obliterated. Rise 6.0 ruthless.",
+    "Tough luck {name}. Custom V128 shows no weakness."
 ];
-const autofunnychat = new Module("autofunnychat", function(callback) {
+
+// Configuration
+const autoFunnyChatConfig = {
+    periodicInterval: 50000,
+    killCooldown: 5000,
+    minDelay: 500,
+    maxDelay: 1500,
+    avoidRepeat: true,
+    maxHistorySize: 5
+};
+
+// Properly togglable module
+const autofunnychat = new Module("autofunnychat", function (callback) {
+    // Disable logic
     if (!callback) {
-        delete tickLoop["autofunnychat"];
         if (window.__autoFunnyKillMsgListener) {
-            ClientSocket.off && ClientSocket.off("CPacketMessage", window.__autoFunnyKillMsgListener);
-            window.__autoFunnyKillMsgListener = undefined;
+            if (ClientSocket?.socket?.off) {
+                ClientSocket.socket.off("CPacketMessage", window.__autoFunnyKillMsgListener);
+            }
+            window.__autoFunnyKillMsgListener = null;
         }
+        window.__autoFunnyState = null;
+        if (tickLoop["autofunnychat"]) delete tickLoop["autofunnychat"];
+        console.log("§c[autofunnychat] Disabled.");
         return;
     }
-    // Periodic random funny message
-    let lastSent = 0;
-    tickLoop["autofunnychat"] = function() {
-        if (Date.now() - lastSent > 50000) { // Sends every 50 seconds
-            const msg = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
-            ClientSocket.sendPacket(new SPacketMessage({text: msg}));
-            lastSent = Date.now();
+
+    // Enable logic
+    if (window.__autoFunnyKillMsgListener) {
+        console.log("§e[autofunnychat] Already enabled!");
+        return;
+    }
+
+    window.__autoFunnyState = {
+        lastKillSent: 0,
+        messageHistory: []
+    };
+
+    const state = window.__autoFunnyState;
+
+    function getRandomMessage(victimName) {
+        let available = killMessages;
+
+        if (autoFunnyChatConfig.avoidRepeat && state.messageHistory.length > 0) {
+            available = killMessages.filter(msg => !state.messageHistory.includes(msg));
+            if (available.length === 0) {
+                state.messageHistory = [];
+                available = killMessages;
+            }
+        }
+
+        let msg = available[Math.floor(Math.random() * available.length)];
+        msg = msg.replace(/{name}/g, victimName);
+
+        state.messageHistory.push(msg);
+        if (state.messageHistory.length > autoFunnyChatConfig.maxHistorySize) {
+            state.messageHistory.shift();
+        }
+
+        return msg;
+    }
+
+    function sendFunnyMessage(victimName) {
+        const now = Date.now();
+        if (now - state.lastKillSent < autoFunnyChatConfig.killCooldown) return;
+
+        const msg = getRandomMessage(victimName);
+        ClientSocket.sendPacket(new SPacketMessage({ text: msg }));
+        state.lastKillSent = now;
+    }
+
+    // Listener
+    window.__autoFunnyKillMsgListener = function (packet) {
+        if (!packet.text) return;
+
+        const patterns = [
+            { regex: /You eliminated (.+?)(?:\.|$|,)/ },
+            { regex: /You knocked out (.+?)(?:\.|$|,)/ },
+            { regex: /You sent (.+?)(?:\.|$|,)/ },
+            { regex: /(.+?) (?:was )?eliminated by/, condition: t => t.includes("eliminated by") && t.includes(player.name) },
+            { regex: new RegExp(player.name + " eliminated (.+?)(?:\\.|$|,)") }
+        ];
+
+        let victimName = null;
+        for (const p of patterns) {
+            if (!p.condition || p.condition(packet.text)) {
+                const match = packet.text.match(p.regex);
+                if (match) {
+                    victimName = match[1].trim().replace(/White/gi, '');
+                    break;
+                }
+            }
+        }
+
+        if (victimName) {
+            const delay = autoFunnyChatConfig.minDelay +
+                Math.random() * (autoFunnyChatConfig.maxDelay - autoFunnyChatConfig.minDelay);
+            setTimeout(() => sendFunnyMessage(victimName), delay);
         }
     };
 
-    // Also send on kill events (Miniblox chat detection)
-    if (!window.__autoFunnyKillMsgListener) {
-        window.__autoFunnyKillMsgListener = function(h) {
-            if (
-                h.text &&
-                (
-                    h.text.includes("You eliminated") ||
-                    h.text.includes("You knocked out") ||
-                    h.text.includes("You sent") ||
-                    (h.text.includes("eliminated by") && h.text.includes(player.name)) ||
-                    h.text.includes(player.name + " eliminated")
-                )
-            ) {
-                const msg = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
-                setTimeout(function() {
-                    ClientSocket.sendPacket(new SPacketMessage({text: msg}));
-                }, 500 + Math.random() * 1000); // slight delay for realism
-            }
-        };
-        ClientSocket.socket.off("CPacketMessage", window.__autoFunnyKillMsgListener);
-    }
+    // Register listener
+    ClientSocket.socket.on("CPacketMessage", window.__autoFunnyKillMsgListener);
+    console.log("§a[autofunnychat] Enabled and listening for kill messages.");
 });
 
 // Jesus
