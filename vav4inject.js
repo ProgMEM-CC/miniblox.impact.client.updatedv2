@@ -3589,6 +3589,23 @@ const survival = new Module("SurvivalMode", function(callback) {
 		// Initialize audio element once
 		musicPlayerState.audio = new Audio();
 		musicPlayerState.audio.volume = 0.7;
+		musicPlayerState.audio.preload = "auto";
+		
+		// Stop all other audio elements on the page (including game music)
+		function stopAllOtherAudio() {
+			document.querySelectorAll("audio, video").forEach(element => {
+				if (element !== musicPlayerState.audio) {
+					element.pause();
+					element.volume = 0;
+					element.muted = true;
+				}
+			});
+		}
+		
+		// Stop game music on page load
+		setTimeout(() => {
+			stopAllOtherAudio();
+		}, 1000);
 
 		// === Open Music Player Panel ===
 		function openMusicPlayerPanel() {
@@ -4001,12 +4018,17 @@ const survival = new Module("SurvivalMode", function(callback) {
 		}
 
 		function playTrack(track) {
+			console.log("playTrack called with:", track.name);
+			
+			// Stop all other audio on the page
+			stopAllOtherAudio();
+			
 			// Setup audio context (only once)
 			if (!musicPlayerState.audioContext) {
 				try {
 					musicPlayerState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
 					musicPlayerState.analyser = musicPlayerState.audioContext.createAnalyser();
-					musicPlayerState.analyser.fftSize = 256; // Increased for better frequency resolution
+					musicPlayerState.analyser.fftSize = 256;
 					musicPlayerState.analyser.smoothingTimeConstant = 0.8;
 					const bufferLength = musicPlayerState.analyser.frequencyBinCount;
 					musicPlayerState.dataArray = new Uint8Array(bufferLength);
@@ -4024,17 +4046,18 @@ const survival = new Module("SurvivalMode", function(callback) {
 				musicPlayerState.audioContext.resume();
 			}
 
-			// Remove old event listeners
-			musicPlayerState.audio.removeEventListener("ended", onTrackEnded);
-			musicPlayerState.audio.removeEventListener("timeupdate", updateSeekBar);
-			musicPlayerState.audio.removeEventListener("loadeddata", null);
-
-			// Stop and reset current track
+			// Stop current playback immediately
+			musicPlayerState.isPlaying = false;
 			musicPlayerState.audio.pause();
-			musicPlayerState.audio.currentTime = 0;
 			
-			// Set new track
+			// Remove all event listeners
+			const oldAudio = musicPlayerState.audio;
+			oldAudio.removeEventListener("ended", onTrackEnded);
+			oldAudio.removeEventListener("timeupdate", updateSeekBar);
+			
+			// Set new track source
 			musicPlayerState.audio.src = track.audio;
+			musicPlayerState.audio.currentTime = 0;
 			musicPlayerState.audio.volume = musicPlayerState.volume;
 			musicPlayerState.currentTrack = track;
 
@@ -4042,28 +4065,18 @@ const survival = new Module("SurvivalMode", function(callback) {
 			musicPlayerState.audio.addEventListener("ended", onTrackEnded);
 			musicPlayerState.audio.addEventListener("timeupdate", updateSeekBar);
 
-			// Wait for track to be loaded before playing
-			musicPlayerState.audio.addEventListener("loadeddata", function onLoaded() {
-				musicPlayerState.audio.removeEventListener("loadeddata", onLoaded);
-				
-				const playPromise = musicPlayerState.audio.play();
-				if (playPromise !== undefined) {
-					playPromise.then(() => {
-						musicPlayerState.isPlaying = true;
-						console.log("Playing:", track.name);
-						updatePlayerUI();
-						showVisualizer();
-					}).catch(err => {
-						musicPlayerState.isPlaying = false;
-						console.error("Audio play error:", err);
-						showNotif("Failed to play track", "error");
-						updatePlayerUI();
-					});
-				}
-			}, { once: true });
-
-			// Load the new track
-			musicPlayerState.audio.load();
+			// Play the track
+			musicPlayerState.audio.play().then(() => {
+				musicPlayerState.isPlaying = true;
+				console.log("Successfully playing:", track.name);
+				updatePlayerUI();
+				showVisualizer();
+			}).catch(err => {
+				musicPlayerState.isPlaying = false;
+				console.error("Audio play error:", err);
+				showNotif("Failed to play track", "error");
+				updatePlayerUI();
+			});
 
 			showNotif("Now playing: " + track.name, "success");
 		}
