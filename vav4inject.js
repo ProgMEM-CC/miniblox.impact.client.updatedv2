@@ -4006,7 +4006,8 @@ const survival = new Module("SurvivalMode", function(callback) {
 				try {
 					musicPlayerState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
 					musicPlayerState.analyser = musicPlayerState.audioContext.createAnalyser();
-					musicPlayerState.analyser.fftSize = 64;
+					musicPlayerState.analyser.fftSize = 256; // Increased for better frequency resolution
+					musicPlayerState.analyser.smoothingTimeConstant = 0.8;
 					const bufferLength = musicPlayerState.analyser.frequencyBinCount;
 					musicPlayerState.dataArray = new Uint8Array(bufferLength);
 					
@@ -4026,7 +4027,12 @@ const survival = new Module("SurvivalMode", function(callback) {
 			// Remove old event listeners
 			musicPlayerState.audio.removeEventListener("ended", onTrackEnded);
 			musicPlayerState.audio.removeEventListener("timeupdate", updateSeekBar);
+			musicPlayerState.audio.removeEventListener("loadeddata", null);
 
+			// Stop and reset current track
+			musicPlayerState.audio.pause();
+			musicPlayerState.audio.currentTime = 0;
+			
 			// Set new track
 			musicPlayerState.audio.src = track.audio;
 			musicPlayerState.audio.volume = musicPlayerState.volume;
@@ -4036,18 +4042,28 @@ const survival = new Module("SurvivalMode", function(callback) {
 			musicPlayerState.audio.addEventListener("ended", onTrackEnded);
 			musicPlayerState.audio.addEventListener("timeupdate", updateSeekBar);
 
-			// Play audio
-			musicPlayerState.audio.play().then(() => {
-				musicPlayerState.isPlaying = true;
-				console.log("Playing:", track.name);
-				updatePlayerUI();
-				showVisualizer();
-			}).catch(err => {
-				musicPlayerState.isPlaying = false;
-				console.error("Audio play error:", err);
-				showNotif("Failed to play track", "error");
-				updatePlayerUI();
-			});
+			// Wait for track to be loaded before playing
+			musicPlayerState.audio.addEventListener("loadeddata", function onLoaded() {
+				musicPlayerState.audio.removeEventListener("loadeddata", onLoaded);
+				
+				const playPromise = musicPlayerState.audio.play();
+				if (playPromise !== undefined) {
+					playPromise.then(() => {
+						musicPlayerState.isPlaying = true;
+						console.log("Playing:", track.name);
+						updatePlayerUI();
+						showVisualizer();
+					}).catch(err => {
+						musicPlayerState.isPlaying = false;
+						console.error("Audio play error:", err);
+						showNotif("Failed to play track", "error");
+						updatePlayerUI();
+					});
+				}
+			}, { once: true });
+
+			// Load the new track
+			musicPlayerState.audio.load();
 
 			showNotif("Now playing: " + track.name, "success");
 		}
@@ -4097,11 +4113,8 @@ const survival = new Module("SurvivalMode", function(callback) {
 			if (musicPlayerState.isPlaying) {
 				musicPlayerState.audio.pause();
 				musicPlayerState.isPlaying = false;
-				// Stop visualizer animation
-				if (musicPlayerState.visualizerElement) {
-					musicPlayerState.visualizerElement.remove();
-					musicPlayerState.visualizerElement = null;
-				}
+				// Animation will stop automatically when isPlaying becomes false
+				updatePlayerUI();
 			} else {
 				// Resume audio context if suspended
 				if (musicPlayerState.audioContext && musicPlayerState.audioContext.state === 'suspended') {
@@ -4118,9 +4131,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 					showNotif("Failed to play", "error", 1000);
 					updatePlayerUI();
 				});
-				return; // Don't update UI yet, wait for play promise
 			}
-			updatePlayerUI();
 		}
 
 		function playNextTrack() {
@@ -4192,13 +4203,13 @@ const survival = new Module("SurvivalMode", function(callback) {
 		}
 
 		function showVisualizer() {
-			// If visualizer already exists, just update album art and restart animation
+			// If visualizer already exists, just update album art
 			if (musicPlayerState.visualizerElement) {
 				const albumArt = musicPlayerState.visualizerElement.querySelector("img");
 				if (albumArt && musicPlayerState.currentTrack) {
 					albumArt.src = musicPlayerState.currentTrack.album_image;
 				}
-				animateVisualizer();
+				// Animation loop is already running, no need to restart
 				return;
 			}
 
@@ -4255,21 +4266,34 @@ const survival = new Module("SurvivalMode", function(callback) {
 		}
 
 		function animateVisualizer() {
-			// Check if we should continue animating
-			if (!musicPlayerState.isPlaying || !musicPlayerState.analyser || !musicPlayerState.visualizerElement) {
+			// Check if visualizer element exists
+			if (!musicPlayerState.visualizerElement) {
 				return;
 			}
 
-			// Get frequency data
-			musicPlayerState.analyser.getByteFrequencyData(musicPlayerState.dataArray);
 			const bars = document.querySelectorAll(".visualizer-bar");
 			
-			// Update bar heights
-			bars.forEach((bar, i) => {
-				const value = musicPlayerState.dataArray[i * 2] || 0;
-				const height = Math.max(4, (value / 255) * 60);
-				bar.style.height = height + "px";
-			});
+			if (musicPlayerState.isPlaying && musicPlayerState.analyser) {
+				// Get frequency data
+				musicPlayerState.analyser.getByteFrequencyData(musicPlayerState.dataArray);
+				
+				// Update bar heights - map frequency bins to bars (low to high frequency, left to right)
+				const barCount = bars.length;
+				const dataLength = musicPlayerState.dataArray.length;
+				
+				bars.forEach((bar, i) => {
+					// Map bar index to frequency bin (low frequencies first)
+					const binIndex = Math.floor((i / barCount) * (dataLength / 2));
+					const value = musicPlayerState.dataArray[binIndex] || 0;
+					const height = Math.max(4, (value / 255) * 60);
+					bar.style.height = height + "px";
+				});
+			} else {
+				// When paused, set bars to minimum height
+				bars.forEach(bar => {
+					bar.style.height = "4px";
+				});
+			}
 
 			// Continue animation loop
 			requestAnimationFrame(animateVisualizer);
