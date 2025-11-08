@@ -64,6 +64,7 @@ And then enjoy using the client!
 - Made new V8, V9 and V10 milestones (ProgMEM-CC and TheM1ddleM1n)
 - Made a new report command in game (dtkiller-jp thanks!) `.report` in miniblox chat
 - added a script system for clickGUI it goes into `scripts` for the GUI (thanks again dtkiller-jp!)
+- also included a `.scriptmanager` command
 
 ## [v6.6] - 2025-10-18
 
