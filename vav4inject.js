@@ -4022,43 +4022,20 @@ const survival = new Module("SurvivalMode", function(callback) {
 			
 			// Stop all other audio on the page
 			stopAllOtherAudio();
-			
-			// Setup audio context (only once)
-			if (!musicPlayerState.audioContext) {
-				try {
-					musicPlayerState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-					musicPlayerState.analyser = musicPlayerState.audioContext.createAnalyser();
-					musicPlayerState.analyser.fftSize = 256;
-					musicPlayerState.analyser.smoothingTimeConstant = 0.8;
-					const bufferLength = musicPlayerState.analyser.frequencyBinCount;
-					musicPlayerState.dataArray = new Uint8Array(bufferLength);
-					
-					musicPlayerState.audioSource = musicPlayerState.audioContext.createMediaElementSource(musicPlayerState.audio);
-					musicPlayerState.audioSource.connect(musicPlayerState.analyser);
-					musicPlayerState.analyser.connect(musicPlayerState.audioContext.destination);
-				} catch (err) {
-					console.error("Audio context setup error:", err);
-				}
-			}
-
-			// Resume audio context if suspended
-			if (musicPlayerState.audioContext && musicPlayerState.audioContext.state === 'suspended') {
-				musicPlayerState.audioContext.resume();
-			}
 
 			// Stop current playback immediately
 			musicPlayerState.isPlaying = false;
-			musicPlayerState.audio.pause();
-			
-			// Remove all event listeners
-			const oldAudio = musicPlayerState.audio;
-			oldAudio.removeEventListener("ended", onTrackEnded);
-			oldAudio.removeEventListener("timeupdate", updateSeekBar);
+			if (musicPlayerState.audio) {
+				musicPlayerState.audio.pause();
+				musicPlayerState.audio.removeEventListener("ended", onTrackEnded);
+				musicPlayerState.audio.removeEventListener("timeupdate", updateSeekBar);
+			}
 			
 			// Set new track source
 			musicPlayerState.audio.src = track.audio;
 			musicPlayerState.audio.currentTime = 0;
 			musicPlayerState.audio.volume = musicPlayerState.volume;
+			musicPlayerState.audio.crossOrigin = "anonymous"; // Try to enable CORS
 			musicPlayerState.currentTrack = track;
 
 			// Add event listeners
@@ -4066,17 +4043,50 @@ const survival = new Module("SurvivalMode", function(callback) {
 			musicPlayerState.audio.addEventListener("timeupdate", updateSeekBar);
 
 			// Play the track
-			musicPlayerState.audio.play().then(() => {
-				musicPlayerState.isPlaying = true;
-				console.log("Successfully playing:", track.name);
-				updatePlayerUI();
-				showVisualizer();
-			}).catch(err => {
-				musicPlayerState.isPlaying = false;
-				console.error("Audio play error:", err);
-				showNotif("Failed to play track", "error");
-				updatePlayerUI();
-			});
+			const playPromise = musicPlayerState.audio.play();
+			if (playPromise !== undefined) {
+				playPromise.then(() => {
+					musicPlayerState.isPlaying = true;
+					console.log("Successfully playing:", track.name);
+					
+					// Setup audio context after user interaction (to avoid CORS issues)
+					if (!musicPlayerState.audioContext) {
+						try {
+							musicPlayerState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+							musicPlayerState.analyser = musicPlayerState.audioContext.createAnalyser();
+							musicPlayerState.analyser.fftSize = 256;
+							musicPlayerState.analyser.smoothingTimeConstant = 0.8;
+							const bufferLength = musicPlayerState.analyser.frequencyBinCount;
+							musicPlayerState.dataArray = new Uint8Array(bufferLength);
+							
+							try {
+								musicPlayerState.audioSource = musicPlayerState.audioContext.createMediaElementSource(musicPlayerState.audio);
+								musicPlayerState.audioSource.connect(musicPlayerState.analyser);
+								musicPlayerState.analyser.connect(musicPlayerState.audioContext.destination);
+							} catch (corsErr) {
+								console.warn("CORS prevented audio analysis, using fallback visualizer");
+								musicPlayerState.audioContext = null;
+								musicPlayerState.analyser = null;
+							}
+						} catch (err) {
+							console.error("Audio context setup error:", err);
+						}
+					}
+					
+					// Resume audio context if suspended
+					if (musicPlayerState.audioContext && musicPlayerState.audioContext.state === 'suspended') {
+						musicPlayerState.audioContext.resume();
+					}
+					
+					updatePlayerUI();
+					showVisualizer();
+				}).catch(err => {
+					musicPlayerState.isPlaying = false;
+					console.error("Audio play error:", err);
+					showNotif("Failed to play track", "error");
+					updatePlayerUI();
+				});
+			}
 
 			showNotif("Now playing: " + track.name, "success");
 		}
@@ -4286,21 +4296,41 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 			const bars = document.querySelectorAll(".visualizer-bar");
 			
-			if (musicPlayerState.isPlaying && musicPlayerState.analyser) {
-				// Get frequency data
-				musicPlayerState.analyser.getByteFrequencyData(musicPlayerState.dataArray);
-				
-				// Update bar heights - map frequency bins to bars (low to high frequency, left to right)
-				const barCount = bars.length;
-				const dataLength = musicPlayerState.dataArray.length;
-				
-				bars.forEach((bar, i) => {
-					// Map bar index to frequency bin (low frequencies first)
-					const binIndex = Math.floor((i / barCount) * (dataLength / 2));
-					const value = musicPlayerState.dataArray[binIndex] || 0;
-					const height = Math.max(4, (value / 255) * 60);
-					bar.style.height = height + "px";
-				});
+			if (musicPlayerState.isPlaying) {
+				if (musicPlayerState.analyser && musicPlayerState.dataArray) {
+					// Get frequency data from audio context
+					try {
+						musicPlayerState.analyser.getByteFrequencyData(musicPlayerState.dataArray);
+						
+						// Update bar heights - map frequency bins to bars (low to high frequency, left to right)
+						const barCount = bars.length;
+						const dataLength = musicPlayerState.dataArray.length;
+						
+						bars.forEach((bar, i) => {
+							// Map bar index to frequency bin (low frequencies first)
+							const binIndex = Math.floor((i / barCount) * (dataLength / 2));
+							const value = musicPlayerState.dataArray[binIndex] || 0;
+							const height = Math.max(4, (value / 255) * 60);
+							bar.style.height = height + "px";
+						});
+					} catch (err) {
+						// Fallback to random animation if audio analysis fails
+						bars.forEach((bar, i) => {
+							const randomHeight = Math.max(4, Math.random() * 60);
+							bar.style.height = randomHeight + "px";
+						});
+					}
+				} else {
+					// Fallback: Use random animation when audio context is not available (CORS issue)
+					bars.forEach((bar, i) => {
+						// Create a wave-like pattern
+						const time = Date.now() / 1000;
+						const wave = Math.sin(time * 2 + i * 0.5) * 0.5 + 0.5;
+						const randomness = Math.random() * 0.3;
+						const height = Math.max(4, (wave + randomness) * 60);
+						bar.style.height = height + "px";
+					});
+				}
 			} else {
 				// When paused, set bars to minimum height
 				bars.forEach(bar => {
