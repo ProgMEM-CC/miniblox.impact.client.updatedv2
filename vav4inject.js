@@ -4018,6 +4018,11 @@ const survival = new Module("SurvivalMode", function(callback) {
 				}
 			}
 
+			// Resume audio context if suspended
+			if (musicPlayerState.audioContext && musicPlayerState.audioContext.state === 'suspended') {
+				musicPlayerState.audioContext.resume();
+			}
+
 			// Remove old event listeners
 			musicPlayerState.audio.removeEventListener("ended", onTrackEnded);
 			musicPlayerState.audio.removeEventListener("timeupdate", updateSeekBar);
@@ -4026,7 +4031,6 @@ const survival = new Module("SurvivalMode", function(callback) {
 			musicPlayerState.audio.src = track.audio;
 			musicPlayerState.audio.volume = musicPlayerState.volume;
 			musicPlayerState.currentTrack = track;
-			musicPlayerState.isPlaying = true;
 
 			// Add event listeners
 			musicPlayerState.audio.addEventListener("ended", onTrackEnded);
@@ -4034,15 +4038,17 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 			// Play audio
 			musicPlayerState.audio.play().then(() => {
+				musicPlayerState.isPlaying = true;
 				console.log("Playing:", track.name);
+				updatePlayerUI();
 				showVisualizer();
 			}).catch(err => {
+				musicPlayerState.isPlaying = false;
 				console.error("Audio play error:", err);
 				showNotif("Failed to play track", "error");
+				updatePlayerUI();
 			});
 
-			// Update UI
-			updatePlayerUI();
 			showNotif("Now playing: " + track.name, "success");
 		}
 
@@ -4091,12 +4097,28 @@ const survival = new Module("SurvivalMode", function(callback) {
 			if (musicPlayerState.isPlaying) {
 				musicPlayerState.audio.pause();
 				musicPlayerState.isPlaying = false;
+				// Stop visualizer animation
+				if (musicPlayerState.visualizerElement) {
+					musicPlayerState.visualizerElement.remove();
+					musicPlayerState.visualizerElement = null;
+				}
 			} else {
-				musicPlayerState.audio.play().catch(err => {
+				// Resume audio context if suspended
+				if (musicPlayerState.audioContext && musicPlayerState.audioContext.state === 'suspended') {
+					musicPlayerState.audioContext.resume();
+				}
+				
+				musicPlayerState.audio.play().then(() => {
+					musicPlayerState.isPlaying = true;
+					updatePlayerUI();
+					showVisualizer();
+				}).catch(err => {
+					musicPlayerState.isPlaying = false;
 					console.error("Play error:", err);
 					showNotif("Failed to play", "error", 1000);
+					updatePlayerUI();
 				});
-				musicPlayerState.isPlaying = true;
+				return; // Don't update UI yet, wait for play promise
 			}
 			updatePlayerUI();
 		}
@@ -4170,9 +4192,14 @@ const survival = new Module("SurvivalMode", function(callback) {
 		}
 
 		function showVisualizer() {
-			// Remove existing visualizer
+			// If visualizer already exists, just update album art and restart animation
 			if (musicPlayerState.visualizerElement) {
-				musicPlayerState.visualizerElement.remove();
+				const albumArt = musicPlayerState.visualizerElement.querySelector("img");
+				if (albumArt && musicPlayerState.currentTrack) {
+					albumArt.src = musicPlayerState.currentTrack.album_image;
+				}
+				animateVisualizer();
+				return;
 			}
 
 			// Create visualizer element
@@ -4223,41 +4250,32 @@ const survival = new Module("SurvivalMode", function(callback) {
 			document.body.appendChild(visualizer);
 			musicPlayerState.visualizerElement = visualizer;
 
-			// Animate visualizer
+			// Start animation
 			animateVisualizer();
 		}
 
 		function animateVisualizer() {
-			if (!musicPlayerState.isPlaying || !musicPlayerState.analyser) {
-				if (musicPlayerState.visualizerElement) {
-					musicPlayerState.visualizerElement.remove();
-					musicPlayerState.visualizerElement = null;
-				}
+			// Check if we should continue animating
+			if (!musicPlayerState.isPlaying || !musicPlayerState.analyser || !musicPlayerState.visualizerElement) {
 				return;
 			}
 
+			// Get frequency data
 			musicPlayerState.analyser.getByteFrequencyData(musicPlayerState.dataArray);
 			const bars = document.querySelectorAll(".visualizer-bar");
 			
+			// Update bar heights
 			bars.forEach((bar, i) => {
 				const value = musicPlayerState.dataArray[i * 2] || 0;
 				const height = Math.max(4, (value / 255) * 60);
 				bar.style.height = height + "px";
 			});
 
+			// Continue animation loop
 			requestAnimationFrame(animateVisualizer);
 		}
 
-		// Hide visualizer when audio ends
-		if (musicPlayerState.audio) {
-			musicPlayerState.audio.onended = () => {
-				musicPlayerState.isPlaying = false;
-				if (musicPlayerState.visualizerElement) {
-					musicPlayerState.visualizerElement.remove();
-					musicPlayerState.visualizerElement = null;
-				}
-			};
-		}
+
 
 		// === Open Settings Panel ===
 		function openSettingsPanel() {
