@@ -41,10 +41,10 @@ And then enjoy using the client!
 
 ## ⚠️ Any known issues will be commented here
 
-- `.toggle all` command currently non-functional (we are looking into it).
+- `.toggle all` command is currently non-functional. (I think the panic module should work?)
 - There is currently an issue with `Nuker`. (via a lot of packets sent you will get kicked instantly.)
-- `FastBreak` doesn't work (Looking into it)
-- Reach is limited to 6 (same as killaura) due to Vector's goofy ahh anticheat.
+- `FastBreak` doesn't work (Looking into it.)
+- Reach is limited to 6 (this is the same for killaura) due to Vector's goofy ahh anticheat.
 - linking to killaura sometimes in the air hits will not register (however, (this is a miniblox anticheat problem - thanks vector) and not our client))
 - Scaffold does work 99% of the time, but sometimes you can get voided because of their new AntiLegit-I mean anticheat (again this is another vector issue 🥀)
 
