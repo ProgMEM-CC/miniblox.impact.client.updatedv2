@@ -2718,11 +2718,8 @@ function dropSlot(index) {
 }
 
 // AutoFunnyChat
-// TODO: find out why the bind is not saving after a reload.
-// 2nd TODO: find out why i have to toggle it off and on again for it to work as expected.
-// However, if u just bind it via the clickGUI it does work!
 var killMessages = [
-    "☠️ {name} couldn’t survive the wrath of ✦ IMPACT V6 ✦",
+     "☠️ {name} couldn’t survive the wrath of ✦ IMPACT V6 ✦",
     "⚡ {name} got deleted — IMPACT V6 never lags.",
     "🔥 {name} folded instantly — IMPACT V6 ON TOP.",
     "💀 R.I.P {name} — system overloaded by IMPACT V6.",
@@ -2771,9 +2768,7 @@ var killMessages = [
     "♛ IMPACT V6 reigns supreme. {name} dethroned."
 ];
 
-// Configuration
 const autoFunnyChatConfig = {
-    periodicInterval: 50000,
     killCooldown: 5000,
     minDelay: 500,
     maxDelay: 1500,
@@ -2781,100 +2776,129 @@ const autoFunnyChatConfig = {
     maxHistorySize: 5
 };
 
-// Properly togglable module
-const autofunnychat = new Module("autofunnychat", function (callback) {
-    // Disable logic
+const autofunnychat = new Module("autofunnychat", function(callback) {
     if (!callback) {
+        // Cleanup when disabled
         if (window.__autoFunnyKillMsgListener) {
-            if (ClientSocket?.socket?.off) {
+            if (ClientSocket && ClientSocket.socket && ClientSocket.socket.off) {
                 ClientSocket.socket.off("CPacketMessage", window.__autoFunnyKillMsgListener);
             }
             window.__autoFunnyKillMsgListener = null;
         }
-        window.__autoFunnyState = null;
-        if (tickLoop["autofunnychat"]) delete tickLoop["autofunnychat"];
-        console.log("§c[autofunnychat] Disabled.");
+        if (window.__autoFunnyState) {
+            window.__autoFunnyState = null;
+        }
         return;
     }
-
-    // Enable logic
-    if (window.__autoFunnyKillMsgListener) {
-        console.log("§e[autofunnychat] Already enabled!");
-        return;
+    
+    // Initialize state
+    if (!window.__autoFunnyState) {
+        window.__autoFunnyState = {
+            lastKillSent: 0,
+            messageHistory: []
+        };
     }
-
-    window.__autoFunnyState = {
-        lastKillSent: 0,
-        messageHistory: []
-    };
-
+    
     const state = window.__autoFunnyState;
-
+    
+    // Helper: Get random message (avoiding recent ones)
     function getRandomMessage(victimName) {
-        let available = killMessages;
-
+        let availableMessages = killMessages;
+        
         if (autoFunnyChatConfig.avoidRepeat && state.messageHistory.length > 0) {
-            available = killMessages.filter(msg => !state.messageHistory.includes(msg));
-            if (available.length === 0) {
+            availableMessages = killMessages.filter(msg => 
+                !state.messageHistory.includes(msg)
+            );
+            
+            if (availableMessages.length === 0) {
                 state.messageHistory = [];
-                available = killMessages;
+                availableMessages = killMessages;
             }
         }
-
-        let msg = available[Math.floor(Math.random() * available.length)];
-        msg = msg.replace(/{name}/g, victimName);
-
+        
+        let msg = availableMessages[Math.floor(Math.random() * availableMessages.length)];
+        
+        if (victimName) {
+            msg = msg.replace(/{name}/g, victimName);
+        }
+        
         state.messageHistory.push(msg);
         if (state.messageHistory.length > autoFunnyChatConfig.maxHistorySize) {
             state.messageHistory.shift();
         }
-
+        
         return msg;
     }
-
+    
+    // Helper: Send message with rate limiting
     function sendFunnyMessage(victimName) {
         const now = Date.now();
-        if (now - state.lastKillSent < autoFunnyChatConfig.killCooldown) return;
-
-        const msg = getRandomMessage(victimName);
-        ClientSocket.sendPacket(new SPacketMessage({ text: msg }));
-        state.lastKillSent = now;
-    }
-
-    // Listener
-    window.__autoFunnyKillMsgListener = function (packet) {
-        if (!packet.text) return;
-
-        const patterns = [
-            { regex: /You eliminated (.+?)(?:\.|$|,)/ },
-            { regex: /You knocked out (.+?)(?:\.|$|,)/ },
-            { regex: /You sent (.+?)(?:\.|$|,)/ },
-            { regex: /(.+?) (?:was )?eliminated by/, condition: t => t.includes("eliminated by") && t.includes(player.name) },
-            { regex: new RegExp(player.name + " eliminated (.+?)(?:\\.|$|,)") }
-        ];
-
-        let victimName = null;
-        for (const p of patterns) {
-            if (!p.condition || p.condition(packet.text)) {
-                const match = packet.text.match(p.regex);
-                if (match) {
-                    victimName = match[1].trim().replace(/White/gi, '');
-                    break;
-                }
-            }
+        
+        if (now - state.lastKillSent < autoFunnyChatConfig.killCooldown) {
+            return false;
         }
-
+        
+        const msg = getRandomMessage(victimName);
+        if (ClientSocket && ClientSocket.sendPacket) {
+            ClientSocket.sendPacket(new SPacketMessage({text: msg}));
+        }
+        
+        state.lastKillSent = now;
+        return true;
+    }
+    
+    // Remove old listener if exists
+    if (window.__autoFunnyKillMsgListener && ClientSocket && ClientSocket.socket && ClientSocket.socket.off) {
+        ClientSocket.socket.off("CPacketMessage", window.__autoFunnyKillMsgListener);
+    }
+    
+    // Create new listener
+    window.__autoFunnyKillMsgListener = function(h) {
+        if (!h || !h.text || !player) return;
+        
+        let victimName = null;
+        
+        // "You eliminated [name]"
+        if (h.text.includes("You eliminated")) {
+            const match = h.text.match(/You eliminated (.+?)(?:\.|$|,)/);
+            if (match) victimName = match[1].trim().replace(/White/gi, '');
+        }
+        // "You knocked out [name]"
+        else if (h.text.includes("You knocked out")) {
+            const match = h.text.match(/You knocked out (.+?)(?:\.|$|,)/);
+            if (match) victimName = match[1].trim().replace(/White/gi, '');
+        }
+        // "You sent [name]"
+        else if (h.text.includes("You sent")) {
+            const match = h.text.match(/You sent (.+?)(?:\.|$|,)/);
+            if (match) victimName = match[1].trim().replace(/White/gi, '');
+        }
+        // "[name] was eliminated by [your name]"
+        else if (h.text.includes("eliminated by") && h.text.includes(player.name)) {
+            const match = h.text.match(/(.+?) (?:was )?eliminated by/);
+            if (match) victimName = match[1].trim().replace(/White/gi, '');
+        }
+        // "[your name] eliminated [name]"
+        else if (h.text.includes(player.name + " eliminated")) {
+            const match = h.text.match(new RegExp(player.name + " eliminated (.+?)(?:\\.|$|,)"));
+            if (match) victimName = match[1].trim().replace(/White/gi, '');
+        }
+        
         if (victimName) {
-            const delay = autoFunnyChatConfig.minDelay +
+            const delay = autoFunnyChatConfig.minDelay + 
                 Math.random() * (autoFunnyChatConfig.maxDelay - autoFunnyChatConfig.minDelay);
-            setTimeout(() => sendFunnyMessage(victimName), delay);
+            
+            setTimeout(function() {
+                sendFunnyMessage(victimName);
+            }, delay);
         }
     };
-
+    
     // Register listener
-    ClientSocket.socket.on("CPacketMessage", window.__autoFunnyKillMsgListener);
-    console.log("§a[autofunnychat] Enabled and listening for kill messages.");
-});
+    if (ClientSocket && ClientSocket.socket && ClientSocket.socket.on) {
+        ClientSocket.socket.on("CPacketMessage", window.__autoFunnyKillMsgListener);
+    }
+}, "Combat");
 
 // Jesus
 const jesus = new Module("Jesus", function(callback) {
@@ -3392,210 +3416,205 @@ const survival = new Module("SurvivalMode", function(callback) {
 		}
 
 		// === Create Module Row ===
-		function createModuleRow(name, mod, content) {
-			const row = document.createElement("div");
-			row.className = "vape-module-row";
+function createModuleRow(name, mod, content) {
+    const row = document.createElement("div");
+    row.className = "vape-module-row";
 
-			const left = document.createElement("div");
-			left.className = "vape-module-left";
+    const left = document.createElement("div");
+    left.className = "vape-module-left";
 
-			const icon = document.createElement("div");
-			icon.className = "vape-module-icon";
-			icon.textContent = name[0];
+    const icon = document.createElement("div");
+    icon.className = "vape-module-icon";
+    icon.textContent = name[0];
 
-			const title = document.createElement("div");
-			title.className = "vape-module-title";
-			title.textContent = name;
+    const title = document.createElement("div");
+    title.className = "vape-module-title";
+    title.textContent = name;
 
-			left.appendChild(icon);
-			left.appendChild(title);
+    left.appendChild(icon);
+    left.appendChild(title);
 
-			const right = document.createElement("div");
-			right.className = "vape-module-right";
+    const right = document.createElement("div");
+    right.className = "vape-module-right";
 
-			// Bind display
-			const bindDisplay = document.createElement("span");
-			bindDisplay.className = "vape-bind-display";
-			if (mod.bind) {
-				bindDisplay.textContent = mod.bind.toUpperCase();
-				bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:30px;text-align:center;flex-shrink:0;background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-weight:700;";
-			} else {
-				bindDisplay.textContent = "";
-				bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:0;text-align:center;flex-shrink:0;";
-			}
+    // Bind display - FIXED VERSION
+    const bindDisplay = document.createElement("span");
+    bindDisplay.className = "vape-bind-display";
 
-			const toggle = document.createElement("div");
-			toggle.className = "vape-toggle" + (mod.enabled ? " on" : "");
-			const knob = document.createElement("div");
-			knob.className = "vape-toggle-knob";
-			toggle.appendChild(knob);
+    // FIX: Check if module has a bind when creating the display
+    if (mod.bind && mod.bind !== "") {
+        bindDisplay.textContent = mod.bind.toUpperCase();
+        bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:30px;text-align:center;flex-shrink:0;background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-weight:700;";
+    } else {
+        bindDisplay.textContent = "";
+        bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:0;text-align:center;flex-shrink:0;";
+    }
 
-			toggle.onclick = (e) => {
-				e.stopPropagation();
-				if (mod.toggle) {
-					mod.toggle();
-					toggle.classList.toggle("on", mod.enabled);
-					showNotif(name + " " + (mod.enabled ? "enabled" : "disabled"), mod.enabled ? "success" : "error");
-				}
-			};
+    const toggle = document.createElement("div");
+    toggle.className = "vape-toggle" + (mod.enabled ? " on" : "");
+    const knob = document.createElement("div");
+    knob.className = "vape-toggle-knob";
+    toggle.appendChild(knob);
 
-			right.appendChild(bindDisplay);
-			right.appendChild(toggle);
-			row.appendChild(left);
-			row.appendChild(right);
+    toggle.onclick = (e) => {
+        e.stopPropagation();
+        if (mod.toggle) {
+            mod.toggle();
+            toggle.classList.toggle("on", mod.enabled);
+            showNotif(name + " " + (mod.enabled ? "enabled" : "disabled"), mod.enabled ? "success" : "error");
+        }
+    };
 
-			const optionsBox = document.createElement("div");
-			optionsBox.className = "vape-options";
-			optionsBox.style.display = "none";
+    right.appendChild(bindDisplay);
+    right.appendChild(toggle);
+    row.appendChild(left);
+    row.appendChild(right);
 
-			const toggleModule = (e) => {
-				const t = e.target;
-				if (t.tagName === "INPUT" || t.classList.contains("vape-toggle") ||
-					t.classList.contains("vape-toggle-knob") || t.classList.contains("vape-bind-key-display") ||
-					t.classList.contains("vape-slider")) return;
-				if (mod.toggle) {
-					mod.toggle();
-					toggle.classList.toggle("on", mod.enabled);
-					showNotif(name + " " + (mod.enabled ? "enabled" : "disabled"), mod.enabled ? "success" : "error");
-				}
-			};
+    const optionsBox = document.createElement("div");
+    optionsBox.className = "vape-options";
+    optionsBox.style.display = "none";
 
-			row.onclick = toggleModule;
-			row.onmousedown = (e) => {
-				if (e.button === 1) {
-					e.preventDefault();
-					bindDisplay.textContent = "waiting...";
-					bindDisplay.style.color = "#0FB3A0";
-					bindingModule = { name, mod, bindDisplay };
-				}
-			};
+    const toggleModule = (e) => {
+        const t = e.target;
+        if (t.tagName === "INPUT" || t.classList.contains("vape-toggle") ||
+            t.classList.contains("vape-toggle-knob") || t.classList.contains("vape-bind-key-display") ||
+            t.classList.contains("vape-slider")) return;
+        if (mod.toggle) {
+            mod.toggle();
+            toggle.classList.toggle("on", mod.enabled);
+            showNotif(name + " " + (mod.enabled ? "enabled" : "disabled"), mod.enabled ? "success" : "error");
+        }
+    };
 
-			// Right click to show options
-			row.addEventListener("contextmenu", (e) => {
-				e.preventDefault();
-				const isVisible = optionsBox.style.display === "flex";
-				optionsBox.style.display = isVisible ? "none" : "flex";
+    row.onclick = toggleModule;
+    row.onmousedown = (e) => {
+        if (e.button === 1) {
+            e.preventDefault();
+            bindDisplay.textContent = "waiting...";
+            bindDisplay.style.color = "#0FB3A0";
+            bindingModule = { name, mod, bindDisplay };
+        }
+    };
 
-				// Populate options if first time
-				if (!isVisible && optionsBox.children.length === 0) {
-					// Bind display at top
-					if (mod.bind) {
-						const bindKeyDisplay = document.createElement("div");
-						bindKeyDisplay.className = "vape-bind-key-display";
-						bindKeyDisplay.textContent = mod.bind.toUpperCase();
-						bindKeyDisplay.style.cssText = "background:rgba(255,255,255,0.08);padding:6px 12px;border-radius:6px;font-weight:700;font-size:11px;text-align:center;margin-bottom:8px;cursor:pointer;";
-						bindKeyDisplay.title = "Click to change bind";
-						bindKeyDisplay.addEventListener("click", (e) => {
-							e.stopPropagation();
-							bindKeyDisplay.textContent = "WAITING...";
-							bindKeyDisplay.style.background = "rgba(241,196,15,0.2)";
-							bindingModule = { name, mod, bindDisplay, optionBindDisplay: bindKeyDisplay };
-						});
-						optionsBox.appendChild(bindKeyDisplay);
-					} else {
-						const bindKeyDisplay = document.createElement("div");
-						bindKeyDisplay.className = "vape-bind-key-display";
-						bindKeyDisplay.textContent = "CLICK TO BIND";
-						bindKeyDisplay.style.cssText = "background:rgba(255,255,255,0.05);padding:6px 12px;border-radius:6px;font-weight:700;font-size:11px;text-align:center;margin-bottom:8px;cursor:pointer;color:#8F9498;";
-						bindKeyDisplay.title = "Click to set bind";
-						bindKeyDisplay.addEventListener("click", (e) => {
-							e.stopPropagation();
-							bindKeyDisplay.textContent = "WAITING...";
-							bindKeyDisplay.style.background = "rgba(241,196,15,0.2)";
-							bindKeyDisplay.style.color = "#f1c40f";
-							bindingModule = { name, mod, bindDisplay, optionBindDisplay: bindKeyDisplay };
-						});
-						optionsBox.appendChild(bindKeyDisplay);
-					}
+    // Right click to show options
+    row.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        const isVisible = optionsBox.style.display === "flex";
+        optionsBox.style.display = isVisible ? "none" : "flex";
 
-					// Module options
-					if (mod.options) {
-						Object.entries(mod.options).forEach(([key, opt]) => {
-							const [type, val, label] = opt;
-							const line = document.createElement("div");
-							line.style.cssText = "display:flex;justify-content:space-between;align-items:center;margin-top:8px;";
+        // Populate options if first time
+        if (!isVisible && optionsBox.children.length === 0) {
+            // Bind display at top - FIXED VERSION
+            const bindKeyDisplay = document.createElement("div");
+            bindKeyDisplay.className = "vape-bind-key-display";
 
-							const labelSpan = document.createElement("span");
-							labelSpan.textContent = label || key;
-							labelSpan.style.cssText = "font-size:12px;color:#E6E9EA;";
-							line.appendChild(labelSpan);
+            // FIX: Show current bind or "CLICK TO BIND"
+            if (mod.bind && mod.bind !== "") {
+                bindKeyDisplay.textContent = mod.bind.toUpperCase();
+                bindKeyDisplay.style.cssText = "background:rgba(255,255,255,0.08);padding:6px 12px;border-radius:6px;font-weight:700;font-size:11px;text-align:center;margin-bottom:8px;cursor:pointer;";
+            } else {
+                bindKeyDisplay.textContent = "CLICK TO BIND";
+                bindKeyDisplay.style.cssText = "background:rgba(255,255,255,0.05);padding:6px 12px;border-radius:6px;font-weight:700;font-size:11px;text-align:center;margin-bottom:8px;cursor:pointer;color:#8F9498;";
+            }
 
-							if (type === Boolean) {
-								const optToggle = document.createElement("div");
-								optToggle.className = "vape-toggle" + (val ? " on" : "");
-								optToggle.style.cssText = "width:42px;height:22px;border-radius:20px;background:rgba(255,255,255,0.05);position:relative;transition:all 0.18s;cursor:pointer;flex-shrink:0;";
-								if (val) {
-									optToggle.style.background = "var(--vape-accent, #0FB3A0)";
-								}
-								const optKnob = document.createElement("div");
-								optKnob.className = "vape-toggle-knob";
-								optKnob.style.cssText = "position:absolute;left:" + (val ? "23px" : "3px") + ";top:3px;width:16px;height:16px;border-radius:50%;background:" + (val ? "white" : "#0d0f10") + ";box-shadow:0 4px 10px rgba(0,0,0,0.6);transition:all 0.18s;";
-								optToggle.appendChild(optKnob);
-								optToggle.addEventListener("click", (e) => {
-									e.stopPropagation();
-									opt[1] = !opt[1];
-									if (opt[1]) {
-										optToggle.style.background = "var(--vape-accent, #0FB3A0)";
-										optKnob.style.left = "23px";
-										optKnob.style.background = "white";
-									} else {
-										optToggle.style.background = "rgba(255,255,255,0.05)";
-										optKnob.style.left = "3px";
-										optKnob.style.background = "#0d0f10";
-									}
-								});
-								line.appendChild(optToggle);
-							} else if (type === Number) {
-								const sliderWrap = document.createElement("div");
-								sliderWrap.style.cssText = "flex:1;margin-left:12px;display:flex;align-items:center;gap:8px;max-width:150px;";
+            bindKeyDisplay.title = "Click to change bind";
+            bindKeyDisplay.addEventListener("click", (e) => {
+                e.stopPropagation();
+                bindKeyDisplay.textContent = "WAITING...";
+                bindKeyDisplay.style.background = "rgba(241,196,15,0.2)";
+                bindKeyDisplay.style.color = "#f1c40f";
+                bindingModule = { name, mod, bindDisplay, optionBindDisplay: bindKeyDisplay };
+            });
+            optionsBox.appendChild(bindKeyDisplay);
 
-								const slider = document.createElement("input");
-								slider.type = "range";
-								slider.className = "vape-slider";
-								const [min, max, step] = opt.range ?? [0, 10, 0.1];
-								slider.min = min;
-								slider.max = max;
-								slider.step = step;
-								slider.value = val;
+            // Module options
+            if (mod.options) {
+                Object.entries(mod.options).forEach(([key, opt]) => {
+                    const [type, val, label] = opt;
+                    const line = document.createElement("div");
+                    line.style.cssText = "display:flex;justify-content:space-between;align-items:center;margin-top:8px;";
 
-								const valueSpan = document.createElement("span");
-								valueSpan.textContent = val;
-								valueSpan.style.cssText = "color:#8F9498;font-size:11px;min-width:35px;text-align:right;font-weight:600;";
+                    const labelSpan = document.createElement("span");
+                    labelSpan.textContent = label || key;
+                    labelSpan.style.cssText = "font-size:12px;color:#E6E9EA;";
+                    line.appendChild(labelSpan);
 
-								slider.addEventListener("click", (e) => e.stopPropagation());
-								slider.addEventListener("mousedown", (e) => e.stopPropagation());
-								slider.oninput = () => {
-									opt[1] = parseFloat(slider.value);
-									valueSpan.textContent = slider.value;
-								};
+                    if (type === Boolean) {
+                        const optToggle = document.createElement("div");
+                        optToggle.className = "vape-toggle" + (val ? " on" : "");
+                        optToggle.style.cssText = "width:42px;height:22px;border-radius:20px;background:rgba(255,255,255,0.05);position:relative;transition:all 0.18s;cursor:pointer;flex-shrink:0;";
+                        if (val) {
+                            optToggle.style.background = "var(--vape-accent, #0FB3A0)";
+                        }
+                        const optKnob = document.createElement("div");
+                        optKnob.className = "vape-toggle-knob";
+                        optKnob.style.cssText = "position:absolute;left:" + (val ? "23px" : "3px") + ";top:3px;width:16px;height:16px;border-radius:50%;background:" + (val ? "white" : "#0d0f10") + ";box-shadow:0 4px 10px rgba(0,0,0,0.6);transition:all 0.18s;";
+                        optToggle.appendChild(optKnob);
+                        optToggle.addEventListener("click", (e) => {
+                            e.stopPropagation();
+                            opt[1] = !opt[1];
+                            if (opt[1]) {
+                                optToggle.style.background = "var(--vape-accent, #0FB3A0)";
+                                optKnob.style.left = "23px";
+                                optKnob.style.background = "white";
+                            } else {
+                                optToggle.style.background = "rgba(255,255,255,0.05)";
+                                optKnob.style.left = "3px";
+                                optKnob.style.background = "#0d0f10";
+                            }
+                        });
+                        line.appendChild(optToggle);
+                    } else if (type === Number) {
+                        const sliderWrap = document.createElement("div");
+                        sliderWrap.style.cssText = "flex:1;margin-left:12px;display:flex;align-items:center;gap:8px;max-width:150px;";
 
-								sliderWrap.appendChild(slider);
-								sliderWrap.appendChild(valueSpan);
-								line.appendChild(sliderWrap);
-							} else if (type === String) {
-								const input = document.createElement("input");
-								input.type = "text";
-								input.value = val;
-								input.style.cssText = "flex:1;margin-left:8px;max-width:150px;background:rgba(255,255,255,0.05);color:#E6E9EA;border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 8px;font-size:12px;outline:none;";
-								input.addEventListener("click", (e) => e.stopPropagation());
-								input.addEventListener("focus", () => {
-									input.style.borderColor = "var(--vape-accent, #0FB3A0)";
-								});
-								input.addEventListener("blur", () => {
-									input.style.borderColor = "rgba(255,255,255,0.1)";
-								});
-								input.onchange = () => { opt[1] = input.value; };
-								line.appendChild(input);
-							}
+                        const slider = document.createElement("input");
+                        slider.type = "range";
+                        slider.className = "vape-slider";
+                        const [min, max, step] = opt.range ?? [0, 10, 0.1];
+                        slider.min = min;
+                        slider.max = max;
+                        slider.step = step;
+                        slider.value = val;
 
-							optionsBox.appendChild(line);
-						});
-					}
-				}
-			});
+                        const valueSpan = document.createElement("span");
+                        valueSpan.textContent = val;
+                        valueSpan.style.cssText = "color:#8F9498;font-size:11px;min-width:35px;text-align:right;font-weight:600;";
 
-			return { row, optionsBox };
-		}
+                        slider.addEventListener("click", (e) => e.stopPropagation());
+                        slider.addEventListener("mousedown", (e) => e.stopPropagation());
+                        slider.oninput = () => {
+                            opt[1] = parseFloat(slider.value);
+                            valueSpan.textContent = slider.value;
+                        };
+
+                        sliderWrap.appendChild(slider);
+                        sliderWrap.appendChild(valueSpan);
+                        line.appendChild(sliderWrap);
+                    } else if (type === String) {
+                        const input = document.createElement("input");
+                        input.type = "text";
+                        input.value = val;
+                        input.style.cssText = "flex:1;margin-left:8px;max-width:150px;background:rgba(255,255,255,0.05);color:#E6E9EA;border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 8px;font-size:12px;outline:none;";
+                        input.addEventListener("click", (e) => e.stopPropagation());
+                        input.addEventListener("focus", () => {
+                            input.style.borderColor = "var(--vape-accent, #0FB3A0)";
+                        });
+                        input.addEventListener("blur", () => {
+                            input.style.borderColor = "rgba(255,255,255,0.1)";
+                        });
+                        input.onchange = () => { opt[1] = input.value; };
+                        line.appendChild(input);
+                    }
+
+                    optionsBox.appendChild(line);
+                });
+            }
+        }
+    });
+
+    return { row, optionsBox };
+}
 
 		// === Close Panel with Animation ===
 		function closePanelWithAnimation(panel, callback) {
