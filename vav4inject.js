@@ -3437,11 +3437,11 @@ function createModuleRow(name, mod, content) {
     const right = document.createElement("div");
     right.className = "vape-module-right";
 
-    // Bind display - FIXED VERSION
+    // Bind display - FIXED VERSION!
     const bindDisplay = document.createElement("span");
     bindDisplay.className = "vape-bind-display";
 
-    // FIX: Check if module has a bind when creating the display
+    // FIXED: Check if module has a bind when creating the display
     if (mod.bind && mod.bind !== "") {
         bindDisplay.textContent = mod.bind.toUpperCase();
         bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:30px;text-align:center;flex-shrink:0;background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-weight:700;";
