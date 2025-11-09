@@ -46,7 +46,7 @@ And then enjoy using the client!
 - `FastBreak` doesn't work (Looking into it.)
 - Reach is limited to 6 (this is the same for killaura) due to Vector's goofy ahh anticheat.
 - linking to killaura sometimes in the air hits will not register (however, (this is a miniblox anticheat problem - thanks vector) and not our client))
-- Scaffold does work 99% of the time, but sometimes you can get voided because of their new AntiLegit-I mean anticheat (again this is another vector issue 🥀)
+- Scaffold does work 50% of the time, but most of the time you will get voided because of their new AntiLegit-I mean anticheat (again this is another vector issue 🥀)
 
 ## Changelog
 
@@ -179,7 +179,7 @@ And then enjoy using the client!
 - [ ] ArmorHUD (to improve my targetHUD ) (using exhibition)
 - [ ] **AutoSword (*should be easy to do*)**
 - [ ] CustomSky – Applies custom skybox textures
-- [ ] AutoInsult / ComplimentBot – Randomly sends messages after kills (improvement to my AutoFunnyChat module) (like any mc client for example: Rise 7.4)
+- [x] AutoInsult / ComplimentBot – Randomly sends messages after kills (improvement to my AutoFunnyChat module) (like any mc client for example: Rise 7.4)
 
 ## 🧩 Developer Notes
 
