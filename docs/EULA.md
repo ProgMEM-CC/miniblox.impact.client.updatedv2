@@ -6,7 +6,7 @@ This software is licensed under the **GNU Affero General Public License version 
 
 ## GNU AFFERO GENERAL PUBLIC LICENSE  
 Version 3, 19 November 2007  
-Full text: https://www.gnu.org/licenses/agpl-3.0.en.html  
+Full text at: https://www.gnu.org/licenses/agpl-3.0.en.html  
 
 ---
 
@@ -87,13 +87,13 @@ There is **no path to re-licensing** once terminated.
 
 ---
 
-## Source and Author
+## Source and Authors
 - **Source:** [https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2)  
-- **Author:** [ProgMEM-CC]  
+- **Authors:** [ProgMEM-CC, TheM1ddleM1n]  
 - **License:** AGPL-3.0 only, with Additional Terms under Section 7  
 - **Effective Date:** [2025-07-11]
 
 ---
 > [!Important]
 > This software is Free Software: you may redistribute and/or modify it under the terms of the AGPL v3.0 **with the additional terms above**.  
-> This software comes with **no warranty**. Use at your own risk.
+> This software comes with **no warranty**. Use this at your **OWN RISK**. We are not responsible if you get banned.
