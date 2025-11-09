@@ -158,7 +158,7 @@ let serverPos = player.pos.clone();
 
 		async function generateAccount() {
 			toast({
-				title: "Generating Miniblox Account Via Integration...",
+				title: "generating miniblox account via integration...",
 				status: "info",
 				duration: 0.3e3
 			});
