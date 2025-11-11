@@ -50,6 +50,11 @@ And then enjoy using the client!
 
 ## Changelog
 
+## [v6.8.7] - 2025-11-11
+
+- Constant updates (once again)
+- Updated readme
+
 ## [v6.8.5] - 2025-11-8
 
 - Constant updates from @TheM1ddleM1n, @dtkiller-jp and @DataM0del
