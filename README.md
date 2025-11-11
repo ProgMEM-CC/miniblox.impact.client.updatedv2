@@ -7,8 +7,8 @@
 (which is a continuation of the discontinued **Vape V4** project by `7GrandDadPGN`).
 Before the original client was deleted ([xylex fake quit moment](https://github.com/7GrandDadPGN/7granddadpgn/commit/46a3b9e9afea226f730b9d9eaf10788b993d43ee#commitcomment-152355396)) 🥀
 <!-- why am I adding all of these dates, this isn't history class LOL -->
-`**DataM0del (aka RealPacket)**` started updating it 13 days before that comment, and then stopped 2 days after.
-But it was fully reusable 3 days after that comment, and then, the first updated version of Vape, 3.0.0, was released.
+**DataM0del (aka RealPacket)** started updating it 13 days before that comment, and then stopped 2 days after.
+But it was fully usable 3 days after that comment, and then, the first updated version of Vape, 3.0.0, was released.
 
 It is designed for stealth (from anticheats), speed, and total domination — with full dark-mode support with a slick Click GUI.
 
@@ -46,7 +46,7 @@ And then enjoy using the client!
 - `FastBreak` doesn't work (Looking into it.)
 - Reach is limited to 6 (this is the same for killaura) due to Vector's goofy ahh anticheat.
 - linking to killaura sometimes in the air hits will not register (however, (this is a miniblox anticheat problem - thanks vector) and not our client))
-- Scaffold does work 99% of the time, but sometimes you can get voided because of their new AntiLegit-I mean anticheat (again this is another vector issue 🥀)
+- Scaffold does work 50% of the time, but most of the time you will get voided because of their new AntiLegit-I mean anticheat (again this is another vector issue 🥀)
 
 ## Changelog
 
@@ -179,7 +179,7 @@ And then enjoy using the client!
 - [ ] ArmorHUD (to improve my targetHUD ) (using exhibition)
 - [ ] **AutoSword (*should be easy to do*)**
 - [ ] CustomSky – Applies custom skybox textures
-- [ ] AutoInsult / ComplimentBot – Randomly sends messages after kills (improvement to my AutoFunnyChat module) (like any mc client for example: Rise 7.4)
+- [x] AutoInsult / ComplimentBot – Randomly sends messages after kills (improvement to my AutoFunnyChat module) (like any mc client for example: Rise 7.4)
 
 ## 🧩 Developer Notes
 
