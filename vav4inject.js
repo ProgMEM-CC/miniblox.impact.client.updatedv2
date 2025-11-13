@@ -1285,7 +1285,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 							continue; // ignore Albert einstein or someone who died
 						// TODO: track the player's position and get the difference from previous position to new position.
 				}
-			}, "Misc");
+			}, "Broken");
 
 
             function reloadTickLoop(value) {
@@ -1319,7 +1319,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				} else {
 					delete tickLoop["NoFallBeta"];
 				}
-			});
+			},"Movement",() => "Packet");
 			noFallExtraYBeta = NoFallBeta.addoption("extraY", Number, .41);
 
 
@@ -1339,10 +1339,10 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	 				else if (player.onGround && shouldDesync && desync) desync = false;
 	  				shouldDesync = !player.onGround && player.motionY < -0.6 && player.fallDistance >= 2.5;
 				};
-			});
+			},"Movement",() => "Desync");
 
 			// WTap
-			new Module("WTap", function() {}, "Movement");
+			new Module("WTap", function() {}, "Movement",() => "Packet");
 
 			// AntiVoid
 			new Module("AntiVoid", function(callback) {
@@ -1356,7 +1356,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					};
 				}
 				else delete tickLoop["AntiVoid"];
-			}, "Player");
+			}, "Movement",() => "Ignore");
 
 			const criticals = new Module("Criticals", () => {}, () => "Packet");
 			criticals.toggle();
@@ -1613,7 +1613,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			killAuraAttackInvisible = killaura.addoption("AttackInvisbles", Boolean, true);
 			killauraSwitchDelay = killaura.addoption("SwitchDelay", Number, 100);
 			
-			new Module("FastBreak", function() {}, "World");
+			new Module("FastBreak", function() {}, "Client",() => "Client-Side");
 
 			function getMoveDirection(moveSpeed) {
 				let moveStrafe = player.moveStrafeDump;
@@ -1647,7 +1647,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					player.motion.z = dir.z;
 					player.motion.y = keyPressedDump("space") ? flyvert[1] : (keyPressedDump("shift") ? -flyvert[1] : 0);
 				};
-			});
+			},"Movement",() => "Desync");
 			flybypass = fly.addoption("Bypass", Boolean, true);
 			flyvalue = fly.addoption("Speed", Number, 0.18);
 			flyvert = fly.addoption("Vertical", Number, 0.3);
@@ -1706,9 +1706,9 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 			infiniteFlyVert = infiniteFly.addoption("Vertical", Number, 0.15);
 			infiniteFlyLessGlide = infiniteFly.addoption("LessGlide", Boolean, true);
 
-			new Module("InvWalk", function() {}, () => "Ignore");
-			new Module("KeepSprint", function() {}, () => "Ignore");
-			new Module("NoSlowdown", function() {}, () => "Ignore");
+			new Module("InvWalk", function() {},"Movement", () => "Ignore");
+			new Module("KeepSprint", function() {},"Movement", () => "Ignore");
+			new Module("NoSlowdown", function() {},"Combat", () => "Ignore");
 
 // WSpeed
 let speedvalue, speedjump, speedauto, speedbypass;
@@ -1745,7 +1745,7 @@ const speed = new Module("Speed", function(callback) {
 	};
 }, function() {
 	return "V " + speedvalue[1] + " J " + speedjump[1] + " " + (speedauto[1] ? "A" : "M");
-});
+},"Movement",() => "Packet");
 
 // Options
 speedbypass = speed.addoption("Bypass", Boolean, true);
@@ -1757,7 +1757,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			stepheight = step.addoption("Height", Number, 0.5);
 
 
-			new Module("ESP", function() {}, "Render");
+			new Module("ESP", function() {}, "Render",() => "Highlight");
 			const textgui = new Module("TextGUI", function() {}, "Render");
 			textguifont = textgui.addoption("Font", String, "Poppins");
 			textguisize = textgui.addoption("TextSize", Number, 15);
@@ -3361,7 +3361,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 		// === Create Category Panel ===
 		function createCategoryPanel() {
 			const { panel, content } = createPanel("Impact V6", 40, 40, 220);
-			const baseCategories = ["Combat", "Movement", "Player", "Render", "World", "Misc","Exploit"];
+			const baseCategories = ["Combat", "Movement", "Player", "Render", "World","Client","Minigames", "Misc","Exploit","Broken"];
 			const categories = [...baseCategories];
 
 			if (scripts > 0) {
