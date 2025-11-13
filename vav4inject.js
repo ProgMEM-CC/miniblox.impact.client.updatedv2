@@ -1790,7 +1790,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					closeScriptManagerUI();
 					if (game?.canvas) game.canvas.requestPointerLock();
 				}
-			});
+			},"Client");
 
 			function openScriptManagerUI() {
 				if (scriptManagerUI) return;
