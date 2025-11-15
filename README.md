@@ -1,5 +1,5 @@
-# [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=2500&pause=1000&color=FF0000&width=435&lines=Impact+Client+for+Miniblox.io!)](https://git.io/typing-svg)
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&duration=2500&pause=1000&color=abe0e4&width=435&lines=The+ultimate+Miniblox+hacked+client!+;Built+for+stealth%2C+speed%2C+and+total+domination.;Fully+dark-mode+optimized+with+a+modern+GUI)](https://git.io/typing-svg)
+# [![Impact for Miniblox.io!](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=2500&pause=1000&color=FF0000&width=435&lines=Impact+Client+for+Miniblox.io!)](https://git.io/typing-svg)
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&duration=2500&pause=1000&color=abe0e4&vCenter=true&width=600&lines=The+ultimate+Miniblox+hacked+client!;Built+for+stealth+(from+AntiCheats)%2C+speed%2C+and+total+domination.;Fully+dark-mode+optimized+with+a+modern+GUI)](https://git.io/typing-svg)
 
 ## An Overview for Impact For Miniblox!
 
@@ -29,7 +29,7 @@ Please join our **[Discord](https://discord.gg/PwpGemYhJx)**!
 
 First, install a userscript manager (🧩 **Tampermonkey**, **Violentmonkey** or **Greasemonkey** via Chrome Web Store or Microsoft Store etc).
 
-Next, copy the contents of `tampermonkey.js`.
+Next, copy the contents of `tampermonkey.user.js`.
 
 Then, paste it into a new userscript and enable it. (you should see it save automatically!)
 
@@ -176,7 +176,8 @@ And then enjoy using the client!
 - [ ] Freecam (like PublicLurker client)
 - [ ] SkinChanger in game (good idea)
 - [ ] Reach fix (possible but its limited to 5-6 thanks to vector's goofy ahh anticheat)
-- [ ] **NoSlow – Prevents slowdown from using items or cobwebs**
+
+<!--- [ ] **NoSlow – Prevents slowdown from using items or cobwebs**-->
 - [ ] Fullbright – Always max brightness. (funny mc client thing.)
 - [ ] CustomCape / Wings / Breadcrumbs – Renders client-side cosmetics (it would be annoying with this current system to hook the game's API, but is still possible, because it's a render module)
 - [ ] Small music player (ie. links to spotify) (like JoLean client)
@@ -188,7 +189,7 @@ And then enjoy using the client!
 
 ## 🧩 Developer Notes
 
-Make sure you **always** update VERSIONFILE, tampermonkey.js, and injection.js together. (as soon as ProgMEM-CC fixes the issue with "Github Actions being disabled!")
+Make sure you **always** update VERSIONFILE, tampermonkey.user.js, and injection.js together. (as soon as ProgMEM-CC fixes the issue with "Github Actions being disabled!")
 
 Never publish unstable code to / (root). Use `/` `beta` for any test builds you have got.
 
@@ -208,7 +209,7 @@ An apology here firstly, i dont know why, but my account seems to have github ac
 
 ## 🧷 Links
 
-- 🌐 **[ImpactWebsite](https://impactminiblox.js.org)**
+- 🌐 **[Impact Website](https://impactminiblox.js.org)**
 
 - 💬 Discord Impact Community (please join this if you can) - **<https://discord.gg/PwpGemYhJx>**
 
