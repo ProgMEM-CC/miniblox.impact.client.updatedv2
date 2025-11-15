@@ -681,7 +681,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				if (module) module.setbind(args[2] == "none" ? "" : args[2], true);
 				return this.closeInput();
 			}
-			case "panic":
+			case ".panic":
 				for(const [name, module] of Object.entries(modules)) module.setEnabled(false);
 				game.chat.addChat({
 					text: "Toggled off all modules!",
