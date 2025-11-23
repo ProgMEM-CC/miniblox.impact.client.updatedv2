@@ -27,7 +27,7 @@ Please join our **[Discord](https://discord.gg/PwpGemYhJx)**!
 
 ## How to install our client?
 
-First, install a userscript manager (🧩 **Tampermonkey**, **Violentmonkey** or **Greasemonkey** via Chrome Web Store or Microsoft Store etc).
+First, install a userscript manager (🧩 **Tampermonkey**, **Violentmonkey** or **Greasemonkey** via Chrome Web Store or Microsoft Store etc)
 
 Next, copy the contents of `tampermonkey.user.js`.
 
