@@ -23,7 +23,7 @@ Please join our **[Discord](https://discord.gg/PwpGemYhJx)**!
 - Nuker (still in BETA, it sends too many block break packets and gets you kicked for this.)
 - Jetpack (this is literally just the old Fly from Vape For Miniblox, this probably still works.)
 - 2ND ClickGUI created by me (TheM1ddleM1n)
-- Script manager/Bug Report function in game (Thanks dtkiller-jp!)
+- Script manager/Bug Report function in game (Thanks dtkiller-jp)
 
 ## How to install our client?
 
@@ -52,7 +52,7 @@ And then enjoy using the client!
 
 ## [v6.8.7] - 2025-11-11
 
-- Constant updates (once again)
+- Constant updates
 - Updated readme
 
 ## [v6.8.5] - 2025-11-8
