@@ -16,7 +16,7 @@ Please join our **[Discord](https://discord.gg/PwpGemYhJx)**!
 
 ## Features
 
-- AntiBan 2.0 (use non accounts OR generate accounts with **[miniblox-acc-gen](https://codeberg.org/RealPacket/miniblox-acc-gen)'s** integration support!)
+- AntiBan 2.0 (use non accounts OR generate accounts with **[miniblox-acc-gen](https://codeberg.org/ForMiniblox/acc-gen)'s** integration support!)
 - Fly, NoFall, NoFallBeta, and Scaffold!
 - A Useable Click GUI
 - ServerCrasher (this works on servers without the new AC, e.g. planets)
