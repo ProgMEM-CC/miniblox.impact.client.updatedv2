@@ -14,12 +14,17 @@ It is designed for stealth (from anticheats), speed, and total domination — wi
 
 Please join our **[Discord](https://discord.gg/PwpGemYhJx)**!
 
+## FAQ (SERVER CRASHER FIX INCLUDED!!)
+
+See <https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ> for the FAQ,
+and <https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ#why-doesnt-this-work-anymore> if you don't want to scroll down a few pixels.
+
 ## Features
 
 - AntiBan 2.0 (use non accounts OR generate accounts with **[miniblox-acc-gen](https://codeberg.org/ForMiniblox/acc-gen)'s** integration support!)
 - Fly, NoFall, NoFallBeta, and Scaffold!
 - A Useable Click GUI
-- ServerCrasher (this works on servers without the new AC, e.g. planets)
+- ServerCrasher (works on ALL servers **AFTER RECONFIGURING TO BYPASS THE VALUE PATCH**)
 - Nuker (still in BETA, it sends too many block break packets and gets you kicked for this.)
 - Jetpack (this is literally just the old Fly from Vape For Miniblox, this probably still works.)
 - 2ND ClickGUI created by me (TheM1ddleM1n)
