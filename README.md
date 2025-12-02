@@ -16,8 +16,11 @@ Please join our **[Discord](https://discord.gg/PwpGemYhJx)**!
 
 ## FAQ (SERVER CRASHER FIX INCLUDED!!)
 
-See <https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ> for the FAQ,
-and <https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ#why-doesnt-this-work-anymore> if you don't want to scroll down a few pixels.
+[FAQ]: https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ
+[server crasher fix]: https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ#why-doesnt-this-work-anymore
+
+See this [FAQ],
+and [server crasher fix] if you don't want to scroll down a few pixels.
 
 ## Features
 
@@ -172,25 +175,26 @@ And then enjoy using the client!
 <!-- things in **bold** we will implement before V7 gets released - TheM1ddleM1n !-->
 
 - [ ] Force OP module (gain access to admin commands?! funny bypass)
-- [ ] Command Block modification (to change command blocks in survival)
+- [x] set server access control (auto private), toggle PvP, and toggle command blocks (we know the method and it's very funny, but we don't want vector to patch it)
+  - [ ] being able to toggle PvP also allows us to make a GodMode (that isn't really a GodMode), so you can only be damaged by arrows.
+<!-- - [ ] Command Block modification (to change command blocks in survival), they check if you're in creative mode and only allow you to then change command blocks !-->
 - [ ] Spoof rank (ProgMEM-CC's idea) (again could be possible)
 - [ ] **AutoEat (Automatically eats food in the inv)**
-- [ ] AimBot (Automatically aims at a player)
+- [ ] AimBot (Automatically aims at a player, just grab KillAura aiming code, add some smoothing, and done)
 - [ ] Inventory Manager – Organizes inventory automatically
 - [ ] X-Ray (possible)
 - [ ] Freecam (like PublicLurker client)
 - [ ] SkinChanger in game (good idea)
 - [ ] Reach fix (possible but its limited to 5-6 thanks to vector's goofy ahh anticheat)
-
-<!--- [ ] **NoSlow – Prevents slowdown from using items or cobwebs**-->
-- [ ] Fullbright – Always max brightness. (funny mc client thing.)
+<!--- [ ] **NoSlow – Prevents slowdown from using items or cobwebs** -->
+<!--- - [ ] Fullbright – Always max brightness. (funny mc client thing.) the game doesn't have brightness implemented at all -->
 - [ ] CustomCape / Wings / Breadcrumbs – Renders client-side cosmetics (it would be annoying with this current system to hook the game's API, but is still possible, because it's a render module)
 - [ ] Small music player (ie. links to spotify) (like JoLean client)
 - [ ] Render miniblox's HUDS (ie. health bar to mc like hearts)
-- [ ] ArmorHUD (to improve my targetHUD ) (using exhibition)
+- [ ] ArmorHUD (to improve my targetHUD) (using exhibition)
 - [ ] **AutoSword (*should be easy to do*)**
 - [ ] CustomSky – Applies custom skybox textures
-- [x] AutoInsult / ComplimentBot – Randomly sends messages after kills (improvement to my AutoFunnyChat module) (like any mc client for example: Rise 7.4)
+- [x] AutoInsult / ComplimentBot – Randomly sends messages after kills (improvement to my AutoFunnyChat module) (like any mc client)
 
 ## 🧩 Developer Notes
 
