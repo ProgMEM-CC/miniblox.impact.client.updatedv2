@@ -15,7 +15,7 @@ It is designed for stealth (from anticheats), speed, and total domination — wi
 Please join our **[Discord](https://discord.gg/PwpGemYhJx)**!
 
 ## FAQ (SERVER CRASHER FIX INCLUDED!!)
-
+[Credit]: https://www.youtube.com/watch?v=dSR7u0OQcrQ Great thanks to the creator of this video!
 [FAQ]: https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ
 [server crasher fix]: https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ#why-doesnt-this-work-anymore
 
