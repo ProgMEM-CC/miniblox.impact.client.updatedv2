@@ -202,8 +202,10 @@ Want your video here? [Submit a media addition request!](https://github.com/Prog
 
 <!-- https://i.ytimg.com/vi/<video id>/hqdefault.jpg is the format for video thumbnail URLs -->
 <!-- [![Thumbnail](URL to the video thumbnail)](https://www.youtube.com/watch?v=thevideoid) -->
+<!-- GitHub doesn't allow iframes so this is probably the best we can do -->
 
 [![Thumbnail](https://i.ytimg.com/vi/dSR7u0OQcrQ/hqdefault.jpg)](https://www.youtube.com/watch?v=dSR7u0OQcrQ)
+
 
 ## 🧩 Developer Notes
 
