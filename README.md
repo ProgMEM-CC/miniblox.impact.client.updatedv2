@@ -15,7 +15,7 @@ It is designed for stealth (from anticheats), speed, and total domination — wi
 Please join our **[Discord](https://discord.gg/PwpGemYhJx)**!
 
 ## FAQ (SERVER CRASHER FIX INCLUDED!!)
-[Credit]: https://www.youtube.com/watch?v=dSR7u0OQcrQ Great thanks to the creator of this video!
+
 [FAQ]: https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ
 [server crasher fix]: https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ#why-doesnt-this-work-anymore
 
@@ -195,6 +195,15 @@ And then enjoy using the client!
 - [ ] **AutoSword (*should be easy to do*)**
 - [ ] CustomSky – Applies custom skybox textures
 - [x] AutoInsult / ComplimentBot – Randomly sends messages after kills (improvement to my AutoFunnyChat module) (like any mc client)
+
+## Media
+
+Want your video here? [Submit a media addition request!](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/discussions/new?category=media-addition-requests)
+
+<!-- https://i.ytimg.com/vi/<video id>/hqdefault.jpg is the format for video thumbnail URLs -->
+<!-- [![Thumbnail](URL to the video thumbnail)](https://www.youtube.com/watch?v=thevideoid) -->
+
+[![Thumbnail](https://i.ytimg.com/vi/dSR7u0OQcrQ/hqdefault.jpg)](https://www.youtube.com/watch?v=dSR7u0OQcrQ)
 
 ## 🧩 Developer Notes
 
