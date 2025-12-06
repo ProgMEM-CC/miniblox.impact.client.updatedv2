@@ -1,8 +1,8 @@
-## Contribution Guidelines!
+## Contribution Guidelines
 
 Keep the code modular and lightweight.
 
-Use clear naming conventions. (refer to the agreed-upon rules or patterns that developers follow to keep the codebase clean, consistent, and easy to understand.)
+Use clear naming conventions. (this refers to the agreed-upon rules or patterns that developers follow to keep the codebase clean, consistent, and easy to understand.)
 
 Test **thoroughly** before submitting or ask me to test it for you!
 
@@ -10,4 +10,4 @@ Test **thoroughly** before submitting or ask me to test it for you!
 
 Raise a issue on GitHub (I usually respond to issues on GitHub) or reach out to the Impact Community on Discord via this link here - `https://discord.gg/PwpGemYhJx`
 
-Made by $TheM1ddleM1n$
+This was made by $TheM1ddleM1n$
