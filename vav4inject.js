@@ -111,7 +111,14 @@ function modifyCode(text) {
 // your position will only update every 20 ticks.
 let serverPos = player.pos.clone();
 `);
+	addModification('this.nameTag.visible=!this.entity.sneak&&!Options$1.streamerMode.value&&game.serverInfo.serverCategory!=="murder"', `
+this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
+			&& !Options$1.streamerMode.value
+			&& (tagsInMM[1] || game.serverInfo.serverCategory !== "murder");
+`, true);
 	addModification('Potions.jump.getId(),"5");', `
+		let adminSpoof;
+		let showNametags, murderMystery, tagsWhileSneaking, tagsInMM;
 		let blocking = false;
 		let sendYaw = false;
 		let sendY = false;
@@ -155,7 +162,40 @@ let serverPos = player.pos.clone();
 		let useAccountGen, accountGenEndpoint;
 		let attackTime = Date.now();
 		let chatDelay = Date.now();
+		function autoToggleShowNametagStuff() {
+			if (!showNametags.enabled) {
+				toast({
+					title: "Turned on show nametags automatically",
+					status: "success"
+				});
+				showNametags.setEnabled(true);
+			}
+			if (tagsInMM[1] !== true) {
+				tagsInMM[1] = true;
+				toast({title: "Turned on Murder Mystery setting in show nametags module" });
+			}
+		}
 
+		function handleMurderMysteryHook(entity, currentItemStack) {
+			const item = currentItemStack?.getItem();
+			if (item === undefined)
+				return;
+			if (item instanceof ItemSword) {
+				autoToggleShowNametagStuff();
+				toast({
+					title: \`\${entity.name} IS THE MURDERER!\`,
+					status: "warning"
+				});
+			}
+			if (item instanceof ItemBow) {
+				autoToggleShowNametagStuff();
+				toast({
+					title: \`\${entity.name} has a bow.\`,
+					color: "blue"
+				});
+			}
+			console.log(\`\${entity.name} is holding\`, item);
+		}
 		async function generateAccount() {
 			toast({
 				title: "generating miniblox account via integration...",
@@ -1552,6 +1592,25 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 
 				return targets;
 			}
+			function lol() {
+				const a = tagsWhileSneaking[1];
+				const b = tagsInMM[1];
+				if (a && b)
+					return "Sneak & MM";
+				return a
+					? "Sneak"
+					:
+						b
+							? "MM"
+							: "Turn the module off at this point";
+			}
+			showNametags = new Module(
+				"ShowNametags", () => {}, "Render",
+				lol
+			);
+			tagsWhileSneaking = showNametags.addoption("WhileSneaking", Boolean, true);
+			tagsInMM = showNametags.addoption("InMurderMystery", Boolean, true);
+			murderMystery = new Module("MurderMystery", () => {}, "Minigames", () => "Classic");
 			const killaura = new Module("Killaura", function(callback) {
 				if (callback) {
 					for(let i = 0; i < 10; i++) {
