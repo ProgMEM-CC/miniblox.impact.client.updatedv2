@@ -803,17 +803,17 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					game.chat.addChat({text: "Usage: #cc <message>"});
 					return;
 				}
-				const sendLIST = msg.shift();
+				const sendLIST = args.shift();
 				for (var s of sendLIST){
 					send += s;
 				}
 				try {
-					const resp = fetch(\`https://chatforminiblox.vercel.app/api/impact/get?username=Anonymous&message=${send}\`,method: "GET");
+					const resp = await fetch(\`https://chatforminiblox.vercel.app/api/impact/get?username=Anonymous&message=\${send}\`,{method: "GET"});
 					if (!resp.ok) {
 						if (resp.status == 429){
 							throw new Error(\`Please wait, you are being rate limited!\`);
 						} else {
-      						throw new Error(\`Unknown status: ${resp.status}\`);
+      						throw new Error(\`Unknown status: \${resp.status}\`);
 						}
     				}
 				}
