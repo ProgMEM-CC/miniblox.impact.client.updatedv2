@@ -796,7 +796,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 				return this.closeInput();
 			}
-			case "#cc":
+			case "#cc": {
 				var send = "";
 				const msg = args[1];
 				if (!msg) {
@@ -821,6 +821,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				catch(error) {
 					game.chat.addChat({text: error.message});
 				}
+			}
 				
 				
 				
