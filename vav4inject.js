@@ -796,6 +796,33 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 				return this.closeInput();
 			}
+			case "#cc":
+				var send = "";
+				const msg = args[1];
+				if (!msg) {
+					game.chat.addChat({text: "Usage: #cc <message>"});
+					return;
+				}
+				const sendLIST = msg.shift();
+				for (var s of sendLIST){
+					send += s;
+				}
+				try {
+					const resp = fetch(`https://chatforminiblox.vercel.app/api/impact/get?username=Anonymous&message=${send}`,method: "GET");
+					if (!resp.ok) {
+						if (resp.status == 429){
+							throw new Error(`Please wait, you are being rate limited!`);
+						} else {
+      						throw new Error(`Unknown status: ${resp.status}`);
+						}
+    				}
+				}
+				catch(error) {
+					game.chat.addChat({text: error.message});
+				}
+				
+				
+				
 			case ".config":
 			case ".profile":
 				if (args.length > 1) {
