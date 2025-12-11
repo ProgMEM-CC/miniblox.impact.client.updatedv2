@@ -803,8 +803,8 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					game.chat.addChat({text: "Usage: #cc <message>"});
 					return;
 				}
-				args.shift()
-				const sendLIST = args
+				args.shift();
+				const sendLIST = args;
 				for (var s of sendLIST){
 					send += s;
 				}
