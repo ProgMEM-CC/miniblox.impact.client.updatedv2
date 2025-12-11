@@ -811,9 +811,9 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					const resp = fetch(\`https://chatforminiblox.vercel.app/api/impact/get?username=Anonymous&message=${send}\`,method: "GET");
 					if (!resp.ok) {
 						if (resp.status == 429){
-							throw new Error(`Please wait, you are being rate limited!`);
+							throw new Error(\`Please wait, you are being rate limited!\`);
 						} else {
-      						throw new Error(`Unknown status: ${resp.status}`);
+      						throw new Error(\`Unknown status: ${resp.status}\`);
 						}
     				}
 				}
