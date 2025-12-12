@@ -117,7 +117,45 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			&& (tagsInMM[1] || game.serverInfo.serverCategory !== "murder");
 `, true);
 	addModification('Potions.jump.getId(),"5");', `
-		let showNametags, murderMystery, tagsWhileSneaking, tagsInMM;
+		// TODO(integrations): replace this address with the actual production server address
+		// once ProgMEM hosts the server.
+		const SERVICES_SERVER = new URL("http://localhost:3000");
+		const SERVICES_SEND_ENDPOINT = new URL("/send", SERVICES_SERVER);
+		let servicesName;
+		/**
+		 * Sends an IRC message to IMChat with our current player's username
+		 * @param {string} message
+		*/
+		function sendIRCMessage(message) {
+			if (servicesName === "Unset name") {
+				game.chat.addChat({
+					text: "Please set your nickname in the \`Services\` module in order to use IRC! (set it via ClickGUI)",
+					color: "red"
+				});
+				game.chat.addChat({
+					text: "You can also set your nickname via .setoption: .setoption Services Name <your nickname, surround with double quotes if it contains spaces>",
+					color: "green"
+				});
+				return;
+			}
+			fetch(\`\${SERVICES_SEND_ENDPOINT}?author=\${servicesName[1]}&platformID=impact:client\`, {
+				method: "POST",
+				body: message
+			}).then(async r => {
+				if (!r.ok) {
+					game.chat.addChat({
+						text: \`Failed sending IRC message (response not OK): \${r.status} \${r.statusText} \${await r.text()}\`,
+						color: "red"
+					});
+				}
+			}).catch(r => {
+				game.chat.addChat({
+					text: \`Failed sending IRC message (server down?): \${r} \`,
+					color: "red"
+				});
+			});
+		}
+		let showNametags, Services, murderMystery, tagsWhileSneaking, tagsInMM;
 		let blocking = false;
 		let sendYaw = false;
 		let sendY = false;
@@ -795,35 +833,20 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 				return this.closeInput();
 			}
-			/* case "#cc": {
-				var send = "";
-				const msg = args[1];
-				if (!msg) {
-					game.chat.addChat({text: "Usage: #cc <message>"});
-					return;
+			// .chat / ; for IRC
+			case ".chat":
+			case ";":
+				if (!Services.enabled) {
+					game.chat.addChat({text:
+						"Please enable Services before trying to use IRC!"
+					});
+					return this.closeInput();
 				}
 				args.shift();
-				const sendLIST = args;
-				for (var s of sendLIST){
-					send += s;
-				}
-				try {
-					const resp = await fetch(\`https://chatforminiblox.vercel.app/api/impact/get?username=Anonymous&message=\${send}\`,{method: "GET"});
-					if (!resp.ok) {
-						if (resp.status == 429){
-							throw new Error(\`Please wait, you are being rate limited!\`);
-						} else {
-      						throw new Error(\`Unknown status: \${resp.status}\`);
-						}
-    				}
-				}
-				catch(error) {
-					game.chat.addChat({text: error.message});
-				}
-			}
-			*/
-				
-				
+				const msg = args.join(" ");
+				console.log(args, "=>", msg);
+				sendIRCMessage(msg);
+				return this.closeInput();
 				
 			case ".config":
 			case ".profile":
@@ -1324,6 +1347,9 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			}
 
 			let clickDelay = Date.now();
+			Services = new Module("Services", function() {}, "Client", () => "Client");
+			servicesName = Services.addoption("Name", String, "Unset name");
+
 			new Module("AutoClicker", function(callback) {
 				if (callback) {
 					tickLoop["AutoClicker"] = function() {
