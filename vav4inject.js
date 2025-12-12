@@ -1347,7 +1347,43 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			}
 
 			let clickDelay = Date.now();
-			Services = new Module("Services", function() {}, "Client", () => "Client");
+			const SERVICES_LISTEN_ENDPOINT = new URL("/listen", SERVICES_SERVER);
+			/** @type {EventSource} */
+			let ircSource;
+			// maps an IRC PlatformID to a "readable" name,
+			// e.g. "impact:discord" is a protected platform ID (requires auth) used by our discord
+			// bot to mirror messages over
+			// "impact:client", however, isn't protected,
+			// since this is a public client and
+			// we have no way of being able to trust the client without this e.g. being possible to emulate the client.
+			const PLATFORM_ID_TO_READABLE = {
+				"impact:discord": "Impact Discord",
+				"impact:client": "Impact"
+			};
+			/** @param {MessageEvent} e */
+			function onIRCMessage(e) {
+				const { message, author, platformID } = JSON.parse(e.data);
+				game.chat.addChat({
+					text: \`[Impact IRC] \${author}: \${message}\`
+				});
+			}
+			function startIRC() {
+				// it's already connected, what is the point?
+				if (ircSource !== undefined) return;
+				ircSource = new EventSource(SERVICES_LISTEN_ENDPOINT);
+				ircSource.on("message", onIRCMessage);
+			}
+			function stopIRC() {
+				// don't try to close it, if it's already closed or not connected.
+				if (ircSource === undefined) return;
+				ircSource.close();
+				ircSource = undefined;
+			}
+			Services = new Module("Services", function(enabled) {
+				if (enabled)
+					startIRC();
+				else stopIRC();
+			}, "Client", () => "Client");
 			servicesName = Services.addoption("Name", String, "Unset name");
 
 			new Module("AutoClicker", function(callback) {
