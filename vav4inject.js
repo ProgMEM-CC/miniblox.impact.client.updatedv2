@@ -1371,7 +1371,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				// it's already connected, what is the point?
 				if (ircSource !== undefined) return;
 				ircSource = new EventSource(SERVICES_LISTEN_ENDPOINT);
-				ircSource.on("message", onIRCMessage);
+				ircSource.addEventListener("message", onIRCMessage);
 			}
 			function stopIRC() {
 				// don't try to close it, if it's already closed or not connected.
