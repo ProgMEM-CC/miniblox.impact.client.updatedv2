@@ -1350,6 +1350,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			const SERVICES_LISTEN_ENDPOINT = new URL("/listen", SERVICES_SERVER);
 			/** @type {EventSource} */
 			let ircSource;
+			let systemMessageColor;
 			// maps an IRC PlatformID to a "readable" name,
 			// e.g. "impact:discord" is a protected platform ID (requires auth) used by our discord
 			// bot to mirror messages over
@@ -1363,8 +1364,16 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			/** @param {MessageEvent} e */
 			function onIRCMessage(e) {
 				const { message, author, platformID } = JSON.parse(e.data);
+				if (author === null && platformID === undefined) {
+					game.chat.addChat({
+						text: \`[Impact] IRC server: \${message}\`,
+						color: systemMessageColor[1]
+					});
+					return;
+				}
+				const readable = PLATFORM_ID_TO_READABLE[platformID] ?? platformID;
 				game.chat.addChat({
-					text: \`[Impact IRC] \${author}: \${message}\`
+					text: \`[Impact IRC] \${author} via \${readable}: \${message}\`
 				});
 			}
 			function startIRC() {
@@ -1385,6 +1394,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				else stopIRC();
 			}, "Client", () => "Client");
 			servicesName = Services.addoption("Name", String, "Unset name");
+			systemMessageColor = Services.addoption("SystemMessageColor", String, "blue");
 
 			new Module("AutoClicker", function(callback) {
 				if (callback) {
