@@ -1,4 +1,4 @@
-// 2nd ClickGUI - You can use this here or use @dtkiller-jp's one!
+// 2nd ClickGUI - You can use this here or use @dtkiller-jp's one! I might recode this.
 (async function () {
   try {
     const fontLink = document.createElement("link");
