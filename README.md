@@ -190,7 +190,7 @@ And then enjoy using the client!
 <!--- [ ] **NoSlow – Prevents slowdown from using items or cobwebs** -->
 <!--- - [ ] Fullbright – Always max brightness. (funny mc client thing.) the game doesn't have brightness implemented at all -->
 - [ ] CustomCape / Wings / Breadcrumbs – Renders client-side cosmetics (it would be annoying with this current system to hook the game's API, but is still possible, because it's a render module)
-- [ ] Small music player (ie. links to spotify) (like JoLean client)
+- [ ] Small music player (ie. links to spotify) (like JoLean client. JoLean client still bypasses YaY)
 - [ ] Render miniblox's HUDS (ie. health bar to mc like hearts)
 - [ ] ArmorHUD (to improve my targetHUD) (using exhibition)
 - [ ] **AutoSword (*should be easy to do*)**
