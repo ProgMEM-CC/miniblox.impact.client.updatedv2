@@ -32,6 +32,7 @@ and [server crasher fix] if you don't want to scroll down a few pixels.
 - Jetpack (this is literally just the old Fly from Vape For Miniblox, this probably still works.)
 - 2ND ClickGUI created by me (TheM1ddleM1n)
 - Script manager/Bug Report function in game (Thanks dtkiller-jp)
+- .chat function (**in progress...**)
 
 ## How to install our client?
 
