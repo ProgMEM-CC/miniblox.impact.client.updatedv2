@@ -56,6 +56,7 @@ And then enjoy using the client!
 - Reach is limited to 6 (this is the same for killaura) due to Vector's goofy ahh anticheat.
 - linking to killaura sometimes in the air hits will not register (however, (this is a miniblox anticheat problem - thanks vector) and not our client))
 - Scaffold does work 50% of the time, but most of the time you will get voided because of their new AntiLegit-I mean anticheat (again this is another vector issue 🥀)
+- Big issue that was found by DataM0del you cannot use this client now on tampermonkey because it will either not inject or will run later than expected..
 
 ## Changelog
 
