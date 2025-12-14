@@ -6,7 +6,6 @@ Add AJAX-based form submissions to improve page interactivity and speed
 Add KeepSprint feature to maintain sprint state even after movement interruptions
 Add ability to sort search results by price, rating, or other filters
 Add ability to toggle auto-jump feature within the Speed module for better control
-Add additional details to `README.md` about contributing to the documentation
 Add better user feedback when enabling or disabling specific modules (Speed, Killaura, etc.)
 Add code of conduct to repository to ensure a welcoming environment for all contributors
 Add collision adjustments for entities to prevent unwanted teleportation or movement bugs
@@ -311,7 +310,6 @@ Update `README.md` to include more detailed information on the contributing work
 Update `README.md` to include section on API usage and endpoints
 Update `README.md` to mention new API endpoints for data integration
 Update `README.md` to reflect new project architecture and design patterns
-Update `README.md` to reflect the project’s change from version 1.x to 2.x
 Update `README.md` with correct environment setup for local development
 Update `README.md` with information on recent changes and upcoming features
 Update `README.md` with instructions for configuring project settings for production
