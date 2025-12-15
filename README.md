@@ -58,7 +58,7 @@ And then enjoy using the client!
 - Reach is limited to 6 (this is the same for killaura) due to Vector's goofy ahh anticheat.
 - linking to killaura sometimes in the air hits will not register (however, (this is a miniblox anticheat problem - thanks vector) and not our client))
 - Scaffold does work 50% of the time, but most of the time you will get voided because of their new AntiLegit-I mean anticheat (again this is another vector issue 🥀)
-- Tampermonkey requires extra setup ([the mv3 / default version you will most likely install requires toggling the "Allow User Scripts" permission toggle in "Manage Extension"](https://www.tampermonkey.net/faq.php#Q209), or (less likely) when [upgrading from a stable release to 4.18+](https://www.tampermonkey.net/faq.php#Q208))
+- Tampermonkey requires extra setup ([the mv3 / default version you will most likely install requires toggling the "Allow User Scripts" permission toggle in "Manage Extension"](https://www.tampermonkey.net/faq.php#Q209), or (less likely) when [upgrading from a stable release to 4.18+](https://www.tampermonkey.net/faq.php#Q208)), as a last resort if the [wiki instructions](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ#why-does-it-not-seem-to-inject) don't work, try using another UserScript manager like Violentmonkey
 
 ## Changelog
 
