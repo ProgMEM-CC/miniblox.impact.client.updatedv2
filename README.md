@@ -14,7 +14,7 @@ It is designed for stealth (from anticheats), speed, and total domination — wi
 
 Please join our **[Discord](https://discord.gg/PwpGemYhJx)**!
 
-## FAQ (SERVER CRASHER FIX INCLUDED!!)
+## FAQ (SERVER CRASHER FIX INCLUDED!! & see the injection section before complaining about this not working with Tampermonkey)
 
 [FAQ]: https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ
 [server crasher fix]: https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ#why-doesnt-this-work-anymore
