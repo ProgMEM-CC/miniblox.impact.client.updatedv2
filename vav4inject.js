@@ -117,17 +117,17 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			&& (tagsInMM[1] || game.serverInfo.serverCategory !== "murder");
 `, true);
 	addModification('Potions.jump.getId(),"5");', `
-		// TODO(integrations): replace this address with the actual production server address
-		// once ProgMEM hosts the server.
-		const SERVICES_SERVER = new URL("http://localhost:3000");
+		const SERVICES_SERVER = new URL("https://imchat-server.vercel.app/");
 		const SERVICES_SEND_ENDPOINT = new URL("/send", SERVICES_SERVER);
 		let servicesName;
+		const SERVICES_UNSET_NAME = "Unset name";
 		/**
 		 * Sends an IRC message to IMChat with our current player's username
 		 * @param {string} message
 		*/
 		function sendIRCMessage(message) {
-			if (servicesName === "Unset name") {
+			const name = servicesName[1];
+			if (name == SERVICES_UNSET_NAME) {
 				game.chat.addChat({
 					text: "Please set your nickname in the \`Services\` module in order to use IRC! (set it via ClickGUI)",
 					color: "red"
@@ -138,7 +138,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 				});
 				return;
 			}
-			fetch(\`\${SERVICES_SEND_ENDPOINT}?author=\${servicesName[1]}&platformID=impact:client\`, {
+			fetch(\`\${SERVICES_SEND_ENDPOINT}?author=\${name}&platformID=impact:client\`, {
 				method: "POST",
 				body: message
 			}).then(async r => {
@@ -1393,7 +1393,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 					startIRC();
 				else stopIRC();
 			}, "Client", () => "Client");
-			servicesName = Services.addoption("Name", String, "Unset name");
+			servicesName = Services.addoption("Name", String, SERVICES_UNSET_NAME);
 			systemMessageColor = Services.addoption("SystemMessageColor", String, "blue");
 
 			new Module("AutoClicker", function(callback) {
