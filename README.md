@@ -32,7 +32,9 @@ and [server crasher fix] if you don't want to scroll down a few pixels.
 - Jetpack (this is literally just the old Fly from Vape For Miniblox, this probably still works.)
 - 2ND ClickGUI created by me (TheM1ddleM1n)
 - Script manager/Bug Report function in game (Thanks dtkiller-jp)
-- .chat function (**in progress...**)
+- IRC! `.chat` and (well, when DataM0del is online since that is hosted on his PC) a Discord bridge so you can send messages in Discord and see them in IRC, and see IRC messages in Discord!
+  (if people abuse it like I did with Rise IRC (spamming it LOL, then billionaire removed it in 6.7.4) then it's getting rate limited to heaven
+  or made read-only for this client and you can only send messages in the Discord)
 
 ## How to install our client?
 
@@ -56,13 +58,19 @@ And then enjoy using the client!
 - Reach is limited to 6 (this is the same for killaura) due to Vector's goofy ahh anticheat.
 - linking to killaura sometimes in the air hits will not register (however, (this is a miniblox anticheat problem - thanks vector) and not our client))
 - Scaffold does work 50% of the time, but most of the time you will get voided because of their new AntiLegit-I mean anticheat (again this is another vector issue 🥀)
-- Big issue that was found by DataM0del you cannot use this client now on tampermonkey because it will either not inject or will run later than expected..
+- Tampermonkey requires extra setup ([the mv3 / default version you will most likely install requires toggling the "Allow User Scripts" permission toggle in "Manage Extension"](https://www.tampermonkey.net/faq.php#Q209), or (less likely) when [upgrading from a stable release to 4.18+](https://www.tampermonkey.net/faq.php#Q208))
 
 ## Changelog
 
+## [v6.8.8] - 2025-12-14
+
+- IRC!
+- `MurderMystery` module (looks at every player's held hand for certain items (e.g. bow for detective, iron sword for murderer) and alerts you if they have one that is blacklisted)
+- `ShowNametags` module (Allows configuring other player's nametags so e.g. they show in the Murder Mystery gamemode, and/or even when they're sneaking)
+
 ## [v6.8.7] - 2025-11-11
 
-- Constant updates
+- Not constant updates
 - Updated readme
 
 ## [v6.8.5] - 2025-11-8
