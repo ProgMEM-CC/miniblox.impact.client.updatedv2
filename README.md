@@ -233,7 +233,7 @@ An apology here firstly, i dont know why, but my account seems to have github ac
 | Avatar | Role                             | Contributor            |
 |--------|----------------------------------|------------------------|
 | <img src="https://github.com/7GrandDadPGN.png" width="40" height="40"> | The OG creator for the first miniblox client (Vape V4) | [7GrandDadPGN](https://github.com/7GrandDadPGN) |
-| <img src="https://github.com/DataM0del.png" width="40" height="40"> | Core Developer                   | [DataM0del (locked out of this account)](https://github.com/DataM0del) [6x67](https://github.com/6x67) |
+| <img src="https://github.com/DataM0del.png" width="40" height="40"> | Core Developer                   | [DataM0del (locked out of this account)](https://github.com/DataM0del) [6x67](https://github.com/6x67) (flagged on this account AGAIN) |
 | <img src="https://github.com/TheM1ddleM1n.png" width="40" height="40"> | Core Developer / Maintainer      | [TheM1ddleM1n](https://github.com/TheM1ddleM1n) |
 | <img src="https://github.com/ProgMEM-CC.png" width="40" height="40"> | Repo Manager / Infrastructure    | [ProgMEM-CC](https://github.com/ProgMEM-CC) |
 | <img src="https://github.com/dtkiller-jp.png" width="40" height="40"> | Vape V4 GUI creator and solver!   | [dtkiller-jp](https://github.com/dtkiller-jp) |
