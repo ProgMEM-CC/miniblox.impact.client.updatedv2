@@ -117,7 +117,45 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			&& (tagsInMM[1] || game.serverInfo.serverCategory !== "murder");
 `, true);
 	addModification('Potions.jump.getId(),"5");', `
-		let showNametags, murderMystery, tagsWhileSneaking, tagsInMM;
+		const SERVICES_SERVER = new URL("https://imchat-server.vercel.app/");
+		const SERVICES_SEND_ENDPOINT = new URL("/send", SERVICES_SERVER);
+		let servicesName;
+		const SERVICES_UNSET_NAME = "Unset name";
+		/**
+		 * Sends an IRC message to IMChat with our current player's username
+		 * @param {string} message
+		*/
+		function sendIRCMessage(message) {
+			const name = servicesName[1];
+			if (name == SERVICES_UNSET_NAME) {
+				game.chat.addChat({
+					text: "Please set your nickname in the \`Services\` module in order to use IRC! (set it via ClickGUI)",
+					color: "red"
+				});
+				game.chat.addChat({
+					text: "You can also set your nickname via .setoption: .setoption Services Name <your nickname, surround with double quotes if it contains spaces>",
+					color: "green"
+				});
+				return;
+			}
+			fetch(\`\${SERVICES_SEND_ENDPOINT}?author=\${name}&platformID=impact:client\`, {
+				method: "POST",
+				body: message
+			}).then(async r => {
+				if (!r.ok) {
+					game.chat.addChat({
+						text: \`Failed sending IRC message (response not OK): \${r.status} \${r.statusText} \${await r.text()}\`,
+						color: "red"
+					});
+				}
+			}).catch(r => {
+				game.chat.addChat({
+					text: \`Failed sending IRC message (server down?): \${r} \`,
+					color: "red"
+				});
+			});
+		}
+		let showNametags, Services, murderMystery, tagsWhileSneaking, tagsInMM;
 		let blocking = false;
 		let sendYaw = false;
 		let sendY = false;
@@ -795,35 +833,20 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 				return this.closeInput();
 			}
-			/* case "#cc": {
-				var send = "";
-				const msg = args[1];
-				if (!msg) {
-					game.chat.addChat({text: "Usage: #cc <message>"});
-					return;
+			// .chat / ; for IRC
+			case ".chat":
+			case ";":
+				if (!Services.enabled) {
+					game.chat.addChat({text:
+						"Please enable Services before trying to use IRC!"
+					});
+					return this.closeInput();
 				}
 				args.shift();
-				const sendLIST = args;
-				for (var s of sendLIST){
-					send += s;
-				}
-				try {
-					const resp = await fetch(\`https://chatforminiblox.vercel.app/api/impact/get?username=Anonymous&message=\${send}\`,{method: "GET"});
-					if (!resp.ok) {
-						if (resp.status == 429){
-							throw new Error(\`Please wait, you are being rate limited!\`);
-						} else {
-      						throw new Error(\`Unknown status: \${resp.status}\`);
-						}
-    				}
-				}
-				catch(error) {
-					game.chat.addChat({text: error.message});
-				}
-			}
-			*/
-				
-				
+				const msg = args.join(" ");
+				console.log(args, "=>", msg);
+				sendIRCMessage(msg);
+				return this.closeInput();
 				
 			case ".config":
 			case ".profile":
@@ -1324,6 +1347,55 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			}
 
 			let clickDelay = Date.now();
+			const SERVICES_LISTEN_ENDPOINT = new URL("/listen", SERVICES_SERVER);
+			/** @type {EventSource} */
+			let ircSource;
+			let systemMessageColor;
+			// maps an IRC PlatformID to a "readable" name,
+			// e.g. "impact:discord" is a protected platform ID (requires auth) used by our discord
+			// bot to mirror messages over
+			// "impact:client", however, isn't protected,
+			// since this is a public client and
+			// we have no way of being able to trust the client without this e.g. being possible to emulate the client.
+			const PLATFORM_ID_TO_READABLE = {
+				"impact:discord": "Impact Discord",
+				"impact:client": "Impact"
+			};
+			/** @param {MessageEvent} e */
+			function onIRCMessage(e) {
+				const { message, author, platformID } = JSON.parse(e.data);
+				if (author === null && platformID === undefined) {
+					game.chat.addChat({
+						text: \`[Impact] IRC server: \${message}\`,
+						color: systemMessageColor[1]
+					});
+					return;
+				}
+				const readable = PLATFORM_ID_TO_READABLE[platformID] ?? platformID;
+				game.chat.addChat({
+					text: \`[Impact IRC] \${author} via \${readable}: \${message}\`
+				});
+			}
+			function startIRC() {
+				// it's already connected, what is the point?
+				if (ircSource !== undefined) return;
+				ircSource = new EventSource(SERVICES_LISTEN_ENDPOINT);
+				ircSource.addEventListener("message", onIRCMessage);
+			}
+			function stopIRC() {
+				// don't try to close it, if it's already closed or not connected.
+				if (ircSource === undefined) return;
+				ircSource.close();
+				ircSource = undefined;
+			}
+			Services = new Module("Services", function(enabled) {
+				if (enabled)
+					startIRC();
+				else stopIRC();
+			}, "Client", () => "Client");
+			servicesName = Services.addoption("Name", String, SERVICES_UNSET_NAME);
+			systemMessageColor = Services.addoption("SystemMessageColor", String, "blue");
+
 			new Module("AutoClicker", function(callback) {
 				if (callback) {
 					tickLoop["AutoClicker"] = function() {
