@@ -29,8 +29,8 @@ and [server crasher fix] if you don't want to scroll down a few pixels.
 - Fly, NoFall, NoFallBeta, and Scaffold!
 - A Useable Click GUI
 - ServerCrasher (works on ALL servers **AFTER RECONFIGURING TO BYPASS THE VALUE PATCH**)
-- Nuker (still in BETA, it sends too many block break packets and gets you kicked for this.)
-- Jetpack (this is literally just the old Fly from Vape For Miniblox, this probably still works.)
+- Nuker (still in BETA, it sends too many block break packets and gets you kicked for this)
+- Jetpack (this is literally just the old Fly from Vape For Miniblox, this still works with a desync.)
 - 2ND ClickGUI created by me (TheM1ddleM1n)
 - Script manager/Bug Report function in game (Thanks dtkiller-jp)
 - IRC! `.chat` and (well, when DataM0del is online since that is hosted on his PC) a Discord bridge so you can send messages in Discord and see them in IRC, and see IRC messages in Discord!
