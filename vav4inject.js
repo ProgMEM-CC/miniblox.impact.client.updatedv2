@@ -3947,39 +3947,509 @@ function createModuleRow(name, mod, content) {
 			const { panel, content } = createPanel("MUSIC PLAYER", 280 + panelCount * 30, 40 + panelCount * 30, 400, true);
 			
 			// Make the panel horizontal (wider)
-			panel.style.width = "500px";
-			panel.style.height = "200px";
+			panel.style.width = "600px";
+			panel.style.height = "250px";
 			
 			modulePanels["Music"] = panel;
 			document.body.appendChild(panel);
 
-			// Add temporary music player content
-			const playerContent = document.createElement("div");
-			playerContent.style.cssText = `
-				padding: 20px;
-				text-align: center;
-				color: var(--vape-text-color, #ffffff);
-			`;
-			
-			playerContent.innerHTML = `
-				<div style="margin-bottom: 20px;">
-					<h3 style="margin: 0 0 10px 0; color: var(--vape-accent-color, #0FB3A0);">🎵 Music Player</h3>
-					<p style="margin: 0; opacity: 0.7;">Coming Soon...</p>
-				</div>
-				<div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 15px;">
-					<button style="background: var(--vape-accent-color, #0FB3A0); border: none; border-radius: 50%; width: 40px; height: 40px; color: white; cursor: pointer;">⏮️</button>
-					<button style="background: var(--vape-accent-color, #0FB3A0); border: none; border-radius: 50%; width: 50px; height: 50px; color: white; cursor: pointer; font-size: 18px;">▶️</button>
-					<button style="background: var(--vape-accent-color, #0FB3A0); border: none; border-radius: 50%; width: 40px; height: 40px; color: white; cursor: pointer;">⏭️</button>
-				</div>
-				<div style="opacity: 0.5; font-size: 12px;">
-					No track loaded
-				</div>
-			`;
-			
-			content.appendChild(playerContent);
+			// Create music player content
+			createMusicPlayerContent(content);
 
 			updateCategoryHighlights();
 			saveGUIState();
+		}
+
+		// === Create Music Player Content ===
+		function createMusicPlayerContent(content) {
+			const JAMENDO_API_KEY = "0c5e9d9e";
+			let currentTrack = null;
+			let audioElement = null;
+			let isPlaying = false;
+			let visualizerEnabled = false;
+
+			// Main container
+			const playerContainer = document.createElement("div");
+			playerContainer.style.cssText = `
+				display: flex;
+				padding: 15px;
+				gap: 15px;
+				height: 100%;
+				color: var(--vape-text-color, #ffffff);
+			`;
+
+			// Left side - Album cover
+			const coverContainer = document.createElement("div");
+			coverContainer.style.cssText = `
+				position: relative;
+				width: 120px;
+				height: 120px;
+				background: #333;
+				border-radius: 8px;
+				overflow: hidden;
+				cursor: pointer;
+				flex-shrink: 0;
+			`;
+
+			const coverImage = document.createElement("img");
+			coverImage.style.cssText = `
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				transition: opacity 0.3s;
+			`;
+			coverImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect width='120' height='120' fill='%23444'/%3E%3Ctext x='60' y='60' text-anchor='middle' dy='0.3em' fill='%23888' font-size='40'%3E🎵%3C/text%3E%3C/svg%3E";
+
+			const searchOverlay = document.createElement("div");
+			searchOverlay.style.cssText = `
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: rgba(0,0,0,0.7);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				opacity: 0;
+				transition: opacity 0.3s;
+				font-size: 24px;
+			`;
+			searchOverlay.innerHTML = "🔍";
+
+			coverContainer.appendChild(coverImage);
+			coverContainer.appendChild(searchOverlay);
+
+			// Hover effect
+			coverContainer.addEventListener("mouseenter", () => {
+				searchOverlay.style.opacity = "1";
+			});
+			coverContainer.addEventListener("mouseleave", () => {
+				searchOverlay.style.opacity = "0";
+			});
+
+			// Click to search
+			coverContainer.addEventListener("click", () => {
+				openMusicSearchModal();
+			});
+
+			// Right side - Controls and info
+			const controlsContainer = document.createElement("div");
+			controlsContainer.style.cssText = `
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+			`;
+
+			// Track info
+			const trackInfo = document.createElement("div");
+			trackInfo.style.cssText = `
+				margin-bottom: 15px;
+			`;
+
+			const trackTitle = document.createElement("div");
+			trackTitle.style.cssText = `
+				font-size: 16px;
+				font-weight: bold;
+				margin-bottom: 5px;
+				color: var(--vape-accent-color, #0FB3A0);
+			`;
+			trackTitle.textContent = "No track selected";
+
+			const trackArtist = document.createElement("div");
+			trackArtist.style.cssText = `
+				font-size: 14px;
+				opacity: 0.7;
+				margin-bottom: 5px;
+			`;
+			trackArtist.textContent = "Click cover to search music";
+
+			const trackDuration = document.createElement("div");
+			trackDuration.style.cssText = `
+				font-size: 12px;
+				opacity: 0.5;
+			`;
+			trackDuration.textContent = "00:00 / 00:00";
+
+			trackInfo.appendChild(trackTitle);
+			trackInfo.appendChild(trackArtist);
+			trackInfo.appendChild(trackDuration);
+
+			// Control buttons
+			const controlButtons = document.createElement("div");
+			controlButtons.style.cssText = `
+				display: flex;
+				gap: 10px;
+				align-items: center;
+				margin-bottom: 15px;
+			`;
+
+			const prevButton = createControlButton("⏮️", 35);
+			const playButton = createControlButton("▶️", 45);
+			const nextButton = createControlButton("⏭️", 35);
+
+			prevButton.addEventListener("click", () => {
+				// TODO: Previous track functionality
+				console.log("Previous track");
+			});
+
+			playButton.addEventListener("click", () => {
+				if (!currentTrack) return;
+				
+				if (isPlaying) {
+					pauseTrack();
+				} else {
+					playTrack();
+				}
+			});
+
+			nextButton.addEventListener("click", () => {
+				// TODO: Next track functionality
+				console.log("Next track");
+			});
+
+			controlButtons.appendChild(prevButton);
+			controlButtons.appendChild(playButton);
+			controlButtons.appendChild(nextButton);
+
+			// Visualizer toggle (ClickGUI style)
+			const visualizerToggle = createVisualizerToggle();
+			controlButtons.appendChild(visualizerToggle);
+
+			controlsContainer.appendChild(trackInfo);
+			controlsContainer.appendChild(controlButtons);
+
+			playerContainer.appendChild(coverContainer);
+			playerContainer.appendChild(controlsContainer);
+			content.appendChild(playerContainer);
+
+			// Helper functions
+			function createControlButton(text, size) {
+				const button = document.createElement("button");
+				button.style.cssText = `
+					background: var(--vape-accent-color, #0FB3A0);
+					border: none;
+					border-radius: 50%;
+					width: ${size}px;
+					height: ${size}px;
+					color: white;
+					cursor: pointer;
+					font-size: ${size === 45 ? '18px' : '14px'};
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					transition: all 0.2s;
+				`;
+				button.textContent = text;
+				
+				button.addEventListener("mouseenter", () => {
+					button.style.transform = "scale(1.1)";
+				});
+				button.addEventListener("mouseleave", () => {
+					button.style.transform = "scale(1)";
+				});
+
+				return button;
+			}
+
+			function createVisualizerToggle() {
+				const toggleContainer = document.createElement("div");
+				toggleContainer.style.cssText = `
+					display: flex;
+					align-items: center;
+					gap: 8px;
+					margin-left: 20px;
+				`;
+
+				const toggleLabel = document.createElement("span");
+				toggleLabel.textContent = "Visualizer";
+				toggleLabel.style.cssText = `
+					font-size: 12px;
+					opacity: 0.8;
+				`;
+
+				const toggleSwitch = document.createElement("div");
+				toggleSwitch.style.cssText = `
+					width: 40px;
+					height: 20px;
+					background: #333;
+					border-radius: 10px;
+					position: relative;
+					cursor: pointer;
+					transition: background 0.3s;
+				`;
+
+				const toggleKnob = document.createElement("div");
+				toggleKnob.style.cssText = `
+					width: 16px;
+					height: 16px;
+					background: white;
+					border-radius: 50%;
+					position: absolute;
+					top: 2px;
+					left: 2px;
+					transition: transform 0.3s;
+				`;
+
+				toggleSwitch.appendChild(toggleKnob);
+
+				toggleSwitch.addEventListener("click", () => {
+					visualizerEnabled = !visualizerEnabled;
+					if (visualizerEnabled) {
+						toggleSwitch.style.background = "var(--vape-accent-color, #0FB3A0)";
+						toggleKnob.style.transform = "translateX(20px)";
+					} else {
+						toggleSwitch.style.background = "#333";
+						toggleKnob.style.transform = "translateX(0px)";
+					}
+				});
+
+				toggleContainer.appendChild(toggleLabel);
+				toggleContainer.appendChild(toggleSwitch);
+				return toggleContainer;
+			}
+
+			function playTrack() {
+				if (!audioElement || !currentTrack) return;
+				
+				audioElement.play();
+				isPlaying = true;
+				playButton.textContent = "⏸️";
+			}
+
+			function pauseTrack() {
+				if (!audioElement) return;
+				
+				audioElement.pause();
+				isPlaying = false;
+				playButton.textContent = "▶️";
+			}
+
+			function loadTrack(track) {
+				currentTrack = track;
+				
+				// Update UI
+				trackTitle.textContent = track.name;
+				trackArtist.textContent = track.artist_name;
+				coverImage.src = track.image || coverImage.src;
+				
+				// Create audio element
+				if (audioElement) {
+					audioElement.pause();
+					audioElement = null;
+				}
+				
+				audioElement = new Audio(track.audio);
+				audioElement.addEventListener("loadedmetadata", () => {
+					const duration = formatTime(audioElement.duration);
+					trackDuration.textContent = `00:00 / ${duration}`;
+				});
+				
+				audioElement.addEventListener("timeupdate", () => {
+					const current = formatTime(audioElement.currentTime);
+					const duration = formatTime(audioElement.duration);
+					trackDuration.textContent = `${current} / ${duration}`;
+				});
+				
+				audioElement.addEventListener("ended", () => {
+					isPlaying = false;
+					playButton.textContent = "▶️";
+				});
+			}
+
+			function formatTime(seconds) {
+				const mins = Math.floor(seconds / 60);
+				const secs = Math.floor(seconds % 60);
+				return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+			}
+
+			// Music search modal
+			function openMusicSearchModal() {
+				// Create modal overlay
+				const modalOverlay = document.createElement("div");
+				modalOverlay.style.cssText = `
+					position: fixed;
+					top: 0;
+					left: 0;
+					width: 100vw;
+					height: 100vh;
+					background: rgba(0,0,0,0.8);
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					z-index: 10000;
+				`;
+
+				const modal = document.createElement("div");
+				modal.style.cssText = `
+					background: var(--vape-bg-color, #1a1a1a);
+					border-radius: 12px;
+					width: 500px;
+					height: 400px;
+					padding: 20px;
+					color: var(--vape-text-color, #ffffff);
+					display: flex;
+					flex-direction: column;
+				`;
+
+				const modalHeader = document.createElement("div");
+				modalHeader.style.cssText = `
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					margin-bottom: 20px;
+				`;
+
+				const modalTitle = document.createElement("h3");
+				modalTitle.textContent = "Search Music";
+				modalTitle.style.cssText = `
+					margin: 0;
+					color: var(--vape-accent-color, #0FB3A0);
+				`;
+
+				const closeButton = document.createElement("button");
+				closeButton.textContent = "✕";
+				closeButton.style.cssText = `
+					background: none;
+					border: none;
+					color: var(--vape-text-color, #ffffff);
+					font-size: 18px;
+					cursor: pointer;
+				`;
+				closeButton.addEventListener("click", () => {
+					document.body.removeChild(modalOverlay);
+				});
+
+				const searchInput = document.createElement("input");
+				searchInput.type = "text";
+				searchInput.placeholder = "Search for music...";
+				searchInput.style.cssText = `
+					width: 100%;
+					padding: 10px;
+					border: 1px solid #333;
+					border-radius: 6px;
+					background: #333;
+					color: white;
+					margin-bottom: 15px;
+				`;
+
+				const searchResults = document.createElement("div");
+				searchResults.style.cssText = `
+					flex: 1;
+					overflow-y: auto;
+					border: 1px solid #333;
+					border-radius: 6px;
+					padding: 10px;
+				`;
+
+				modalHeader.appendChild(modalTitle);
+				modalHeader.appendChild(closeButton);
+				modal.appendChild(modalHeader);
+				modal.appendChild(searchInput);
+				modal.appendChild(searchResults);
+				modalOverlay.appendChild(modal);
+				document.body.appendChild(modalOverlay);
+
+				// Search functionality
+				let searchTimeout;
+				searchInput.addEventListener("input", () => {
+					clearTimeout(searchTimeout);
+					searchTimeout = setTimeout(() => {
+						searchMusic(searchInput.value, searchResults);
+					}, 500);
+				});
+
+				// Close modal on overlay click
+				modalOverlay.addEventListener("click", (e) => {
+					if (e.target === modalOverlay) {
+						document.body.removeChild(modalOverlay);
+					}
+				});
+			}
+
+			async function searchMusic(query, resultsContainer) {
+				if (!query.trim()) {
+					resultsContainer.innerHTML = "<p style='opacity: 0.5; text-align: center;'>Enter a search term</p>";
+					return;
+				}
+
+				resultsContainer.innerHTML = "<p style='opacity: 0.5; text-align: center;'>Searching...</p>";
+
+				try {
+					const response = await fetch(`https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_API_KEY}&format=json&limit=10&search=${encodeURIComponent(query)}&include=musicinfo`);
+					const data = await response.json();
+
+					if (data.results && data.results.length > 0) {
+						resultsContainer.innerHTML = "";
+						data.results.forEach(track => {
+							const resultItem = document.createElement("div");
+							resultItem.style.cssText = `
+								display: flex;
+								align-items: center;
+								gap: 10px;
+								padding: 10px;
+								border-radius: 6px;
+								cursor: pointer;
+								transition: background 0.2s;
+								margin-bottom: 5px;
+							`;
+
+							resultItem.addEventListener("mouseenter", () => {
+								resultItem.style.background = "rgba(255,255,255,0.1)";
+							});
+							resultItem.addEventListener("mouseleave", () => {
+								resultItem.style.background = "transparent";
+							});
+
+							const trackImage = document.createElement("img");
+							trackImage.src = track.image || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23444'/%3E%3Ctext x='20' y='20' text-anchor='middle' dy='0.3em' fill='%23888' font-size='16'%3E🎵%3C/text%3E%3C/svg%3E";
+							trackImage.style.cssText = `
+								width: 40px;
+								height: 40px;
+								border-radius: 4px;
+								object-fit: cover;
+							`;
+
+							const trackInfo = document.createElement("div");
+							trackInfo.style.cssText = `
+								flex: 1;
+							`;
+
+							const trackName = document.createElement("div");
+							trackName.textContent = track.name;
+							trackName.style.cssText = `
+								font-weight: bold;
+								margin-bottom: 2px;
+							`;
+
+							const artistName = document.createElement("div");
+							artistName.textContent = track.artist_name;
+							artistName.style.cssText = `
+								opacity: 0.7;
+								font-size: 12px;
+							`;
+
+							trackInfo.appendChild(trackName);
+							trackInfo.appendChild(artistName);
+							resultItem.appendChild(trackImage);
+							resultItem.appendChild(trackInfo);
+
+							resultItem.addEventListener("click", () => {
+								loadTrack(track);
+								document.body.removeChild(resultsContainer.closest(".modal-overlay") || resultsContainer.parentElement.parentElement.parentElement);
+							});
+
+							resultsContainer.appendChild(resultItem);
+						});
+					} else {
+						resultsContainer.innerHTML = "<p style='opacity: 0.5; text-align: center;'>No results found</p>";
+					}
+				} catch (error) {
+					console.error("Search error:", error);
+					resultsContainer.innerHTML = "<p style='opacity: 0.5; text-align: center; color: red;'>Search failed</p>";
+				}
+			}
 		}
 
 
