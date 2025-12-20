@@ -3799,6 +3799,7 @@ function createModuleRow(name, mod, content) {
 
 			// Special handling for Music category
 			if (category === "Music") {
+				console.log("Music category detected, calling openMusicPlayerPanel"); // Debug log
 				openMusicPlayerPanel();
 				return;
 			}
@@ -3932,6 +3933,8 @@ function createModuleRow(name, mod, content) {
 
 		// === Open Music Player Panel ===
 		function openMusicPlayerPanel() {
+			console.log("openMusicPlayerPanel called"); // Debug log
+			
 			// Close if already open
 			if (modulePanels["Music"]) {
 				closePanelWithAnimation(modulePanels["Music"], () => {
@@ -3962,6 +3965,8 @@ function createModuleRow(name, mod, content) {
 
 		// === Create Music Player Content ===
 		function createMusicPlayerContent(content) {
+			console.log("createMusicPlayerContent called"); // Debug log
+			
 			const JAMENDO_API_KEY = "0c5e9d9e";
 			let currentTrack = null;
 			let audioElement = null;
