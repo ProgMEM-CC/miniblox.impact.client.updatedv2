@@ -3519,7 +3519,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 		// === Create Category Panel ===
 		function createCategoryPanel() {
 			const { panel, content } = createPanel("Impact V6", 40, 40, 220);
-			const baseCategories = ["Combat", "Movement", "Player", "Render", "World","Client","Minigames", "Misc","Exploit","Broken"];
+			const baseCategories = ["Combat", "Movement", "Player", "Render", "World","Client","Minigames", "Misc","Exploit","Broken","Music"];
 			const categories = [...baseCategories];
 
 			if (scripts > 0) {
@@ -3797,6 +3797,12 @@ function createModuleRow(name, mod, content) {
 				return;
 			}
 
+			// Special handling for Music category
+			if (category === "Music") {
+				openMusicPlayerPanel();
+				return;
+			}
+
 			// Get modules for this category
 			const modules = Object.values(store.modules).filter((mod) => mod.category == category);
 
@@ -3919,6 +3925,58 @@ function createModuleRow(name, mod, content) {
 				showNotif("Accent color reset!", "success");
 			});
 			content.appendChild(resetColorBtn);
+
+			updateCategoryHighlights();
+			saveGUIState();
+		}
+
+		// === Open Music Player Panel ===
+		function openMusicPlayerPanel() {
+			// Close if already open
+			if (modulePanels["Music"]) {
+				closePanelWithAnimation(modulePanels["Music"], () => {
+					delete modulePanels["Music"];
+					updateCategoryHighlights();
+					saveGUIState();
+				});
+				return;
+			}
+
+			// Create horizontal music player panel (wider than normal)
+			const panelCount = Object.keys(modulePanels).length;
+			const { panel, content } = createPanel("MUSIC PLAYER", 280 + panelCount * 30, 40 + panelCount * 30, 400, true);
+			
+			// Make the panel horizontal (wider)
+			panel.style.width = "500px";
+			panel.style.height = "200px";
+			
+			modulePanels["Music"] = panel;
+			document.body.appendChild(panel);
+
+			// Add temporary music player content
+			const playerContent = document.createElement("div");
+			playerContent.style.cssText = `
+				padding: 20px;
+				text-align: center;
+				color: var(--vape-text-color, #ffffff);
+			`;
+			
+			playerContent.innerHTML = `
+				<div style="margin-bottom: 20px;">
+					<h3 style="margin: 0 0 10px 0; color: var(--vape-accent-color, #0FB3A0);">🎵 Music Player</h3>
+					<p style="margin: 0; opacity: 0.7;">Coming Soon...</p>
+				</div>
+				<div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 15px;">
+					<button style="background: var(--vape-accent-color, #0FB3A0); border: none; border-radius: 50%; width: 40px; height: 40px; color: white; cursor: pointer;">⏮️</button>
+					<button style="background: var(--vape-accent-color, #0FB3A0); border: none; border-radius: 50%; width: 50px; height: 50px; color: white; cursor: pointer; font-size: 18px;">▶️</button>
+					<button style="background: var(--vape-accent-color, #0FB3A0); border: none; border-radius: 50%; width: 40px; height: 40px; color: white; cursor: pointer;">⏭️</button>
+				</div>
+				<div style="opacity: 0.5; font-size: 12px;">
+					No track loaded
+				</div>
+			`;
+			
+			content.appendChild(playerContent);
 
 			updateCategoryHighlights();
 			saveGUIState();
