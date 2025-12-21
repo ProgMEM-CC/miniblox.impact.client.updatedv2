@@ -3799,7 +3799,6 @@ function createModuleRow(name, mod, content) {
 
 			// Special handling for Music category
 			if (category === "Music") {
-				console.log("Music category detected, calling openMusicPlayerPanel"); // Debug log
 				openMusicPlayerPanel();
 				return;
 			}
@@ -3933,8 +3932,6 @@ function createModuleRow(name, mod, content) {
 
 		// === Open Music Player Panel ===
 		function openMusicPlayerPanel() {
-			console.log("openMusicPlayerPanel called"); // Debug log
-			
 			// Close if already open
 			if (modulePanels["Music"]) {
 				closePanelWithAnimation(modulePanels["Music"], () => {
@@ -3949,9 +3946,9 @@ function createModuleRow(name, mod, content) {
 			const panelCount = Object.keys(modulePanels).length;
 			const { panel, content } = createPanel("MUSIC PLAYER", 280 + panelCount * 30, 40 + panelCount * 30, 400, true);
 			
-			// Make the panel horizontal (wider)
-			panel.style.width = "600px";
-			panel.style.height = "250px";
+			// Make the panel compact
+			panel.style.width = "350px";
+			panel.style.height = "140px";
 			
 			modulePanels["Music"] = panel;
 			document.body.appendChild(panel);
@@ -3963,22 +3960,30 @@ function createModuleRow(name, mod, content) {
 			saveGUIState();
 		}
 
+		// === Global Music Player State ===
+		let globalMusicState = {
+			currentTrack: null,
+			audioElement: null,
+			isPlaying: false,
+			visualizerEnabled: false
+		};
+
 		// === Create Music Player Content ===
 		function createMusicPlayerContent(content) {
-			console.log("createMusicPlayerContent called"); // Debug log
-			
 			const JAMENDO_API_KEY = "0c5e9d9e";
-			let currentTrack = null;
-			let audioElement = null;
-			let isPlaying = false;
-			let visualizerEnabled = false;
+			
+			// Use global state instead of local variables
+			let currentTrack = globalMusicState.currentTrack;
+			let audioElement = globalMusicState.audioElement;
+			let isPlaying = globalMusicState.isPlaying;
+			let visualizerEnabled = globalMusicState.visualizerEnabled;
 
 			// Main container
 			const playerContainer = document.createElement("div");
 			playerContainer.style.cssText = `
 				display: flex;
-				padding: 15px;
-				gap: 15px;
+				padding: 8px;
+				gap: 8px;
 				height: 100%;
 				color: var(--vape-text-color, #ffffff);
 			`;
@@ -3987,10 +3992,10 @@ function createModuleRow(name, mod, content) {
 			const coverContainer = document.createElement("div");
 			coverContainer.style.cssText = `
 				position: relative;
-				width: 120px;
-				height: 120px;
+				width: 70px;
+				height: 70px;
 				background: #333;
-				border-radius: 8px;
+				border-radius: 6px;
 				overflow: hidden;
 				cursor: pointer;
 				flex-shrink: 0;
@@ -4050,29 +4055,35 @@ function createModuleRow(name, mod, content) {
 			// Track info
 			const trackInfo = document.createElement("div");
 			trackInfo.style.cssText = `
-				margin-bottom: 15px;
+				margin-bottom: 6px;
 			`;
 
 			const trackTitle = document.createElement("div");
 			trackTitle.style.cssText = `
-				font-size: 16px;
+				font-size: 12px;
 				font-weight: bold;
-				margin-bottom: 5px;
+				margin-bottom: 1px;
 				color: var(--vape-accent-color, #0FB3A0);
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
 			`;
 			trackTitle.textContent = "No track selected";
 
 			const trackArtist = document.createElement("div");
 			trackArtist.style.cssText = `
-				font-size: 14px;
+				font-size: 10px;
 				opacity: 0.7;
-				margin-bottom: 5px;
+				margin-bottom: 1px;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
 			`;
 			trackArtist.textContent = "Click cover to search music";
 
 			const trackDuration = document.createElement("div");
 			trackDuration.style.cssText = `
-				font-size: 12px;
+				font-size: 9px;
 				opacity: 0.5;
 			`;
 			trackDuration.textContent = "00:00 / 00:00";
@@ -4085,14 +4096,33 @@ function createModuleRow(name, mod, content) {
 			const controlButtons = document.createElement("div");
 			controlButtons.style.cssText = `
 				display: flex;
-				gap: 10px;
+				gap: 6px;
 				align-items: center;
-				margin-bottom: 15px;
+				margin-bottom: 6px;
 			`;
 
-			const prevButton = createControlButton("⏮️", 35);
-			const playButton = createControlButton("▶️", 45);
-			const nextButton = createControlButton("⏭️", 35);
+			const prevButton = createControlButton("⏮️", 26);
+			let playButton = createControlButton("▶️", 32);
+			const nextButton = createControlButton("⏭️", 26);
+
+			// Initialize UI with global state
+			if (globalMusicState.currentTrack) {
+				currentTrack = globalMusicState.currentTrack;
+				audioElement = globalMusicState.audioElement;
+				isPlaying = globalMusicState.isPlaying;
+				
+				if (trackTitle) trackTitle.textContent = currentTrack.name;
+				if (trackArtist) trackArtist.textContent = currentTrack.artist_name;
+				if (coverImage) coverImage.src = currentTrack.image || coverImage.src;
+				if (playButton) playButton.textContent = isPlaying ? "⏸️" : "▶️";
+			}
+
+			// Update functions to use current state
+			function updatePlayButton() {
+				if (playButton) {
+					playButton.textContent = globalMusicState.isPlaying ? "⏸️" : "▶️";
+				}
+			}
 
 			prevButton.addEventListener("click", () => {
 				// TODO: Previous track functionality
@@ -4100,9 +4130,10 @@ function createModuleRow(name, mod, content) {
 			});
 
 			playButton.addEventListener("click", () => {
-				if (!currentTrack) return;
+				console.log("Play button clicked, globalState.isPlaying:", globalMusicState.isPlaying, "globalState.currentTrack:", globalMusicState.currentTrack);
+				if (!globalMusicState.currentTrack) return;
 				
-				if (isPlaying) {
+				if (globalMusicState.isPlaying) {
 					pauseTrack();
 				} else {
 					playTrack();
@@ -4133,26 +4164,31 @@ function createModuleRow(name, mod, content) {
 			function createControlButton(text, size) {
 				const button = document.createElement("button");
 				button.style.cssText = `
-					background: var(--vape-accent-color, #0FB3A0);
-					border: none;
+					background: transparent;
+					border: 2px solid var(--vape-accent-color, #0FB3A0);
 					border-radius: 50%;
 					width: ${size}px;
 					height: ${size}px;
-					color: white;
+					color: var(--vape-accent-color, #0FB3A0);
 					cursor: pointer;
-					font-size: ${size === 45 ? '18px' : '14px'};
+					font-size: ${size === 32 ? '14px' : '10px'};
 					display: flex;
 					align-items: center;
 					justify-content: center;
 					transition: all 0.2s;
+					font-family: inherit;
 				`;
 				button.textContent = text;
 				
 				button.addEventListener("mouseenter", () => {
 					button.style.transform = "scale(1.1)";
+					button.style.background = "var(--vape-accent-color, #0FB3A0)";
+					button.style.color = "white";
 				});
 				button.addEventListener("mouseleave", () => {
 					button.style.transform = "scale(1)";
+					button.style.background = "transparent";
+					button.style.color = "var(--vape-accent-color, #0FB3A0)";
 				});
 
 				return button;
@@ -4216,51 +4252,87 @@ function createModuleRow(name, mod, content) {
 			}
 
 			function playTrack() {
-				if (!audioElement || !currentTrack) return;
+				if (!globalMusicState.audioElement || !globalMusicState.currentTrack) {
+					console.log("No audio element or track in global state");
+					return;
+				}
 				
-				audioElement.play();
-				isPlaying = true;
-				playButton.textContent = "⏸️";
+				globalMusicState.audioElement.play().then(() => {
+					globalMusicState.isPlaying = true;
+					updatePlayButton();
+					console.log("Playing:", globalMusicState.currentTrack.name);
+				}).catch(error => {
+					console.error("Play error:", error);
+					if (trackDuration) trackDuration.textContent = "Play failed";
+				});
 			}
 
 			function pauseTrack() {
-				if (!audioElement) return;
+				if (!globalMusicState.audioElement) return;
 				
-				audioElement.pause();
-				isPlaying = false;
-				playButton.textContent = "▶️";
+				globalMusicState.audioElement.pause();
+				globalMusicState.isPlaying = false;
+				updatePlayButton();
+				console.log("Paused");
 			}
 
 			function loadTrack(track) {
 				currentTrack = track;
+				globalMusicState.currentTrack = track;
 				
 				// Update UI
-				trackTitle.textContent = track.name;
-				trackArtist.textContent = track.artist_name;
-				coverImage.src = track.image || coverImage.src;
+				if (trackTitle) trackTitle.textContent = track.name;
+				if (trackArtist) trackArtist.textContent = track.artist_name;
+				if (coverImage) coverImage.src = track.image || coverImage.src;
 				
 				// Create audio element
 				if (audioElement) {
 					audioElement.pause();
+					audioElement.src = "";
 					audioElement = null;
 				}
 				
-				audioElement = new Audio(track.audio);
+				// Get the correct audio URL from Jamendo
+				const audioUrl = `https://prod-1.storage.jamendo.com/?trackid=${track.id}&format=mp31&from=app-97dab294`;
+				
+				audioElement = new Audio();
+				globalMusicState.audioElement = audioElement;
+				audioElement.crossOrigin = "anonymous";
+				audioElement.preload = "metadata";
+				
 				audioElement.addEventListener("loadedmetadata", () => {
-					const duration = formatTime(audioElement.duration);
+					const duration = formatTime(audioElement.duration || 0);
 					trackDuration.textContent = `00:00 / ${duration}`;
+					console.log("Track loaded:", track.name, "Duration:", audioElement.duration);
 				});
 				
 				audioElement.addEventListener("timeupdate", () => {
-					const current = formatTime(audioElement.currentTime);
-					const duration = formatTime(audioElement.duration);
+					const current = formatTime(audioElement.currentTime || 0);
+					const duration = formatTime(audioElement.duration || 0);
 					trackDuration.textContent = `${current} / ${duration}`;
 				});
 				
 				audioElement.addEventListener("ended", () => {
-					isPlaying = false;
-					playButton.textContent = "▶️";
+					globalMusicState.isPlaying = false;
+					updatePlayButton();
 				});
+				
+				audioElement.addEventListener("error", (e) => {
+					console.error("Audio error:", e);
+					trackDuration.textContent = "Error loading audio";
+				});
+				
+				audioElement.addEventListener("canplay", () => {
+					console.log("Audio can play");
+				});
+				
+				// Set the source and load
+				audioElement.src = audioUrl;
+				audioElement.load();
+				
+				// Reset play state
+				globalMusicState.isPlaying = false;
+				updatePlayButton();
 			}
 
 			function formatTime(seconds) {
@@ -4271,8 +4343,15 @@ function createModuleRow(name, mod, content) {
 
 			// Music search modal
 			function openMusicSearchModal() {
+				// Prevent multiple modals
+				if (document.querySelector('.music-search-modal')) {
+					return;
+				}
+
 				// Create modal overlay
 				const modalOverlay = document.createElement("div");
+				modalOverlay.className = "music-search-modal";
+				modalOverlay.className = "modal-overlay";
 				modalOverlay.style.cssText = `
 					position: fixed;
 					top: 0;
@@ -4283,7 +4362,7 @@ function createModuleRow(name, mod, content) {
 					display: flex;
 					align-items: center;
 					justify-content: center;
-					z-index: 10000;
+					z-index: 9999999;
 				`;
 
 				const modal = document.createElement("div");
@@ -4361,7 +4440,7 @@ function createModuleRow(name, mod, content) {
 				searchInput.addEventListener("input", () => {
 					clearTimeout(searchTimeout);
 					searchTimeout = setTimeout(() => {
-						searchMusic(searchInput.value, searchResults);
+						searchMusic(searchInput.value, searchResults, modalOverlay);
 					}, 500);
 				});
 
@@ -4371,9 +4450,21 @@ function createModuleRow(name, mod, content) {
 						document.body.removeChild(modalOverlay);
 					}
 				});
+
+				// Close modal on Escape key
+				const handleEscape = (e) => {
+					if (e.key === "Escape") {
+						document.body.removeChild(modalOverlay);
+						document.removeEventListener("keydown", handleEscape);
+					}
+				};
+				document.addEventListener("keydown", handleEscape);
+
+				// Auto-focus search input
+				setTimeout(() => searchInput.focus(), 100);
 			}
 
-			async function searchMusic(query, resultsContainer) {
+			async function searchMusic(query, resultsContainer, modalOverlay) {
 				if (!query.trim()) {
 					resultsContainer.innerHTML = "<p style='opacity: 0.5; text-align: center;'>Enter a search term</p>";
 					return;
@@ -4442,7 +4533,8 @@ function createModuleRow(name, mod, content) {
 
 							resultItem.addEventListener("click", () => {
 								loadTrack(track);
-								document.body.removeChild(resultsContainer.closest(".modal-overlay") || resultsContainer.parentElement.parentElement.parentElement);
+								// Close modal properly
+								document.body.removeChild(modalOverlay);
 							});
 
 							resultsContainer.appendChild(resultItem);
