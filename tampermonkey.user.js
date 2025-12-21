@@ -26,7 +26,6 @@
 //  BlueDragon7327 (github.com/BlueDragon7327) 
 //  dtkiller-jp (github.com/dtkiller-jp)
 //  whoppps (github.com/whoppps)
-//  annepaurush (github.com/annepaurush)
 //
 //  i dont think we need anymore devs lol :trollface: (unless required)
 //  
