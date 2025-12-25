@@ -1,253 +1,184 @@
-# [![Impact for Miniblox.io!](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=2500&pause=1000&color=FF0000&width=435&lines=Impact+Client+for+Miniblox.io!)](https://git.io/typing-svg)
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&duration=2500&pause=1000&color=abe0e4&vCenter=true&width=600&lines=The+ultimate+Miniblox+hacked+client!;Built+for+stealth+(from+AntiCheats)%2C+speed%2C+and+total+domination.;Fully+dark-mode+optimized+with+a+modern+GUI)](https://git.io/typing-svg)
+# Impact Client for Miniblox.io
 
-## An Overview for Impact For Miniblox!
+A feature-rich client modification for Miniblox.io with enhanced gameplay capabilities, stealth optimization, and a modern dark-mode interface.
 
-<!-- test update (my account is flagged 😭) -->
-**Impact For Miniblox** is a fork of the **Vape V4** project by `DataM0del`
-(which is a continuation of the discontinued **Vape V4** project by `7GrandDadPGN`).
-Before the original client was deleted ([xylex fake quit moment](https://github.com/7GrandDadPGN/7granddadpgn/commit/46a3b9e9afea226f730b9d9eaf10788b993d43ee#commitcomment-152355396)) 🥀
-<!-- why am I adding all of these dates, this isn't history class LOL -->
-**DataM0del (aka RealPacket)** started updating it 13 days before that comment, and then stopped 2 days after.
-But it was fully usable 3 days after that comment, and then, the first updated version of Vape, 3.0.0, was released.
+[![Discord](https://img.shields.io/badge/Discord-Join%20Us-5865F2)](https://discord.gg/PwpGemYhJx)
+[![Website](https://img.shields.io/badge/Website-impactminiblox.js.org-blue)](https://impactminiblox.js.org)
 
-It is designed for stealth (from anticheats), speed, and total domination — with full dark-mode support with a slick Click GUI.
+---
 
-Please join our **[Discord](https://discord.gg/PwpGemYhJx)**!
+## ⚠️ Important Disclaimer
 
-## FAQ (SERVER CRASHER FIX INCLUDED!! & see the injection section before complaining about this not working with Tampermonkey)
+**PLEASE READ BEFORE INSTALLING**: This client modification may violate Miniblox.io's Terms of Service. Use at your own risk. The developers are not responsible for any account actions, bans, or consequences resulting from use of this software. By installing this client, you acknowledge and accept these risks.
 
-[FAQ]: https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ
-[server crasher fix]: https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ#why-doesnt-this-work-anymore
+---
 
-See this [FAQ],
-and [server crasher fix] if you don't want to scroll down a few pixels.
+## Quick Start
+
+### Prerequisites
+- A userscript manager extension (Tampermonkey, Violentmonkey, or Greasemonkey)
+- Chrome, Firefox, or Edge browser
+
+### Installation
+
+1. **Install a userscript manager** from your browser's extension store
+   - [Tampermonkey](https://www.tampermonkey.net/) (recommended)
+   - [Violentmonkey](https://violentmonkey.github.io/)
+   - [Greasemonkey](https://www.greasespot.net/)
+
+2. **Copy the script**
+   - Open `tampermonkey.user.js` from this repository
+   - Copy all contents
+
+3. **Create new userscript**
+   - Click your userscript manager icon
+   - Select "Create new script"
+   - Paste the copied contents
+   - Save (Ctrl+S or Cmd+S)
+
+4. **Launch the client**
+   - Navigate to [miniblox.io](https://miniblox.io)
+   - The client will auto-initialize
+
+5. **Troubleshooting**
+   - **Tampermonkey users**: If the script doesn't load, go to Extensions → Manage Extensions → Tampermonkey → Toggle "Allow User Scripts" permission ([FAQ #209](https://www.tampermonkey.net/faq.php#Q209))
+   - See our [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ) for additional help
+
+---
 
 ## Features
 
-- AntiBan 2.0 (use non accounts OR generate accounts with **[miniblox-acc-gen](https://codeberg.org/ForMiniblox/acc-gen)'s** integration support!)
-- Fly, NoFall, NoFallBeta, and Scaffold!
-- A Useable Click GUI
-- ServerCrasher (works on ALL servers **AFTER RECONFIGURING TO BYPASS THE VALUE PATCH**)
-- Nuker (still in BETA, it sends too many block break packets and gets you kicked for this)
-- Jetpack (this is literally just the old Fly from Vape For Miniblox, this still works with a desync.)
-- 2ND ClickGUI created by me (TheM1ddleM1n)
-- Script manager/Bug Report function in game (Thanks dtkiller-jp)
-- IRC! `.chat` and (well, when DataM0del is online since that is hosted on his PC) a Discord bridge so you can send messages in Discord and see them in IRC, and see IRC messages in Discord!
-  (if people abuse it like I did with Rise IRC (spamming it LOL, then billionaire removed it in 6.7.4) then it's getting rate limited to heaven
-  or made read-only for this client and you can only send messages in the Discord)
+### Movement Modules
+- **Fly** - Enhanced movement with customizable speed
+- **NoFall** / **NoFallBeta** - Prevents fall damage
+- **Scaffold** - Automatic block placement under player
+- **Jetpack** - Legacy fly mode with desync support
+- **LongJump** - Extended jump distance with desync
 
-## How to install our client?
+### Combat Modules
+- **KillAura** - Automated combat (limited to 6 block reach)
+- **TargetHUD** - Visual display of current target information
 
-First, install a userscript manager (🧩 **Tampermonkey**, **Violentmonkey** or **Greasemonkey** via Chrome Web Store or Microsoft Store etc)
+### Utility Modules
+- **AntiBan 2.0** - Account protection with optional account generation
+- **InvCleaner** - Automatic inventory organization
+- **ServerCrasher** - Server stress testing (requires reconfiguration after patch)
+- **Nuker** - Rapid block breaking (currently in beta)
 
-Next, copy the contents of `tampermonkey.user.js`.
+### Visual Modules
+- **ClickGUI** - Modern interface for module management
+- **TextGUI** - Alternative text-based interface
+- **MurderMystery** - Player role detection for Murder Mystery gamemode
+- **ShowNametags** - Enhanced nametag visibility options
 
-Then, paste it into a new userscript and enable it. (you should see it save automatically!)
-
-Finally, open **[miniblox.io](https://miniblox.io)** — the client will auto-initialize!
-
-And then enjoy using the client!
-
----
-
-## ⚠️ Any known issues will be commented here
-
-- `.toggle all` command is currently non-functional. (I think the panic module should work?)
-- There is currently an issue with `Nuker`. (via a lot of packets sent you will get kicked instantly.)
-- `FastBreak` doesn't work (Looking into it.)
-- Reach is limited to 6 (this is the same for killaura) due to Vector's goofy ahh anticheat.
-- linking to killaura sometimes in the air hits will not register (however, (this is a miniblox anticheat problem - thanks vector) and not our client))
-- Scaffold does work 50% of the time, but most of the time you will get voided because of their new AntiLegit-I mean anticheat (again this is another vector issue 🥀)
-- Tampermonkey requires extra setup ([the mv3 / default version you will most likely install requires toggling the "Allow User Scripts" permission toggle in "Manage Extension"](https://www.tampermonkey.net/faq.php#Q209), or (less likely) when [upgrading from a stable release to 4.18+](https://www.tampermonkey.net/faq.php#Q208)), as a last resort if the [wiki instructions](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ#why-does-it-not-seem-to-inject) don't work, try using another UserScript manager like Violentmonkey
-
-## Changelog
-
-## [v6.8.8] - 2025-12-14
-
-- IRC!
-- `MurderMystery` module (looks at every player's held hand for certain items (e.g. bow for detective, iron sword for murderer) and alerts you if they have one that is blacklisted)
-- `ShowNametags` module (Allows configuring other player's nametags so e.g. they show in the Murder Mystery gamemode, and/or even when they're sneaking)
-
-## [v6.8.7] - 2025-11-11
-
-- Not constant updates
-- Updated readme
-
-## [v6.8.5] - 2025-11-8
-
-- Constant updates from @TheM1ddleM1n, @dtkiller-jp and @DataM0del
-- Updated README (@TheM1ddleM1n and @DataM0del)
-- Updated the Music Player branch (@dtkiller-jp)
-- Auto synced version to `v6.8.5`
-
-## [v6.8.1] - 2025-10-24
-
-- Update milestone to `V7 LTS` (ProgMEM-CC)
-- synced version to `6.8.1`
-- Made new V8, V9 and V10 milestones (ProgMEM-CC and TheM1ddleM1n)
-- Made a new report command in game (dtkiller-jp thanks!) `.report` in miniblox chat
-- added a script system for clickGUI it goes into `scripts` for the GUI (thanks again dtkiller-jp!)
-- also included a `.scriptmanager` command
-
-## [v6.6] - 2025-10-18
-
-- 🔄 **Auto-synced version to:** v6.6 (`TheM1ddleM1n`)  and made a PR!
-- `tugayozsoy1982-lab` - added a manifest file for the Crazy Games PWA.
-- Updated Readme
-- improved my NEW ClickGUI with new css animations
-- removed chinahat (ages ago lol cause it would not render as a cone no matter what I did.)
-
-## [v6.5] – 2025-10-16
-
-- 🔄 **Auto-synced version to:** v6.5  
-- Major README refactor for improved clarity and structure (`TheM1ddleM1n`)  
-- Deleted outdated `docs/ModuleIdeas.md` (moved into dev notes)
-- Multiple incremental README updates and formatting fixes  
-- Repository cleanup and minor internal refactoring
+### Social Features
+- **IRC Integration** - In-game chat system (`.chat` command)
+- **Discord Bridge** - Connect IRC with Discord server
+- **Friend System** - Manage trusted players (`.friend` command)
+- **Script Manager** - Custom script support (`.scriptmanager` command)
+- **Bug Reports** - In-game reporting (`.report` command)
 
 ---
 
-## [v6.4] – 2025-10-14  
+## Known Issues
 
-- Merged PR #52 into `main` (`TheM1ddleM1n`)
-- Stability improvements and structure synchronization.
+| Issue | Severity | Status |
+|-------|----------|--------|
+| `.toggle all` command non-functional | Medium | Investigating |
+| Nuker causes instant kick due to packet spam | High | In Development |
+| FastBreak not working | Medium | In Development |
+| Reach limited to 6 blocks | Low | Game Limitation |
+| KillAura air hits sometimes don't register | Low | Server-side Issue |
+| Scaffold success rate ~50% | Medium | Server-side Issue |
+| Tampermonkey requires extra permission toggle | Low | Documented |
 
----
-
-## [v6.3] – 2025-10-10
-
-- Updated README layout and documentation links.  
-- Polished module descriptions for consistency.
-- Improved formatting for developer credits.  
-
----
-
-## [v6.2] – 2025-10-07  
-
-- General cleanup and internal structure improvements.
-- Minor typo fixes and metadata updates.  
+For detailed information and workarounds, see our [Known Issues Wiki](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
 
 ---
 
-## [v6.1] – 2025-10-06  
+## Recent Updates
 
-- Updated README  
-- Added module "tags" instead of hardcoded "modes" (e.g. `Step` with value set to 2.0 displays as `Step` `2.0`)  
-- Introduced the **ServerCrasher** module (thanks to `DataM0del`)  
+### v6.8.8 (2025-12-14)
+- Added IRC chat system
+- New MurderMystery module for role detection
+- ShowNametags module with enhanced visibility options
 
----
+### v6.8.7 (2025-11-11)
+- Improved update consistency
+- Documentation updates
 
-## [v6.0] – 2025-10-03  
+### v6.8.5 (2025-11-08)
+- Multiple contributor updates
+- Music Player branch improvements
+- Version synchronization
 
-- Updated the README
-- Added an `AccountGen` option to the **AntiBan** module to play on account only servers and auto generate disposable accounts (`DataM0del`)
-- Moved outdated content to `docs/` (`TheM1ddleM1n`)
-
----
-
-## [v6.0] – 2025-09-30
-
-- Ported `.friend` and `antiblind` features from Vape for Miniblox (`DataM0del`)
-- Version bump from v5.9 → v6.0
+[View Full Changelog](CHANGELOG.md)
 
 ---
 
-## [v5.9] – 2025-09-29  
+## Project History
 
-- Overhauled the **InvCleaner** module (`TheM1ddleM1n`)  
-- Updated docs
-
----
-
-## [v5.8] – 2025-09-26  
-
-- Added the **TargetHUD** module 
-- Added **LongJump** module with a desync (thanks to `TheM1ddleM1n`)  
-- Updated `tampermonkey.js` and `ModuleIdeas.md`
+Impact for Miniblox is a continuation of the Vape V4 project, originally created by 7GrandDadPGN and later maintained by DataM0del. The project focuses on providing enhanced gameplay features while maintaining compatibility with game updates.
 
 ---
 
-## [v5.6 – v5.7]  
+## Contributing
 
-- Overhauled **TextGUI** visuals  
-- Updated README
+### For Developers
+
+**Version Management**: Always update `VERSIONFILE`, `tampermonkey.user.js`, and `injection.js` together.
+
+**Branch Strategy**: 
+- `main` - Stable releases only
+- `beta` - Testing and experimental features
+
+**Code Standards**: Follow existing code style and comment logic.
+
+### Feature Requests & Bug Reports
+
+- Use GitHub Issues for bug reports
+- Join our [Discord](https://discord.gg/PwpGemYhJx) for feature discussions
+- Submit media showcases via [Discussion](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/discussions/new?category=media-addition-requests)
 
 ---
 
-## [v5.0 – v5.5]  
+## Community
 
-- Fixed filter bypass operating when running a `/` command
-- Added improvements to **Fly - desync**, **NoFall - desync**, and a **Scaffold** bypass 
-- Introduced a working ClickGUI via the `vav4inject.js` file  
-- Improved inventory handling and user interface
+- **Discord**: [Join our server](https://discord.gg/PwpGemYhJx)
+- **Website**: [impactminiblox.js.org](https://impactminiblox.js.org)
+- **GitHub**: [Repository](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2)
 
-## Ideas for some new modules (please look at this for a next step on making this client better!)
-<!-- things in **bold** we will implement before V7 gets released - TheM1ddleM1n !-->
+### Community Showcase
 
-- [ ] Force OP module (gain access to admin commands?! funny bypass)
-- [x] set server access control (auto private), toggle PvP, and toggle command blocks (we know the method and it's very funny, but we don't want vector to patch it)
-  - [ ] being able to toggle PvP also allows us to make a GodMode (that isn't really a GodMode), so you can only be damaged by arrows.
-<!-- - [ ] Command Block modification (to change command blocks in survival), they check if you're in creative mode and only allow you to then change command blocks !-->
-- [ ] Spoof rank (ProgMEM-CC's idea) (again could be possible)
-- [ ] **AutoEat (Automatically eats food in the inv)**
-- [ ] AimBot (Automatically aims at a player, just grab KillAura aiming code, add some smoothing, and done)
-- [ ] Inventory Manager – Organizes inventory automatically
-- [ ] X-Ray (possible)
-- [ ] Freecam (like PublicLurker client)
-- [ ] SkinChanger in game (good idea)
-- [ ] Reach fix (possible but its limited to 5-6 thanks to vector's goofy ahh anticheat)
-<!--- [ ] **NoSlow – Prevents slowdown from using items or cobwebs** -->
-<!--- - [ ] Fullbright – Always max brightness. (funny mc client thing.) the game doesn't have brightness implemented at all -->
-- [ ] CustomCape / Wings / Breadcrumbs – Renders client-side cosmetics (it would be annoying with this current system to hook the game's API, but is still possible, because it's a render module)
-- [ ] Small music player (ie. links to spotify) (like JoLean client. JoLean client still bypasses YaY)
-- [ ] Render miniblox's HUDS (ie. health bar to mc like hearts)
-- [ ] ArmorHUD (to improve my targetHUD) (using exhibition)
-- [ ] **AutoSword (*should be easy to do*)**
-- [ ] CustomSky – Applies custom skybox textures
-- [x] AutoInsult / ComplimentBot – Randomly sends messages after kills (improvement to my AutoFunnyChat module) (like any mc client)
+[![Video Showcase](https://i.ytimg.com/vi/dSR7u0OQcrQ/hqdefault.jpg)](https://www.youtube.com/watch?v=dSR7u0OQcrQ)
 
-## Media
+Want your video featured? [Submit here](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/discussions/new?category=media-addition-requests)
 
-Want your video here? [Submit a media addition request!](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/discussions/new?category=media-addition-requests)
+---
 
-<!-- https://i.ytimg.com/vi/<video id>/hqdefault.jpg is the format for video thumbnail URLs -->
-<!-- [![Thumbnail](URL to the video thumbnail)](https://www.youtube.com/watch?v=thevideoid) -->
-<!-- GitHub doesn't allow iframes so this is probably the best we can do -->
+## Contributors
 
-[![Thumbnail](https://i.ytimg.com/vi/dSR7u0OQcrQ/hqdefault.jpg)](https://www.youtube.com/watch?v=dSR7u0OQcrQ)
+| Contributor | Role |
+|------------|------|
+| [7GrandDadPGN](https://github.com/7GrandDadPGN) | Original Vape V4 Creator |
+| [DataM0del](https://github.com/DataM0del) / [6x67](https://github.com/6x67) / [6x68](https://github.com/6x68) | Core Developer |
+| [TheM1ddleM1n](https://github.com/TheM1ddleM1n) | Core Developer / Maintainer |
+| [ProgMEM-CC](https://github.com/ProgMEM-CC) | Repository Manager / Infrastructure |
+| [dtkiller-jp](https://github.com/dtkiller-jp) | GUI Developer |
 
+---
 
-## 🧩 Developer Notes
+## License & Legal
 
-Make sure you **always** update VERSIONFILE, tampermonkey.user.js, and injection.js together. (as soon as ProgMEM-CC fixes the issue with "Github Actions being disabled!")
+This software is provided as-is without any warranties. Users are solely responsible for compliance with Miniblox.io's Terms of Service and any applicable laws. The developers disclaim all liability for misuse or consequences of using this software.
 
-Never publish unstable code to / (root). Use `/` `beta` for any test builds you have got.
+**By using this client, you accept full responsibility for any actions taken against your account.**
 
-## Repo rename pending once (the literally none) closed-source dependencies are synced
+---
 
-An apology here firstly, i dont know why, but my account seems to have github actions disabled @TheM1ddleM1n sorry about your CI.
+## Support
 
-## 👥 Contributors For Impact For Miniblox
-
-| Avatar | Role                             | Contributor            |
-|--------|----------------------------------|------------------------|
-| <img src="https://github.com/7GrandDadPGN.png" width="40" height="40"> | The OG creator for the first miniblox client (Vape V4) | [7GrandDadPGN](https://github.com/7GrandDadPGN) |
-| <img src="https://github.com/DataM0del.png" width="40" height="40"> | Core Developer                   | [DataM0del (locked out of this account)](https://github.com/DataM0del) [6x67](https://github.com/6x67) (flagged on this account), [6x68](https://github.com/6x68) (NEW account) |
-| <img src="https://github.com/TheM1ddleM1n.png" width="40" height="40"> | Core Developer / Maintainer      | [TheM1ddleM1n](https://github.com/TheM1ddleM1n) |
-| <img src="https://github.com/ProgMEM-CC.png" width="40" height="40"> | Repo Manager / Infrastructure    | [ProgMEM-CC](https://github.com/ProgMEM-CC) |
-| <img src="https://github.com/dtkiller-jp.png" width="40" height="40"> | Vape V4 GUI creator and solver!   | [dtkiller-jp](https://github.com/dtkiller-jp) |
-
-## 🧷 Links
-
-- 🌐 **[Impact Website](https://impactminiblox.js.org)**
-
-- 💬 Discord Impact Community (please join this if you can) - **<https://discord.gg/PwpGemYhJx>**
-
-## ⚠️ Disclaimer (DO READ THIS IF YOU CAN BEFORE INSTALLING PLEASE)
-
-Please be aware that the developers are not responsible for any misuse or violations of Miniblox.io’s Terms of Service. So please enjoy and give any feedback we are willing to hear your views!
-
-## Important (FOR BETA) - Comment from TheM1ddleM1n
-
-You can put out code (if it needs to be tested) without harming the main branch. However, if you do decide to put anything in BETA I will thoroughly test the idea and I will then give you feedback based on:- where to improve or if it is good to pull it into `vav4inject.js`!
+- Check the [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ) first
+- Search existing [GitHub Issues](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/issues)
+- Ask in our [Discord server](https://discord.gg/PwpGemYhJx)
+- Create a new issue with detailed information.
