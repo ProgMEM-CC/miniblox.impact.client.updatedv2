@@ -113,13 +113,13 @@ For detailed information and workarounds, see our [Known Issues Wiki](https://gi
 - Music Player branch improvements
 - Version synchronization
 
-[View Full Changelog](CHANGELOG.md)
+- etc...
 
 ---
 
 ## Project History
 
-Impact for Miniblox is a continuation of the Vape V4 project, originally created by 7GrandDadPGN and later maintained by DataM0del. The project focuses on providing enhanced gameplay features while maintaining compatibility with game updates.
+Impact for Miniblox is a continuation of the Vape V4 project, originally created by 7GrandDadPGN and later maintained by DataM0del. This project focuses on providing enhanced gameplay features while maintaining compatibility with updates
 
 ---
 
