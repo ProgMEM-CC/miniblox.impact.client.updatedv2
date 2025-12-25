@@ -1,7 +1,7 @@
 # [![Impact for Miniblox.io!](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=2500&pause=1000&color=FF0000&width=435&lines=Impact+Client+for+Miniblox.io!)](https://git.io/typing-svg)
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&duration=2500&pause=1000&color=abe0e4&vCenter=true&width=600&lines=The+ultimate+Miniblox+hacked+client!;Built+for+stealth+(from+AntiCheats)%2C+speed%2C+and+total+domination.;Fully+dark-mode+optimized+with+a+modern+GUI)](https://git.io/typing-svg)
 
-## **A feature-rich client modification for Miniblox.io with enhanced gameplay capabilities, stealth optimization, and a modern dark-mode interface.**
+## A feature-rich client modification for Miniblox.io with enhanced gameplay capabilities, stealth optimization, and a modern, dark-mode interface.
 
 [![Discord](https://img.shields.io/badge/Discord-Join%20Us-5865F2)](https://discord.gg/PwpGemYhJx)
 [![Website](https://img.shields.io/badge/Website-impactminiblox.js.org-blue)](https://impactminiblox.js.org)
@@ -17,15 +17,16 @@
 ## Quick Start
 
 ### Prerequisites
+
 - A userscript manager extension (Tampermonkey, Violentmonkey, or Greasemonkey)
 - Chrome, Firefox, or Edge browser
 
 ### Installation
 
-1. **Install a userscript manager** from your browser's extension store
+1. **Install a userscript manager** from your browser's extension store (if you haven't already)
    - [Tampermonkey](https://www.tampermonkey.net/) (recommended)
-   - [Violentmonkey](https://violentmonkey.github.io/)
-   - [Greasemonkey](https://www.greasespot.net/)
+   - [Violentmonkey](https://violentmonkey.github.io/) (MV2 / Manifest v2, but some users reported success in using this userscript manager when Tampermonkey fails)
+   - [Greasemonkey](https://www.greasespot.net/) (old and not recommended, please use Tampermonkey or Violentmonkey.)
 
 2. **Copy the script**
    - Open `tampermonkey.user.js` from this repository
@@ -74,7 +75,7 @@
 
 ### Social Features
 - **IRC Integration** - In-game chat system (`.chat` command)
-- **Discord Bridge** - Connect IRC with Discord server
+- **Discord Bridge** - Connect IRC with Discord server (when @6x68 is online, and is hosting the bot (almost never))
 - **Friend System** - Manage trusted players (`.friend` command)
 - **Script Manager** - Custom script support (`.scriptmanager` command)
 - **Bug Reports** - In-game reporting (`.report` command)
@@ -85,15 +86,15 @@
 
 | Issue | Severity | Status |
 |-------|----------|--------|
-| `.toggle all` command non-functional | Medium | Investigating |
-| Nuker causes instant kick due to packet spam | High | In Development |
-| FastBreak not working | Medium | In Development |
-| Reach limited to 6 blocks | Low | Game Limitation |
-| KillAura air hits sometimes don't register | Low | Server-side Issue |
-| Scaffold success rate ~50% | Medium | Server-side Issue |
-| Tampermonkey requires extra permission toggle | Low | Documented |
+| `.toggle all` command non-functional          | Medium | Investigating     |
+| Nuker causes instant kick due to packet spam  | High   | In Development    |
+| FastBreak not working                         | Medium | In Development    |
+| Reach limited to 6 blocks                     | Low | Game Limitation      |
+| KillAura air hits sometimes don't register    | Low | Server-side Issue    |
+| Scaffold success rate ~50%                    | Medium | Server-side Issue |
+| Tampermonkey requires extra permission toggle | Low | Documented           |
 
-For detailed information and workarounds, see our [Known Issues Wiki](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
+For detailed information and workarounds, see our [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
 
 ---
 
@@ -125,7 +126,6 @@ Before the original client was deleted ([xylex fake quit moment](https://github.
 <!-- why am I adding all of these dates, this isn't history class LOL -->
 **DataM0del (aka RealPacket)** started updating it 13 days before that comment, and then stopped 2 days after.
 But it was fully usable 3 days after that comment, and then, the first updated version of Vape, 3.0.0, was released.
-
 
 ---
 
@@ -168,7 +168,7 @@ Want your video featured? [Submit here](https://github.com/ProgMEM-CC/miniblox.i
 | Contributor | Role |
 |------------|------|
 | [7GrandDadPGN](https://github.com/7GrandDadPGN) | Original Vape V4 Creator |
-| [DataM0del](https://github.com/DataM0del) / [6x67](https://github.com/6x67) / [6x68](https://github.com/6x68) | Core Developer |
+| [DataM0del](https://github.com/DataM0del) / [6x68](https://github.com/6x68) | Core Developer |
 | [TheM1ddleM1n](https://github.com/TheM1ddleM1n) | Core Developer / Maintainer |
 | [ProgMEM-CC](https://github.com/ProgMEM-CC) | Repository Manager / Infrastructure |
 | [dtkiller-jp](https://github.com/dtkiller-jp) | GUI Developer |
