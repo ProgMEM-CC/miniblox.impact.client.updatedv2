@@ -1,6 +1,7 @@
-# Impact Client for Miniblox.io
+# [![Impact for Miniblox.io!](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=2500&pause=1000&color=FF0000&width=435&lines=Impact+Client+for+Miniblox.io!)](https://git.io/typing-svg)
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&duration=2500&pause=1000&color=abe0e4&vCenter=true&width=600&lines=The+ultimate+Miniblox+hacked+client!;Built+for+stealth+(from+AntiCheats)%2C+speed%2C+and+total+domination.;Fully+dark-mode+optimized+with+a+modern+GUI)](https://git.io/typing-svg)
 
-A feature-rich client modification for Miniblox.io with enhanced gameplay capabilities, stealth optimization, and a modern dark-mode interface.
+## **A feature-rich client modification for Miniblox.io with enhanced gameplay capabilities, stealth optimization, and a modern dark-mode interface.**
 
 [![Discord](https://img.shields.io/badge/Discord-Join%20Us-5865F2)](https://discord.gg/PwpGemYhJx)
 [![Website](https://img.shields.io/badge/Website-impactminiblox.js.org-blue)](https://impactminiblox.js.org)
