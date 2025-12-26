@@ -1773,7 +1773,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			killAuraAttackInvisible = killaura.addoption("AttackInvisbles", Boolean, true);
 			killauraSwitchDelay = killaura.addoption("SwitchDelay", Number, 100);
 			
-			new Module("FastBreak", function() {}, "Client",() => "Client-Side");
+			new Module("FastBreak", function() {}, "Broken", () => "Client-Side");
 
 			function getMoveDirection(moveSpeed) {
 				let moveStrafe = player.moveStrafeDump;
