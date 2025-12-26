@@ -11,4 +11,4 @@ Test **THOROUGHLY** before submitting or ask me to test it for you!
 Please raise a issue on GitHub (I will respond to issues on GitHub) or reach out to the Impact Community on Discord via this link here - `https://discord.gg/PwpGemYhJx`
 
 
-Made by $TheM1ddleM1n$
+Authored by [@TheM1ddleM1n](https://github.com/TheM1ddleM1n)
