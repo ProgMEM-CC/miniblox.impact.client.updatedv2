@@ -74,7 +74,7 @@
 - **ShowNametags** - Enhanced nametag visibility options
 
 ### Social Features
-- **IRC Integration** - In-game chat system (`.chat` command)
+- **IRC Integration** - In-game chat system (`.chat` command, enable the `Services` module first AND set the name to whatever you want)
 - **Discord Bridge** - Connect IRC with Discord server (when @6x68 is online, and is hosting the bot (almost never))
 - **Friend System** - Manage trusted players (`.friend` command)
 - **Script Manager** - Custom script support (`.scriptmanager` command)
