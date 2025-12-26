@@ -2376,17 +2376,24 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			// Nuker
 			// TODO: fix kick from sending too many packets at once,
 			// and also to fix for when the break time isn't instant.
-			let nukerRange;
+			let nukerRange, lastBreak, nukerDelay;
+			function breakWithRateLimit(b) {
+				const diff = Math.abs(lastBreak - Date.now());
+				if (!!lastBreak && diff <= nukerDelay[1]) return;
+				lastBreak = Date.now();
+				blockHandlers.breakBlock(b);
+			}
 			const nuker = new Module("Nuker", function(callback) {
 				if (callback) {
 					tickLoop["Nuker"] = function() {
 						let offset = nukerRange[1];
-						handleInRange(nukerRange[1], undefined, blockHandlers.breakBlock);
+						handleInRange(nukerRange[1], undefined, breakWithRateLimit);
 					}
 				}
 				else delete tickLoop["Nuker"];
 			}, "World", () => \`\${nukerRange[1]} block\${nukerRange[1] == 1 ? "" : "s"}\`);
 			nukerRange = nuker.addoption("Range", Number, 5);
+			nukerDelay = nuker.addoption("Delay", Number, 1);
 
 			function getItemStrength(stack) {
 				if (stack == null) return 0;
