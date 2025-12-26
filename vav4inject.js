@@ -1499,7 +1499,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				else delete tickLoop["AntiVoid"];
 			}, "Movement",() => "Ignore");
 
-			const criticals = new Module("Criticals", () => {}, () => "Packet");
+			const criticals = new Module("Criticals", () => {}, "Combat", () => "Packet");
 			criticals.toggle();
 
 			// this is a very old crash method,
@@ -1901,9 +1901,7 @@ const speed = new Module("Speed", function(callback) {
 				: player.motion.y;
 		}
 	};
-}, function() {
-	return "V " + speedvalue[1] + " J " + speedjump[1] + " " + (speedauto[1] ? "A" : "M");
-},"Movement",() => "Packet");
+}, "Movement", () => \`V \${speedvalue[1]} J \${speedjump[1]} \${speedauto[1] ? "A" : "M"}\`);
 
 // Options
 speedbypass = speed.addoption("Bypass", Boolean, true);
@@ -1921,7 +1919,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			textguisize = textgui.addoption("TextSize", Number, 15);
 			textguishadow = textgui.addoption("Shadow", Boolean, true);
 			textgui.toggle();
-			new Module("AutoRespawn", function() {});
+			new Module("AutoRespawn", function() {}, "Player");
 
 			// === Script Manager Module ===
 			let scriptManagerUI = null;
