@@ -65,7 +65,7 @@
 - **AntiBan 2.0** - Account protection with optional account generation
 - **InvCleaner** - Automatic inventory organization
 - **ServerCrasher** - Server stress testing (requires reconfiguration after patch)
-- **Nuker** - Rapid block breaking (currently in beta)
+- **Nuker** - Rapid block breaking
 
 ### Visual Modules
 - **ClickGUI** - Modern interface for module management
@@ -87,12 +87,11 @@
 | Issue | Severity | Status |
 |-------|----------|--------|
 | `.toggle all` command non-functional          | Medium | Investigating     |
-| Nuker causes instant kick due to packet spam  | High   | In Development    |
 | FastBreak not working                         | Medium | In Development    |
-| Reach limited to 6 blocks                     | Low | Game Limitation      |
-| KillAura air hits sometimes don't register    | Low | Server-side Issue    |
-| Scaffold success rate ~50%                    | Medium | Server-side Issue |
-| Tampermonkey requires extra permission toggle | Low | Documented           |
+| Reach limited to 6 blocks                     | None   | Game Limitation   |
+| KillAura air hits sometimes don't register    | Low    | Server-side Issue |
+| Scaffold success rate ~50% (new AC issue)     | Medium | Server-side Issue |
+| Tampermonkey requires extra permission toggle | Low    | Documented        |
 
 For detailed information and workarounds, see our [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
 
@@ -104,6 +103,7 @@ For detailed information and workarounds, see our [FAQ](https://github.com/ProgM
 - Added IRC chat system
 - New MurderMystery module for role detection
 - ShowNametags module with enhanced visibility options
+- (2025-12-26) Added a tiny delay to Nuker in order to fix 
 
 ### v6.8.7 (2025-11-11)
 - Improved update consistency
