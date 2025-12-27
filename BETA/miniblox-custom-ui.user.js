@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Miniblox Custom UI!
-// @namespace    http://tampermonkey.net/
-// @version      2.4
-// @description  Custom UI for Miniblox home screen with animated background
+// @name         Miniblox Custom UI
+// @namespace    |TheM1ddleM1n|
+// @version      2.5
+// @description  Custom UI for Miniblox home screen with a animated background.
 // @author       You
 // @match        https://miniblox.io/
 // @grant        GM_addStyle
