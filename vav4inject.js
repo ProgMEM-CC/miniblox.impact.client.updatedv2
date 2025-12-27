@@ -98,6 +98,10 @@ function modifyCode(text) {
 	addDump('syncItemDump', 'playerControllerMP\.([a-zA-Z]*)\\(\\),ClientSocket\.sendPacket');
 
 	// PRE
+		addModification("}p.slot===Equipment_Slot.MAIN_HAND", "}" + /*js*/`
+if (murderMystery.enabled) handleMurderMysteryHook(y, g);
+p.slot===Equipment_Slot.MAIN_HAND
+`, true);
 	addModification('document.addEventListener("DOMContentLoaded",startGame,!1);', `
 		setTimeout(function() {
 			var DOMContentLoaded_event = document.createEvent("Event");
@@ -1720,7 +1724,9 @@ clientVersion: VERSION$1
 			);
 			tagsWhileSneaking = showNametags.addoption("WhileSneaking", Boolean, true);
 			tagsInMM = showNametags.addoption("InMurderMystery", Boolean, true);
-			murderMystery = new Module("MurderMystery", () => {}, "Minigames", () => "Classic");
+			murderMystery = new Module("MurderMystery", () => {
+				// implemented in hooks (see the handleMurderMysteryHook function)
+			}, "Minigames", () => "Classic");
 			const killaura = new Module("Killaura", function(callback) {
 				if (callback) {
 					for(let i = 0; i < 10; i++) {

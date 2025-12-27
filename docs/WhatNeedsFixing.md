@@ -38,13 +38,8 @@
 
 ## Minor Issues
 
-### 6. Murder Mystery Module Not Implemented
-- **Status**: Empty implementation
-- **Location**: vav4inject.js
-- **Code**: `murderMystery = new Module("MurderMystery", () => {}, "Minigames", () => "Classic");`
-- **Issue**: Module is defined but has no actual implementation
-
 ### 7. NoFall Module Conflicts
+
 - **Status**: Potential conflicts
 - **Location**: vav4inject.js - NoFall and NoFallBeta modules
 - **Issue**: Two implementations both manipulate `desync` flag
