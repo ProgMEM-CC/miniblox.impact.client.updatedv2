@@ -731,13 +731,17 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		'metricsId:localStorage.getItem("metrics_id")??"",' +
 		'clientVersion:VERSION$1' +
 		'})',
-		'new SPacketLoginStart({' +
-		'requestedUuid: void 0, ' +
-		'session: (enabledModules["AntiBan"] ? useAccountGen[1] ? (await generateAccount()).session : "" : (localStorage.getItem(SESSION_TOKEN_KEY) ?? "")), ' +
-		'hydration: "0", ' +
-		'metricsId: uuid$1(), ' +
-		'clientVersion: VERSION$1' +
-		'})',
+		`new SPacketLoginStart({
+requestedUuid: undefined,
+session: (enabledModules["AntiBan"]
+	? useAccountGen[1]
+		? (await generateAccount()).session
+		: ""
+	: (localStorage.getItem(SESSION_TOKEN_KEY) ?? "")),
+hydration: "0",
+metricsId: uuid$1(),
+clientVersion: VERSION$1
+})`,
 		true
 	);
 
@@ -844,7 +848,6 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				}
 				args.shift();
 				const msg = args.join(" ");
-				console.log(args, "=>", msg);
 				sendIRCMessage(msg);
 				return this.closeInput();
 				
@@ -1190,7 +1193,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	// MAIN
 	addModification('document.addEventListener("contextmenu",m=>m.preventDefault());', /*js*/`
 		// my code lol
-		(function() {
+		(async function() {
 			class Module {
 				name;
 				func;
@@ -1357,10 +1360,8 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 			// "impact:client", however, isn't protected,
 			// since this is a public client and
 			// we have no way of being able to trust the client without this e.g. being possible to emulate the client.
-			const PLATFORM_ID_TO_READABLE = {
-				"impact:discord": "Impact Discord",
-				"impact:client": "Impact"
-			};
+			const PID_REG = "https://codeberg.org/IMChat/platform-id-registry/src/branch/main/registry.json";
+			const PLATFORM_ID_TO_READABLE = await fetch(PID_REG).then(r => r.json());
 			/** @param {MessageEvent} e */
 			function onIRCMessage(e) {
 				const { message, author, platformID } = JSON.parse(e.data);
@@ -1381,6 +1382,14 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 				if (ircSource !== undefined) return;
 				ircSource = new EventSource(SERVICES_LISTEN_ENDPOINT);
 				ircSource.addEventListener("message", onIRCMessage);
+				ircSource.addEventListener("error", e => {
+					game.chat.addChat({
+						text: "[Impact] Error while connecting to IMChat / IRC, see console! (reconnecting in 3s)",
+					});
+					console.error(e);
+					stopIRC();
+					setTimeout(startIRC, 3e3);
+				});
 			}
 			function stopIRC() {
 				// don't try to close it, if it's already closed or not connected.
@@ -2372,8 +2381,6 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			breakerrange = breaker.addoption("Range", Number, 10);
 
 			// Nuker
-			// TODO: fix kick from sending too many packets at once,
-			// and also to fix for when the break time isn't instant.
 			let nukerRange, lastBreak, nukerDelay;
 			function breakWithRateLimit(b) {
 				const diff = Math.abs(lastBreak - Date.now());
