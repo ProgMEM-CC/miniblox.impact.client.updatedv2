@@ -8,7 +8,7 @@
 
 ---
 
-## ⚠️ Important Disclaimer
+## ⚠️ Important Disclaimer.
 
 **PLEASE READ BEFORE INSTALLING**: This client modification may violate Miniblox.io's Terms of Service. Use at your own risk. The developers are not responsible for any account actions, bans, or consequences resulting from use of this software. By installing this client, you acknowledge and accept these risks.
 
@@ -51,8 +51,8 @@
 ## Features
 
 ### Movement Modules
-- **Fly** - Enhanced movement with customizable speed
-- **NoFall** / **NoFallBeta** - Prevents fall damage
+- **Fly** - Enhanced movement with customizable speed (With desync created by 6x68)
+- **NoFall** / **NoFallBeta** - Prevents fall damage (Use NoFallBeta lol.)
 - **Scaffold** - Automatic block placement under player
 - **Jetpack** - Legacy fly mode with desync support
 - **LongJump** - Extended jump distance with desync
@@ -63,14 +63,14 @@
 
 ### Utility Modules
 - **AntiBan 2.0** - Account protection with optional account generation
-- **InvCleaner** - Automatic inventory organization
+- **InvCleaner** - Automatic inventory organization (but needs a recode for duplicate detection)
 - **ServerCrasher** - Server stress testing (requires reconfiguration after patch)
 - **Nuker** - Rapid block breaking
 
 ### Visual Modules
-- **ClickGUI** - Modern interface for module management
-- **TextGUI** - Alternative text-based interface
-- **MurderMystery** - Player role detection for Murder Mystery gamemode
+- **ClickGUI** - A Modern interface for module management
+- **TextGUI** - A Alternative for a text-based interface
+- **MurderMystery** - Player role detection for Murder Mystery gamemode!
 - **ShowNametags** - Enhanced nametag visibility options
 
 ### Social Features
@@ -93,7 +93,7 @@
 | Scaffold success rate ~50% (new AC issue)     | Medium | Server-side Issue |
 | Tampermonkey requires extra permission toggle | Low    | Documented        |
 
-For detailed information and workarounds, see our [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
+For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
 
 ---
 
@@ -103,18 +103,19 @@ For detailed information and workarounds, see our [FAQ](https://github.com/ProgM
 - Added IRC chat system
 - New MurderMystery module for role detection
 - ShowNametags module with enhanced visibility options
-- (2025-12-26) Added a tiny delay to Nuker in order to fix 
+- (2025-12-26) Added a tiny delay to Nuker in order to fix
+- (2025-12-27) AutoFunnyChat update!
 
 ### v6.8.7 (2025-11-11)
 - Improved update consistency
 - Documentation updates
 
 ### v6.8.5 (2025-11-08)
-- Multiple contributor updates
+- Multiple contribution updates
 - Music Player branch improvements
 - Version synchronization
 
-- etc...
+- (v5-v6.8.4) etc
 
 ---
 
@@ -169,7 +170,7 @@ Want your video featured? [Submit here](https://github.com/ProgMEM-CC/miniblox.i
 |------------|------|
 | [7GrandDadPGN](https://github.com/7GrandDadPGN) | Original Vape V4 Creator |
 | [DataM0del](https://github.com/DataM0del) / [6x68](https://github.com/6x68) | Core Developer |
-| [TheM1ddleM1n](https://github.com/TheM1ddleM1n) | Core Developer / Maintainer |
+| [TheM1ddleM1n](https://github.com/TheM1ddleM1n) | Core Developer / Maintainer for Github |
 | [ProgMEM-CC](https://github.com/ProgMEM-CC) | Repository Manager / Infrastructure |
 | [dtkiller-jp](https://github.com/dtkiller-jp) | GUI Developer |
 
@@ -179,13 +180,13 @@ Want your video featured? [Submit here](https://github.com/ProgMEM-CC/miniblox.i
 
 This software is provided as-is without any warranties. Users are solely responsible for compliance with Miniblox.io's Terms of Service and any applicable laws. The developers disclaim all liability for misuse or consequences of using this software.
 
-**By using this client, you accept full responsibility for any actions taken against your account.**
+**By using this client, you will accept the full responsibility for any actions taken against your account.**
 
 ---
 
 ## Support
 
 - Check the [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ) first
-- Search existing [GitHub Issues](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/issues)
+- Search the existing [GitHub Issues](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/issues)
 - Ask in our [Discord server](https://discord.gg/PwpGemYhJx)
-- Create a new issue with detailed information.
+- Create a new issue with detailed info.
