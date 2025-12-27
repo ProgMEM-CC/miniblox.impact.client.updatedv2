@@ -2888,15 +2888,17 @@ function dropSlot(index) {
 }
 
 // AutoFunnyChat
-var killMessages = [
-     "☠️ {name} couldn’t survive the wrath of ✦ IMPACT V6 ✦",
+// TODO: it aims at other players i dont kill so i need to fix this.
+// Expanded kill messages with hopefully better grammar :skull:
+const killMessages = [
+    "☠️ {name} couldn't survive the wrath of ✦ IMPACT V6 ✦",
     "⚡ {name} got deleted — IMPACT V6 never lags.",
     "🔥 {name} folded instantly — IMPACT V6 ON TOP.",
     "💀 R.I.P {name} — system overloaded by IMPACT V6.",
     "✪ {name} tried to fight perfection. IMPACT V6 responded.",
     "🚀 {name} launched straight to respawn courtesy of IMPACT V6.",
     "⚙️ Calculated. Executed. {name} eliminated by IMPACT V6.",
-    "💥 Boom! {name} couldn’t handle the force of IMPACT V6.",
+    "💥 Boom! {name} couldn't handle the force of IMPACT V6.",
     "🏆 Victory secured. {name} was just another demo target.",
     "🔧 {name} broke under optimized pressure (IMPACT V6).",
     "🧠 {name} got out-thought, out-aimed, out-classed.",
@@ -2907,46 +2909,71 @@ var killMessages = [
     "⛔ Access denied, {name}. IMPACT V6 firewall engaged.",
     "💎 Another flawless execution — goodbye {name}.",
     "🕹️ GG {name}, but IMPACT V6 plays on expert mode.",
-    "💀 {name} forgot rule #1: Don’t challenge IMPACT V6.",
+    "💀 {name} forgot rule #1: Don't challenge IMPACT V6.",
     "⚔️ Outplayed, outclassed, outlasted — {name} destroyed.",
     "🌐 IMPACT V6 connected. {name} disconnected.",
     "🔥 {name} evaporated under precision fire.",
     "⚙️ Advanced algorithms say: {name} = loser.",
-    "💢 IMPACT V6 just rewrote {name}’s respawn code.",
+    "💢 IMPACT V6 just rewrote {name}'s respawn code.",
     "🚨 Critical hit! {name} eliminated with style.",
     "⚡ Frame-perfect execution on {name}.",
     "♻️ {name} recycled into experience points.",
     "💣 {name} detonated by IMPACT V6.",
-    "🔮 {name} predicted defeat, couldn’t avoid it.",
+    "🔮 {name} predicted defeat, couldn't avoid it.",
     "💀 System log: {name} — user terminated.",
     "⚡ Fast reflexes? Not enough, {name}.",
     "🔥 {name} entered the killzone of IMPACT V6.",
     "☢️ Danger: {name} exposed to high-impact energy.",
-    "🧩 {name} didn’t fit the puzzle. Removed by IMPACT V6.",
+    "🧩 {name} didn't fit the puzzle. Removed by IMPACT V6.",
     "⚔️ Duel complete — {name} eliminated cleanly.",
-    "📉 {name}’s K/D ratio just dropped hard.",
+    "📉 {name}'s K/D ratio just dropped hard.",
     "🛠️ Patch note: {name} no longer a threat.",
     "⚙️ Efficiency 100%. {name} 0%.",
     "💀 {name} deleted by advanced targeting system.",
     "✨ Another one for the highlight reel. RIP {name}.",
     "⚡ Instant replay: {name} got obliterated.",
     "🔥 {name} ran diagnostics — result: IMPACT V6 superiority.",
-    "🧠 IMPACT V6 calculated every frame. {name} didn’t.",
+    "🧠 IMPACT V6 calculated every frame. {name} didn't.",
     "💀 End of line, {name}.",
     "⚡ Shockwave detected — source: IMPACT V6.",
     "🔥 Execution complete. {name} neutralized.",
-    "♛ IMPACT V6 reigns supreme. {name} dethroned."
+    "♛ IMPACT V6 reigns supreme. {name} dethroned.",
+    "🎯 {name} was the easiest target today.",
+    "💻 {name}'s game just crashed — permanently.",
+    "🔒 {name} tried to escape. Access: DENIED.",
+    "🌟 {name} thought they were the main character. Wrong.",
+    "⚠️ Warning: {name} has been deprecated.",
+    "🎮 {name} rage quit before they could even quit.",
+    "💤 {name} took a dirt nap courtesy of IMPACT V6.",
+    "🎪 {name} just became the circus. 🤡",
+    "📴 {name} disconnected from life.",
+    "🧪 Experiment complete: {name} = failure.",
 ];
 
+// Configuration (NEW)
 const autoFunnyChatConfig = {
-    killCooldown: 5000,
-    minDelay: 500,
-    maxDelay: 1500,
+    killCooldown: 3000,           // Reduced from 5000ms for faster responses
+    minDelay: 300,                // Reduced from 500ms for quicker reactions
+    maxDelay: 1200,               // Reduced from 1500ms
     avoidRepeat: true,
-    maxHistorySize: 5
+    maxHistorySize: 8,            // Increased from 5 to avoid more repeats
+    enabled: true,                // Can be toggled
+    customMessages: [],           // Allow users to add custom messages
+    triggerPatterns: [            // More comprehensive kill detection patterns
+        /You eliminated (.+?)(?:\.|$|,)/i,
+        /You knocked out (.+?)(?:\.|$|,)/i,
+        /You sent (.+?)(?:\.|$|,)/i,
+        /(.+?) (?:was )?eliminated by/i,
+        /You (?:killed|defeated) (.+?)(?:\.|$|,)/i,
+        /(.+?) (?:was|has been) killed by you/i,
+        /You assassinated (.+?)(?:\.|$|,)/i,
+        /(.+?) fell to your/i,
+    ],
+    blacklistedNames: [],         // Names to never taunt (friends, etc.)
+    onlyTauntPlayers: true,       // Don't taunt bots/NPCs if detected
 };
 
-const autofunnychat = new Module("autofunnychat", function(callback) {
+const autofunnychat = new Module("AutoFunnyChat", function(callback) {
     if (!callback) {
         // Cleanup when disabled
         if (window.__autoFunnyKillMsgListener) {
@@ -2960,115 +2987,213 @@ const autofunnychat = new Module("autofunnychat", function(callback) {
         }
         return;
     }
-    
+
     // Initialize state
     if (!window.__autoFunnyState) {
         window.__autoFunnyState = {
             lastKillSent: 0,
-            messageHistory: []
+            messageHistory: [],
+            lastVictim: null,
+            killStreak: 0,
         };
     }
-    
-    const state = window.__autoFunnyState;
-    
-    // Helper: Get random message (avoiding recent ones)
+
+    var state = window.__autoFunnyState;
+
+    // Helper: Clean victim name (remove colors, extra spaces, etc.)
+    function cleanVictimName(name) {
+        if (!name) return null;
+
+        // Remove common color codes and formatting
+        var cleaned = name
+            .replace(/\\+[a-z]+\\+/gi, '')  // Remove \color\ codes
+            .replace(/White/gi, '')
+            .replace(/§[0-9a-fk-or]/gi, '')  // Minecraft color codes
+            .trim();
+
+        // Filter out empty or very short names
+        if (cleaned.length < 2) return null;
+
+        return cleaned;
+    }
+
+    // Helper: Check if name is blacklisted
+    function isBlacklisted(name) {
+        if (!name) return true;
+        var lowerName = name.toLowerCase();
+        return autoFunnyChatConfig.blacklistedNames.some(function(blocked) {
+            return lowerName.indexOf(blocked.toLowerCase()) !== -1;
+        });
+    }
+
+    // Helper: Get random message with weighted selection for streaks
     function getRandomMessage(victimName) {
-        let availableMessages = killMessages;
-        
+        var allMessages = killMessages.concat(autoFunnyChatConfig.customMessages);
+
+        // Filter out recently used messages
         if (autoFunnyChatConfig.avoidRepeat && state.messageHistory.length > 0) {
-            availableMessages = killMessages.filter(msg => 
-                !state.messageHistory.includes(msg)
-            );
-            
-            if (availableMessages.length === 0) {
+            var availableMessages = allMessages.filter(function(msg) {
+                return state.messageHistory.indexOf(msg) === -1;
+            });
+
+            if (availableMessages.length > 0) {
+                allMessages = availableMessages;
+            } else {
+                // Reset history if we've used all messages
                 state.messageHistory = [];
-                availableMessages = killMessages;
             }
         }
-        
-        let msg = availableMessages[Math.floor(Math.random() * availableMessages.length)];
-        
-        if (victimName) {
-            msg = msg.replace(/{name}/g, victimName);
+
+        // On kill streaks, prefer more intense messages (those with fire, skull emojis)
+        if (state.killStreak >= 3) {
+            var intenseMessages = allMessages.filter(function(msg) {
+                return msg.indexOf('🔥') !== -1 || msg.indexOf('💀') !== -1 || msg.indexOf('☠️') !== -1;
+            });
+            if (intenseMessages.length > 0) {
+                allMessages = intenseMessages;
+            }
         }
-        
+
+        // Select random message
+        var msg = allMessages[Math.floor(Math.random() * allMessages.length)];
+
+        // Replace {name} placeholder
+        var finalMsg = msg.replace(/{name}/g, victimName);
+
+        // Update history
         state.messageHistory.push(msg);
         if (state.messageHistory.length > autoFunnyChatConfig.maxHistorySize) {
             state.messageHistory.shift();
         }
-        
-        return msg;
+
+        return finalMsg;
     }
-    
+
     // Helper: Send message with rate limiting
     function sendFunnyMessage(victimName) {
-        const now = Date.now();
-        
+        var now = Date.now();
+
+        // Check cooldown
         if (now - state.lastKillSent < autoFunnyChatConfig.killCooldown) {
             return false;
         }
-        
-        const msg = getRandomMessage(victimName);
+
+        // Check if enabled
+        if (!autoFunnyChatConfig.enabled) {
+            return false;
+        }
+
+        // Get and send message
+        var msg = getRandomMessage(victimName);
         if (ClientSocket && ClientSocket.sendPacket) {
             ClientSocket.sendPacket(new SPacketMessage({text: msg}));
         }
-        
+
+        // Update state
         state.lastKillSent = now;
+        state.lastVictim = victimName;
+
+        // Update kill streak
+        if (state.lastVictim === victimName) {
+            state.killStreak++;
+        } else {
+            state.killStreak = 1;
+        }
+
         return true;
     }
-    
+
+    // Helper: Extract victim name from message using patterns
+    function extractVictimName(messageText) {
+        if (!messageText || !player) return null;
+
+        for (var i = 0; i < autoFunnyChatConfig.triggerPatterns.length; i++) {
+            var pattern = autoFunnyChatConfig.triggerPatterns[i];
+            var match = messageText.match(pattern);
+            if (match) {
+                var victimName = null;
+
+                // Check if pattern includes player name (meaning we need to extract victim)
+                if (messageText.indexOf(player.name) !== -1) {
+                    // Extract name that isn't the player's name
+                    victimName = match[1];
+                } else {
+                    // Use captured group
+                    victimName = match[1];
+                }
+
+                // Clean and validate name
+                victimName = cleanVictimName(victimName);
+
+                // Don't self-taunt
+                if (victimName === player.name) {
+                    return null;
+                }
+
+                // Check blacklist
+                if (isBlacklisted(victimName)) {
+                    return null;
+                }
+
+                return victimName;
+            }
+        }
+
+        return null;
+    }
+
     // Remove old listener if exists
     if (window.__autoFunnyKillMsgListener && ClientSocket && ClientSocket.socket && ClientSocket.socket.off) {
         ClientSocket.socket.off("CPacketMessage", window.__autoFunnyKillMsgListener);
     }
-    
-    // Create new listener
-    window.__autoFunnyKillMsgListener = function(h) {
-        if (!h || !h.text || !player) return;
-        
-        let victimName = null;
-        
-        // "You eliminated [name]"
-        if (h.text.includes("You eliminated")) {
-            const match = h.text.match(/You eliminated (.+?)(?:\.|$|,)/);
-            if (match) victimName = match[1].trim().replace(/White/gi, '');
-        }
-        // "You knocked out [name]"
-        else if (h.text.includes("You knocked out")) {
-            const match = h.text.match(/You knocked out (.+?)(?:\.|$|,)/);
-            if (match) victimName = match[1].trim().replace(/White/gi, '');
-        }
-        // "You sent [name]"
-        else if (h.text.includes("You sent")) {
-            const match = h.text.match(/You sent (.+?)(?:\.|$|,)/);
-            if (match) victimName = match[1].trim().replace(/White/gi, '');
-        }
-        // "[name] was eliminated by [your name]"
-        else if (h.text.includes("eliminated by") && h.text.includes(player.name)) {
-            const match = h.text.match(/(.+?) (?:was )?eliminated by/);
-            if (match) victimName = match[1].trim().replace(/White/gi, '');
-        }
-        // "[your name] eliminated [name]"
-        else if (h.text.includes(player.name + " eliminated")) {
-            const match = h.text.match(new RegExp(player.name + " eliminated (.+?)(?:\\.|$|,)"));
-            if (match) victimName = match[1].trim().replace(/White/gi, '');
-        }
-        
+
+    // Create new listener with improved detection
+    window.__autoFunnyKillMsgListener = function(packet) {
+        if (!packet || !packet.text || !player) return;
+
+        // Extract victim name using all patterns
+        var victimName = extractVictimName(packet.text);
+
         if (victimName) {
-            const delay = autoFunnyChatConfig.minDelay + 
+            // Random delay for more human-like behavior
+            var delay = autoFunnyChatConfig.minDelay +
                 Math.random() * (autoFunnyChatConfig.maxDelay - autoFunnyChatConfig.minDelay);
-            
+
             setTimeout(function() {
                 sendFunnyMessage(victimName);
             }, delay);
         }
     };
-    
+
     // Register listener
     if (ClientSocket && ClientSocket.socket && ClientSocket.socket.on) {
         ClientSocket.socket.on("CPacketMessage", window.__autoFunnyKillMsgListener);
     }
-}, "Combat");
+}, "Player");
+
+// Add configuration options
+var autoFunnyChatEnabled = autofunnychat.addoption("Enabled", Boolean, true);
+var autoFunnyChatCooldown = autofunnychat.addoption("Cooldown", Number, 3000);
+var autoFunnyChatMinDelay = autofunnychat.addoption("MinDelay", Number, 300);
+var autoFunnyChatMaxDelay = autofunnychat.addoption("MaxDelay", Number, 1200);
+
+// Update config when options change
+(function() {
+    var checkInterval = setInterval(function() {
+        if (autoFunnyChatEnabled[1] !== undefined) {
+            autoFunnyChatConfig.enabled = autoFunnyChatEnabled[1];
+        }
+        if (autoFunnyChatCooldown[1] !== undefined) {
+            autoFunnyChatConfig.killCooldown = autoFunnyChatCooldown[1];
+        }
+        if (autoFunnyChatMinDelay[1] !== undefined) {
+            autoFunnyChatConfig.minDelay = autoFunnyChatMinDelay[1];
+        }
+        if (autoFunnyChatMaxDelay[1] !== undefined) {
+            autoFunnyChatConfig.maxDelay = autoFunnyChatMaxDelay[1];
+        }
+    }, 100);
+})();
 
 // Jesus
 const jesus = new Module("Jesus", function(callback) {
