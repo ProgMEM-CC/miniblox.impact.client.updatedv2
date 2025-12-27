@@ -1364,7 +1364,7 @@ clientVersion: VERSION$1
 			// "impact:client", however, isn't protected,
 			// since this is a public client and
 			// we have no way of being able to trust the client without this e.g. being possible to emulate the client.
-			const PID_REG = "https://codeberg.org/IMChat/platform-id-registry/src/branch/main/registry.json";
+			const PID_REG = "https://raw.githubusercontent.com/Impact-IMChat/platform-id-registry/refs/heads/main/registry.json";
 			const PLATFORM_ID_TO_READABLE = await fetch(PID_REG).then(r => r.json());
 			/** @param {MessageEvent} e */
 			function onIRCMessage(e) {
