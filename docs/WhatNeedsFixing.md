@@ -85,7 +85,6 @@
 ### Medium Priority (Fix Soon)
 5. ⚠️ Fix/improve Scaffold reliability (50% success rate)
 6. ⚠️ Consolidate NoFall implementations (avoid conflicts)
-7. ⚠️ Add Murder Mystery functionality (empty module)
 8. ⚠️ Improve FastBreak or mark as deprecated
 
 ### Low Priority (Nice to Have)
