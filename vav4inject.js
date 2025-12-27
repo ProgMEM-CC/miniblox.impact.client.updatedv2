@@ -4072,7 +4072,10 @@ function createModuleRow(name, mod, content) {
 		// === Toggle ClickGUI ===
 		let visible = false;
 		document.addEventListener("keydown", (e) => {
-			if (e.code === "Backslash") {
+			if (e.code === "Backslash" && !document.hasFocus()) {
+				e.preventDefault();
+				e.stopPropagation();
+				e.stopImmediatePropagation();
 				visible = !visible;
 
 				if (visible) {
