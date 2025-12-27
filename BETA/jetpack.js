@@ -1,5 +1,5 @@
+// jetpack (NO DESYNC)
 let jetpackvalue, jetpackvert, jetpackUpMotion, jetpackGlide;
-			// jetpack (NO DESYNC)
 			const jetpack = new Module("JetPack", function(callback) {
 				if (callback) {
 					let ticks = 0;
