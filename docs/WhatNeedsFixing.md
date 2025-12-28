@@ -79,7 +79,7 @@
 ### High Priority (Fix ASAP)
 1. ✅ Fix AutoFunnyChat kill detection (has active TODO comment)
 2. ✅ Fix InvCleaner duplicate detection (documented in README)
-3. ✅ Implement Toggle All command (user-facing feature)
+3. ✅ Implement Toggle All command (user-facing feature) (Hey 6x68 is toggle all working? if so can you port it please?)
 4. ✅ Add better error handling to Script Manager (stability)
 
 ### Medium Priority (Soon)
