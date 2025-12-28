@@ -10,7 +10,6 @@ Add better user feedback when enabling or disabling specific modules (Speed, Kil
 Add code of conduct to repository to ensure a welcoming environment for all contributors
 Add collision adjustments for entities to prevent unwanted teleportation or movement bugs
 Add config files for easier user adjustments to keybinds and module settings
-Add configurable flight mode options for InfiniteFly, including vertical speed control
 Add configurable keybinds for core features in hacked client
 Add configuration for customizing Killaura’s targeting range and attack frequency
 Add custom CSS overrides for smoother animations on page load
@@ -243,7 +242,6 @@ Refactor README.md to include clearer usage instructions and examples
 Refactor README.md to include common troubleshooting steps for common errors
 Refactor README.md to include proper sections for project setup and configuration
 Refactor Speed module to allow dynamic adjustment of player speed at runtime
-Refactor `README.md` to be more user-friendly with numbered setup steps
 Refactor `README.md` to improve the layout of the "Installation" section
 Refactor attack hitboxes in Killaura to prevent missed or delayed hits
 Refactor attack logic in Killaura to ensure simultaneous attacks work efficiently
