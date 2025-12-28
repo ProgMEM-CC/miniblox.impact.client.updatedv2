@@ -1,5 +1,4 @@
-// Take code from here
-// Could soon.. (M1ddleM1n)
+// Take code from here 
 (function () {
   'use strict'
   const normalWatermark = document.createElement('div')
