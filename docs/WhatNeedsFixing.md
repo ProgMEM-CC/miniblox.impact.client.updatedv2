@@ -38,7 +38,7 @@
 
 ## Minor Issues
 
-### 7. NoFall Module Conflicts
+### 6. NoFall Module Conflicts
 
 - **Status**: Potential conflicts
 - **Location**: vav4inject.js - NoFall and NoFallBeta modules
@@ -46,7 +46,7 @@
 - **Note**: Could conflict with Fly module
 - **Fix Needed**: Consolidate implementations or add proper conflict handling
 
-### 8. Reach Limited to 6 Blocks
+### 7. Reach Limited to 6 Blocks
 - **Status**: Game limitation
 - **Location**: KillAura module
 - **Note**: This is a server-side limitation, not fixable client-side
@@ -56,7 +56,7 @@
 
 ## Code Quality Issues
 
-### 12. Missing Error Handling
+### 8. Missing Error Handling
 - **Status**: Stability issue
 - **Locations**: Script Manager, IRC integration, various fetch calls
 - **Example**:
@@ -66,7 +66,7 @@
   ```
 - **Fix Needed**: Add comprehensive try-catch blocks and .catch() handlers
 
-### 13. Bind System Edge Cases
+### 9. Bind System Edge Cases
 - **Status**: Minor bugs
 - **Location**: Keybinding system in vav4inject.js
 - **Issue**: Doesn't handle all edge cases (special keys, conflicts, etc.)
@@ -74,7 +74,7 @@
 
 ---
 
-## Priority Recommendations
+## Priority fixes
 
 ### High Priority (Fix ASAP)
 1. ✅ Fix AutoFunnyChat kill detection (has active TODO comment)
@@ -82,17 +82,16 @@
 3. ✅ Implement Toggle All command (user-facing feature)
 4. ✅ Add better error handling to Script Manager (stability)
 
-### Medium Priority (Fix Soon)
+### Medium Priority (Soon)
 5. ⚠️ Fix/improve Scaffold reliability (50% success rate)
 6. ⚠️ Consolidate NoFall implementations (avoid conflicts)
 8. ⚠️ Improve FastBreak or mark as deprecated
 
-### Low Priority (Nice to Have)
+### Low Priority (we dont need to fix this)
 10. 📝 Add comprehensive error handling everywhere
 ---
 
 ## Additional Notes
-
 - **KillAura Air Hits**: Server-side issue, not fixable client-side (low severity)
 - **Storage API**: localStorage usage is fine for userscript environment (not an issue)
 - **Version Sync**: sync_version.py script handles version consistency well (working correctly)
