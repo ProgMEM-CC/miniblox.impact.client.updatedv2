@@ -1,4 +1,4 @@
-// Scaffold Module - Better AC Bypass + Sprint Support
+// Scaffold Module - Better AC Bypass + Sprint Support (does this work?)
 let scaffoldtower, oldHeld, scaffoldextend, scaffoldcycle, scaffoldSafeMode, scaffoldSprint;
 let tickCount = 0;
 let lastPlaceTime = 0;
