@@ -40,8 +40,8 @@ const scaffold = new Module("Scaffold", function(callback) {
         if (player) oldHeld = game.info.selectedSlot;
 
         game.chat.addChat({
-            text: "Scaffold enabled!",
-            color: "lime"
+            text: "Scaffold rotations enabled :D!",
+            color: "purple"
         });
 
         tickLoop["Scaffold"] = function() {
