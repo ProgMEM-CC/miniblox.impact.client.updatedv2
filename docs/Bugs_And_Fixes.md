@@ -12,7 +12,7 @@
 - **Status**: Partially functional
 - **Location**: BETA/ScaffoldV2.js AND in injection.js
 - **Issue**: New anticheat is causing placement failures
-- **Fix Needed**: Better prediction/timing adjustments for block placement
+- **Fix Needed**: Better prediction adjustments for block placement
 
 ### 3. AutoFunnyChat Kill Detection Issues
 - **Status**: Has false positives
