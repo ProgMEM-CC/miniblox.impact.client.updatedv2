@@ -2,12 +2,6 @@
 
 ## Critical Issues
 
-### 1. Toggle All Command Not Working (However, .panic works tho?)
-- **Status**: Non-functional
-- **Location**: Command handler in vav4inject.js
-- **Issue**: The `.toggle all` command is listed as non-functional in Known Issues
-- **Fix Needed**: Implement logic to toggle all modules
-
 ### 2. FastBreak Module Broken
 - **Status**: Not working
 - **Location**: vav4inject.js - FastBreak module
@@ -79,7 +73,6 @@
 ### High Priority (Fix ASAP)
 1. ✅ Fix AutoFunnyChat kill detection (has active TODO comment)
 2. ✅ Fix InvCleaner duplicate detection (documented in README)
-3. ✅ Implement Toggle All command (user-facing feature) (Hey 6x68 is toggle all working? if so can you port it please?)
 4. ✅ Add better error handling to Script Manager (stability)
 
 ### Medium Priority (Soon)
