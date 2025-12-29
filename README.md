@@ -87,11 +87,20 @@
 | Issue | Severity | Status |
 |-------|----------|--------|
 | Scaffold success rate ~50% (new AC issue)     | Medium | Server-side issue |
-| Reach limited to 6 blocks                     | None   | Game Limitation   |
-| KillAura air hits sometimes don't register    | Low    | Server-side Issue |
 | Tampermonkey requires extra permission toggle | Low    | Documented        |
+| AutoFunnyChat Kill Detection Issue            | Low    | Incomplete        |
+| InvCleaner duplicate detection issue          | Medium | Incomplete        |
+| Bind System Edge Cases (in keybinding)        | Low    | Incomplete        |
+| NoFall Module Conflict                        | None   | No issue here ig  |
+| Error Handling                                | None   | Stability Issue   |
 
 For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
+
+## Additional Notes
+- **KillAura Air Hits**: Server-side issue, not fixable client-side (low severity)
+- **Storage API**: localStorage usage is fine for userscript environment (not an issue)
+- **Version Sync**: sync_version.py script handles version consistency well (working correctly)
+- **Reach** is limited to 6 blocks because of the **anticheat**
 
 ---
 
