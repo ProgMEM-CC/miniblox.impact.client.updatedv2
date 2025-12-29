@@ -2,26 +2,26 @@
 
 ## Critical Issues
 
-### 2. FastBreak Module Broken
+### 1. FastBreak Module Broken
 - **Status**: Not working
 - **Location**: vav4inject.js - FastBreak module
 - **Issue**: Listed in Known Issues as "not working"
 - **Note**: Code shows it's marked as "Client-Side" but needs server-side implementation
 
-### 3. Scaffold Success Rate ~50%
+### 2. Scaffold Success Rate ~50%
 - **Status**: Partially functional
 - **Location**: BETA/ScaffoldV2.js AND in injection.js
 - **Issue**: New anticheat is causing placement failures
 - **Fix Needed**: Better prediction/timing adjustments for block placement
 
-### 4. AutoFunnyChat Kill Detection Issues
+### 3. AutoFunnyChat Kill Detection Issues
 - **Status**: Has false positives
 - **Location**: vav4inject.js - AutoFunnyChat module (line with TODO comment)
 - **Issue**: Kill message detection patterns catch false positives
 - **TODO Comment**: "// TODO: it aims at other players i dont kill so i need to fix this."
 - **Fix Needed**: More precise victim name extraction logic
 
-### 5. InvCleaner Duplicate Detection
+### 4. InvCleaner Duplicate Detection
 - **Status**: Incomplete
 - **Location**: vav4inject.js - InvCleaner module
 - **Issue**: Doesn't properly detect duplicate items
@@ -32,7 +32,7 @@
 
 ## Minor Issues
 
-### 6. NoFall Module Conflicts
+### 5. NoFall Module Conflicts
 
 - **Status**: Potential conflicts
 - **Location**: vav4inject.js - NoFall and NoFallBeta modules
@@ -40,7 +40,7 @@
 - **Note**: Could conflict with Fly module
 - **Fix Needed**: Consolidate implementations or add proper conflict handling
 
-### 7. Reach Limited to 6 Blocks
+### 6. Reach Limited to 6 Blocks
 - **Status**: Game limitation
 - **Location**: KillAura module
 - **Note**: This is a server-side limitation, not fixable client-side
@@ -50,7 +50,7 @@
 
 ## Code Quality Issues
 
-### 8. Missing Error Handling
+### 7. Missing Error Handling
 - **Status**: Stability issue
 - **Locations**: Script Manager, IRC integration, various fetch calls
 - **Example**:
@@ -60,7 +60,7 @@
   ```
 - **Fix Needed**: Add comprehensive try-catch blocks and .catch() handlers
 
-### 9. Bind System Edge Cases
+### 8. Bind System Edge Cases
 - **Status**: Minor bugs
 - **Location**: Keybinding system in vav4inject.js
 - **Issue**: Doesn't handle all edge cases (special keys, conflicts, etc.)
@@ -73,15 +73,15 @@
 ### High Priority (Fix ASAP)
 1. ✅ Fix AutoFunnyChat kill detection (has active TODO comment)
 2. ✅ Fix InvCleaner duplicate detection (documented in README)
-4. ✅ Add better error handling to Script Manager (stability)
+3. ✅ Add better error handling to Script Manager (stability)
 
 ### Medium Priority (Soon)
-5. ⚠️ Fix/improve Scaffold reliability (50% success rate)
-6. ⚠️ Consolidate NoFall implementations (avoid conflicts)
-8. ⚠️ Improve FastBreak or mark as deprecated
+4. ⚠️ Fix/improve Scaffold reliability (50% success rate)
+5. ⚠️ Consolidate NoFall implementations (avoid conflicts)
+6. ⚠️ Improve FastBreak or mark as deprecated
 
 ### Low Priority (we dont need to fix this)
-10. 📝 Add comprehensive error handling everywhere
+7. 📝 Add comprehensive error handling everywhere
 ---
 
 ## Additional Notes
