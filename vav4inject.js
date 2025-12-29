@@ -2534,15 +2534,16 @@ const cheststeal = new Module("ChestSteal", function(callback) {
 cheststealblocks = cheststeal.addoption("Blocks", Boolean, true);
 cheststealtools = cheststeal.addoption("Tools", Boolean, true);
 
-           // Scaffold :)
-           let scaffoldtower, oldHeld, scaffoldextend, scaffoldcycle;
+          // Fixed Scaffold Module (should work 99%)
+let scaffoldtower, oldHeld, scaffoldextend, scaffoldcycle;
 let tickCount = 0;
 
 function getPossibleSides(pos) {
     const possibleSides = [];
     for (const side of EnumFacing.VALUES) {
         const offset = side.toVector();
-        const state = game.world.getBlockState(pos.add(offset.x, offset.y, offset.z));
+        const checkPos = new BlockPos(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z);
+        const state = game.world.getBlockState(checkPos);
         if (state.getBlock().material !== Materials.air) {
             possibleSides.push(side.getOpposite());
         }
@@ -2555,171 +2556,170 @@ function switchSlot(slot) {
     game.info.selectedSlot = slot;
 }
 
+function findBlockSlots() {
+    const slotsWithBlocks = [];
+    for (let i = 0; i < 9; i++) {
+        const item = player.inventory.main[i];
+        if (item &&
+            item.item instanceof ItemBlock &&
+            item.item.block.getBoundingBox().max.y === 1 &&
+            item.item.name !== "tnt") {
+            slotsWithBlocks.push(i);
+        }
+    }
+    return slotsWithBlocks;
+}
+
 const scaffold = new Module("Scaffold", function(callback) {
     if (callback) {
         if (player) oldHeld = game.info.selectedSlot;
 
         game.chat.addChat({
-    text: "funny bypass.",
-    color: "royalblue"
-});
+            text: "V2 Scaffold Bypasser?!",
+            color: "royalblue"
+        });
 
         tickLoop["Scaffold"] = function() {
             tickCount++;
 
-            // Auto-select blocks & cycle between them
-            let slotsWithBlocks = [];
-            for (let i = 0; i < 9; i++) {
-                const item = player.inventory.main[i];
-                if (
-                    item &&
-                    item.item instanceof ItemBlock &&
-                    item.item.block.getBoundingBox().max.y === 1 &&
-                    item.item.name !== "tnt"
-                ) {
-                    slotsWithBlocks.push(i);
-                }
-            }
+            // Auto-select blocks & cycle
+            const blockSlots = findBlockSlots();
+            if (blockSlots.length === 0) return;
 
-            if (slotsWithBlocks.length >= 2) {
-                const selected = Math.floor(tickCount / scaffoldcycle[1]) % slotsWithBlocks.length;
-                switchSlot(slotsWithBlocks[selected]);
-            } else if (slotsWithBlocks.length > 0) {
-                switchSlot(slotsWithBlocks[0]); // fallback
+            if (blockSlots.length >= 2 && scaffoldcycle[1] > 0) {
+                const selected = Math.floor(tickCount / scaffoldcycle[1]) % blockSlots.length;
+                switchSlot(blockSlots[selected]);
+            } else {
+                switchSlot(blockSlots[0]);
             }
 
             const item = player.inventory.getCurrentItem();
             if (!item || !(item.getItem() instanceof ItemBlock)) return;
 
-            let flooredX = Math.floor(player.pos.x);
-            let flooredY = Math.floor(player.pos.y);
-            let flooredZ = Math.floor(player.pos.z);
+            // Calculate positions - MORE AGGRESSIVE PREDICTION
+            const playerX = Math.floor(player.pos.x);
+            const playerY = Math.floor(player.pos.y);
+            const playerZ = Math.floor(player.pos.z);
 
-            let futureX = player.pos.x + player.motion.x;
-            let futureZ = player.pos.z + player.motion.z;
-            let flooredFutureX = Math.floor(futureX);
-            let flooredFutureZ = Math.floor(futureZ);
+            // Predict further ahead based on motion
+            const predictionMultiplier = scaffoldextend[1] * 2; // 2x for skywars speed
+            const futureX = player.pos.x + player.motion.x * predictionMultiplier;
+            const futureZ = player.pos.z + player.motion.z * predictionMultiplier;
+            const flooredFutureX = Math.floor(futureX);
+            const flooredFutureZ = Math.floor(futureZ);
 
-            let positionsToCheck = [
-                new BlockPos(flooredX, flooredY - 1, flooredZ),
-                new BlockPos(flooredFutureX, flooredY - 1, flooredFutureZ)
+            // Check MORE positions for faster bridging
+            const positionsToCheck = [
+                new BlockPos(flooredFutureX, playerY - 1, flooredFutureZ), // Future position first!
+                new BlockPos(playerX, playerY - 1, playerZ),
             ];
 
-            for (let pos of positionsToCheck) {
-                if (game.world.getBlockState(pos).getBlock().material === Materials.air) {
-                    let placeSide = getPossibleSides(pos);
+            // Also check diagonal positions for fast strafing
+            if (Math.abs(player.motion.x) > 0.1 || Math.abs(player.motion.z) > 0.1) {
+                positionsToCheck.push(
+                    new BlockPos(flooredFutureX, playerY - 1, playerZ),
+                    new BlockPos(playerX, playerY - 1, flooredFutureZ)
+                );
+            }
 
-                    if (!placeSide) {
-                        let closestSide = null;
-                        let closestPos = null;
-                        let closestDist = Infinity;
+            for (const pos of positionsToCheck) {
+                const blockAtPos = game.world.getBlockState(pos).getBlock();
 
-                        for (let x = -5; x <= 5; x++) {
-                            for (let z = -5; z <= 5; z++) {
-                                const newPos = new BlockPos(pos.x + x, pos.y, pos.z + z);
-                                const side = getPossibleSides(newPos);
+                // Skip if not air
+                if (blockAtPos.material !== Materials.air) continue;
+
+                // Find a side to place on
+                let placeSide = getPossibleSides(pos);
+
+                // If no direct side, search nearby (FASTER search for skywars)
+                if (!placeSide) {
+                    let found = false;
+                    // Smaller search radius but prioritize close blocks
+                    for (let dist = 1; dist <= 2 && !found; dist++) {
+                        for (let x = -dist; x <= dist && !found; x++) {
+                            for (let z = -dist; z <= dist && !found; z++) {
+                                if (x === 0 && z === 0) continue;
+                                const searchPos = new BlockPos(pos.x + x, pos.y, pos.z + z);
+                                const side = getPossibleSides(searchPos);
                                 if (side) {
-                                    const dist = player.pos.distanceTo(new Vector3$1(newPos.x, newPos.y, newPos.z));
-                                    if (dist < closestDist) {
-                                        closestDist = dist;
-                                        closestSide = side;
-                                        closestPos = newPos;
-                                    }
+                                    placeSide = side;
+                                    found = true;
                                 }
                             }
                         }
-
-                        if (closestPos) {
-                            pos = closestPos;
-                            placeSide = closestSide;
-                        }
                     }
-
-                    if (placeSide) {
-                        const dir = placeSide.getOpposite().toVector();
-
-                        let offsetX = dir.x;
-                        let offsetY = dir.y;
-                        let offsetZ = dir.z;
-
-                        if (scaffoldextend[1] > 0) {
-                            offsetX *= scaffoldextend[1];
-                            offsetZ *= scaffoldextend[1];
-                        }
-
-                        const placeX = pos.x + offsetX;
-                        const placeY = keyPressedDump("shift")
-                            ? pos.y - (dir.y + 2)
-                            : pos.y + dir.y;
-                        const placeZ = pos.z + offsetZ;
-
-                        const placePosition = new BlockPos(placeX, placeY, placeZ);
-
-                        function randomFaceOffset(face) {
-                            const rand = () => 0.1 + Math.random() * 0.8;
-                            if (face.getAxis() === "Y") {
-                                return {
-                                    x: placePosition.x + rand(),
-                                    y: placePosition.y + (face === EnumFacing.UP ? 0.95 : 0.05) + Math.random() * 0.04,
-                                    z: placePosition.z + rand()
-                                };
-                            } else if (face.getAxis() === "X") {
-                                return {
-                                    x: placePosition.x + (face === EnumFacing.EAST ? 0.95 : 0.05) + Math.random() * 0.04,
-                                    y: placePosition.y + rand(),
-                                    z: placePosition.z + rand()
-                                };
-                            } else {
-                                return {
-                                    x: placePosition.x + rand(),
-                                    y: placePosition.y + rand(),
-                                    z: placePosition.z + (face === EnumFacing.SOUTH ? 0.95 : 0.05) + Math.random() * 0.04
-                                };
-                            }
-                        }
-
-                        const hitOffsets = randomFaceOffset(placeSide);
-                        const hitVec = new Vector3$1(hitOffsets.x, hitOffsets.y, hitOffsets.z);
-
-                        const dx = hitVec.x - player.pos.x;
-                        const dy = hitVec.y - (player.pos.y + player.getEyeHeight());
-                        const dz = hitVec.z - player.pos.z;
-                        const distHorizontal = Math.sqrt(dx * dx + dz * dz);
-
-                        const rotYaw = Math.atan2(dz, dx) * (180 / Math.PI) - 90;
-                        const rotPitch = -Math.atan2(dy, distHorizontal) * (180 / Math.PI);
-                        player.rotationYaw = rotYaw;
-                        player.rotationPitch = Math.max(-90, Math.min(90, rotPitch));
-
-                        if (
-                            scaffoldtower[1] &&
-                            keyPressedDump("space") &&
-                            dir.y === -1 &&
-                            Math.abs(player.pos.x - flooredX - 0.5) < 0.2 &&
-                            Math.abs(player.pos.z - flooredZ - 0.5) < 0.2
-                        ) {
-                            if (player.motion.y < 0.2 && player.motion.y > 0.15) {
-                                player.motion.y = 0.42;
-                            }
-                        }
-
-                        if (keyPressedDump("shift") && dir.y === 1) {
-                            if (player.motion.y > -0.2 && player.motion.y < -0.15) {
-                                player.motion.y = -0.42;
-                            }
-                        }
-
-                        if (playerControllerDump.onPlayerRightClick(player, game.world, item, placePosition, placeSide, hitVec)) {
-                            hud3D.swingArm();
-                        }
-
-                        if (item.stackSize === 0) {
-                            player.inventory.main[player.inventory.currentItem] = null;
-                        }
-                    }
-
-                    break; // Stop checks after placing.
                 }
+
+                if (!placeSide) continue;
+
+                // Calculate place position
+                const dir = placeSide.getOpposite().toVector();
+                const placePos = new BlockPos(
+                    pos.x + dir.x,
+                    pos.y + dir.y,
+                    pos.z + dir.z
+                );
+
+                // Calculate hit vector (randomized on face)
+                function getRandomHitVec(placePos, face) {
+                    const rand = () => 0.2 + Math.random() * 0.6;
+                    let hitX = placePos.x + 0.5;
+                    let hitY = placePos.y + 0.5;
+                    let hitZ = placePos.z + 0.5;
+
+                    if (face.getAxis() === "Y") {
+                        hitX = placePos.x + rand();
+                        hitY = placePos.y + (face === EnumFacing.UP ? 0.99 : 0.01);
+                        hitZ = placePos.z + rand();
+                    } else if (face.getAxis() === "X") {
+                        hitX = placePos.x + (face === EnumFacing.EAST ? 0.99 : 0.01);
+                        hitY = placePos.y + rand();
+                        hitZ = placePos.z + rand();
+                    } else {
+                        hitX = placePos.x + rand();
+                        hitY = placePos.y + rand();
+                        hitZ = placePos.z + (face === EnumFacing.SOUTH ? 0.99 : 0.01);
+                    }
+
+                    return new Vector3$1(hitX, hitY, hitZ);
+                }
+
+                const hitVec = getRandomHitVec(placePos, placeSide);
+
+                // Tower mode - IMPROVED
+                if (scaffoldtower[1] &&
+                    keyPressedDump("space") &&
+                    player.onGround) {
+
+                    // Less strict centering for faster towering
+                    const centerDist = Math.sqrt(
+                        Math.pow(player.pos.x - (playerX + 0.5), 2) +
+                        Math.pow(player.pos.z - (playerZ + 0.5), 2)
+                    );
+
+                    if (centerDist < 0.3 && player.motion.y < 0.2 && player.motion.y >= 0) {
+                        player.motion.y = 0.42;
+                    }
+                }
+
+                // Try to place block
+                if (playerControllerDump.onPlayerRightClick(
+                    player,
+                    game.world,
+                    item,
+                    placePos,
+                    placeSide,
+                    hitVec
+                )) {
+                    hud3D.swingArm();
+
+                    // Handle item stack
+                    if (item.stackSize === 0) {
+                        player.inventory.main[player.inventory.currentItem] = null;
+                    }
+                }
+
+                break; // Only place one block per tick
             }
         };
     } else {
