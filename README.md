@@ -58,8 +58,8 @@
 - **LongJump** - Extended jump distance with desync
 
 ### Combat Modules
-- **KillAura** - Automated combat (limited to 6 block reach)
-- **TargetHUD** - Visual display of current target information
+- **KillAura** - Automated combat (limited to 6 block reach because of anticheat)
+- **TargetHUD** - Visual display of current target information (where is the code gone?)
 
 ### Utility Modules
 - **AntiBan 2.0** - Account protection with optional account generation
@@ -99,7 +99,6 @@ For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM
 - **KillAura Air Hits**: Server-side issue, not fixable client-side (low severity)
 - **Storage API**: localStorage usage is fine for userscript environment (not an issue)
 - **Version Sync**: sync_version.py script handles version consistency well (working correctly)
-- **Reach** is limited to 6 blocks because of the **anticheat**
 
 ---
 
