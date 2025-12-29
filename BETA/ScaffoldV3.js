@@ -1,4 +1,5 @@
 // Scaffold with rots 🤑🤑
+// TODO: make this better for skywars if we can!
 let scaffoldtower, oldHeld, scaffoldextend, scaffoldcycle, scaffoldRotations;
 let tickCount = 0;
 
