@@ -1,4 +1,4 @@
-## Contribution Guidelines
+## 💡 Contribution Guidelines
 
 Keep your code modular and lightweight.
 
