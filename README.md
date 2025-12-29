@@ -86,7 +86,6 @@
 
 | Issue | Severity | Status |
 |-------|----------|--------|
-| Scaffold success rate ~50% (new AC issue)     | Medium | Server-side issue |
 | Tampermonkey requires extra permission toggle | Low    | Documented        |
 | AutoFunnyChat Kill Detection Issue            | Low    | Incomplete        |
 | InvCleaner duplicate detection issue          | Medium | Incomplete        |
