@@ -86,11 +86,9 @@
 
 | Issue | Severity | Status |
 |-------|----------|--------|
-| `.toggle all` command non-functional          | Medium | Investigating     |
-| FastBreak not working                         | Medium | In Development    |
+| Scaffold success rate ~50% (new AC issue)     | Medium | Server-side issue |
 | Reach limited to 6 blocks                     | None   | Game Limitation   |
 | KillAura air hits sometimes don't register    | Low    | Server-side Issue |
-| Scaffold success rate ~50% (new AC issue)     | Medium | Server-side Issue |
 | Tampermonkey requires extra permission toggle | Low    | Documented        |
 
 For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
