@@ -121,7 +121,7 @@ For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM
 - Music Player branch improvements
 - Version synchronization
 
-- (v5-v6.8.4) etc
+## (v5-v6.8.4) etc
 
 ---
 
