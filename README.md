@@ -1,7 +1,7 @@
-# [![Impact for Miniblox.io!](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=2500&pause=1000&color=FF0000&width=435&lines=Impact+Client+for+Miniblox.io!)](https://git.io/typing-svg)
+# [![Impact for Miniblox.io!](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=2500&pause=1000&color=FF0000&width=435&lines=Impact+Client+for+Miniblox)](https://git.io/typing-svg)
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&duration=2500&pause=1000&color=abe0e4&vCenter=true&width=600&lines=The+ultimate+Miniblox+hacked+client!;Built+for+stealth+(from+AntiCheats)%2C+speed%2C+and+total+domination.;Fully+dark-mode+optimized+with+a+modern+GUI)](https://git.io/typing-svg)
 
-## A feature-rich client modification for Miniblox.io with enhanced gameplay capabilities, stealth optimization, and a modern, dark-mode interface.
+## A feature-rich client modification for Miniblox.io with enhanced gameplay capabilities, stealth optimization, and a modern, dark-mode user interface.
 
 [![Discord](https://img.shields.io/badge/Discord-Join%20Us-5865F2)](https://discord.gg/PwpGemYhJx)
 [![Website](https://img.shields.io/badge/Website-impactminiblox.js.org-blue)](https://impactminiblox.js.org)
@@ -10,7 +10,7 @@
 
 ## ⚠️ Important Disclaimer.
 
-**PLEASE READ BEFORE INSTALLING**: This client modification may violate Miniblox.io's Terms of Service. Use at your own risk. The developers are not responsible for any account actions, bans, or consequences resulting from use of this software. By installing this client, you acknowledge and accept these risks.
+**PLEASE READ BEFORE INSTALLING**: This client modification may violate Miniblox.io's Terms of Service. Use at your **own risk**. The Developers of Impact are not responsible for any account actions, bans, or consequences resulting from use of this software. By installing this client, **you acknowledge and accept these risks**.
 
 ---
 
@@ -23,10 +23,10 @@
 
 ### Installation
 
-1. **Install a userscript manager** from your browser's extension store (if you haven't already)
-   - [Tampermonkey](https://www.tampermonkey.net/) (recommended)
+1. **Install one of the three main userscript managers** from your browser's extension store (if you haven't already)
+   - [Tampermonkey](https://www.tampermonkey.net/) (this is recommended)
    - [Violentmonkey](https://violentmonkey.github.io/) (MV2 / Manifest v2, but some users reported success in using this userscript manager when Tampermonkey fails)
-   - [Greasemonkey](https://www.greasespot.net/) (old and not recommended, please use Tampermonkey or Violentmonkey.)
+   - [Greasemonkey](https://www.greasespot.net/) (**not recommended** as it is old, please use Tampermonkey or Violentmonkey.)
 
 2. **Copy the script**
    - Open `tampermonkey.user.js` from this repository
@@ -96,6 +96,7 @@
 For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
 
 ## Additional Notes
+
 - **KillAura Air Hits**: Server-side issue, not fixable client-side (low severity)
 - **Storage API**: localStorage usage is fine for userscript environment (not an issue)
 - **Version Sync**: sync_version.py script handles version consistency well (working correctly)
@@ -158,7 +159,7 @@ But it was fully usable 3 days after that comment, and then, the first updated v
 
 ## Community
 
-- **Discord**: [Join our server](https://discord.gg/PwpGemYhJx)
+- **Discord**: [Join our server today](https://discord.gg/PwpGemYhJx)
 - **Website**: [impactminiblox.js.org](https://impactminiblox.js.org)
 - **GitHub**: [Repository](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2)
 
@@ -194,7 +195,7 @@ This software is provided as-is without any warranties. Users are solely respons
 
 - Check the [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ) first
 - Search the existing [GitHub Issues](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/issues)
-- Ask in our [Discord server](https://discord.gg/PwpGemYhJx)
+- Ask in our [Discord Server](https://discord.gg/PwpGemYhJx)
 - Create a new issue with detailed info.
 
 Enjoy! 🤑
