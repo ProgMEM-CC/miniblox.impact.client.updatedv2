@@ -2496,45 +2496,239 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			}, "Misc");
 
 			
-            // ChestSteal
-			let cheststealblocks, cheststealtools;
+// Improved ChestSteal Module
+let cheststealblocks, cheststealtools, cheststealdelay, cheststealsilent;
+let cheststealignoreFull, cheststealminStack, cheststealEnchantedOnly;
+let lastStealTime = 0;
+
 const cheststeal = new Module("ChestSteal", function(callback) {
     if (callback) {
         let lastContainer = null;
+        let stealQueue = [];
+        let isProcessing = false;
+
         tickLoop["ChestSteal"] = function() {
-            if (
-                player.openContainer &&
+            const now = Date.now();
+
+            // Check if we have a chest open
+            if (player.openContainer &&
                 player.openContainer instanceof ContainerChest &&
-                player.openContainer !== lastContainer
-            ) {
+                player.openContainer !== lastContainer) {
+
                 lastContainer = player.openContainer;
-                // Instantly steal items and close the GUI before it becomes visible
+                stealQueue = [];
+
+                // Check if inventory is full
+                if (cheststealignoreFull[1] && isInventoryFull()) {
+                    if (cheststealsilent[1]) {
+                        setTimeout(() => player.closeScreen(), 50);
+                    }
+                    return;
+                }
+
+                // Scan chest for valuable items
                 for(let i = 0; i < player.openContainer.numRows * 9; i++) {
                     const slot = player.openContainer.inventorySlots[i];
-                    const item = slot.getHasStack() ? slot.getStack().getItem() : null;
-                    if (item && (
-                        item instanceof ItemSword ||
-                        item instanceof ItemArmor ||
-                        item instanceof ItemAppleGold ||
-                        (cheststealblocks[1] && item instanceof ItemBlock) ||
-                        (cheststealtools[1] && item instanceof ItemTool)
-                    )) {
-                        playerControllerDump.windowClickDump(player.openContainer.windowId, i, 0, 1, player);
+                    if (!slot.getHasStack()) continue;
+
+                    const stack = slot.getStack();
+                    const item = stack.getItem();
+
+                    // Check minimum stack size
+                    if (cheststealminStack[1] > 1 && stack.stackSize < cheststealminStack[1]) {
+                        continue;
+                    }
+
+                    // Check for enchantments if enabled
+                    if (cheststealEnchantedOnly[1]) {
+                        const enchants = stack.getEnchantmentTagList();
+                        if (!enchants || enchants.length === 0) {
+                            continue;
+                        }
+                    }
+
+                    // Determine if item should be stolen
+                    let shouldSteal = false;
+                    let priority = 0;
+
+                    // High priority: Weapons and armor
+                    if (item instanceof ItemSword || item instanceof ItemArmor) {
+                        shouldSteal = true;
+                        priority = 100;
+
+                        // Higher priority for better materials
+                        const name = stack.getDisplayName().toLowerCase();
+                        if (name.includes("diamond")) priority += 50;
+                        else if (name.includes("iron")) priority += 30;
+                        else if (name.includes("chain")) priority += 20;
+                    }
+
+                    // High priority: Golden apples and ender pearls
+                    if (item instanceof ItemAppleGold) {
+                        shouldSteal = true;
+                        priority = 150; // Very high priority
+                    }
+
+                    // High priority: Food items
+                    if (item instanceof ItemFood) {
+                        shouldSteal = true;
+                        priority = 90;
+
+                        const foodName = stack.getDisplayName().toLowerCase();
+                        // Higher priority for better food
+                        if (foodName.includes("golden apple")) priority = 150;
+                        else if (foodName.includes("steak") || foodName.includes("beef")) priority = 95;
+                        else if (foodName.includes("porkchop") || foodName.includes("cooked")) priority = 95;
+                        else if (foodName.includes("apple")) priority = 85;
+                        else if (foodName.includes("bread")) priority = 80;
+                    }
+
+                    // Medium-High priority: Bows
+                    if (item instanceof ItemBow) {
+                        shouldSteal = true;
+                        priority = 80;
+                    }
+
+                    // High priority: Flint and Steel (fire charge alternative)
+                    const itemName = stack.getDisplayName().toLowerCase();
+                    if (itemName.includes("flint and steel") || itemName.includes("fire charge")) {
+                        shouldSteal = true;
+                        priority = 85;
+                    }
+
+                    // High priority: Ember Stones (custom item)
+                    if (itemName.includes("ember stone") || itemName.includes("emberstone")) {
+                        shouldSteal = true;
+                        priority = 85;
+                    }
+
+                    // Optional: Blocks
+                    if (cheststealblocks[1] && item instanceof ItemBlock) {
+                        const blockName = stack.getDisplayName().toLowerCase();
+
+                        // Skip common junk blocks
+                        const junkBlocks = ["dirt", "cobblestone", "stone", "gravel", "sand"];
+                        const isJunk = junkBlocks.some(junk => blockName.includes(junk));
+
+                        if (!isJunk) {
+                            shouldSteal = true;
+                            priority = 40;
+
+                            // Higher priority for useful blocks
+                            if (blockName.includes("wood") || blockName.includes("plank")) priority += 20;
+                            if (blockName.includes("wool")) priority += 10;
+                        }
+                    }
+
+                    // Optional: Tools
+                    if (cheststealtools[1] && (item instanceof ItemTool || item instanceof ItemPickaxe)) {
+                        shouldSteal = true;
+                        priority = 60;
+
+                        const name = stack.getDisplayName().toLowerCase();
+                        if (name.includes("diamond")) priority += 40;
+                        else if (name.includes("iron")) priority += 20;
+                    }
+
+                    // Add enchantment bonus to priority
+                    const enchants = stack.getEnchantmentTagList();
+                    if (enchants && enchants.length > 0) {
+                        priority += enchants.length * 10;
+                    }
+
+                    if (shouldSteal) {
+                        stealQueue.push({ index: i, priority: priority });
                     }
                 }
-                player.closeScreen();
+
+                // Sort queue by priority (highest first)
+                stealQueue.sort((a, b) => b.priority - a.priority);
+
+                // Start stealing process
+                isProcessing = true;
             }
-            // Reset lastContainer when chest GUI is closed
-            if (!player.openContainer && lastContainer) lastContainer = null;
-        }
+
+            // Process steal queue with delay
+            if (isProcessing && stealQueue.length > 0 &&
+                now - lastStealTime >= cheststealdelay[1]) {
+
+                // Check if inventory is full before each steal
+                if (cheststealignoreFull[1] && isInventoryFull()) {
+                    isProcessing = false;
+                    stealQueue = [];
+                    if (cheststealsilent[1]) {
+                        setTimeout(() => player.closeScreen(), 50);
+                    }
+                    return;
+                }
+
+                const slotData = stealQueue.shift();
+
+                // Shift-click to quickly move item
+                playerControllerDump.windowClickDump(
+                    player.openContainer.windowId,
+                    slotData.index,
+                    0,
+                    1, // Shift-click mode
+                    player
+                );
+
+                lastStealTime = now;
+
+                // Close chest when done if silent mode is enabled
+                if (stealQueue.length === 0) {
+                    isProcessing = false;
+                    if (cheststealsilent[1]) {
+                        setTimeout(() => player.closeScreen(), 50);
+                    }
+                }
+            }
+
+            // Reset lastContainer when chest is closed
+            if (!player.openContainer || !(player.openContainer instanceof ContainerChest)) {
+                lastContainer = null;
+                isProcessing = false;
+                stealQueue = [];
+            }
+        };
     } else {
         delete tickLoop["ChestSteal"];
-    };
-}, "World", () => \`\${cheststealblocks[1] ? "B: Y" : "B: N"} \${cheststealtools[1] ? "T: Y" : "T: N"}\`);
+    }
+}, "World", () => {
+    const parts = [];
+    if (cheststealblocks[1]) parts.push("B");
+    if (cheststealtools[1]) parts.push("T");
+    if (cheststealsilent[1]) parts.push("Silent");
+    if (cheststealEnchantedOnly[1]) parts.push("Ench");
+    return parts.join(" ") || "Basic";
+});
+
+// Helper function to check if inventory is full
+function isInventoryFull() {
+    for (let i = 9; i < 36; i++) {
+        const slot = player.inventory.main[i];
+        if (!slot || slot.stackSize === 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Options
 cheststealblocks = cheststeal.addoption("Blocks", Boolean, true);
 cheststealtools = cheststeal.addoption("Tools", Boolean, true);
+cheststealdelay = cheststeal.addoption("Delay", Number, 50);
+cheststealsilent = cheststeal.addoption("Silent", Boolean, true);
+cheststealignoreFull = cheststeal.addoption("IgnoreWhenFull", Boolean, true);
+cheststealminStack = cheststeal.addoption("MinStackSize", Number, 1);
+cheststealEnchantedOnly = cheststeal.addoption("EnchantedOnly", Boolean, false);
 
-          // Fixed Scaffold Module (should work 99%)
+// Set ranges
+cheststealdelay.range = [0, 500, 10];
+cheststealminStack.range = [1, 64, 1];
+
+
+// Fixed Scaffold Module (should work 99%)
 let scaffoldtower, oldHeld, scaffoldextend, scaffoldcycle;
 let tickCount = 0;
 
