@@ -59,7 +59,7 @@ jobs:
 
       - name: 💾 Commit updated files
         run: |
-          git add VERSIONFILE tampermonkey.js vav4inject.js
+          git add VERSIONFILE tampermonkey.user.js vav4inject.js
           git commit -m "🔄 Auto-sync version: ${VERSION}" || echo "No changes to commit"
 
       - name: 🚀 Push changes back to main
