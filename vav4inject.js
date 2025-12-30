@@ -453,17 +453,28 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 	// SPRINT
 	addModification('b=keyPressedDump("shift")||touchcontrols.sprinting', '||enabledModules["Sprint"]');
 
-	// VELOCITY
+		// VELOCITY
 	addModification('"CPacketEntityVelocity",h=>{const p=m.world.entitiesDump.get(h.id);', `
 		if (player && h.id == player.id && enabledModules["Velocity"]) {
-			if (velocityhori[1] == 0 && velocityvert[1] == 0) return;
-			h.motion = new Vector3$1($.motion.x * velocityhori[1], h.motion.y * velocityvert[1], h.motion.z * velocityhori[1]);
+			const [, vH] = velocityhori;
+			const [, vV] = velocityvert;
+			if (vH === 0 && vV === 0) return;
+			// i.e. percentage = 100% => 1 or 50% => 0.5, and 50.5% => 0.505
+			const pH = vH / 100;
+			const pV = vV / 100;
+			h.motion = new Vector3$1(h.motion.x * pH, h.motion.y * pV, h.motion.z * pH);
 		}
 	`);
 	addModification('"CPacketExplosion",h=>{', `
 		if (h.playerPos && enabledModules["Velocity"]) {
+			const [, vH] = velocityhori;
+			const [, vV] = velocityvert;
+			if (vH === 0 && vV === 0) return;
+			// i.e. percentage = 100% => 1 or 50% => 0.5, and 50.5% => 0.505
+			const pH = vH / 100;
+			const pV = vV / 100;
 			if (velocityhori[1] == 0 && velocityvert[1] == 0) return;
-			h.playerPos = new Vector3$1(h.playerPos.x * velocityhori[1], h.playerPos.y * velocityvert[1], h.playerPos.z * velocityhori[1]);
+			h.playerPos = new Vector3$1(h.playerPos.x * pH, h.playerPos.y * pV, h.playerPos.z * pH);
 		}
 	`);
 
