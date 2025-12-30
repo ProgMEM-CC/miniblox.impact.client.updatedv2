@@ -59,13 +59,13 @@
 
 ### Combat Modules
 - **KillAura** - Automated combat (limited to 6 block reach because of anticheat)
-- **TargetHUD** - Visual display of current target information (where is the code gone?)
 
 ### Utility Modules
 - **AntiBan 2.0** - Account protection with optional account generation
 - **InvCleaner** - Automatic inventory organization (but needs a recode for duplicate detection)
 - **ServerCrasher** - Server stress testing (requires reconfiguration after patch)
 - **Nuker** - Rapid block breaking
+- **ChestSteal** - Steals items/armor from chest quickly (50ms)
 
 ### Visual Modules
 - **ClickGUI** - A Modern interface for module management
@@ -110,6 +110,7 @@ For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM
 - ShowNametags module with enhanced visibility options
 - (2025-12-26) Added a tiny delay to Nuker in order to fix
 - (2025-12-27) AutoFunnyChat update!
+- (2025-12-30) ChestSteal recode! 
 
 ### v6.8.7 (2025-11-11)
 - Improved update consistency
