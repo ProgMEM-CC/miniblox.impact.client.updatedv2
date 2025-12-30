@@ -3,7 +3,7 @@
 Impact Client For Miniblox VERSIONFILE auto-syncer!
 Synchronizes version numbers across:
 - VERSIONFILE
-- tampermonkey.js  (// @version <num>)
+- tampermonkey.user.js  (// @version <num>)
 - vav4inject.js    (const VERSION = "<num>")
 """
 
@@ -13,7 +13,7 @@ from pathlib import Path
 
 # --- CONFIG ---
 VERSION_FILE = Path("VERSIONFILE")
-TARGET_FILES = ["tampermonkey.js", "vav4inject.js"]
+TARGET_FILES = ["tampermonkey.user.js", "vav4inject.js"]
 
 def read_current_version() -> str:
     """Read version from VERSIONFILE."""
@@ -27,13 +27,13 @@ def write_new_version(new_version: str):
     print(f"✅ Updated VERSIONFILE → {new_version}")
 
 def update_tampermonkey(file_path: Path, numeric_version: str):
-    """Update the // @version line in tampermonkey.js."""
+    """Update the // @version line in tampermonkey.user.js."""
     pattern = re.compile(r"(//\s*@version\s+)([\d\.]+)")
     content = file_path.read_text(encoding="utf-8")
     new_content, count = pattern.subn(rf"\g<1>{numeric_version}", content)
     if count > 0:
         file_path.write_text(new_content, encoding="utf-8")
-        print(f"✅ Updated tampermonkey.js → {numeric_version}")
+        print(f"✅ Updated tampermonkey.user.js → {numeric_version}")
     else:
         print(f"⚠️ No // @version line found in {file_path.name}")
 
@@ -57,26 +57,26 @@ def main():
     if len(sys.argv) > 1:
         new_version = sys.argv[1]
     else:
-        new_version = input("Enter new version (e.g. v6.3): ").strip()
+        new_version = input("Enter new version (e.g. v6.7): ").strip()
 
-    # Validate format (v6.3)
+    # Validate format (v6.7)
     if not re.match(r"^v\d+(\.\d+)*$", new_version):
-        print("❌ Invalid version format. Use like: v6.3 or v6.3.1")
+        print("❌ Invalid version format. Use like: v6.7 or v6.7.1")
         sys.exit(1)
 
-    numeric_version = new_version.lstrip("v")  # e.g. "6.3"
+    numeric_version = new_version.lstrip("v")  # e.g. "6.7"
 
     # Write version file
     write_new_version(new_version)
 
-    # Update tampermonkey.js and vav4inject.js
-    tm_file = Path("tampermonkey.js")
+    # Update tampermonkey.user.js and vav4inject.js
+    tm_file = Path("tampermonkey.user.js")
     vi_file = Path("vav4inject.js")
 
     if tm_file.exists():
         update_tampermonkey(tm_file, numeric_version)
     else:
-        print("⚠️ tampermonkey.js not found — skipped")
+        print("⚠️ tampermonkey.user.js not found — skipped")
 
     if vi_file.exists():
         update_vav4inject(vi_file, numeric_version)
