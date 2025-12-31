@@ -96,4 +96,4 @@ There is **no path to re-licensing** once terminated.
 ---
 > [!Important]
 > This software is Free Software: you may redistribute and/or modify it under the terms of the AGPL v3.0 **with the additional terms above**.  
-> This software comes with **no warranty**. Use this at your **OWN RISK**. We will, however, enforce this EULA if MiniBlox bans any of our users or interferes in any way and will not hesitate to enforce this if deemed necessary
+> This software comes with **no warranty**. Use this at your **OWN RISK**. However, we will enforce this EULA if Miniblox bans any of our users or interferes in any way and will not hesitate to enforce this if deemed necessary.
