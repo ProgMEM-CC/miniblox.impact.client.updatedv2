@@ -90,7 +90,6 @@
 | InvCleaner – Duplicate Detection          | Medium   | Incomplete (requires fix)         |
 | Bind System – Keybinding Edge Cases       | Low      | Incomplete                        |
 | Tampermonkey Extra Permission Requirement | None     | Documented                        |
-| NoFall Module Conflict                    | None     | No known issue                    |
 | Error Handling                            | None     | Stability improvements needed     |
 
 For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
