@@ -3947,8 +3947,8 @@ function createModuleRow(name, mod, content) {
 			const { panel, content } = createPanel("MUSIC PLAYER", 280 + panelCount * 30, 40 + panelCount * 30, 400, true);
 			
 			// Make the panel compact
-			panel.style.width = "350px";
-			panel.style.height = "140px";
+			panel.style.width = "380px";
+			panel.style.height = "120px";
 			
 			modulePanels["Music"] = panel;
 			document.body.appendChild(panel);
@@ -3975,40 +3975,38 @@ function createModuleRow(name, mod, content) {
 			container.id = "music-visualizer-container";
 			container.style.cssText = `
 				position: fixed;
-				bottom: 15px;
-				left: 15px;
-				width: 200px;
-				background: rgba(26, 26, 26, 0.95);
-				border-radius: 12px;
-				padding: 10px;
+				bottom: 0;
+				left: 0;
 				display: none;
 				z-index: 9999;
-				backdrop-filter: blur(10px);
-				border: 1px solid rgba(255, 255, 255, 0.1);
+				pointer-events: none;
 			`;
 
-			// Cover image
+			// Cover image - small, bottom-left corner
 			const coverImg = document.createElement("img");
 			coverImg.id = "visualizer-cover";
 			coverImg.style.cssText = `
-				width: 100%;
-				height: 180px;
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				width: 100px;
+				height: 100px;
 				object-fit: cover;
-				border-radius: 8px;
-				margin-bottom: 8px;
+				pointer-events: auto;
 			`;
-			coverImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Crect width='180' height='180' fill='%23333'/%3E%3Ctext x='90' y='90' text-anchor='middle' dy='0.3em' fill='%23888' font-size='50'%3E🎵%3C/text%3E%3C/svg%3E";
+			coverImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23333'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='0.3em' fill='%23888' font-size='30'%3E🎵%3C/text%3E%3C/svg%3E";
 
-			// Canvas for visualizer
+			// Canvas for visualizer - large, extends to center
 			const canvas = document.createElement("canvas");
 			canvas.id = "visualizer-canvas";
-			canvas.width = 180;
-			canvas.height = 60;
+			canvas.width = 800;
+			canvas.height = 100;
 			canvas.style.cssText = `
-				width: 100%;
-				height: 60px;
-				border-radius: 6px;
-				background: rgba(0, 0, 0, 0.3);
+				position: fixed;
+				bottom: 0;
+				left: 100px;
+				width: 800px;
+				height: 100px;
 			`;
 
 			container.appendChild(coverImg);
@@ -4032,29 +4030,28 @@ function createModuleRow(name, mod, content) {
 
 			function draw() {
 				if (!globalMusicState.isPlaying) {
-					// Draw idle state
-					ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
-					ctx.fillRect(0, 0, canvas.width, canvas.height);
+					// Clear canvas when not playing
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
 					return;
 				}
 
 				requestAnimationFrame(draw);
 				analyser.getByteFrequencyData(dataArray);
 
-				ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
-				ctx.fillRect(0, 0, canvas.width, canvas.height);
+				// Clear canvas (transparent background)
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-				const barCount = 32;
+				const barCount = 64;
 				const barWidth = canvas.width / barCount;
 				const accentColor = getComputedStyle(document.documentElement).getPropertyValue("--vape-accent-color") || "#0FB3A0";
 
 				for (let i = 0; i < barCount; i++) {
 					const dataIndex = Math.floor((i / barCount) * bufferLength);
-					const barHeight = (dataArray[dataIndex] / 255) * canvas.height * 0.8;
+					const barHeight = (dataArray[dataIndex] / 255) * canvas.height * 0.9;
 					
 					const gradient = ctx.createLinearGradient(0, canvas.height - barHeight, 0, canvas.height);
 					gradient.addColorStop(0, accentColor);
-					gradient.addColorStop(1, accentColor + "80");
+					gradient.addColorStop(1, accentColor + "60");
 					
 					ctx.fillStyle = gradient;
 					ctx.fillRect(
@@ -4098,8 +4095,8 @@ function createModuleRow(name, mod, content) {
 			const playerContainer = document.createElement("div");
 			playerContainer.style.cssText = `
 				display: flex;
-				padding: 12px;
-				gap: 12px;
+				padding: 10px;
+				gap: 10px;
 				height: 100%;
 				color: var(--vape-text-color, #ffffff);
 			`;
@@ -4108,8 +4105,8 @@ function createModuleRow(name, mod, content) {
 			const coverContainer = document.createElement("div");
 			coverContainer.style.cssText = `
 				position: relative;
-				width: 70px;
-				height: 70px;
+				width: 80px;
+				height: 80px;
 				background: #333;
 				border-radius: 8px;
 				overflow: hidden;
@@ -4164,21 +4161,25 @@ function createModuleRow(name, mod, content) {
 			controlsContainer.style.cssText = `
 				flex: 1;
 				display: flex;
-				flex-direction: column;
-				justify-content: space-between;
+				flex-direction: row;
+				gap: 12px;
+				align-items: center;
 			`;
 
 			// Track info
 			const trackInfo = document.createElement("div");
 			trackInfo.style.cssText = `
-				margin-bottom: 12px;
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
 			`;
 
 			const trackTitle = document.createElement("div");
 			trackTitle.style.cssText = `
 				font-size: 12px;
 				font-weight: bold;
-				margin-bottom: 4px;
+				margin-bottom: 3px;
 				color: var(--vape-accent-color, #0FB3A0);
 				white-space: nowrap;
 				overflow: hidden;
@@ -4190,7 +4191,7 @@ function createModuleRow(name, mod, content) {
 			trackArtist.style.cssText = `
 				font-size: 10px;
 				opacity: 0.7;
-				margin-bottom: 4px;
+				margin-bottom: 3px;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
@@ -4214,7 +4215,7 @@ function createModuleRow(name, mod, content) {
 				display: flex;
 				gap: 8px;
 				align-items: center;
-				margin-bottom: 0;
+				flex-shrink: 0;
 			`;
 
 			const prevButton = createControlButton("⏮️", 26);
