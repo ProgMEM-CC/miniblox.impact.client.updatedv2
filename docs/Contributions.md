@@ -6,9 +6,9 @@ Use clear naming conventions. (this refers to the agreed-upon rules or patterns 
 
 Test **THOROUGHLY** before submitting or ask me to test it for you!
 
-### 💬  Do you need any further assistance?
+### 💬 Do you need any further assistance?
 
-Please raise a issue on GitHub (I will respond to issues on GitHub) or reach out to the Impact Community on Discord via this link here - `https://discord.gg/PwpGemYhJx`
+Please raise a issue on GitHub or reach out to the Impact Community on Discord via this link here - [ImpactV4Cheats](https://discord.gg/PwpGemYhJx)
 
 
 Authored by [@TheM1ddleM1n](https://github.com/TheM1ddleM1n)
