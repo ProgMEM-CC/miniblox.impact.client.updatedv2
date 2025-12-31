@@ -140,11 +140,9 @@ But it was fully usable 3 days after that comment, and then, the first updated v
 
 ---
 
-## Contributing
-
 ### For Developers
 
-**Version Management**: Always update `VERSIONFILE`, `tampermonkey.user.js`, and `injection.js` together.
+**Version Management**: Always update `VERSIONFILE`, `tampermonkey.user.js`, and `injection.js` together. (TheM1ddleM1n's job)
 
 **Branch Strategy**: 
 - `main` - Stable releases only
@@ -176,13 +174,13 @@ Want your video featured? [Submit here](https://github.com/ProgMEM-CC/miniblox.i
 
 ## Contributors
 
-| Contributor | Role |
-|------------|------|
-| [7GrandDadPGN](https://github.com/7GrandDadPGN) | Original Vape V4 Creator |
-| [DataM0del](https://github.com/DataM0del) / [6x68](https://github.com/6x68) | Core Developer |
-| [TheM1ddleM1n](https://github.com/TheM1ddleM1n) | Core Developer / Maintainer for Github |
-| [ProgMEM-CC](https://github.com/ProgMEM-CC) | Repository Manager / Infrastructure |
-| [dtkiller-jp](https://github.com/dtkiller-jp) | GUI Developer |
+| Contributor                                                                 | Role                                   |
+| --------------------------------------------------------------------------- | -------------------------------------- |
+| [7GrandDadPGN](https://github.com/7GrandDadPGN)                             | Original creator of Vape V4            |
+| [DataM0del](https://github.com/DataM0del) / [6x68](https://github.com/6x68) | Core developer                         |
+| [TheM1ddleM1n](https://github.com/TheM1ddleM1n)                             | Core developer & GitHub maintainer     |
+| [ProgMEM-CC](https://github.com/ProgMEM-CC)                                 | Repository management & infrastructure |
+| [dtkiller-jp](https://github.com/dtkiller-jp)                               | GUI developer                          |
 
 ---
 
