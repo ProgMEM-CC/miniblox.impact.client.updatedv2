@@ -84,14 +84,14 @@
 
 ## Known Issues
 
-| Issue | Severity | Status |
-|-------|----------|--------|
-| Tampermonkey requires extra permission toggle | Low    | Documented        |
-| AutoFunnyChat Kill Detection Issue            | Low    | Incomplete        |
-| InvCleaner duplicate detection issue          | Medium | Incomplete        |
-| Bind System Edge Cases (in keybinding)        | Low    | Incomplete        |
-| NoFall Module Conflict                        | None   | No issue here ig  |
-| Error Handling                                | None   | Stability Issue   |
+| Issue                                         | Severity | Status           |
+| --------------------------------------------- | -------- | ---------------- |
+| AutoFunnyChat Kill Detection Issue            | Medium   | Incomplete       |
+| InvCleaner duplicate detection issue          | Medium   | Incomplete       |
+| Bind System Edge Cases (in keybinding)        | Low      | Incomplete       |
+| Tampermonkey requires extra permission toggle | None     | Documented       |
+| NoFall Module Conflict                        | None     | No issue here ig |
+| Error Handling                                | None     | Stability Issue  |
 
 For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
 
