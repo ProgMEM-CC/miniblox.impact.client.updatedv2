@@ -3947,8 +3947,8 @@ function createModuleRow(name, mod, content) {
 			const { panel, content } = createPanel("MUSIC PLAYER", 280 + panelCount * 30, 40 + panelCount * 30, 400, true);
 			
 			// Make the panel compact
-			panel.style.width = "380px";
-			panel.style.height = "120px";
+			panel.style.width = "400px";
+			panel.style.height = "110px";
 			
 			modulePanels["Music"] = panel;
 			document.body.appendChild(panel);
@@ -4068,17 +4068,29 @@ function createModuleRow(name, mod, content) {
 
 		// === Setup Audio Context and Analyser ===
 		function setupAudioAnalyser(audioElement) {
-			if (!globalMusicState.audioContext) {
-				globalMusicState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-			}
+			try {
+				if (!globalMusicState.audioContext) {
+					globalMusicState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+					console.log("AudioContext created");
+				}
 
-			if (!globalMusicState.analyser) {
-				globalMusicState.analyser = globalMusicState.audioContext.createAnalyser();
-				globalMusicState.analyser.fftSize = 256;
-				
-				const source = globalMusicState.audioContext.createMediaElementSource(audioElement);
-				source.connect(globalMusicState.analyser);
-				globalMusicState.analyser.connect(globalMusicState.audioContext.destination);
+				// Only create analyser once
+				if (!globalMusicState.analyser) {
+					globalMusicState.analyser = globalMusicState.audioContext.createAnalyser();
+					globalMusicState.analyser.fftSize = 256;
+					console.log("Analyser created");
+				}
+
+				// Only create source once per audio element
+				if (!audioElement._audioSource) {
+					const source = globalMusicState.audioContext.createMediaElementSource(audioElement);
+					source.connect(globalMusicState.analyser);
+					globalMusicState.analyser.connect(globalMusicState.audioContext.destination);
+					audioElement._audioSource = source;
+					console.log("Audio source connected");
+				}
+			} catch (error) {
+				console.error("Failed to setup audio analyser:", error);
 			}
 		}
 
@@ -4105,8 +4117,8 @@ function createModuleRow(name, mod, content) {
 			const coverContainer = document.createElement("div");
 			coverContainer.style.cssText = `
 				position: relative;
-				width: 80px;
-				height: 80px;
+				width: 70px;
+				height: 70px;
 				background: #333;
 				border-radius: 8px;
 				overflow: hidden;
@@ -4162,24 +4174,37 @@ function createModuleRow(name, mod, content) {
 				flex: 1;
 				display: flex;
 				flex-direction: row;
-				gap: 12px;
+				gap: 10px;
 				align-items: center;
+				min-width: 0;
 			`;
 
-			// Track info
-			const trackInfo = document.createElement("div");
-			trackInfo.style.cssText = `
+			// Left part: Track info (vertical)
+			const infoContainer = document.createElement("div");
+			infoContainer.style.cssText = `
 				flex: 1;
 				display: flex;
 				flex-direction: column;
 				justify-content: center;
+				min-width: 0;
 			`;
 
+			// Right part: Control buttons (fixed width)
+			const buttonContainer = document.createElement("div");
+			buttonContainer.style.cssText = `
+				display: flex;
+				gap: 8px;
+				align-items: center;
+				flex-shrink: 0;
+			`;
+
+			// Track info
+			// Track info elements
 			const trackTitle = document.createElement("div");
 			trackTitle.style.cssText = `
 				font-size: 12px;
 				font-weight: bold;
-				margin-bottom: 3px;
+				margin-bottom: 2px;
 				color: var(--vape-accent-color, #0FB3A0);
 				white-space: nowrap;
 				overflow: hidden;
@@ -4191,7 +4216,7 @@ function createModuleRow(name, mod, content) {
 			trackArtist.style.cssText = `
 				font-size: 10px;
 				opacity: 0.7;
-				margin-bottom: 3px;
+				margin-bottom: 2px;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
@@ -4205,22 +4230,21 @@ function createModuleRow(name, mod, content) {
 			`;
 			trackDuration.textContent = "00:00 / 00:00";
 
-			trackInfo.appendChild(trackTitle);
-			trackInfo.appendChild(trackArtist);
-			trackInfo.appendChild(trackDuration);
+			infoContainer.appendChild(trackTitle);
+			infoContainer.appendChild(trackArtist);
+			infoContainer.appendChild(trackDuration);
 
 			// Control buttons
-			const controlButtons = document.createElement("div");
-			controlButtons.style.cssText = `
-				display: flex;
-				gap: 8px;
-				align-items: center;
-				flex-shrink: 0;
-			`;
-
 			const prevButton = createControlButton("⏮️", 26);
 			let playButton = createControlButton("▶️", 32);
 			const nextButton = createControlButton("⏭️", 26);
+
+			buttonContainer.appendChild(prevButton);
+			buttonContainer.appendChild(playButton);
+			buttonContainer.appendChild(nextButton);
+
+			controlsContainer.appendChild(infoContainer);
+			controlsContainer.appendChild(buttonContainer);
 
 			// Initialize UI with global state
 			if (globalMusicState.currentTrack) {
@@ -4291,13 +4315,6 @@ function createModuleRow(name, mod, content) {
 				// TODO: Next track functionality
 				console.log("Next track");
 			});
-
-			controlButtons.appendChild(prevButton);
-			controlButtons.appendChild(playButton);
-			controlButtons.appendChild(nextButton);
-
-			controlsContainer.appendChild(trackInfo);
-			controlsContainer.appendChild(controlButtons);
 
 			playerContainer.appendChild(coverContainer);
 			playerContainer.appendChild(controlsContainer);
