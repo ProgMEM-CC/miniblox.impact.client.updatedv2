@@ -3947,8 +3947,8 @@ function createModuleRow(name, mod, content) {
 			const { panel, content } = createPanel("MUSIC PLAYER", 280 + panelCount * 30, 40 + panelCount * 30, 400, true);
 			
 			// Make the panel compact
-			panel.style.width = "400px";
-			panel.style.height = "110px";
+			panel.style.width = "320px";
+			panel.style.height = "120px";
 			
 			modulePanels["Music"] = panel;
 			document.body.appendChild(panel);
@@ -4107,8 +4107,8 @@ function createModuleRow(name, mod, content) {
 			const playerContainer = document.createElement("div");
 			playerContainer.style.cssText = `
 				display: flex;
-				padding: 10px;
-				gap: 10px;
+				padding: 8px;
+				gap: 8px;
 				height: 100%;
 				color: var(--vape-text-color, #ffffff);
 			`;
@@ -4174,7 +4174,7 @@ function createModuleRow(name, mod, content) {
 				flex: 1;
 				display: flex;
 				flex-direction: row;
-				gap: 10px;
+				gap: 8px;
 				align-items: center;
 				min-width: 0;
 			`;
@@ -4204,7 +4204,7 @@ function createModuleRow(name, mod, content) {
 			trackTitle.style.cssText = `
 				font-size: 12px;
 				font-weight: bold;
-				margin-bottom: 2px;
+				margin-bottom: 4px;
 				color: var(--vape-accent-color, #0FB3A0);
 				white-space: nowrap;
 				overflow: hidden;
@@ -4216,7 +4216,7 @@ function createModuleRow(name, mod, content) {
 			trackArtist.style.cssText = `
 				font-size: 10px;
 				opacity: 0.7;
-				margin-bottom: 2px;
+				margin-bottom: 4px;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
@@ -4235,13 +4235,9 @@ function createModuleRow(name, mod, content) {
 			infoContainer.appendChild(trackDuration);
 
 			// Control buttons
-			const prevButton = createControlButton("⏮️", 26);
-			let playButton = createControlButton("▶️", 32);
-			const nextButton = createControlButton("⏭️", 26);
+			let playButton = createControlButton("▶️", 36);
 
-			buttonContainer.appendChild(prevButton);
 			buttonContainer.appendChild(playButton);
-			buttonContainer.appendChild(nextButton);
 
 			controlsContainer.appendChild(infoContainer);
 			controlsContainer.appendChild(buttonContainer);
@@ -4295,11 +4291,6 @@ function createModuleRow(name, mod, content) {
 				return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 			}
 
-			prevButton.addEventListener("click", () => {
-				// TODO: Previous track functionality
-				console.log("Previous track");
-			});
-
 			playButton.addEventListener("click", () => {
 				console.log("Play button clicked, globalState.isPlaying:", globalMusicState.isPlaying, "globalState.currentTrack:", globalMusicState.currentTrack);
 				if (!globalMusicState.currentTrack) return;
@@ -4309,11 +4300,6 @@ function createModuleRow(name, mod, content) {
 				} else {
 					playTrack();
 				}
-			});
-
-			nextButton.addEventListener("click", () => {
-				// TODO: Next track functionality
-				console.log("Next track");
 			});
 
 			playerContainer.appendChild(coverContainer);
@@ -4331,7 +4317,7 @@ function createModuleRow(name, mod, content) {
 					height: ${size}px;
 					color: var(--vape-accent-color, #0FB3A0);
 					cursor: pointer;
-					font-size: ${size === 32 ? '14px' : '10px'};
+					font-size: ${size === 36 ? '16px' : '12px'};
 					display: flex;
 					align-items: center;
 					justify-content: center;
