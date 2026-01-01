@@ -4998,8 +4998,6 @@ function createModuleRow(name, mod, content) {
 			}
 		}
 
-
-
 		// === Toggle ClickGUI ===
 		let visible = false;
 		document.addEventListener("keydown", (e) => {
