@@ -3867,7 +3867,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 		// === Create Category Panel ===
 		function createCategoryPanel() {
 			const { panel, content } = createPanel("Impact V6", 40, 40, 220);
-			const baseCategories = ["Combat", "Movement", "Player", "Render", "World","Client","Minigames", "Misc","Exploit","Broken"];
+			const baseCategories = ["Combat", "Movement", "Player", "Render", "World","Client","Minigames", "Misc","Exploit","Broken","Music"];
 			const categories = [...baseCategories];
 
 			if (scripts > 0) {
@@ -4145,6 +4145,12 @@ function createModuleRow(name, mod, content) {
 				return;
 			}
 
+			// Special handling for Music category
+			if (category === "Music") {
+				openMusicPlayerPanel();
+				return;
+			}
+
 			// Get modules for this category
 			const modules = Object.values(store.modules).filter((mod) => mod.category == category);
 
@@ -4270,6 +4276,726 @@ function createModuleRow(name, mod, content) {
 
 			updateCategoryHighlights();
 			saveGUIState();
+		}
+
+		// === Open Music Player Panel ===
+		function openMusicPlayerPanel() {
+			// Close if already open
+			if (modulePanels["Music"]) {
+				closePanelWithAnimation(modulePanels["Music"], () => {
+					delete modulePanels["Music"];
+					updateCategoryHighlights();
+					saveGUIState();
+				});
+				return;
+			}
+
+			// Create horizontal music player panel (wider than normal)
+			const panelCount = Object.keys(modulePanels).length;
+			const { panel, content } = createPanel("MUSIC PLAYER", 280 + panelCount * 30, 40 + panelCount * 30, 400, true);
+			
+			// Make the panel compact
+			panel.style.width = "320px";
+			panel.style.height = "142px";
+			
+			modulePanels["Music"] = panel;
+			document.body.appendChild(panel);
+
+			// Create music player content
+			createMusicPlayerContent(content);
+
+			updateCategoryHighlights();
+			saveGUIState();
+		}
+
+		// === Global Music Player State ===
+		let globalMusicState = {
+			currentTrack: null,
+			audioElement: null,
+			isPlaying: false,
+			analyser: null,
+			audioContext: null
+		};
+
+		// === Create Always-Visible Visualizer ===
+		function createAlwaysVisibleVisualizer() {
+			const container = document.createElement("div");
+			container.id = "music-visualizer-container";
+			container.style.cssText = `
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				display: none;
+				z-index: 9999;
+				pointer-events: none;
+			`;
+
+			// Cover image - small, bottom-left corner
+			const coverImg = document.createElement("img");
+			coverImg.id = "visualizer-cover";
+			coverImg.style.cssText = `
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				width: 100px;
+				height: 100px;
+				object-fit: cover;
+				pointer-events: auto;
+			`;
+			coverImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23333'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='0.3em' fill='%23888' font-size='30'%3E🎵%3C/text%3E%3C/svg%3E";
+
+			// Canvas for visualizer - large, extends to center
+			const canvas = document.createElement("canvas");
+			canvas.id = "visualizer-canvas";
+			canvas.width = 800;
+			canvas.height = 100;
+			canvas.style.cssText = `
+				position: fixed;
+				bottom: 0;
+				left: 100px;
+				width: 800px;
+				height: 100px;
+			`;
+
+			container.appendChild(coverImg);
+			container.appendChild(canvas);
+			document.body.appendChild(container);
+
+			return { container, canvas, coverImg };
+		}
+
+		const visualizerElements = createAlwaysVisibleVisualizer();
+
+		// === Visualizer Animation ===
+		function startVisualizer() {
+			if (!globalMusicState.audioElement || !globalMusicState.analyser) return;
+
+			const canvas = visualizerElements.canvas;
+			const ctx = canvas.getContext("2d");
+			const analyser = globalMusicState.analyser;
+			const bufferLength = analyser.frequencyBinCount;
+			const dataArray = new Uint8Array(bufferLength);
+
+			function draw() {
+				if (!globalMusicState.isPlaying) {
+					// Clear canvas when not playing
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					return;
+				}
+
+				requestAnimationFrame(draw);
+				analyser.getByteFrequencyData(dataArray);
+
+				// Clear canvas (transparent background)
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+				const barCount = 64;
+				const barWidth = canvas.width / barCount;
+				const accentColor = getComputedStyle(document.documentElement).getPropertyValue("--vape-accent-color") || "#0FB3A0";
+
+				for (let i = 0; i < barCount; i++) {
+					const dataIndex = Math.floor((i / barCount) * bufferLength);
+					const barHeight = (dataArray[dataIndex] / 255) * canvas.height * 0.9;
+					
+					const gradient = ctx.createLinearGradient(0, canvas.height - barHeight, 0, canvas.height);
+					gradient.addColorStop(0, accentColor);
+					gradient.addColorStop(1, accentColor + "60");
+					
+					ctx.fillStyle = gradient;
+					ctx.fillRect(
+						i * barWidth + 1,
+						canvas.height - barHeight,
+						barWidth - 2,
+						barHeight
+					);
+				}
+			}
+
+			draw();
+		}
+
+		// === Setup Audio Context and Analyser ===
+		function setupAudioAnalyser(audioElement) {
+			try {
+				if (!globalMusicState.audioContext) {
+					globalMusicState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+					console.log("AudioContext created");
+				}
+
+				// Only create analyser once
+				if (!globalMusicState.analyser) {
+					globalMusicState.analyser = globalMusicState.audioContext.createAnalyser();
+					globalMusicState.analyser.fftSize = 256;
+					console.log("Analyser created");
+				}
+
+				// Only create source once per audio element
+				if (!audioElement._audioSource) {
+					const source = globalMusicState.audioContext.createMediaElementSource(audioElement);
+					source.connect(globalMusicState.analyser);
+					globalMusicState.analyser.connect(globalMusicState.audioContext.destination);
+					audioElement._audioSource = source;
+					console.log("Audio source connected");
+				}
+			} catch (error) {
+				console.error("Failed to setup audio analyser:", error);
+			}
+		}
+
+		// === Create Music Player Content ===
+		function createMusicPlayerContent(content) {
+			const JAMENDO_API_KEY = "0c5e9d9e";
+			
+			// Use global state instead of local variables
+			let currentTrack = globalMusicState.currentTrack;
+			let audioElement = globalMusicState.audioElement;
+			let isPlaying = globalMusicState.isPlaying;
+
+			// Main container
+			const playerContainer = document.createElement("div");
+			playerContainer.style.cssText = `
+				display: flex;
+				padding: 8px;
+				gap: 8px;
+				height: 100%;
+				color: var(--vape-text-color, #ffffff);
+			`;
+
+			// Left side - Album cover
+			const coverContainer = document.createElement("div");
+			coverContainer.style.cssText = `
+				position: relative;
+				width: 70px;
+				height: 70px;
+				background: #333;
+				border-radius: 8px;
+				overflow: hidden;
+				cursor: pointer;
+				flex-shrink: 0;
+			`;
+
+			const coverImage = document.createElement("img");
+			coverImage.style.cssText = `
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				transition: opacity 0.3s;
+			`;
+			coverImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect width='120' height='120' fill='%23444'/%3E%3Ctext x='60' y='60' text-anchor='middle' dy='0.3em' fill='%23888' font-size='40'%3E🎵%3C/text%3E%3C/svg%3E";
+
+			const searchOverlay = document.createElement("div");
+			searchOverlay.style.cssText = `
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: rgba(0,0,0,0.7);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				opacity: 0;
+				transition: opacity 0.3s;
+				font-size: 24px;
+			`;
+			searchOverlay.innerHTML = "🔍";
+
+			coverContainer.appendChild(coverImage);
+			coverContainer.appendChild(searchOverlay);
+
+			// Hover effect
+			coverContainer.addEventListener("mouseenter", () => {
+				searchOverlay.style.opacity = "1";
+			});
+			coverContainer.addEventListener("mouseleave", () => {
+				searchOverlay.style.opacity = "0";
+			});
+
+			// Click to search
+			coverContainer.addEventListener("click", () => {
+				openMusicSearchModal();
+			});
+
+			// Right side - Controls and info
+			const controlsContainer = document.createElement("div");
+			controlsContainer.style.cssText = `
+				flex: 1;
+				display: flex;
+				flex-direction: row;
+				gap: 8px;
+				align-items: center;
+				min-width: 0;
+			`;
+
+			// Left part: Track info (vertical)
+			const infoContainer = document.createElement("div");
+			infoContainer.style.cssText = `
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				min-width: 0;
+			`;
+
+			// Right part: Control buttons (fixed width)
+			const buttonContainer = document.createElement("div");
+			buttonContainer.style.cssText = `
+				display: flex;
+				gap: 8px;
+				align-items: center;
+				flex-shrink: 0;
+			`;
+
+			// Track info
+			// Track info elements
+			const trackTitle = document.createElement("div");
+			trackTitle.style.cssText = `
+				font-size: 12px;
+				font-weight: bold;
+				margin-bottom: 4px;
+				color: var(--vape-accent-color, #0FB3A0);
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			`;
+			trackTitle.textContent = "No track selected";
+
+			const trackArtist = document.createElement("div");
+			trackArtist.style.cssText = `
+				font-size: 10px;
+				opacity: 0.7;
+				margin-bottom: 4px;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			`;
+			trackArtist.textContent = "Click cover to search music";
+
+			const trackDuration = document.createElement("div");
+			trackDuration.style.cssText = `
+				font-size: 9px;
+				opacity: 0.5;
+			`;
+			trackDuration.textContent = "00:00 / 00:00";
+
+			infoContainer.appendChild(trackTitle);
+			infoContainer.appendChild(trackArtist);
+			infoContainer.appendChild(trackDuration);
+
+			// Control buttons
+			let playButton = createControlButton("▶️", 36);
+
+			buttonContainer.appendChild(playButton);
+
+			controlsContainer.appendChild(infoContainer);
+			controlsContainer.appendChild(buttonContainer);
+
+			// Initialize UI with global state
+			if (globalMusicState.currentTrack) {
+				currentTrack = globalMusicState.currentTrack;
+				audioElement = globalMusicState.audioElement;
+				isPlaying = globalMusicState.isPlaying;
+				
+				if (trackTitle) trackTitle.textContent = currentTrack.name;
+				if (trackArtist) trackArtist.textContent = currentTrack.artist_name;
+				if (coverImage) coverImage.src = currentTrack.image || coverImage.src;
+				if (playButton) playButton.textContent = isPlaying ? "⏸️" : "▶️";
+				
+				// Reconnect audio element event listeners for time updates
+				if (audioElement) {
+					// Remove old listeners if any
+					audioElement.removeEventListener("timeupdate", audioElement._timeupdateHandler);
+					
+					// Create new handler
+					audioElement._timeupdateHandler = () => {
+						const current = formatTime(audioElement.currentTime || 0);
+						const duration = formatTime(audioElement.duration || 0);
+						if (trackDuration) trackDuration.textContent = `${current} / ${duration}`;
+					};
+					
+					// Add new listener
+					audioElement.addEventListener("timeupdate", audioElement._timeupdateHandler);
+					
+					// Update duration immediately
+					if (audioElement.duration) {
+						const current = formatTime(audioElement.currentTime || 0);
+						const duration = formatTime(audioElement.duration || 0);
+						if (trackDuration) trackDuration.textContent = `${current} / ${duration}`;
+					}
+				}
+			}
+
+			// Update functions to use current state
+			function updatePlayButton() {
+				if (playButton) {
+					playButton.textContent = globalMusicState.isPlaying ? "⏸️" : "▶️";
+				}
+			}
+			
+			function formatTime(seconds) {
+				if (!seconds || isNaN(seconds)) return "00:00";
+				const mins = Math.floor(seconds / 60);
+				const secs = Math.floor(seconds % 60);
+				return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+			}
+
+			playButton.addEventListener("click", () => {
+				console.log("Play button clicked, globalState.isPlaying:", globalMusicState.isPlaying, "globalState.currentTrack:", globalMusicState.currentTrack);
+				if (!globalMusicState.currentTrack) return;
+				
+				if (globalMusicState.isPlaying) {
+					pauseTrack();
+				} else {
+					playTrack();
+				}
+			});
+
+			playerContainer.appendChild(coverContainer);
+			playerContainer.appendChild(controlsContainer);
+			content.appendChild(playerContainer);
+
+			// Helper functions
+			function createControlButton(text, size) {
+				const button = document.createElement("button");
+				button.style.cssText = `
+					background: transparent;
+					border: 2px solid var(--vape-accent-color, #0FB3A0);
+					border-radius: 50%;
+					width: ${size}px;
+					height: ${size}px;
+					color: var(--vape-accent-color, #0FB3A0);
+					cursor: pointer;
+					font-size: ${size === 36 ? '16px' : '12px'};
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					transition: all 0.2s;
+					font-family: inherit;
+				`;
+				button.textContent = text;
+				
+				button.addEventListener("mouseenter", () => {
+					button.style.transform = "scale(1.1)";
+					button.style.background = "var(--vape-accent-color, #0FB3A0)";
+					button.style.color = "white";
+				});
+				button.addEventListener("mouseleave", () => {
+					button.style.transform = "scale(1)";
+					button.style.background = "transparent";
+					button.style.color = "var(--vape-accent-color, #0FB3A0)";
+				});
+
+				return button;
+			}
+
+			function playTrack() {
+				if (!globalMusicState.audioElement || !globalMusicState.currentTrack) {
+					console.log("No audio element or track in global state");
+					return;
+				}
+				
+				globalMusicState.audioElement.play().then(() => {
+					globalMusicState.isPlaying = true;
+					updatePlayButton();
+					
+					// Show visualizer and start animation
+					visualizerElements.container.style.display = "block";
+					startVisualizer();
+					
+					console.log("Playing:", globalMusicState.currentTrack.name);
+				}).catch(error => {
+					console.error("Play error:", error);
+					if (trackDuration) trackDuration.textContent = "Play failed";
+				});
+			}
+
+			function pauseTrack() {
+				if (!globalMusicState.audioElement) return;
+				
+				globalMusicState.audioElement.pause();
+				globalMusicState.isPlaying = false;
+				updatePlayButton();
+				console.log("Paused");
+			}
+
+			function loadTrack(track) {
+				currentTrack = track;
+				globalMusicState.currentTrack = track;
+				
+				// Update UI
+				if (trackTitle) trackTitle.textContent = track.name;
+				if (trackArtist) trackArtist.textContent = track.artist_name;
+				if (coverImage) coverImage.src = track.image || coverImage.src;
+				
+				// Create audio element
+				if (audioElement) {
+					audioElement.pause();
+					audioElement.src = "";
+					audioElement = null;
+				}
+				
+				// Get the correct audio URL from Jamendo
+				const audioUrl = `https://prod-1.storage.jamendo.com/?trackid=${track.id}&format=mp31&from=app-97dab294`;
+				
+				audioElement = new Audio();
+				globalMusicState.audioElement = audioElement;
+				audioElement.crossOrigin = "anonymous";
+				audioElement.preload = "metadata";
+				
+				audioElement.addEventListener("loadedmetadata", () => {
+					const duration = formatTime(audioElement.duration || 0);
+					if (trackDuration) trackDuration.textContent = `00:00 / ${duration}`;
+					console.log("Track loaded:", track.name, "Duration:", audioElement.duration);
+				});
+				
+				// Store handler for reconnection
+				audioElement._timeupdateHandler = () => {
+					const current = formatTime(audioElement.currentTime || 0);
+					const duration = formatTime(audioElement.duration || 0);
+					if (trackDuration) trackDuration.textContent = `${current} / ${duration}`;
+				};
+				audioElement.addEventListener("timeupdate", audioElement._timeupdateHandler);
+				
+				audioElement.addEventListener("ended", () => {
+					globalMusicState.isPlaying = false;
+					updatePlayButton();
+				});
+				
+				audioElement.addEventListener("error", (e) => {
+					console.error("Audio error:", e);
+					if (trackDuration) trackDuration.textContent = "Error loading audio";
+				});
+				
+				audioElement.addEventListener("canplay", () => {
+					console.log("Audio can play");
+				});
+				
+				// Set the source and load
+				audioElement.src = audioUrl;
+				audioElement.load();
+				
+				// Setup audio analyser for visualizer
+				try {
+					setupAudioAnalyser(audioElement);
+				} catch (e) {
+					console.error("Failed to setup audio analyser:", e);
+				}
+				
+				// Update visualizer cover image
+				if (visualizerElements.coverImg) {
+					visualizerElements.coverImg.src = track.image || visualizerElements.coverImg.src;
+				}
+				
+				// Reset play state
+				globalMusicState.isPlaying = false;
+				updatePlayButton();
+			}
+
+			// Music search modal
+			function openMusicSearchModal() {
+				// Prevent multiple modals
+				if (document.querySelector('.music-search-modal')) {
+					return;
+				}
+
+				// Create modal overlay
+				const modalOverlay = document.createElement("div");
+				modalOverlay.className = "music-search-modal";
+				modalOverlay.style.cssText = `
+					position: fixed;
+					top: 0;
+					left: 0;
+					width: 100vw;
+					height: 100vh;
+					background: rgba(0,0,0,0.8);
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					z-index: 9999999;
+				`;
+
+				const modal = document.createElement("div");
+				modal.style.cssText = `
+					background: var(--vape-bg-color, #1a1a1a);
+					border-radius: 12px;
+					width: 500px;
+					height: 400px;
+					padding: 20px;
+					color: var(--vape-text-color, #ffffff);
+					display: flex;
+					flex-direction: column;
+				`;
+
+				const modalHeader = document.createElement("div");
+				modalHeader.style.cssText = `
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					margin-bottom: 20px;
+				`;
+
+				const modalTitle = document.createElement("h3");
+				modalTitle.textContent = "Search Music";
+				modalTitle.style.cssText = `
+					margin: 0;
+					color: var(--vape-accent-color, #0FB3A0);
+				`;
+
+				const closeButton = document.createElement("button");
+				closeButton.textContent = "✕";
+				closeButton.style.cssText = `
+					background: none;
+					border: none;
+					color: var(--vape-text-color, #ffffff);
+					font-size: 18px;
+					cursor: pointer;
+				`;
+				closeButton.addEventListener("click", () => {
+					document.body.removeChild(modalOverlay);
+				});
+
+				const searchInput = document.createElement("input");
+				searchInput.type = "text";
+				searchInput.placeholder = "Search for music...";
+				searchInput.style.cssText = `
+					width: 100%;
+					padding: 10px;
+					border: 1px solid #333;
+					border-radius: 6px;
+					background: #333;
+					color: white;
+					margin-bottom: 15px;
+				`;
+
+				const searchResults = document.createElement("div");
+				searchResults.style.cssText = `
+					flex: 1;
+					overflow-y: auto;
+					border: 1px solid #333;
+					border-radius: 6px;
+					padding: 10px;
+				`;
+
+				modalHeader.appendChild(modalTitle);
+				modalHeader.appendChild(closeButton);
+				modal.appendChild(modalHeader);
+				modal.appendChild(searchInput);
+				modal.appendChild(searchResults);
+				modalOverlay.appendChild(modal);
+				document.body.appendChild(modalOverlay);
+
+				// Search functionality
+				let searchTimeout;
+				searchInput.addEventListener("input", () => {
+					clearTimeout(searchTimeout);
+					searchTimeout = setTimeout(() => {
+						searchMusic(searchInput.value, searchResults, modalOverlay);
+					}, 500);
+				});
+
+				// Close modal on overlay click
+				modalOverlay.addEventListener("click", (e) => {
+					if (e.target === modalOverlay) {
+						document.body.removeChild(modalOverlay);
+					}
+				});
+
+				// Close modal on Escape key
+				const handleEscape = (e) => {
+					if (e.key === "Escape") {
+						document.body.removeChild(modalOverlay);
+						document.removeEventListener("keydown", handleEscape);
+					}
+				};
+				document.addEventListener("keydown", handleEscape);
+
+				// Auto-focus search input
+				setTimeout(() => searchInput.focus(), 100);
+			}
+
+			async function searchMusic(query, resultsContainer, modalOverlay) {
+				if (!query.trim()) {
+					resultsContainer.innerHTML = "<p style='opacity: 0.5; text-align: center;'>Enter a search term</p>";
+					return;
+				}
+
+				resultsContainer.innerHTML = "<p style='opacity: 0.5; text-align: center;'>Searching...</p>";
+
+				try {
+					const response = await fetch(`https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_API_KEY}&format=json&limit=10&search=${encodeURIComponent(query)}&include=musicinfo`);
+					const data = await response.json();
+
+					if (data.results && data.results.length > 0) {
+						resultsContainer.innerHTML = "";
+						data.results.forEach(track => {
+							const resultItem = document.createElement("div");
+							resultItem.style.cssText = `
+								display: flex;
+								align-items: center;
+								gap: 10px;
+								padding: 10px;
+								border-radius: 6px;
+								cursor: pointer;
+								transition: background 0.2s;
+								margin-bottom: 5px;
+							`;
+
+							resultItem.addEventListener("mouseenter", () => {
+								resultItem.style.background = "rgba(255,255,255,0.1)";
+							});
+							resultItem.addEventListener("mouseleave", () => {
+								resultItem.style.background = "transparent";
+							});
+
+							const trackImage = document.createElement("img");
+							trackImage.src = track.image || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23444'/%3E%3Ctext x='20' y='20' text-anchor='middle' dy='0.3em' fill='%23888' font-size='16'%3E🎵%3C/text%3E%3C/svg%3E";
+							trackImage.style.cssText = `
+								width: 40px;
+								height: 40px;
+								border-radius: 4px;
+								object-fit: cover;
+							`;
+
+							const trackInfo = document.createElement("div");
+							trackInfo.style.cssText = `
+								flex: 1;
+							`;
+
+							const trackName = document.createElement("div");
+							trackName.textContent = track.name;
+							trackName.style.cssText = `
+								font-weight: bold;
+								margin-bottom: 2px;
+							`;
+
+							const artistName = document.createElement("div");
+							artistName.textContent = track.artist_name;
+							artistName.style.cssText = `
+								opacity: 0.7;
+								font-size: 12px;
+							`;
+
+							trackInfo.appendChild(trackName);
+							trackInfo.appendChild(artistName);
+							resultItem.appendChild(trackImage);
+							resultItem.appendChild(trackInfo);
+
+							resultItem.addEventListener("click", () => {
+								loadTrack(track);
+								// Close modal properly
+								document.body.removeChild(modalOverlay);
+							});
+
+							resultsContainer.appendChild(resultItem);
+						});
+					} else {
+						resultsContainer.innerHTML = "<p style='opacity: 0.5; text-align: center;'>No results found</p>";
+					}
+				} catch (error) {
+					console.error("Search error:", error);
+					resultsContainer.innerHTML = "<p style='opacity: 0.5; text-align: center; color: red;'>Search failed</p>";
+				}
+			}
 		}
 
 
