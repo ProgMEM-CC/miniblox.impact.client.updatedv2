@@ -3948,7 +3948,7 @@ function createModuleRow(name, mod, content) {
 			
 			// Make the panel compact
 			panel.style.width = "320px";
-			panel.style.height = "150px";
+			panel.style.height = "180px";
 			
 			modulePanels["Music"] = panel;
 			document.body.appendChild(panel);
