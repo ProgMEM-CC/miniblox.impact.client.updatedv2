@@ -31,6 +31,7 @@ dynamicIsland.show({
 ```
 
 ### dynamicIsland.hide()
+
 Immediately return to default display
 
 ---
