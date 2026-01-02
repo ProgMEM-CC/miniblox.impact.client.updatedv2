@@ -1802,6 +1802,7 @@ clientVersion: VERSION$1
 			// Killaura!
 			let attackDelay = Date.now();
 			let lastAttackTime = 0;
+			let killauraShowingDI = false;
 			let didSwing = false;
 			let attacked = 0;
 			let attackedPlayers = {};
@@ -2004,9 +2005,11 @@ clientVersion: VERSION$1
 										{ type: "progress", value: health / maxHealth, x: 0, y: 22, width: 260, height: 4, color: "#ff4444", rounded: true }
 									]
 								});
-							} else if (timeSinceLastAttack >= 1000) {
-								// Hide after 1 second of no attacks
+								killauraShowingDI = true;
+							} else if (timeSinceLastAttack >= 1000 && killauraShowingDI) {
+								// Only hide if Killaura was showing it
 								dynamicIsland.hide();
+								killauraShowingDI = false;
 							}
 						}
 
@@ -2036,6 +2039,12 @@ clientVersion: VERSION$1
 					boxMeshes.splice(boxMeshes.length);
 					sendYaw = false;
 					unblock();
+					
+					// Hide Dynamic Island if Killaura was showing it
+					if (killauraShowingDI && enabledModules["DynamicIsland"]) {
+						dynamicIsland.hide();
+						killauraShowingDI = false;
+					}
 				}
 			}, "Combat", () => \`\${killaurarange[1]} block\${killaurarange[1] == 1 ? "" : "s"} \${killaurablock[1] ? "Auto Block" : ""}\`);
 			killaurarange = killaura.addoption("Range", Number, 6);
@@ -3110,12 +3119,18 @@ function countBlocks() {
 }
 
 let scaffoldInitialBlocks = 0;
+let scaffoldLastPos = null;
+let scaffoldLastTime = 0;
+let scaffoldSpeed = 0;
 
 const scaffold = new Module("Scaffold", function(callback) {
     if (callback) {
         if (player) {
             oldHeld = game.info.selectedSlot;
             scaffoldInitialBlocks = countBlocks();
+            scaffoldLastPos = player.pos.clone();
+            scaffoldLastTime = Date.now();
+            scaffoldSpeed = 0;
         }
 
         game.chat.addChat({
@@ -3140,7 +3155,22 @@ const scaffold = new Module("Scaffold", function(callback) {
             const item = player.inventory.getCurrentItem();
             if (!item || !(item.getItem() instanceof ItemBlock)) return;
 
-            // Show Dynamic Island with block count
+            // Calculate speed (blocks per second)
+            const currentTime = Date.now();
+            const timeDiff = (currentTime - scaffoldLastTime) / 1000; // seconds
+            
+            if (timeDiff >= 0.1) { // Update every 100ms
+                const currentPos = player.pos;
+                const distance = Math.sqrt(
+                    Math.pow(currentPos.x - scaffoldLastPos.x, 2) +
+                    Math.pow(currentPos.z - scaffoldLastPos.z, 2)
+                );
+                scaffoldSpeed = distance / timeDiff;
+                scaffoldLastPos = currentPos.clone();
+                scaffoldLastTime = currentTime;
+            }
+
+            // Show Dynamic Island with block count and speed
             if (enabledModules["DynamicIsland"]) {
                 const currentBlocks = countBlocks();
                 const progress = scaffoldInitialBlocks > 0 ? currentBlocks / scaffoldInitialBlocks : 0;
@@ -3148,11 +3178,12 @@ const scaffold = new Module("Scaffold", function(callback) {
                 dynamicIsland.show({
                     duration: 0,
                     width: 280,
-                    height: 60,
+                    height: 75,
                     elements: [
-                        { type: "text", content: "Scaffolding", x: 0, y: -12, color: "#fff", size: 14, bold: true },
-                        { type: "text", content: currentBlocks + "/" + scaffoldInitialBlocks + " blocks", x: 0, y: 8, color: "#aaa", size: 11 },
-                        { type: "progress", value: progress, x: 0, y: 22, width: 240, height: 4, color: "#0FB3A0", rounded: true }
+                        { type: "text", content: "Scaffolding", x: 0, y: -20, color: "#fff", size: 14, bold: true },
+                        { type: "text", content: currentBlocks + "/" + scaffoldInitialBlocks + " blocks", x: 0, y: -2, color: "#aaa", size: 11 },
+                        { type: "text", content: scaffoldSpeed.toFixed(1) + " b/s", x: 0, y: 12, color: "#0FB3A0", size: 11 },
+                        { type: "progress", value: progress, x: 0, y: 28, width: 240, height: 4, color: "#0FB3A0", rounded: true }
                     ]
                 });
             }
