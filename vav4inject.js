@@ -1282,6 +1282,11 @@ clientVersion: VERSION$1
 					// Clear existing timeout
 					if (dynamicIslandTimeout) clearTimeout(dynamicIslandTimeout);
 					
+					// Check if content is the same (avoid unnecessary re-render)
+					const requestKey = JSON.stringify(request);
+					if (this.lastRequestKey === requestKey) return;
+					this.lastRequestKey = requestKey;
+					
 					// Store current request
 					dynamicIslandCurrentRequest = request;
 					
@@ -1315,23 +1320,14 @@ clientVersion: VERSION$1
 				renderElements(elements) {
 					if (!dynamicIslandContent) return;
 					
-					// Fade out
-					dynamicIslandContent.style.opacity = "0";
+					// Clear existing content
+					dynamicIslandContent.innerHTML = "";
 					
-					// Wait for fade out, then update content
-					setTimeout(() => {
-						// Clear existing content
-						dynamicIslandContent.innerHTML = "";
-						
-						// Render each element
-						for (const element of elements) {
-							const el = this.createElement(element);
-							if (el) dynamicIslandContent.appendChild(el);
-						}
-						
-						// Fade in
-						dynamicIslandContent.style.opacity = "1";
-					}, 100);
+					// Render each element
+					for (const element of elements) {
+						const el = this.createElement(element);
+						if (el) dynamicIslandContent.appendChild(el);
+					}
 				},
 				
 				createElement(element) {
@@ -1805,6 +1801,7 @@ clientVersion: VERSION$1
 
 			// Killaura!
 			let attackDelay = Date.now();
+			let lastAttackTime = 0;
 			let didSwing = false;
 			let attacked = 0;
 			let attackedPlayers = {};
@@ -1981,6 +1978,37 @@ clientVersion: VERSION$1
 						});
 
 						for(const entity of attackList) killauraAttack(entity, attackList[0] == entity);
+
+						// Update last attack time when attacking
+						if (attacked > 0) {
+							lastAttackTime = Date.now();
+						}
+
+						// Show Dynamic Island with target info (with 1 second grace period)
+						if (enabledModules["DynamicIsland"]) {
+							const timeSinceLastAttack = Date.now() - lastAttackTime;
+							if (attackList.length > 0 && attackList[0] && timeSinceLastAttack < 1000) {
+								const target = attackList[0];
+								const health = target.getHealth();
+								const maxHealth = 20;
+								// Remove rich text formatting
+								const cleanName = target.name.replace(/\\\\[a-z]+\\\\/g, '');
+								
+								dynamicIsland.show({
+									duration: 0,
+									width: 300,
+									height: 60,
+									elements: [
+										{ type: "text", content: cleanName, x: 0, y: -12, color: "#fff", size: 15, bold: true },
+										{ type: "text", content: Math.round(health) + "/" + maxHealth + " HP", x: 0, y: 8, color: "#aaa", size: 11 },
+										{ type: "progress", value: health / maxHealth, x: 0, y: 22, width: 260, height: 4, color: "#ff4444", rounded: true }
+									]
+								});
+							} else if (timeSinceLastAttack >= 1000) {
+								// Hide after 1 second of no attacks
+								dynamicIsland.hide();
+							}
+						}
 
 						if (attackList.length > 0) block();
 						else {
@@ -3068,9 +3096,27 @@ function findBlockSlots() {
     return slotsWithBlocks;
 }
 
+function countBlocks() {
+    let totalBlocks = 0;
+    for (let i = 0; i < 36; i++) {
+        const item = player.inventory.main[i];
+        if (item && item.item instanceof ItemBlock && 
+            item.item.block.getBoundingBox().max.y === 1 &&
+            item.item.name !== "tnt") {
+            totalBlocks += item.stackSize;
+        }
+    }
+    return totalBlocks;
+}
+
+let scaffoldInitialBlocks = 0;
+
 const scaffold = new Module("Scaffold", function(callback) {
     if (callback) {
-        if (player) oldHeld = game.info.selectedSlot;
+        if (player) {
+            oldHeld = game.info.selectedSlot;
+            scaffoldInitialBlocks = countBlocks();
+        }
 
         game.chat.addChat({
             text: "V2 Scaffold Bypasser?!",
@@ -3093,6 +3139,23 @@ const scaffold = new Module("Scaffold", function(callback) {
 
             const item = player.inventory.getCurrentItem();
             if (!item || !(item.getItem() instanceof ItemBlock)) return;
+
+            // Show Dynamic Island with block count
+            if (enabledModules["DynamicIsland"]) {
+                const currentBlocks = countBlocks();
+                const progress = scaffoldInitialBlocks > 0 ? currentBlocks / scaffoldInitialBlocks : 0;
+                
+                dynamicIsland.show({
+                    duration: 0,
+                    width: 280,
+                    height: 60,
+                    elements: [
+                        { type: "text", content: "Scaffolding", x: 0, y: -12, color: "#fff", size: 14, bold: true },
+                        { type: "text", content: currentBlocks + "/" + scaffoldInitialBlocks + " blocks", x: 0, y: 8, color: "#aaa", size: 11 },
+                        { type: "progress", value: progress, x: 0, y: 22, width: 240, height: 4, color: "#0FB3A0", rounded: true }
+                    ]
+                });
+            }
 
             // Calculate positions - MORE AGGRESSIVE PREDICTION
             const playerX = Math.floor(player.pos.x);
@@ -3225,6 +3288,11 @@ const scaffold = new Module("Scaffold", function(callback) {
             switchSlot(oldHeld);
         }
         delete tickLoop["Scaffold"];
+        
+        // Hide Dynamic Island when disabled
+        if (enabledModules["DynamicIsland"]) {
+            dynamicIsland.hide();
+        }
     }
 }, "World");
 
