@@ -2837,10 +2837,11 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			}, "Misc");
 
 			
-// Improved ChestSteal Module
+// ChestSteal V2
 let cheststealblocks, cheststealtools, cheststealdelay, cheststealsilent;
 let cheststealignoreFull, cheststealminStack, cheststealEnchantedOnly;
 let lastStealTime = 0;
+let cheststeal_initialQueueSize = 0;
 
 const cheststeal = new Module("ChestSteal", function(callback) {
     if (callback) {
@@ -2984,6 +2985,20 @@ const cheststeal = new Module("ChestSteal", function(callback) {
 
                 // Sort queue by priority (highest first)
                 stealQueue.sort((a, b) => b.priority - a.priority);
+                cheststeal_initialQueueSize = stealQueue.length;
+
+                // Show chest opened on Dynamic Island
+                if (enabledModules["DynamicIsland"]) {
+                    dynamicIsland.show({
+                        duration: 1500,
+                        width: 300,
+                        height: 70,
+                        elements: [
+                            { type: "text", content: "Chest Opened", x: 0, y: -15, color: "#ffd700", size: 15, bold: true },
+                            { type: "text", content: cheststeal_initialQueueSize + " items found", x: 0, y: 12, color: "#fff", size: 12 }
+                        ]
+                    });
+                }
 
                 // Start stealing process
                 isProcessing = true;
@@ -3016,11 +3031,43 @@ const cheststeal = new Module("ChestSteal", function(callback) {
 
                 lastStealTime = now;
 
+                // Show progress on Dynamic Island
+                if (enabledModules["DynamicIsland"]) {
+                    const stolen = cheststeal_initialQueueSize - stealQueue.length;
+                    const progress = cheststeal_initialQueueSize > 0 ? stolen / cheststeal_initialQueueSize : 0;
+                    const speed = (1000 / cheststealdelay[1]).toFixed(1);
+
+                    dynamicIsland.show({
+                        duration: 0,
+                        width: 320,
+                        height: 85,
+                        elements: [
+                            { type: "text", content: "ChestSteal", x: 0, y: -25, color: "#fff", size: 15, bold: true },
+                            { type: "progress", value: progress, x: 0, y: -8, width: 280, height: 8, color: "#ffd700", rounded: true },
+                            { type: "text", content: stolen + " / " + cheststeal_initialQueueSize, x: -110, y: 10, color: "#ffd700", size: 12, bold: true },
+                            { type: "text", content: stealQueue.length + " left", x: 40, y: 10, color: "#888", size: 11 },
+                            { type: "text", content: speed + " items/s", x: 0, y: 28, color: "#0FB3A0", size: 10 }
+                        ]
+                    });
+                }
+
                 // Close chest when done if silent mode is enabled
                 if (stealQueue.length === 0) {
                     isProcessing = false;
                     if (cheststealsilent[1]) {
                         setTimeout(() => player.closeScreen(), 50);
+                    }
+
+                    // Show completion on Dynamic Island
+                    if (enabledModules["DynamicIsland"]) {
+                        dynamicIsland.show({
+                            duration: 1000,
+                            width: 260,
+                            height: 50,
+                            elements: [
+                                { type: "text", content: "✓ Chest Closed", x: 0, y: 0, color: "#0FB3A0", size: 14, bold: true }
+                            ]
+                        });
                     }
                 }
             }
@@ -3030,6 +3077,19 @@ const cheststeal = new Module("ChestSteal", function(callback) {
                 lastContainer = null;
                 isProcessing = false;
                 stealQueue = [];
+
+                // Show closed message if not already shown
+                if (enabledModules["DynamicIsland"] && cheststeal_initialQueueSize > 0) {
+                    dynamicIsland.show({
+                        duration: 1000,
+                        width: 260,
+                        height: 50,
+                        elements: [
+                            { type: "text", content: "✓ Chest Closed", x: 0, y: 0, color: "#0FB3A0", size: 14, bold: true }
+                        ]
+                    });
+                    cheststeal_initialQueueSize = 0;
+                }
             }
         };
     } else {
