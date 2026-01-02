@@ -1230,6 +1230,10 @@ clientVersion: VERSION$1
 				}
 				toggle() {
 					this.setEnabled(!this.enabled);
+					// Show Dynamic Island on toggle
+					if (enabledModules["DynamicIsland"]) {
+						moduleToggleDisplay.show(this.name, this.enabled);
+					}
 				}
 				setEnabled(enabled) {
 					this.enabled = enabled;
@@ -1262,6 +1266,222 @@ clientVersion: VERSION$1
 					return this.options[name];
 				}
 			}
+
+			// === Dynamic Island System ===
+			let dynamicIslandElement = null;
+			let dynamicIslandContent = null;
+			let dynamicIslandTimeout = null;
+			let dynamicIslandCurrentRequest = null;
+			let dynamicIslandDefaultDisplay = null;
+			let dynamicIslandUpdateInterval = null;
+
+			const dynamicIsland = {
+				show(request) {
+					if (!dynamicIslandElement) return;
+					
+					// Clear existing timeout
+					if (dynamicIslandTimeout) clearTimeout(dynamicIslandTimeout);
+					
+					// Store current request
+					dynamicIslandCurrentRequest = request;
+					
+					// Update size
+					dynamicIslandElement.style.width = request.width + "px";
+					dynamicIslandElement.style.height = request.height + "px";
+					
+					// Store dimensions for coordinate conversion
+					this.currentWidth = request.width;
+					this.currentHeight = request.height;
+					
+					// Render elements
+					this.renderElements(request.elements);
+					
+					// Set timeout to return to default
+					if (request.duration > 0) {
+						dynamicIslandTimeout = setTimeout(() => {
+							this.hide();
+						}, request.duration);
+					}
+				},
+				
+				hide() {
+					if (dynamicIslandTimeout) clearTimeout(dynamicIslandTimeout);
+					dynamicIslandCurrentRequest = null;
+					if (dynamicIslandDefaultDisplay) {
+						this.show(dynamicIslandDefaultDisplay);
+					}
+				},
+				
+				renderElements(elements) {
+					if (!dynamicIslandContent) return;
+					
+					// Fade out
+					dynamicIslandContent.style.opacity = "0";
+					
+					// Wait for fade out, then update content
+					setTimeout(() => {
+						// Clear existing content
+						dynamicIslandContent.innerHTML = "";
+						
+						// Render each element
+						for (const element of elements) {
+							const el = this.createElement(element);
+							if (el) dynamicIslandContent.appendChild(el);
+						}
+						
+						// Fade in
+						dynamicIslandContent.style.opacity = "1";
+					}, 100);
+				},
+				
+				createElement(element) {
+					const el = document.createElement("div");
+					el.style.position = "absolute";
+					el.style.left = element.x + "px";
+					el.style.top = element.y + "px";
+					
+					switch (element.type) {
+						case "text":
+							return this.createTextElement(element);
+						case "progress":
+							return this.createProgressElement(element);
+						case "toggle":
+							return this.createToggleElement(element);
+						case "image":
+							return this.createImageElement(element);
+					}
+					return null;
+				},
+				
+				createTextElement(element) {
+					const centerX = this.currentWidth / 2;
+					const centerY = this.currentHeight / 2;
+					const el = document.createElement("div");
+					el.style.cssText = \`
+						position: absolute;
+						left: \${centerX + element.x}px;
+						top: \${centerY + element.y}px;
+						color: \${element.color || "#fff"};
+						font-size: \${element.size || 14}px;
+						font-weight: \${element.bold ? "bold" : "normal"};
+						white-space: nowrap;
+						transform: translate(-50%, -50%);
+						\${element.shadow ? "text-shadow: 1px 1px 2px rgba(0,0,0,0.8);" : ""}
+					\`;
+					el.textContent = element.content;
+					return el;
+				},
+				
+				createProgressElement(element) {
+					const centerX = this.currentWidth / 2;
+					const centerY = this.currentHeight / 2;
+					const container = document.createElement("div");
+					container.style.cssText = \`
+						position: absolute;
+						left: \${centerX + element.x}px;
+						top: \${centerY + element.y}px;
+						width: \${element.width}px;
+						height: \${element.height}px;
+						background: \${element.bgColor || "#333"};
+						border-radius: \${element.rounded ? (element.height / 2) + "px" : "0"};
+						overflow: hidden;
+						transform: translate(-50%, -50%);
+					\`;
+					
+					const bar = document.createElement("div");
+					bar.style.cssText = \`
+						width: \${element.value * 100}%;
+						height: 100%;
+						background: \${element.color || "#0FB3A0"};
+						transition: width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+					\`;
+					
+					container.appendChild(bar);
+					return container;
+				},
+				
+				createToggleElement(element) {
+					const centerX = this.currentWidth / 2;
+					const centerY = this.currentHeight / 2;
+					const size = element.size || 30;
+					const container = document.createElement("div");
+					container.style.cssText = \`
+						position: absolute;
+						left: \${centerX + element.x}px;
+						top: \${centerY + element.y}px;
+						width: \${size * 1.8}px;
+						height: \${size}px;
+						background: \${element.state ? "#0FB3A0" : "#555"};
+						border-radius: \${size / 2}px;
+						transition: background 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+						transform: translate(-50%, -50%);
+					\`;
+					
+					const circle = document.createElement("div");
+					const circleSize = size * 0.8;
+					circle.style.cssText = \`
+						width: \${circleSize}px;
+						height: \${circleSize}px;
+						background: #fff;
+						border-radius: 50%;
+						position: absolute;
+						top: \${(size - circleSize) / 2}px;
+						left: \${element.state ? (size * 1.8 - circleSize - (size - circleSize) / 2) : ((size - circleSize) / 2)}px;
+						transition: left 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+						box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+					\`;
+					
+					// Handle animation flag
+					if (element.animate) {
+						// Start from opposite state
+						circle.style.left = element.state ? ((size - circleSize) / 2) + "px" : (size * 1.8 - circleSize - (size - circleSize) / 2) + "px";
+						// Trigger animation immediately after render
+						requestAnimationFrame(() => {
+							circle.style.left = element.state ? (size * 1.8 - circleSize - (size - circleSize) / 2) + "px" : ((size - circleSize) / 2) + "px";
+						});
+					}
+					
+					container.appendChild(circle);
+					return container;
+				},
+				
+				createImageElement(element) {
+					const centerX = this.currentWidth / 2;
+					const centerY = this.currentHeight / 2;
+					const img = document.createElement("img");
+					img.style.cssText = \`
+						position: absolute;
+						left: \${centerX + element.x}px;
+						top: \${centerY + element.y}px;
+						width: \${element.width}px;
+						height: \${element.height}px;
+						transform: translate(-50%, -50%);
+					\`;
+					img.src = typeof element.src === "string" ? element.src : element.src.src;
+					return img;
+				},
+				
+				updateVariables() {
+					// No longer needed, but kept for compatibility
+				}
+			};
+
+			// Module toggle display system
+			const moduleToggleDisplay = {
+				show(moduleName, enabled) {
+					dynamicIsland.show({
+						duration: 1000,
+						width: 300,
+						height: 60,
+						elements: [
+							{ type: "text", content: moduleName, x: 10, y: -8, color: "#fff", size: 18, bold: true },
+							{ type: "text", content: enabled ? "ENABLED" : "DISABLED", x: 10, y: 12, 
+								color: enabled ? "#0FB3A0" : "#ff4444", size: 12, bold: true },
+							{ type: "toggle", state: enabled, x: -100, y: 0, size: 30, animate: true }
+						]
+					});
+				}
+			};
 
 			// === Custom Scripts Storage ===
 			if (typeof globalThis.${storeName} === "undefined") globalThis.${storeName} = {};
@@ -1940,6 +2160,79 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 
 
 			new Module("ESP", function() {}, "Render",() => "Highlight");
+			
+			// === Dynamic Island Module ===
+			const dynamicIslandModule = new Module("DynamicIsland", function(enabled) {
+				if (enabled) {
+					// Create DOM element
+					dynamicIslandElement = document.createElement("div");
+					dynamicIslandElement.id = "dynamic-island";
+					dynamicIslandElement.style.cssText = \`
+						position: fixed;
+						top: 15px;
+						left: 50%;
+						transform: translateX(-50%);
+						background: rgba(20, 20, 20, 0.7);
+						border-radius: 20px;
+						box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+						transition: width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+						z-index: 9999;
+						pointer-events: none;
+						width: 200px;
+						height: 40px;
+					\`;
+					
+					dynamicIslandContent = document.createElement("div");
+					dynamicIslandContent.style.cssText = \`
+						position: relative;
+						width: 100%;
+						height: 100%;
+						transition: opacity 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+					\`;
+					
+					dynamicIslandElement.appendChild(dynamicIslandContent);
+					document.body.appendChild(dynamicIslandElement);
+					
+					// Set default display (updated every 100ms)
+					const updateDefaultDisplay = () => {
+						if (!enabledModules["DynamicIsland"] || dynamicIslandCurrentRequest) return;
+						
+						const fps = Math.round(1000 / (game?.deltaTime || 16));
+						
+						dynamicIslandDefaultDisplay = {
+							duration: 0,
+							width: 300,
+							height: 40,
+							elements: [
+								{ type: "image", src:"https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: -130, y: 0, height: 25},
+								{ type: "text", content: \`Impact v6\`, x: -60, y: 0, color: "#fff", size: 18, bold: true },
+								{ type: "text", content: \`\${fps} FPS\`, x: 100, y: 0, color: "#0FB3A0", size: 18 }
+							]
+						};
+						
+						dynamicIsland.show(dynamicIslandDefaultDisplay);
+					};
+					
+					// Initial display
+					updateDefaultDisplay();
+					
+					// Update default display every 100ms
+					dynamicIslandUpdateInterval = setInterval(updateDefaultDisplay, 100);
+					
+				} else {
+					// Remove DOM element
+					if (dynamicIslandElement) {
+						dynamicIslandElement.remove();
+						dynamicIslandElement = null;
+						dynamicIslandContent = null;
+					}
+					if (dynamicIslandTimeout) clearTimeout(dynamicIslandTimeout);
+					if (dynamicIslandUpdateInterval) clearInterval(dynamicIslandUpdateInterval);
+					dynamicIslandCurrentRequest = null;
+					dynamicIslandDefaultDisplay = null;
+				}
+			}, "Render", () => "Adaptive");
+			
 			const textgui = new Module("TextGUI", function() {}, "Render");
 			textguifont = textgui.addoption("Font", String, "Poppins");
 			textguisize = textgui.addoption("TextSize", Number, 15);
@@ -3488,6 +3781,9 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 			globalThis.${storeName}.modules = modules;
 			globalThis.${storeName}.profile = "default";
+			globalThis.${storeName}.dynamicIsland = dynamicIsland;
+
+			window.dynamicIsland = dynamicIsland;
 		})();
 	`);
 
