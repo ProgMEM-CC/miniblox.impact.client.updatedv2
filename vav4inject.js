@@ -5000,8 +5000,9 @@ function createModuleRow(name, mod, content) {
 
 		// === Toggle ClickGUI ===
 		let visible = false;
+		// Use capture phase to ensure this runs before other listeners
 		document.addEventListener("keydown", (e) => {
-			if (e.code === "Backslash" && !document.hasFocus()) {
+			if (e.code === "Backslash") {
 				e.preventDefault();
 				e.stopPropagation();
 				e.stopImmediatePropagation();
@@ -5091,7 +5092,7 @@ function createModuleRow(name, mod, content) {
 					}
 				}
 			}
-		});
+		}, true); // Use capture phase to run before other listeners
 
 		// === Startup notification ===
 		setTimeout(() => { showNotif("Press \\\\ to open Impact V6 ClickGUI!", "info", 4000); }, 500);
