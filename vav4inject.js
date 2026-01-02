@@ -2837,7 +2837,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			}, "Misc");
 
 			
-// ChestSteal V2
+// Improved ChestSteal Module with Dynamic Island Integration
 let cheststealblocks, cheststealtools, cheststealdelay, cheststealsilent;
 let cheststealignoreFull, cheststealminStack, cheststealEnchantedOnly;
 let lastStealTime = 0;
@@ -2990,7 +2990,7 @@ const cheststeal = new Module("ChestSteal", function(callback) {
                 // Show chest opened on Dynamic Island
                 if (enabledModules["DynamicIsland"]) {
                     dynamicIsland.show({
-                        duration: 1500,
+                        duration: 2000,
                         width: 300,
                         height: 70,
                         elements: [
@@ -3061,7 +3061,7 @@ const cheststeal = new Module("ChestSteal", function(callback) {
                     // Show completion on Dynamic Island
                     if (enabledModules["DynamicIsland"]) {
                         dynamicIsland.show({
-                            duration: 1000,
+                            duration: 500,
                             width: 260,
                             height: 50,
                             elements: [
