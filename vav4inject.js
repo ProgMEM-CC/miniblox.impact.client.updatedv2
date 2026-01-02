@@ -1319,23 +1319,23 @@ clientVersion: VERSION$1
 				
 				renderElements(elements) {
 					if (!dynamicIslandContent) return;
-					
+
 					// Clear existing content
 					dynamicIslandContent.innerHTML = "";
-					
+
 					// Render each element
 					for (const element of elements) {
 						const el = this.createElement(element);
 						if (el) dynamicIslandContent.appendChild(el);
 					}
 				},
-				
+
 				createElement(element) {
 					const el = document.createElement("div");
 					el.style.position = "absolute";
 					el.style.left = element.x + "px";
 					el.style.top = element.y + "px";
-					
+
 					switch (element.type) {
 						case "text":
 							return this.createTextElement(element);
@@ -1348,7 +1348,7 @@ clientVersion: VERSION$1
 					}
 					return null;
 				},
-				
+
 				createTextElement(element) {
 					const centerX = this.currentWidth / 2;
 					const centerY = this.currentHeight / 2;
@@ -2217,6 +2217,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 						pointer-events: none;
 						width: 200px;
 						height: 40px;
+						backdrop-filter: blur(20px);
 					\`;
 					
 					dynamicIslandContent = document.createElement("div");
