@@ -412,7 +412,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 	addModification('ClientSocket.on("CPacketDisconnect",h=>{', `
 		if (enabledModules["AutoRejoin"]) {
 			setTimeout(function() {
-				h.connect(lastJoined);
+				game.connect(lastJoined);
 			}, 400);
 		}
 	`);
