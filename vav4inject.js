@@ -444,9 +444,9 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			ClientSocket.sendPacket(new SPacketMessage({text: "/vote 2"}));
 		}
 
-		console.info("Message (text and ID): ", h.text, h.id);
+		// console.info("Message (text and ID): ", h.text, h.id);
 
-		if (h.text == "Press N to queue for the next game!" && h.id == undefined && enabledModules["AutoQueue"]) {
+		if (h.text.endsWith("Press N to queue for the next game!") && h.id == undefined && enabledModules["AutoQueue"]) {
 			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
 			dynamicIsland.show({
 				duration: 4e3, // 4 seconds (e3 means 3 extra 0's)
