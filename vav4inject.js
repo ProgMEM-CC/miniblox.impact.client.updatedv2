@@ -457,7 +457,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
 			dynamicIsland.show({
 				duration: 1.55e3, // 1.55 seconds (e3 means 3 extra 0's)
-				width: 325,
+				width: 335,
 				height: 67,
 				elements: [
 					// centered on x and y
