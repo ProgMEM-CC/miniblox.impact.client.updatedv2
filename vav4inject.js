@@ -2740,8 +2740,9 @@ cheststealminStack.range = [1, 64, 1];
 
 
 // Fixed Scaffold Module (should work 99%)
-let scaffoldtower, oldHeld, scaffoldextend, scaffoldcycle;
+let scaffoldtower, oldHeld, scaffoldextend, scaffoldcycle, scaffoldSameY;
 let tickCount = 0;
+let lastScaffoldY = null; // Track the Y coordinate for sameY mode
 
 function getPossibleSides(pos) {
     const possibleSides = [];
@@ -2801,10 +2802,33 @@ const scaffold = new Module("Scaffold", function(callback) {
             const item = player.inventory.getCurrentItem();
             if (!item || !(item.getItem() instanceof ItemBlock)) return;
 
+            // Check if player is moving (any movement key pressed)
+            const isMoving = player.moveForwardDump !== 0 || player.moveStrafeDump !== 0;
+
             // Calculate positions - MORE AGGRESSIVE PREDICTION
             const playerX = Math.floor(player.pos.x);
             const playerY = Math.floor(player.pos.y);
             const playerZ = Math.floor(player.pos.z);
+
+            // Determine target Y coordinate based on sameY mode
+            let targetY;
+            if (scaffoldSameY[1]) {
+                if (isMoving) {
+                    // When moving, use the last scaffold Y or initialize it
+                    if (lastScaffoldY === null) {
+                        lastScaffoldY = playerY - 1;
+                    }
+                    targetY = lastScaffoldY;
+                } else {
+                    // When not moving (stationary jump), allow placing under player
+                    targetY = playerY - 1;
+                    lastScaffoldY = targetY;
+                }
+            } else {
+                // Normal mode: always place under player
+                targetY = playerY - 1;
+                lastScaffoldY = targetY;
+            }
 
             // Predict further ahead based on motion
             const predictionMultiplier = scaffoldextend[1] * 2; // 2x for skywars speed
@@ -2815,15 +2839,15 @@ const scaffold = new Module("Scaffold", function(callback) {
 
             // Check MORE positions for faster bridging
             const positionsToCheck = [
-                new BlockPos(flooredFutureX, playerY - 1, flooredFutureZ), // Future position first!
-                new BlockPos(playerX, playerY - 1, playerZ),
+                new BlockPos(flooredFutureX, targetY, flooredFutureZ), // Future position first!
+                new BlockPos(playerX, targetY, playerZ),
             ];
 
             // Also check diagonal positions for fast strafing
             if (Math.abs(player.motion.x) > 0.1 || Math.abs(player.motion.z) > 0.1) {
                 positionsToCheck.push(
-                    new BlockPos(flooredFutureX, playerY - 1, playerZ),
-                    new BlockPos(playerX, playerY - 1, flooredFutureZ)
+                    new BlockPos(flooredFutureX, targetY, playerZ),
+                    new BlockPos(playerX, targetY, flooredFutureZ)
                 );
             }
 
@@ -2932,12 +2956,14 @@ const scaffold = new Module("Scaffold", function(callback) {
             switchSlot(oldHeld);
         }
         delete tickLoop["Scaffold"];
+        lastScaffoldY = null; // Reset the Y coordinate when scaffold is disabled
     }
 }, "World");
 
 scaffoldtower = scaffold.addoption("Tower", Boolean, true);
 scaffoldextend = scaffold.addoption("Extend", Number, 1);
 scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
+scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 
             // Timer
 			let timervalue;
