@@ -2209,7 +2209,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 				}
 			}
 
-			liquidGlassWaitPromise = import("https://raw.githack.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/dynamic-island/liquidGlass.js").then(mod => {
+			liquidGlassWaitPromise = import("https://raw.githack.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/dynamic-island/liquidGlass.js?a").then(mod => {
 				lGlass = mod;
 				return lGlass;
 			});
@@ -2246,13 +2246,24 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 
 					dynamicIslandElement.appendChild(dynamicIslandContent);
 					liquidGlass().then(mod => {
-						const shader = new mod.default({
-							width: 200,
-							height: 400
+						// === APPLY LIQUID GLASS ===
+						const liquidIsland = new mod.default({
+							width: 320,  // Slightly larger to handle transitions
+							height: 50,
+							fragment: (uv, mouse) => {
+								const ix = uv.x - 0.5;
+								const iy = uv.y - 0.5;
+								const distanceToEdge = mod.roundedRectSDF(ix, iy, 0.45, 0.4, 0.8);  // Pill shape like Apple's
+								const displacement = mod.smoothStep(0.9, 0, distanceToEdge - 0.1);
+								const scaled = mod.smoothStep(0, 1, displacement * 1.2);  // Subtle expansion
+								const mouseInfluence = mod.length(ix - (mouse.x - 0.5), iy - (mouse.y - 0.5)) * 0.2;  // Hover wave
+								return mod.texture(ix * scaled + mouseInfluence + 0.5, iy * scaled + mouseInfluence + 0.5);
+							}
 						});
-						shader.appendChild(dynamicIslandElement);
-						shader.appendTo(document.body);
-					})
+
+						liquidIsland.appendChild(dynamicIslandElement);
+						liquidIsland.appendTo(document.body);
+					});
 
 					// Set default display (updated every 100ms)
 					const updateDefaultDisplay = () => {
