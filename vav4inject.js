@@ -831,7 +831,7 @@ clientVersion: VERSION$1
 						});
 					}
 					else if (mName == "all") {
-						for(const [name, module] of Object.entries(modules)) module.toggle();
+						for(const [name, module] of Object.entries(modules)) module.toggleSilently();
 					}
 				}
 				return this.closeInput();
@@ -1216,7 +1216,7 @@ clientVersion: VERSION$1
 			}
 			case ".scriptmanager": {
 				if (!modules["ScriptManager"].enabled) {
-					modules["ScriptManager"].toggle();
+					modules["ScriptManager"].toggleSilently();
 				}
 				return this.closeInput();
 			}
@@ -1262,8 +1262,13 @@ clientVersion: VERSION$1
 					this.category = category;
 					modules[this.name] = this;
 				}
-				toggle() {
+				/** toggles the module without i.e. the notifications */
+				toggleSilently() {
 					this.setEnabled(!this.enabled);
+				}
+				/** toggles to notification and shows the dynamic island if DynamicIsland */
+				toggle() {
+					this.toggleSilently();
 					// Show Dynamic Island on toggle
 					if (enabledModules["DynamicIsland"]) {
 						moduleToggleDisplay.show(this.name, this.enabled);
@@ -1546,7 +1551,7 @@ clientVersion: VERSION$1
 				try {
 					// Try to remove the old module if it exists.
 					if (modules[name]) {
-						if (modules[name].enabled) modules[name].toggle();
+						if (modules[name].enabled) modules[name].toggleSilently();
 						delete modules[name];
 						delete enabledModules[name];
 					}
@@ -1587,7 +1592,7 @@ clientVersion: VERSION$1
 			
 			function deleteCustomScript(name) {
 				if (modules[name]) {
-					if (modules[name].enabled) modules[name].toggle();
+					if (modules[name].enabled) modules[name].toggleSilently();
 					delete modules[name];
 					delete enabledModules[name];
 				}
@@ -1775,7 +1780,7 @@ clientVersion: VERSION$1
 			}, "Movement",() => "Ignore");
 
 			const criticals = new Module("Criticals", () => {}, "Combat", () => "Packet");
-			criticals.toggle();
+			criticals.toggleSilently();
 
 			// this is a very old crash method,
 			// bread (one of the devs behind atmosphere) found it
@@ -2331,7 +2336,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			textguifont = textgui.addoption("Font", String, "Poppins");
 			textguisize = textgui.addoption("TextSize", Number, 15);
 			textguishadow = textgui.addoption("Shadow", Boolean, true);
-			textgui.toggle();
+			textgui.toggleSilently();
 			new Module("AutoRespawn", function() {}, "Player");
 
 			// === Script Manager Module ===
@@ -2551,7 +2556,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 				}
 				
 				const closeBtn = createButton("Close", () => {
-					modules["ScriptManager"].toggle();
+					modules["ScriptManager"].toggleSilently();
 				});
 				closeBtn.style.width = "100%";
 				
@@ -2562,7 +2567,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 				modal.appendChild(container);
 				
 				modal.onclick = (e) => {
-					if (e.target === modal) modules["ScriptManager"].toggle();
+					if (e.target === modal) modules["ScriptManager"].toggleSilently();
 				};
 				
 				document.body.appendChild(modal);
@@ -2669,8 +2674,8 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 						modal.remove();
 						// Trigger refresh by reopening Script Manager
 						if (modules["ScriptManager"]) {
-							modules["ScriptManager"].toggle();
-							setTimeout(() => modules["ScriptManager"].toggle(), 100);
+							modules["ScriptManager"].toggleSilently();
+							setTimeout(() => modules["ScriptManager"].toggleSilently(), 100);
 						}
 					} else {
 						alert("Failed to load script: " + name + "\\nCheck console for errors.");
@@ -3461,7 +3466,7 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 			const antiban = new Module("AntiBan", function() {}, "Misc", () => useAccountGen[1] ? "Gen" : "Non Account");
 			useAccountGen = antiban.addoption("AccountGen", Boolean, false);
 			accountGenEndpoint = antiban.addoption("GenServer", String, "http://localhost:8000/generate");
-			antiban.toggle();
+			antiban.toggleSilently();
 			new Module("AutoRejoin", function() {}, "Misc");
 			new Module("AutoQueue", function() {}, "Minigames");
 			new Module("AutoVote", function() {}, "Minigames");
@@ -4087,7 +4092,7 @@ ljdesync = longjump.addoption("Desync", Boolean, true);  // toggle desync mode
 const survival = new Module("SurvivalMode", function(callback) {
 				if (callback) {
 					if (player) player.setGamemode(GameMode.fromId("survival"));
-					survival.toggle();
+					survival.toggleSilently();
 				}
 			}, "Misc", () => "Spoof");
 
@@ -4125,7 +4130,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 		for (const [name, module] of Object.entries(loaded)) {
 			const realModule = unsafeWindow.globalThis[storeName].modules[name];
 			if (!realModule) continue;
-			if (realModule.enabled != module.enabled) realModule.toggle();
+			if (realModule.enabled != module.enabled) realModule.toggleSilently();
 			if (realModule.bind != module.bind) realModule.setbind(module.bind);
 			if (module.options) {
 				for (const [option, setting] of Object.entries(module.options)) {
