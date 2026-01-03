@@ -430,11 +430,38 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 		}
 
 		if (h.text && h.text.indexOf("Poll started") != -1 && h.id == undefined && enabledModules["AutoVote"]) {
+			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+			dynamicIsland.show({
+				duration: 1.5e3,
+				width: 30,
+				height: 15,
+				elements: [
+					// centered on x and y
+					{ type: "text", content: "Voting for #2 (Overpowered)", x: 15, y: 7.5, size: 18 }
+				]
+			});
+			// vote for option 2 (Overpowered)
 			ClientSocket.sendPacket(new SPacketMessage({text: "/vote 2"}));
 		}
 
-		if (h.text && h.text.indexOf("won the game") != -1 && h.id == undefined && enabledModules["AutoQueue"]) {
-			game.requestQueue();
+		//console.info("Message (text and ID): ", h.text, h.id);
+
+		if (h.text == "Press N to queue for the next game!" && h.id == undefined && enabledModules["AutoQueue"]) {
+			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+			dynamicIsland.show({
+				duration: 4e3, // 4 seconds (e3 means 3 extra 0's)
+				width: 30,
+				height: 15,
+				elements: [
+					// centered on x and y
+					{ type: "text", content: "Queueing next game in 4 seconds", x: 15, y: 7.5, size: 18 }
+				]
+			});
+			// I'd hope you could disable auto queue within 4 seconds if you want
+			// so we have to check here too.
+			setTimeout(() => {
+				if (enabledModules["AutoQueue"]) game.requestQueue();
+			}, 4e3);
 		}
 	`);
 	addModification('ClientSocket.on("CPacketUpdateStatus",h=>{', `
