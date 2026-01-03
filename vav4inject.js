@@ -2899,6 +2899,7 @@ let cheststealblocks, cheststealtools, cheststealdelay, cheststealsilent;
 let cheststealignoreFull, cheststealminStack, cheststealEnchantedOnly;
 let lastStealTime = 0;
 let cheststeal_initialQueueSize = 0;
+let showChestStealCloseIsland = false;
 
 const cheststeal = new Module("ChestSteal", function(callback) {
     if (callback) {
@@ -3043,6 +3044,7 @@ const cheststeal = new Module("ChestSteal", function(callback) {
                 // Sort queue by priority (highest first)
                 stealQueue.sort((a, b) => b.priority - a.priority);
                 cheststeal_initialQueueSize = stealQueue.length;
+				showChestStealCloseIsland = true;
 
                 // Show chest opened on Dynamic Island
                 if (enabledModules["DynamicIsland"]) {
@@ -3136,7 +3138,7 @@ const cheststeal = new Module("ChestSteal", function(callback) {
                 stealQueue = [];
 
                 // Show closed message if not already shown
-                if (enabledModules["DynamicIsland"] && cheststeal_initialQueueSize > 0) {
+                if (enabledModules["DynamicIsland"] && showChestStealCloseIsland) {
                     dynamicIsland.show({
                         duration: 1000,
                         width: 260,
@@ -3145,7 +3147,7 @@ const cheststeal = new Module("ChestSteal", function(callback) {
                             { type: "text", content: "✓ Chest Closed", x: 0, y: 0, color: "#0FB3A0", size: 14, bold: true }
                         ]
                     });
-                    cheststeal_initialQueueSize = 0;
+                    showChestStealCloseIsland = false;
                 }
             }
         };
