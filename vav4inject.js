@@ -238,19 +238,28 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			console.log(\`\${entity.name} is holding\`, item);
 		}
 		async function generateAccount() {
-			toast({
-				title: "generating miniblox account via integration...",
-				status: "info",
-				duration: 0.3e3
+			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+			dynamicIsland.show({
+				duration: 1.5e3,
+				width: 80,
+				height: 60,
+				elements: [
+					// centered on x and y
+					{ type: "text", content: "Generating account", x: 40, y: 30, size: 18 }
+				]
 			});
 			const res = await fetch(accountGenEndpoint[1]);
 			if (!res.ok)
 				throw await res.text();
 			const j = await res.json();
-			toast({
-				title: \`Generated a miniblox account! named \${j.name}!\`,
-				status: "success",
-				duration: 1e3
+			dynamicIsland.show({
+				duration: 1e3,
+				width: 80,
+				height: 60,
+				elements: [
+					// centered on x and y
+					{ type: "text", content: \`Generated account: \${j.name}\`, x: 40, y: 30, size: 18 }
+				]
 			});
 			return j;
 		}
@@ -433,11 +442,11 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
 			dynamicIsland.show({
 				duration: 3e3,
-				width: 75,
-				height: 50,
+				width: 80,
+				height: 60,
 				elements: [
 					// centered on x and y
-					{ type: "text", content: "Voting for #2 (Overpowered)", x: 37.5, y: 25, size: 18 }
+					{ type: "text", content: "Voting for #2 (Overpowered)", x: 40, y: 30, size: 18 }
 				]
 			});
 			// vote for option 2 (Overpowered)
@@ -450,11 +459,11 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
 			dynamicIsland.show({
 				duration: 4e3, // 4 seconds (e3 means 3 extra 0's)
-				width: 75,
-				height: 50,
+				width: 80,
+				height: 60,
 				elements: [
 					// centered on x and y
-					{ type: "text", content: "Queueing next game in 4 seconds", x: 37.5, y: 25, size: 18 }
+					{ type: "text", content: "Queueing next game in 4 seconds", x: 40, y: 30, size: 18 }
 				]
 			});
 			// I'd hope you could disable auto queue within 4 seconds if you want
