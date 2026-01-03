@@ -15,7 +15,7 @@ export function smoothStep(a, b, t) {
  * @param {number} y
  * @returns {number}
  */
-function length(x, y) {
+export function length(x, y) {
 	return Math.sqrt(x * x + y * y);
 }
 /**
@@ -38,10 +38,10 @@ export function texture(x, y) {
 }
 
 function generateId() {
-	return 'liquid-glass-' + Math.random().toString(36).substring(2, 9);
+	return `liquid-glass-${Math.random().toString(36).substring(2, 9)}`;
 }
 
-class Shader {
+export class Shader {
 	/** @type {number} */
 	width;
 	/** @type {number} */
