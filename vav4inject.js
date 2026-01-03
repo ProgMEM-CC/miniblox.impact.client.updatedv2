@@ -241,11 +241,10 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
 			dynamicIsland.show({
 				duration: 1.5e3,
-				width: 80,
-				height: 60,
+				width: 250,
+				height: 50,
 				elements: [
-					// centered on x and y
-					{ type: "text", content: "Generating account", x: 40, y: 30, size: 18 }
+					{ type: "text", content: "Generating account", x: 0, y: 0, size: 18 }
 				]
 			});
 			const res = await fetch(accountGenEndpoint[1]);
@@ -254,11 +253,11 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			const j = await res.json();
 			dynamicIsland.show({
 				duration: 1e3,
-				width: 80,
-				height: 60,
+				width: 255,
+				height: 45,
 				elements: [
 					// centered on x and y
-					{ type: "text", content: \`Generated account: \${j.name}\`, x: 40, y: 30, size: 18 }
+					{ type: "text", content: \`Generated account: \${j.name}\`, x: 0, y: 0, size: 18 }
 				]
 			});
 			return j;
@@ -442,11 +441,10 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
 			dynamicIsland.show({
 				duration: 3e3,
-				width: 80,
-				height: 60,
+				width: 300,
+				height: 67,
 				elements: [
-					// centered on x and y
-					{ type: "text", content: "Voting for #2 (Overpowered)", x: 40, y: 30, size: 18 }
+					{ type: "text", content: "Voting for #2 (Overpowered)", x: 0, y: 0, size: 18 }
 				]
 			});
 			// vote for option 2 (Overpowered)
@@ -459,11 +457,11 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
 			dynamicIsland.show({
 				duration: 4e3, // 4 seconds (e3 means 3 extra 0's)
-				width: 80,
-				height: 60,
+				width: 300,
+				height: 67,
 				elements: [
 					// centered on x and y
-					{ type: "text", content: "Queueing next game in 4 seconds", x: 40, y: 30, size: 18 }
+					{ type: "text", content: "Queueing next game in 4 seconds", x: 0, y: 0, size: 18 }
 				]
 			});
 			// I'd hope you could disable auto queue within 4 seconds if you want
