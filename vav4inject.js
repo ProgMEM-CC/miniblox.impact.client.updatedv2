@@ -432,7 +432,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 		if (h.text && h.text.indexOf("Poll started") != -1 && h.id == undefined && enabledModules["AutoVote"]) {
 			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
 			dynamicIsland.show({
-				duration: 1.5e3,
+				duration: 3e3,
 				width: 30,
 				height: 15,
 				elements: [
