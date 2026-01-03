@@ -2197,10 +2197,27 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 
 
 			new Module("ESP", function() {}, "Render",() => "Highlight");
-			
+
+			let lGlass;
+			let liquidGlassWaitPromise;
+
+			function liquidGlass() {
+				if (lGlass) {
+					return Promise.resolve(lGlass);
+				} else {
+					return liquidGlassWaitPromise;
+				}
+			}
+
+			liquidGlassWaitPromise = import("https://raw.githubusercontent.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/dynamic-island/liquidGlass.js").then(mod => {
+				lGlass = mod;
+				return lGlass;
+			});
+
 			// === Dynamic Island Module ===
 			const dynamicIslandModule = new Module("DynamicIsland", function(enabled) {
 				if (enabled) {
+					new liquidGlass.Shader();
 					// Create DOM element
 					dynamicIslandElement = document.createElement("div");
 					dynamicIslandElement.id = "dynamic-island";
@@ -2219,7 +2236,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 						height: 40px;
 						backdrop-filter: blur(20px);
 					\`;
-					
+
 					dynamicIslandContent = document.createElement("div");
 					dynamicIslandContent.style.cssText = \`
 						position: relative;
@@ -2227,16 +2244,16 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 						height: 100%;
 						transition: opacity 0.1s cubic-bezier(0.4, 0, 0.2, 1);
 					\`;
-					
+
 					dynamicIslandElement.appendChild(dynamicIslandContent);
 					document.body.appendChild(dynamicIslandElement);
-					
+
 					// Set default display (updated every 100ms)
 					const updateDefaultDisplay = () => {
 						if (!enabledModules["DynamicIsland"] || dynamicIslandCurrentRequest) return;
-						
-						const fps = Math.round(1000 / (game?.deltaTime || 16));
-						
+
+						const fps = Math.round(1000 / (game?.deltaTime ?? 16));
+
 						dynamicIslandDefaultDisplay = {
 							duration: 0,
 							width: 300,
