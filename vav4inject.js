@@ -2245,14 +2245,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					\`;
 
 					dynamicIslandElement.appendChild(dynamicIslandContent);
-					liquidGlass().then(mod => {
-						const shader = new mod.default({
-							width: 200,
-							height: 400
-						});
-						shader.appendChild(dynamicIslandElement);
-						shader.appendTo(document.body);
-					})
+					document.body.appendChild(dynamicIslandElement);
 
 					// Set default display (updated every 100ms)
 					const updateDefaultDisplay = () => {
