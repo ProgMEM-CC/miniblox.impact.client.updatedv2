@@ -87,8 +87,8 @@
 | Issue                                     | Severity | Status / Notes                    |
 | ----------------------------------------- | -------- | --------------------------------- |
 | AutoFunnyChat – Kill Detection            | Medium   | Incomplete (needs implementation) |
-| InvCleaner – Duplicate Detection          | Low      | Incomplete (requires fix)         |
-| Bind System – Keybinding Edge Cases       | Low      | Incomplete                        |
+| InvCleaner – Duplicate Detection          | None     | Completed                         |
+| Bind System – Keybinding Edge Cases       | None     | Its fine                          |
 | Tampermonkey Extra Permission Requirement | None     | Documented                        |
 | Error Handling                            | None     | Stability improvements needed     |
 
