@@ -441,7 +441,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
 			dynamicIsland.show({
 				duration: 3e3,
-				width: 300,
+				width: 330,
 				height: 67,
 				elements: [
 					{ type: "text", content: "Voting for #2 (Overpowered)", x: 0, y: 0, size: 18 }
