@@ -1276,20 +1276,21 @@ clientVersion: VERSION$1
 			let dynamicIslandUpdateInterval = null;
 
 			const dynamicIsland = {
+				/** do NOT use a duration of 0, it is reserved for the default display. */
 				show(request) {
 					if (!dynamicIslandElement) return;
-					
+
 					// Clear existing timeout
 					if (dynamicIslandTimeout) clearTimeout(dynamicIslandTimeout);
-					
+
 					// Check if content is the same (avoid unnecessary re-render)
 					const requestKey = JSON.stringify(request);
 					if (this.lastRequestKey === requestKey) return;
 					this.lastRequestKey = requestKey;
-					
+
 					// Store current request
 					dynamicIslandCurrentRequest = request;
-					
+
 					// Update size
 					dynamicIslandElement.style.width = request.width + "px";
 					dynamicIslandElement.style.height = request.height + "px";
@@ -2249,18 +2250,23 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 
 					// Set default display (updated every 100ms)
 					const updateDefaultDisplay = () => {
-						if (!enabledModules["DynamicIsland"] || dynamicIslandCurrentRequest) return;
+						// duration is 0 for only the default display
+						if (!enabledModules["DynamicIsland"]
+							|| (dynamicIslandCurrentRequest && dynamicIslandCurrentRequest.duration !== 0)) return;
 
-						const fps = Math.round(1000 / (game?.deltaTime ?? 16));
+						const fps = Math.floor(game.resourceMonitor.filteredFPS);
+						// do NOT use instantPing, it is never updated. use filteredPing instead.
+						const ping = Math.floor(game.resourceMonitor.filteredPing);
 
 						dynamicIslandDefaultDisplay = {
 							duration: 0,
 							width: 300,
-							height: 40,
+							height: 67,
 							elements: [
 								{ type: "image", src:"https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: -130, y: 0, height: 25},
 								{ type: "text", content: \`Impact v6\`, x: -60, y: 0, color: "#fff", size: 18, bold: true },
-								{ type: "text", content: \`\${fps} FPS\`, x: 100, y: 0, color: "#0FB3A0", size: 18 }
+								{ type: "text", content: \`\${fps} FPS\`, x: 100, y: 0, color: "#0FB3A0", size: 18 },
+								{ type: "text", content: \`\${ping} Ping\`, x: 100, y: 12, color: "#0FB3A0", size: 12 }
 							]
 						};
 						
@@ -2270,8 +2276,8 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					// Initial display
 					updateDefaultDisplay();
 					
-					// Update default display every 100ms
-					dynamicIslandUpdateInterval = setInterval(updateDefaultDisplay, 100);
+					// Update default display every 550ms
+					dynamicIslandUpdateInterval = setInterval(updateDefaultDisplay, 550);
 					
 				} else {
 					// Remove DOM element
