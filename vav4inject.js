@@ -2966,50 +2966,112 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 		}
 
 		const armorPriority = ["leather", "chain", "iron", "diamond"];
-		const weaponClasses = new Set(["ItemSword", "ItemAxe", "ItemBow", "ItemPickaxe"]);
-		const essentials = ["gapple", "golden apple", "ender pearl", "fire charge"];
+		const essentials = ["gapple", "golden apple", "ender pearl", "fire charge", "ember stone"];
 		const customKeep = ["god helmet", "legend boots"];
 		const bestArmor = {};
-		const bestItems = {};
+		const bestWeapons = {}; // Separate weapons from tools
+		const bestTools = {}; // Pickaxe, Axe, Shovel, etc.
 		let lastRun = 0;
-		const seenItems = {};
 
 		function getArmorScore(stack) {
 			const item = stack.getItem();
 			const material = item.getArmorMaterial?.()?.toLowerCase?.() ?? "unknown";
 			const priority = armorPriority.indexOf(material);
 			const durability = stack.getMaxDamage() - stack.getItemDamage();
-			return (priority === -1 ? -999 : priority * 1000) + durability;
+			const enchants = stack.getEnchantmentTagList()?.length ?? 0;
+			return (priority === -1 ? -999 : priority * 10000) + durability + (enchants * 500);
 		}
 
 		function getMaterialScore(name) {
 			name = name.toLowerCase();
-			if (name.includes("diamond")) return 4;
-			if (name.includes("iron")) return 3;
-			if (name.includes("chain")) return 2;
-			if (name.includes("wood")) return 1;
+			if (name.includes("diamond")) return 1000;
+			if (name.includes("iron")) return 500;
+			if (name.includes("stone")) return 100;
+			if (name.includes("wood")) return 50;
+			if (name.includes("gold")) return 300; // Gold is weak but valuable
 			return 0;
 		}
 
-		function getScore(stack, item) {
-			const damage = item.getDamageVsEntity?.() ?? 0;
-			const enchants = stack.getEnchantmentTagList()?.length ?? 0;
-			const material = getMaterialScore(stack.getDisplayName());
-			return damage + enchants * 1.5 + material * 0.5;
+		function getEnchantmentScore(stack) {
+			const enchants = stack.getEnchantmentTagList();
+			if (!enchants || enchants.length === 0) return 0;
+			
+			let score = 0;
+			for (const enchant of enchants) {
+				const level = enchant.lvl ?? 1;
+				const id = enchant.id ?? 0;
+				
+				// High value enchants
+				if (id === 16 || id === 20) score += level * 200; // Sharpness, Fire Aspect
+				else if (id === 19 || id === 21) score += level * 150; // Knockback, Looting
+				else if (id === 0 || id === 1 || id === 3 || id === 4) score += level * 180; // Protection, Fire Protection, Blast Protection, Projectile Protection
+				else if (id === 32 || id === 34) score += level * 100; // Efficiency, Unbreaking
+				else if (id === 48 || id === 49 || id === 50 || id === 51) score += level * 120; // Power, Punch, Flame, Infinity
+				else score += level * 50; // Other enchants
+			}
+			return score;
 		}
 
-		function isSameItem(a, b) {
-			if (!a || !b) return false;
-			const nameA = a.stack.getDisplayName()?.toLowerCase();
-			const nameB = b.stack.getDisplayName()?.toLowerCase();
-			const enchA = a.stack.getEnchantmentTagList()?.toString();
-			const enchB = b.stack.getEnchantmentTagList()?.toString();
-			return nameA === nameB && enchA === enchB;
+		function getWeaponScore(stack, item) {
+			const name = stack.getDisplayName().toLowerCase();
+			const material = getMaterialScore(name);
+			const enchantScore = getEnchantmentScore(stack);
+			const durability = stack.getMaxDamage() > 0 ? (stack.getMaxDamage() - stack.getItemDamage()) : 1000;
+			
+			let baseScore = 0;
+			if (item instanceof ItemSword) {
+				baseScore = 1000;
+			} else if (item instanceof ItemBow) {
+				baseScore = 900;
+			}
+			
+			// Material is VERY important - diamond should always beat stone even with enchants
+			return baseScore + (material * 2) + enchantScore + (durability * 0.1);
+		}
+
+		function getToolScore(stack, item) {
+			const name = stack.getDisplayName().toLowerCase();
+			const material = getMaterialScore(name);
+			const enchantScore = getEnchantmentScore(stack);
+			const durability = stack.getMaxDamage() > 0 ? (stack.getMaxDamage() - stack.getItemDamage()) : 1000;
+			
+			let baseScore = 0;
+			if (item instanceof ItemPickaxe) {
+				baseScore = 800;
+			} else if (item instanceof ItemAxe) {
+				baseScore = 700;
+			} else if (item instanceof ItemSpade) {
+				baseScore = 600;
+			} else if (item instanceof ItemTool) {
+				baseScore = 500;
+			}
+			
+			return baseScore + (material * 2) + enchantScore + (durability * 0.1);
+		}
+
+		function getToolType(item) {
+			if (item instanceof ItemPickaxe) return "pickaxe";
+			if (item instanceof ItemAxe) return "axe";
+			if (item instanceof ItemSpade) return "shovel";
+			if (item instanceof ItemHoe) return "hoe";
+			return "tool";
 		}
 
 		function shouldKeep(stack) {
 			const name = stack.getDisplayName().toLowerCase();
-			return essentials.some(k => name.includes(k)) || customKeep.some(k => name.includes(k));
+			const item = stack.getItem();
+			
+			// Always keep essentials
+			if (essentials.some(k => name.includes(k))) return true;
+			if (customKeep.some(k => name.includes(k))) return true;
+			
+			// Always keep blocks
+			if (item instanceof ItemBlock) return true;
+			
+			// Keep food
+			if (item instanceof ItemFood) return true;
+			
+			return false;
 		}
 
 		tickLoop["InvCleaner"] = function () {
@@ -3021,8 +3083,8 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 			if (!player.openContainer || player.openContainer !== player.inventoryContainer || !slots || slots.length < 36) return;
 
 			Object.keys(bestArmor).forEach(k => delete bestArmor[k]);
-			Object.keys(bestItems).forEach(k => delete bestItems[k]);
-			Object.keys(seenItems).forEach(k => delete seenItems[k]);
+			Object.keys(bestWeapons).forEach(k => delete bestWeapons[k]);
+			Object.keys(bestTools).forEach(k => delete bestTools[k]);
 
 			const toDrop = [];
 
@@ -3040,10 +3102,11 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 				if (!stack) continue;
 
 				const item = stack.getItem();
-				const className = item.constructor.name;
 
+				// Skip items that should always be kept
 				if (shouldKeep(stack)) continue;
 
+				// Handle armor
 				if (item instanceof ItemArmor) {
 					const armorType = item.armorType ?? "unknown";
 					const key = "armor_" + armorType;
@@ -3054,7 +3117,10 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 						bestArmor[key] = { stack, index: i, score };
 					} else {
 						if (score > existing.score) {
-							toDrop.push(existing.index);
+							// Only drop the old armor if it's in inventory (not equipped)
+							if (existing.index < 36) {
+								toDrop.push(existing.index);
+							}
 							bestArmor[key] = { stack, index: i, score };
 						} else {
 							toDrop.push(i);
@@ -3063,31 +3129,59 @@ scaffoldcycle = scaffold.addoption("CycleSpeed", Number, 10);
 					continue;
 				}
 
-				if (weaponClasses.has(className)) {
-					const score = getScore(stack, item);
-					const existing = bestItems[className];
+				// Handle weapons (Sword and Bow)
+				if (item instanceof ItemSword) {
+					const key = "sword";
+					const score = getWeaponScore(stack, item);
+					const existing = bestWeapons[key];
 
-					if (!existing || score > existing.score) {
-						if (existing && existing.index !== i) toDrop.push(existing.index);
-						bestItems[className] = { stack, score, index: i };
-					} else if (existing && isSameItem(bestItems[className], { stack })) {
-						toDrop.push(i);
+					if (!existing) {
+						bestWeapons[key] = { stack, score, index: i };
+					} else if (score > existing.score) {
+						toDrop.push(existing.index);
+						bestWeapons[key] = { stack, score, index: i };
 					} else {
 						toDrop.push(i);
 					}
 					continue;
 				}
 
-				const name = stack.getDisplayName()?.toLowerCase() ?? "";
-				if (!shouldKeep(stack)) {
-					if (seenItems[name]) {
-						toDrop.push(i);
+				if (item instanceof ItemBow) {
+					const key = "bow";
+					const score = getWeaponScore(stack, item);
+					const existing = bestWeapons[key];
+
+					if (!existing) {
+						bestWeapons[key] = { stack, score, index: i };
+					} else if (score > existing.score) {
+						toDrop.push(existing.index);
+						bestWeapons[key] = { stack, score, index: i };
 					} else {
-						seenItems[name] = true;
+						toDrop.push(i);
 					}
+					continue;
+				}
+
+				// Handle tools (Pickaxe, Axe, Shovel, etc.) - Keep only ONE of each type
+				if (item instanceof ItemPickaxe || item instanceof ItemAxe || 
+				    item instanceof ItemSpade || item instanceof ItemHoe || item instanceof ItemTool) {
+					const toolType = getToolType(item);
+					const score = getToolScore(stack, item);
+					const existing = bestTools[toolType];
+
+					if (!existing) {
+						bestTools[toolType] = { stack, score, index: i };
+					} else if (score > existing.score) {
+						toDrop.push(existing.index);
+						bestTools[toolType] = { stack, score, index: i };
+					} else {
+						toDrop.push(i);
+					}
+					continue;
 				}
 			}
 
+			// Drop items
 			toDrop.forEach(dropSlot);
 		};
 }, "Player");
