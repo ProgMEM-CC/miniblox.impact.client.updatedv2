@@ -94,6 +94,12 @@
 
 For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
 
+## Modules additions (tick when implemented)
+- [ ] ChestAura (with a range of 6)
+- [ ] XRay
+- [ ] AutoEat
+- [ ] ArmorHUD
+
 ## Additional Notes
 
 - **KillAura Air Hits**: Server-side issue, not fixable client-side (low severity)
