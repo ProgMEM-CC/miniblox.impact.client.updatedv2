@@ -2198,21 +2198,21 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 
 			new Module("ESP", function() {}, "Render",() => "Highlight");
 
-			let lGlass;
-			let liquidGlassWaitPromise;
+			// let lGlass;
+			// let liquidGlassWaitPromise;
 
-			function liquidGlass() {
-				if (lGlass) {
-					return Promise.resolve(lGlass);
-				} else {
-					return liquidGlassWaitPromise;
-				}
-			}
+			// function liquidGlass() {
+			// 	if (lGlass) {
+			// 		return Promise.resolve(lGlass);
+			// 	} else {
+			// 		return liquidGlassWaitPromise;
+			// 	}
+			// }
 
-			liquidGlassWaitPromise = import("https://raw.githack.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/dynamic-island/liquidGlass.js").then(mod => {
-				lGlass = mod;
-				return lGlass;
-			});
+			// liquidGlassWaitPromise = import("https://raw.githack.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/dynamic-island/liquidGlass.js").then(mod => {
+			// 	lGlass = mod;
+			// 	return lGlass;
+			// });
 
 			// === Dynamic Island Module ===
 			const dynamicIslandModule = new Module("DynamicIsland", function(enabled) {
