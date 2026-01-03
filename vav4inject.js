@@ -2288,7 +2288,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 						dynamicIslandDefaultDisplay = {
 							duration: 0,
 							width: 300,
-							height: 67,
+							height: 60,
 							elements: [
 								{ type: "image", src:"https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: -130, y: 0, height: 25},
 								{ type: "text", content: \`Impact v6\`, x: -60, y: 0, color: "#fff", size: 18, bold: true },
