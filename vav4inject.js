@@ -2128,7 +2128,7 @@ clientVersion: VERSION$1
 			},"Movement",() => "Desync");
 			flybypass = fly.addoption("Bypass", Boolean, true);
 			flyvalue = fly.addoption("Speed", Number, 0.18);
-			flyvert = fly.addoption("Vertical", Number, 0.3);
+			flyvert = fly.addoption("Vertical", Number, 0.12);
 
 
 			// InfinityFly
@@ -2186,7 +2186,7 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 			new Module("KeepSprint", function() {},"Movement", () => "Ignore");
 			new Module("NoSlowdown", function() {},"Combat", () => "Ignore");
 
-// WSpeed
+// Speed (this has been patched)
 let speedvalue, speedjump, speedauto, speedbypass;
 
 const speed = new Module("Speed", function(callback) {
@@ -2223,8 +2223,8 @@ const speed = new Module("Speed", function(callback) {
 
 // Options
 speedbypass = speed.addoption("Bypass", Boolean, true);
-speedvalue = speed.addoption("Speed", Number, 0.39);
-speedjump = speed.addoption("JumpHeight", Number, 0.42);
+speedvalue = speed.addoption("Speed", Number, 0.19);
+speedjump = speed.addoption("JumpHeight", Number, 0.19);
 speedauto = speed.addoption("AutoJump", Boolean, true);
 
 			const step = new Module("Step", function() {}, "Player", () => \`\${stepheight[1]}\`);
