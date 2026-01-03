@@ -433,11 +433,11 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
 			dynamicIsland.show({
 				duration: 3e3,
-				width: 30,
-				height: 15,
+				width: 75,
+				height: 50,
 				elements: [
 					// centered on x and y
-					{ type: "text", content: "Voting for #2 (Overpowered)", x: 15, y: 7.5, size: 18 }
+					{ type: "text", content: "Voting for #2 (Overpowered)", x: 37.5, y: 25, size: 18 }
 				]
 			});
 			// vote for option 2 (Overpowered)
@@ -450,11 +450,11 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
 			dynamicIsland.show({
 				duration: 4e3, // 4 seconds (e3 means 3 extra 0's)
-				width: 30,
-				height: 15,
+				width: 75,
+				height: 50,
 				elements: [
 					// centered on x and y
-					{ type: "text", content: "Queueing next game in 4 seconds", x: 15, y: 7.5, size: 18 }
+					{ type: "text", content: "Queueing next game in 4 seconds", x: 37.5, y: 25, size: 18 }
 				]
 			});
 			// I'd hope you could disable auto queue within 4 seconds if you want
