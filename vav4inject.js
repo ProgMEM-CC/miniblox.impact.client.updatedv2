@@ -2209,7 +2209,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 				}
 			}
 
-			liquidGlassWaitPromise = import("https://raw.githubusercontent.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/dynamic-island/liquidGlass.js").then(mod => {
+			liquidGlassWaitPromise = import("https://raw.githack.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/dynamic-island/liquidGlass.js").then(mod => {
 				lGlass = mod;
 				return lGlass;
 			});
@@ -2217,7 +2217,6 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			// === Dynamic Island Module ===
 			const dynamicIslandModule = new Module("DynamicIsland", function(enabled) {
 				if (enabled) {
-					new liquidGlass.Shader();
 					// Create DOM element
 					dynamicIslandElement = document.createElement("div");
 					dynamicIslandElement.id = "dynamic-island";
@@ -2246,7 +2245,14 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					\`;
 
 					dynamicIslandElement.appendChild(dynamicIslandContent);
-					document.body.appendChild(dynamicIslandElement);
+					liquidGlass().then(mod => {
+						const shader = new mod.default({
+							width: 200,
+							height: 400
+						});
+						shader.appendChild(dynamicIslandElement);
+						shader.appendTo(document.body);
+					})
 
 					// Set default display (updated every 100ms)
 					const updateDefaultDisplay = () => {
