@@ -456,19 +456,19 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 		if (h.text.endsWith("Press N to queue for the next game!") && h.id == undefined && enabledModules["AutoQueue"]) {
 			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
 			dynamicIsland.show({
-				duration: 4e3, // 4 seconds (e3 means 3 extra 0's)
+				duration: 1.55e3, // 1.55 seconds (e3 means 3 extra 0's)
 				width: 300,
 				height: 67,
 				elements: [
 					// centered on x and y
-					{ type: "text", content: "Queueing next game in 4 seconds", x: 0, y: 0, size: 18 }
+					{ type: "text", content: "Queueing next game in 1.5 seconds", x: 0, y: 0, size: 18 }
 				]
 			});
-			// I'd hope you could disable auto queue within 4 seconds if you want
+			// I'd hope you could disable auto queue within 3 seconds if you want
 			// so we have to check here too.
 			setTimeout(() => {
 				if (enabledModules["AutoQueue"]) game.requestQueue();
-			}, 4e3);
+			}, 1.5e3);
 		}
 	`);
 	addModification('ClientSocket.on("CPacketUpdateStatus",h=>{', `
