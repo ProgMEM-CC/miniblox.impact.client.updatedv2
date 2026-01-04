@@ -26,8 +26,6 @@ body:
         you can either fork the repository and edit `vav4inject.js` or make a script [using the script manager](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/Script-Manager-(Quick-Start-for-developers)).
       placeholder: |
         Not because I said so, but because I don't want my mailbox to be blown up!
-      validation:
-        required: true
   - type: textarea
     attributes:
       label: "Are there any alternatives / workarounds you have considered?"
