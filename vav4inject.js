@@ -2299,7 +2299,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 						const inGame = game.inGame();
 						// the reason for this is that FPS and Ping aren't updated when you're not in a game.
 						const extraElements = inGame ? [
-							{ type: "text", content: \`\${fps} FPS\`, x: 100, y: 0, color: "#0FB3A0", size: 18 },
+							{ type: "text", content: \`\${fps} FPS\`, x: 100, y: -2, color: "#0FB3A0", size: 18 },
 							{ type: "text", content: \`\${ping} Ping\`, x: 100, y: 12, color: "#0FB3A0", size: 12 }
 						] : [];
 						const baseWidth = inGame ? 320 : 220;
