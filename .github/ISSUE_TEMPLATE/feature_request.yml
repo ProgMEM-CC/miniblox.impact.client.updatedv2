@@ -1,0 +1,36 @@
+name: Feature request
+about: Suggest an idea for this project
+title: ''
+labels: ''
+assignees: ''
+
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: "What should we add?"
+      description: |
+        Sadly, reading other people's minds while being miles away hasn't been discovered yet.
+        So, what do you want us to add?
+      placeholder: |
+        An option in inventory cleaner that removes pipe bombs from my mailbox
+  - type: textarea
+    id: why
+    attributes:
+      label: "Why should we add it?"
+      description: |
+        Why *should* we add this feature?
+        If it only helps i.e. you, it doesn't really make a difference for everyone except you.
+        And if a feature takes a lot of effort and it only helps you, then why would we implement it?
+        In those cases, if your feature is rejected / not implemented,
+        you can either fork the repository and edit `vav4inject.js` or make a script [using the script manager](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/Script-Manager-(Quick-Start-for-developers)).
+      placeholder: |
+        Not because I said so, but because I don't want my mailbox to be blown up!
+    validation:
+        required: true
+    - type: textarea
+      label: "Are there any alternatives / workarounds you have considered?"
+      placeholder: |
+        - Petting my cat (worked because I'm happy then)
+        - Making my cat go purr (worked because my cat is happen and I am also happy)
+        - Removing the pipe bomb from the mailbox (they just have to add it at 3 am, and I can't stay up 24/8)
