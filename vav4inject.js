@@ -2384,12 +2384,9 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 
 					// Set default display (updated every 550ms)
 					const updateDefaultDisplay = () => {
-						// Only update if no other module is showing (check if current request is the default display itself)
-						if (!enabledModules["DynamicIsland"]) return;
-						
-						// Don't update if another module is actively showing something
-						if (dynamicIslandCurrentRequest && 
-							dynamicIslandCurrentRequest !== dynamicIslandDefaultDisplay) return;
+						// duration is 0 for only the default display
+						if (!enabledModules["DynamicIsland"]
+							|| (dynamicIslandCurrentRequest && dynamicIslandCurrentRequest.duration !== 0)) return;
 
 						const fps = Math.floor(game.resourceMonitor.filteredFPS);
 						// do NOT use instantPing, it is never updated. use filteredPing instead.
@@ -2408,61 +2405,36 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 								? \`\${minutes}m \${seconds}s\`
 								: \`\${seconds}s\`;
 
-						// Get server name and player name
-						const serverName = game.serverInfo?.serverName || "Menu";
-						const playerName = player?.name || "Unknown";
-
 						// Pill-shaped horizontal layout with even spacing
 						if (inGame) {
+							const width = 406;
+							const logoX = - (width / 2 - 30);
 							dynamicIslandDefaultDisplay = {
 								duration: 0,
-								width: 520,
+								width,
 								height: 45,
 								elements: [
 									// Logo
-									{ type: "image", src: "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: -240, y: 0, width: 22, height: 22 },
+									{ type: "image", src: "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: logoX, y: 0, width: 22, height: 22 },
 									// Impact V6
-									{ type: "text", content: "Impact V6", x: -183, y: 0, color: "#fff", size: 13, bold: true },
-									// Separator 
-									{ type: "text", content: "|", x: -134, y: 0, color: "#444", size: 12 },
-									// FPS 
-									{ type: "text", content: \`\${fps} FPS\`, x: -100, y: 0, color: "#0FB3A0", size: 12, bold: true },
-									// Separator 
-									{ type: "text", content: "|", x: -65, y: 0, color: "#444", size: 12 },
-									// Ping 
-									{ type: "text", content: \`\${ping}ms\`, x: -33, y: 0, color: "#888", size: 12 },
-									// Separator 
-									{ type: "text", content: "|", x: 2, y: 0, color: "#444", size: 12 },
-									// Server
-									{ type: "text", content: serverName, x: 44, y: 0, color: "#fff", size: 11, bold: true },
-									// Separator 
-									{ type: "text", content: "|", x: 94, y: 0, color: "#444", size: 12 },
-									// Player 
-									{ type: "text", content: playerName, x: 136, y: 0, color: "#0FB3A0", size: 11, bold: true },
-									// Separator 
-									{ type: "text", content: "|", x: 190, y: 0, color: "#444", size: 12 },
+									{ type: "text", content: "Impact V6", x: 0, y: 0, color: "#fff", size: 13, bold: true },
+									{ type: "text", content: \`\${fps} FPS\`, x: 100, y: -4, color: "#0FB3A0", size: 18 },
+									{ type: "text", content: \`\${ping} Ping\`, x: 100, y: 12, color: "#0FB3A0", size: 12 },
 									// Session time 
-									{ type: "text", content: timeStr, x: 230, y: 0, color: "#ffd700", size: 11, bold: true }
+									{ type: "text", content: timeStr, x: -logoX, y: 0, color: "#ffd700", size: 11, bold: true }
 								]
 							};
 						} else {
+							const logoX = - (220 / 2) + 18;
 							dynamicIslandDefaultDisplay = {
 								duration: 0,
-								width: 340,
+								width: 220,
 								height: 45,
 								elements: [
 									// Logo
-									{ type: "image", src: "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: -145, y: 0, width: 22, height: 22 },
-									// Impact V6
-									{ type: "text", content: "Impact V6", x: -88, y: 0, color: "#fff", size: 13, bold: true },
-									// Separator 
-									{ type: "text", content: "|", x: -40, y: 0, color: "#444", size: 12 },
-									// Player 
-									{ type: "text", content: playerName, x: 17, y: 0, color: "#0FB3A0", size: 11, bold: true },
-									// Separator 
-									{ type: "text", content: "|", x: 77, y: 0, color: "#444", size: 12 },
-									// Session time 
-									{ type: "text", content: timeStr, x: 100, y: 0, color: "#ffd700", size: 11, bold: true }
+									{ type: "image", src: "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: logoX, y: 0, width: 22, height: 22 },
+									{ type: "text", content: "Impact V6", x: 0, y: 0, color: "#fff", size: 13, bold: true },
+									{ type: "text", content: timeStr, x: -logoX, y: 0, color: "#ffd700", size: 11, bold: true }
 								]
 							};
 						}
