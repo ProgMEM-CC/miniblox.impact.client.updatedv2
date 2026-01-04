@@ -2359,11 +2359,13 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 
 						// Pill-shaped horizontal layout with even spacing
 						if (inGame) {
-							const width = 406;
-							const logoX = - (width / 2 - 30);
+							const baseWidth = 406;
+							const estimatedTimeLen = timeStr.length * 11;
+							const timeAccountedWidth = baseWidth + estimatedTimeLen;
+							const logoX = - (timeAccountedWidth / 2 - 30);
 							dynamicIslandDefaultDisplay = {
 								duration: 0,
-								width,
+								width: timeAccountedWidth,
 								height: 45,
 								elements: [
 									// Logo
@@ -2377,10 +2379,14 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 								]
 							};
 						} else {
-							const logoX = - (220 / 2) + 18;
+							const baseWidth = 220;
+							const estimatedTimeLen = timeStr.length * 11;
+							// a tiny bit of padding
+							const timeAccountedWidth = baseWidth + estimatedTimeLen;
+							const logoX = - (timeAccountedWidth / 2) + 18;
 							dynamicIslandDefaultDisplay = {
 								duration: 0,
-								width: 220,
+								width: timeAccountedWidth,
 								height: 45,
 								elements: [
 									// Logo
