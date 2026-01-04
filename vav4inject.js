@@ -640,20 +640,6 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	addModification('this.game.info.showSignEditor=null,exitPointerLock())', `
 		if (this.showDeathScreen && enabledModules["AutoRespawn"]) {
 			ClientSocket.sendPacket(new SPacketRespawn$1);
-			
-			// Dynamic Island notification
-			if (enabledModules["DynamicIsland"]) {
-				const dynamicIsland = globalThis.${storeName}.dynamicIsland;
-				dynamicIsland.show({
-					duration: 1500,
-					width: 220,
-					height: 60,
-					elements: [
-						{ type: "text", content: "Respawned", x: 0, y: -8, color: "#fff", size: 13, bold: true },
-						{ type: "text", content: "Auto respawn", x: 0, y: 12, color: "#888", size: 11 }
-					]
-				});
-			}
 		}
 	`);
 
@@ -1296,23 +1282,6 @@ clientVersion: VERSION$1
 
 	// ANTIBLIND
 	addModification("player.isPotionActive(Potions.blindness)", 'player.isPotionActive(Potions.blindness) && !enabledModules["AntiBlind"]', true);
-	
-	// ANTIBLIND NOTIFICATION HOOK
-	addModification('this.activePotionEffects.set(h.id,h)', `
-		this.activePotionEffects.set(h.id,h);
-		if (h.id === Potions.blindness.id && enabledModules["AntiBlind"] && enabledModules["DynamicIsland"]) {
-			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
-			dynamicIsland.show({
-				duration: 2000,
-				width: 260,
-				height: 60,
-				elements: [
-					{ type: "text", content: "Anti Blinded", x: 0, y: -8, color: "#fff", size: 14, bold: true },
-					{ type: "text", content: "Blindness removed", x: 0, y: 12, color: "#888", size: 11 }
-				]
-			});
-		}
-	`, true);
 
 	// MAIN
 	addModification('document.addEventListener("contextmenu",m=>m.preventDefault());', /*js*/`
@@ -1844,27 +1813,10 @@ clientVersion: VERSION$1
 			new Module("AntiVoid", function(callback) {
 				if (callback) {
 					let ticks = 0;
-					let lastVoidWarning = 0;
 					tickLoop["AntiVoid"] = function() {
         				const ray = rayTraceBlocks(player.getEyePos(), player.getEyePos().clone().setY(0), false, false, false, game.world);
 						if (!ray) {
 							player.motion.y = 0;
-							
-							// Show warning every 2 seconds
-							const now = Date.now();
-							if (now - lastVoidWarning > 2000 && enabledModules["DynamicIsland"]) {
-								lastVoidWarning = now;
-								const dynamicIsland = globalThis.${storeName}.dynamicIsland;
-								dynamicIsland.show({
-									duration: 1500,
-									width: 240,
-									height: 60,
-									elements: [
-										{ type: "text", content: "AntiVoid", x: 0, y: -8, color: "#ff4444", size: 13, bold: true },
-										{ type: "text", content: "Void detected", x: 0, y: 12, color: "#888", size: 11 }
-									]
-								});
-							}
 						}
 					};
 				}
