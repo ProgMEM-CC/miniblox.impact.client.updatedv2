@@ -2296,45 +2296,21 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 						const ping = Math.floor(game.resourceMonitor.filteredPing);
 
 						const inGame = game.inGame();
-
 						// the reason for this is that FPS and Ping aren't updated when you're not in a game.
 						const extraElements = inGame ? [
 							{ type: "text", content: \`\${fps} FPS\`, x: 100, y: -2, color: "#0FB3A0", size: 18 },
 							{ type: "text", content: \`\${ping} Ping\`, x: 100, y: 12, color: "#0FB3A0", size: 12 }
 						] : [];
-						const baseWidth = inGame ? 320 : 285;
+						const baseWidth = inGame ? 320 : 220;
 						const logoX = inGame ? - (baseWidth / 2 - 30) : - (baseWidth / 2) + 18;
-						const showServicesData = Services.enabled && servicesName[1] !== SERVICES_UNSET_NAME;
-						const servicesData = showServicesData ? {
-							type: "text",
-							content: \`• \${servicesName[1]}\`,
-							x: logoX + 47,
-							y: 0,
-							color: "#fff",
-							size: 18
-						} : undefined;
 
 						dynamicIslandDefaultDisplay = {
 							duration: 0,
 							width: baseWidth,
 							height: inGame ? 60 : 40,
 							elements: [
-								{
-									type: "image",
-									src: "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true",
-									x: logoX,
-									y: 0,
-									height: 25
-								},
-								servicesData,
-								{
-									type: "text",
-									content: \`Impact v6\`,
-									x: showServicesData ? (servicesName[1].length + 2) * 2 : 0, y: 0,
-									color: "#fff",
-									size: 18,
-									bold: true
-								},
+								{ type: "image", src: "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: logoX, y: 0, height: 25},
+								{ type: "text", content: \`Impact v6\`, x: 0, y: 0, color: "#fff", size: 18, bold: true },
 								...extraElements
 							]
 						};
