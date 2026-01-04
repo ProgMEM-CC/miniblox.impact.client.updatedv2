@@ -227,6 +227,22 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 					title: \`\${entity.name} IS THE MURDERER!\`,
 					status: "warning"
 				});
+				
+				// Dynamic Island notification
+				if (enabledModules["DynamicIsland"]) {
+					const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+					const cleanName = entity.name.replace(/\\\\[a-z]+\\\\/g, '');
+					dynamicIsland.show({
+						duration: 4000,
+						width: 300,
+						height: 70,
+						elements: [
+							{ type: "text", content: "⚔️ Murderer Detected", x: 0, y: -15, color: "#ff4444", size: 14, bold: true },
+							{ type: "text", content: cleanName, x: 0, y: 5, color: "#fff", size: 13, bold: true },
+							{ type: "text", content: "Holding sword", x: 0, y: 22, color: "#888", size: 10 }
+						]
+					});
+				}
 			}
 			if (item instanceof ItemBow) {
 				autoToggleShowNametagStuff();
@@ -234,6 +250,22 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 					title: \`\${entity.name} has a bow.\`,
 					color: "blue"
 				});
+				
+				// Dynamic Island notification
+				if (enabledModules["DynamicIsland"]) {
+					const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+					const cleanName = entity.name.replace(/\\\\[a-z]+\\\\/g, '');
+					dynamicIsland.show({
+						duration: 4000,
+						width: 300,
+						height: 70,
+						elements: [
+							{ type: "text", content: "🏹 Bow Detected", x: 0, y: -15, color: "#0FB3A0", size: 14, bold: true },
+							{ type: "text", content: cleanName, x: 0, y: 5, color: "#fff", size: 13, bold: true },
+							{ type: "text", content: "Holding bow", x: 0, y: 22, color: "#888", size: 10 }
+						]
+					});
+				}
 			}
 			console.log(\`\${entity.name} is holding\`, item);
 		}
@@ -1236,6 +1268,23 @@ clientVersion: VERSION$1
 
 	// ANTIBLIND
 	addModification("player.isPotionActive(Potions.blindness)", 'player.isPotionActive(Potions.blindness) && !enabledModules["AntiBlind"]', true);
+	
+	// ANTIBLIND NOTIFICATION HOOK
+	addModification('this.activePotionEffects.set(h.id,h)', `
+		this.activePotionEffects.set(h.id,h);
+		if (h.id === Potions.blindness.id && enabledModules["AntiBlind"] && enabledModules["DynamicIsland"]) {
+			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+			dynamicIsland.show({
+				duration: 2000,
+				width: 260,
+				height: 60,
+				elements: [
+					{ type: "text", content: "Anti Blinded", x: 0, y: -8, color: "#fff", size: 14, bold: true },
+					{ type: "text", content: "Blindness removed", x: 0, y: 12, color: "#888", size: 11 }
+				]
+			});
+		}
+	`, true);
 
 	// MAIN
 	addModification('document.addEventListener("contextmenu",m=>m.preventDefault());', /*js*/`
@@ -2253,6 +2302,9 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			// });
 
 			// === Dynamic Island Module ===
+			// Session start time (global scope)
+			let sessionStartTime = Date.now();
+			
 			const dynamicIslandModule = new Module("DynamicIsland", function(enabled) {
 				if (enabled) {
 					// Create DOM element
@@ -2285,35 +2337,90 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					dynamicIslandElement.appendChild(dynamicIslandContent);
 					document.body.appendChild(dynamicIslandElement);
 
-					// Set default display (updated every 100ms)
+					// Set default display (updated every 550ms)
 					const updateDefaultDisplay = () => {
-						// duration is 0 for only the default display
-						if (!enabledModules["DynamicIsland"]
-							|| (dynamicIslandCurrentRequest && dynamicIslandCurrentRequest.duration !== 0)) return;
+						// Only update if no other module is showing (check if current request is the default display itself)
+						if (!enabledModules["DynamicIsland"]) return;
+						
+						// Don't update if another module is actively showing something
+						if (dynamicIslandCurrentRequest && 
+							dynamicIslandCurrentRequest !== dynamicIslandDefaultDisplay) return;
 
 						const fps = Math.floor(game.resourceMonitor.filteredFPS);
 						// do NOT use instantPing, it is never updated. use filteredPing instead.
 						const ping = Math.floor(game.resourceMonitor.filteredPing);
 
 						const inGame = game.inGame();
-						// the reason for this is that FPS and Ping aren't updated when you're not in a game.
-						const extraElements = inGame ? [
-							{ type: "text", content: \`\${fps} FPS\`, x: 100, y: -2, color: "#0FB3A0", size: 18 },
-							{ type: "text", content: \`\${ping} Ping\`, x: 100, y: 12, color: "#0FB3A0", size: 12 }
-						] : [];
-						const baseWidth = inGame ? 320 : 220;
-						const logoX = inGame ? - (baseWidth / 2 - 30) : - (baseWidth / 2) + 18;
+						
+						// Calculate session time
+						const sessionTime = Math.floor((Date.now() - sessionStartTime) / 1000);
+						const hours = Math.floor(sessionTime / 3600);
+						const minutes = Math.floor((sessionTime % 3600) / 60);
+						const seconds = sessionTime % 60;
+						const timeStr = hours > 0 
+							? \`\${hours}h \${minutes}m\`
+							: minutes > 0 
+								? \`\${minutes}m \${seconds}s\`
+								: \`\${seconds}s\`;
 
-						dynamicIslandDefaultDisplay = {
-							duration: 0,
-							width: baseWidth,
-							height: inGame ? 60 : 40,
-							elements: [
-								{ type: "image", src: "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: logoX, y: 0, height: 25},
-								{ type: "text", content: \`Impact v6\`, x: 0, y: 0, color: "#fff", size: 18, bold: true },
-								...extraElements
-							]
-						};
+						// Get server name and player name
+						const serverName = game.serverInfo?.serverName || "Menu";
+						const playerName = player?.name || "Unknown";
+
+						// Pill-shaped horizontal layout with even spacing
+						if (inGame) {
+							dynamicIslandDefaultDisplay = {
+								duration: 0,
+								width: 520,
+								height: 45,
+								elements: [
+									// Logo
+									{ type: "image", src: "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: -240, y: 0, width: 22, height: 22 },
+									// Impact V6
+									{ type: "text", content: "Impact V6", x: -183, y: 0, color: "#fff", size: 13, bold: true },
+									// Separator 
+									{ type: "text", content: "|", x: -134, y: 0, color: "#444", size: 12 },
+									// FPS 
+									{ type: "text", content: \`\${fps} FPS\`, x: -100, y: 0, color: "#0FB3A0", size: 12, bold: true },
+									// Separator 
+									{ type: "text", content: "|", x: -65, y: 0, color: "#444", size: 12 },
+									// Ping 
+									{ type: "text", content: \`\${ping}ms\`, x: -33, y: 0, color: "#888", size: 12 },
+									// Separator 
+									{ type: "text", content: "|", x: 2, y: 0, color: "#444", size: 12 },
+									// Server
+									{ type: "text", content: serverName, x: 44, y: 0, color: "#fff", size: 11, bold: true },
+									// Separator 
+									{ type: "text", content: "|", x: 94, y: 0, color: "#444", size: 12 },
+									// Player 
+									{ type: "text", content: playerName, x: 136, y: 0, color: "#0FB3A0", size: 11, bold: true },
+									// Separator 
+									{ type: "text", content: "|", x: 190, y: 0, color: "#444", size: 12 },
+									// Session time 
+									{ type: "text", content: timeStr, x: 230, y: 0, color: "#ffd700", size: 11, bold: true }
+								]
+							};
+						} else {
+							dynamicIslandDefaultDisplay = {
+								duration: 0,
+								width: 340,
+								height: 45,
+								elements: [
+									// Logo
+									{ type: "image", src: "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: -145, y: 0, width: 22, height: 22 },
+									// Impact V6
+									{ type: "text", content: "Impact V6", x: -88, y: 0, color: "#fff", size: 13, bold: true },
+									// Separator 
+									{ type: "text", content: "|", x: -40, y: 0, color: "#444", size: 12 },
+									// Player 
+									{ type: "text", content: playerName, x: 17, y: 0, color: "#0FB3A0", size: 11, bold: true },
+									// Separator 
+									{ type: "text", content: "|", x: 77, y: 0, color: "#444", size: 12 },
+									// Session time 
+									{ type: "text", content: timeStr, x: 100, y: 0, color: "#ffd700", size: 11, bold: true }
+								]
+							};
+						}
 						
 						dynamicIsland.show(dynamicIslandDefaultDisplay);
 					};
@@ -4123,6 +4230,21 @@ ljdesync = longjump.addoption("Desync", Boolean, true);  // toggle desync mode
 const survival = new Module("SurvivalMode", function(callback) {
 				if (callback) {
 					if (player) player.setGamemode(GameMode.fromId("survival"));
+					
+					// Dynamic Island notification
+					if (enabledModules["DynamicIsland"]) {
+						const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+						dynamicIsland.show({
+							duration: 2000,
+							width: 280,
+							height: 60,
+							elements: [
+								{ type: "text", content: "Survival Mode", x: 0, y: -8, color: "#fff", size: 14, bold: true },
+								{ type: "text", content: "Gamemode changed", x: 0, y: 12, color: "#888", size: 11 }
+							]
+						});
+					}
+					
 					survival.toggleSilently();
 				}
 			}, "Misc", () => "Spoof");
