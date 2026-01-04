@@ -244,7 +244,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 				width: 250,
 				height: 50,
 				elements: [
-					{ type: "text", content: "Generating account", x: 0, y: 0, size: 18 }
+					{ type: "text", content: "Generating account", x: 125, y: 0, size: 18 }
 				]
 			});
 			const res = await fetch(accountGenEndpoint[1]);
@@ -257,7 +257,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 				height: 45,
 				elements: [
 					// centered on x and y
-					{ type: "text", content: \`Generated account: \${j.name}\`, x: 0, y: 0, size: 18 }
+					{ type: "text", content: \`Generated account: \${j.name}\`, x: 127.5, y: 0, size: 18 }
 				]
 			});
 			return j;
@@ -444,7 +444,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 				width: 330,
 				height: 67,
 				elements: [
-					{ type: "text", content: "Voting for #2 (Overpowered)", x: 0, y: 0, size: 18 }
+					{ type: "text", content: "Voting for #2 (Overpowered)", x: 165, y: 0, size: 18 }
 				]
 			});
 			// vote for option 2 (Overpowered)
@@ -460,8 +460,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 				width: 370,
 				height: 67,
 				elements: [
-					// centered on x and y
-					{ type: "text", content: "Queueing next game in 1.5 seconds", x: 0, y: 0, size: 18 }
+					{ type: "text", content: "Queueing next game in 1.5 seconds", x: 185, y: 0, size: 18 }
 				]
 			});
 			// I'd hope you could disable auto queue within 3 seconds if you want
@@ -2303,14 +2302,16 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 							{ type: "text", content: \`\${fps} FPS\`, x: 100, y: 0, color: "#0FB3A0", size: 18 },
 							{ type: "text", content: \`\${ping} Ping\`, x: 100, y: 12, color: "#0FB3A0", size: 12 }
 						] : [];
+						const baseWidth = inGame ? 320 : 220;
+						const logoX = inGame ? - (baseWidth / 2 - 30) : - (baseWidth / 2) + 18;
 
 						dynamicIslandDefaultDisplay = {
 							duration: 0,
-							width: inGame ? 300 : 200,
+							width: baseWidth,
 							height: inGame ? 60 : 40,
 							elements: [
-								{ type: "image", src: "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: inGame ? -130 : -75, y: 0, height: 25},
-								{ type: "text", content: \`Impact v6\`, x: inGame ? -60 : 0, y: 0, color: "#fff", size: 18, bold: true },
+								{ type: "image", src: "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: logoX, y: 0, height: 25},
+								{ type: "text", content: \`Impact v6\`, x: 0, y: 0, color: "#fff", size: 18, bold: true },
 								...extraElements
 							]
 						};
