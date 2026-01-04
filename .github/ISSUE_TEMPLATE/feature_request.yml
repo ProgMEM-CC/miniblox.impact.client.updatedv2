@@ -12,8 +12,10 @@ body:
       description: |
         Sadly, reading other people's minds while being miles away hasn't been discovered yet.
         So, what do you want us to add?
+
       placeholder: |
         An option in inventory cleaner that removes pipe bombs from my mailbox
+
   - type: textarea
     id: why
     attributes:
