@@ -227,6 +227,22 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 					title: \`\${entity.name} IS THE MURDERER!\`,
 					status: "warning"
 				});
+				
+				// Dynamic Island notification
+				if (enabledModules["DynamicIsland"]) {
+					const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+					const cleanName = entity.name.replace(/\\\\[a-z]+\\\\/g, '');
+					dynamicIsland.show({
+						duration: 4000,
+						width: 300,
+						height: 70,
+						elements: [
+							{ type: "text", content: "⚔️ Murderer Detected", x: 0, y: -15, color: "#ff4444", size: 14, bold: true },
+							{ type: "text", content: cleanName, x: 0, y: 5, color: "#fff", size: 13, bold: true },
+							{ type: "text", content: "Holding sword", x: 0, y: 22, color: "#888", size: 10 }
+						]
+					});
+				}
 			}
 			if (item instanceof ItemBow) {
 				autoToggleShowNametagStuff();
@@ -234,23 +250,46 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 					title: \`\${entity.name} has a bow.\`,
 					color: "blue"
 				});
+				
+				// Dynamic Island notification
+				if (enabledModules["DynamicIsland"]) {
+					const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+					const cleanName = entity.name.replace(/\\\\[a-z]+\\\\/g, '');
+					dynamicIsland.show({
+						duration: 4000,
+						width: 300,
+						height: 70,
+						elements: [
+							{ type: "text", content: "🏹 Bow Detected", x: 0, y: -15, color: "#0FB3A0", size: 14, bold: true },
+							{ type: "text", content: cleanName, x: 0, y: 5, color: "#fff", size: 13, bold: true },
+							{ type: "text", content: "Holding bow", x: 0, y: 22, color: "#888", size: 10 }
+						]
+					});
+				}
 			}
 			console.log(\`\${entity.name} is holding\`, item);
 		}
 		async function generateAccount() {
-			toast({
-				title: "generating miniblox account via integration...",
-				status: "info",
-				duration: 0.3e3
+			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+			dynamicIsland.show({
+				duration: 1.5e3,
+				width: 250,
+				height: 50,
+				elements: [
+					{ type: "text", content: "Generating account", x: 0, y: 0, size: 18 }
+				]
 			});
 			const res = await fetch(accountGenEndpoint[1]);
 			if (!res.ok)
 				throw await res.text();
 			const j = await res.json();
-			toast({
-				title: \`Generated a miniblox account! named \${j.name}!\`,
-				status: "success",
-				duration: 1e3
+			dynamicIsland.show({
+				duration: 1e3,
+				width: 255,
+				height: 45,
+				elements: [
+					{ type: "text", content: \`Generated account: \${j.name}\`, x: 0, y: 0, size: 18 }
+				]
 			});
 			return j;
 		}
@@ -411,6 +450,20 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 	addModification('SliderOption("Render Distance ",2,8,3)', 'SliderOption("Render Distance ",2,64,3)', true);
 	addModification('ClientSocket.on("CPacketDisconnect",h=>{', `
 		if (enabledModules["AutoRejoin"]) {
+			// Show notification
+			if (enabledModules["DynamicIsland"]) {
+				const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+				dynamicIsland.show({
+					duration: 2000,
+					width: 260,
+					height: 60,
+					elements: [
+						{ type: "text", content: "AutoRejoin", x: 0, y: -8, color: "#fff", size: 13, bold: true },
+						{ type: "text", content: "Rejoining in 0.4s", x: 0, y: 12, color: "#888", size: 11 }
+					]
+				});
+			}
+			
 			setTimeout(function() {
 				game.connect(lastJoined);
 			}, 400);
@@ -430,11 +483,36 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 		}
 
 		if (h.text && h.text.indexOf("Poll started") != -1 && h.id == undefined && enabledModules["AutoVote"]) {
+			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+			dynamicIsland.show({
+				duration: 3e3,
+				width: 330,
+				height: 67,
+				elements: [
+					{ type: "text", content: "Voting for #2 (Overpowered)", x: 0, y: 0, size: 18 }
+				]
+			});
+			// vote for option 2 (Overpowered)
 			ClientSocket.sendPacket(new SPacketMessage({text: "/vote 2"}));
 		}
 
-		if (h.text && h.text.indexOf("won the game") != -1 && h.id == undefined && enabledModules["AutoQueue"]) {
-			game.requestQueue();
+		// console.info("Message (text and ID): ", h.text, h.id);
+
+		if (h.text.endsWith("Press N to queue for the next game!") && h.id == undefined && enabledModules["AutoQueue"]) {
+			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+			dynamicIsland.show({
+				duration: 1.55e3, // 1.55 seconds (e3 means 3 extra 0's)
+				width: 370,
+				height: 67,
+				elements: [
+					{ type: "text", content: "Queueing next game in 1.5 seconds", x: 0, y: 0, size: 18 }
+				]
+			});
+			// I'd hope you could disable auto queue within 3 seconds if you want
+			// so we have to check here too.
+			setTimeout(() => {
+				if (enabledModules["AutoQueue"]) game.requestQueue();
+			}, 1.5e3);
 		}
 	`);
 	addModification('ClientSocket.on("CPacketUpdateStatus",h=>{', `
@@ -562,6 +640,20 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	addModification('this.game.info.showSignEditor=null,exitPointerLock())', `
 		if (this.showDeathScreen && enabledModules["AutoRespawn"]) {
 			ClientSocket.sendPacket(new SPacketRespawn$1);
+			
+			// Dynamic Island notification
+			if (enabledModules["DynamicIsland"]) {
+				const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+				dynamicIsland.show({
+					duration: 1500,
+					width: 220,
+					height: 60,
+					elements: [
+						{ type: "text", content: "Respawned", x: 0, y: -8, color: "#fff", size: 13, bold: true },
+						{ type: "text", content: "Auto respawn", x: 0, y: 12, color: "#888", size: 11 }
+					]
+				});
+			}
 		}
 	`);
 
@@ -797,7 +889,7 @@ clientVersion: VERSION$1
 						});
 					}
 					else if (mName == "all") {
-						for(const [name, module] of Object.entries(modules)) module.toggle();
+						for(const [name, module] of Object.entries(modules)) module.toggleSilently();
 					}
 				}
 				return this.closeInput();
@@ -1182,7 +1274,7 @@ clientVersion: VERSION$1
 			}
 			case ".scriptmanager": {
 				if (!modules["ScriptManager"].enabled) {
-					modules["ScriptManager"].toggle();
+					modules["ScriptManager"].toggleSilently();
 				}
 				return this.closeInput();
 			}
@@ -1204,6 +1296,23 @@ clientVersion: VERSION$1
 
 	// ANTIBLIND
 	addModification("player.isPotionActive(Potions.blindness)", 'player.isPotionActive(Potions.blindness) && !enabledModules["AntiBlind"]', true);
+	
+	// ANTIBLIND NOTIFICATION HOOK
+	addModification('this.activePotionEffects.set(h.id,h)', `
+		this.activePotionEffects.set(h.id,h);
+		if (h.id === Potions.blindness.id && enabledModules["AntiBlind"] && enabledModules["DynamicIsland"]) {
+			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+			dynamicIsland.show({
+				duration: 2000,
+				width: 260,
+				height: 60,
+				elements: [
+					{ type: "text", content: "Anti Blinded", x: 0, y: -8, color: "#fff", size: 14, bold: true },
+					{ type: "text", content: "Blindness removed", x: 0, y: 12, color: "#888", size: 11 }
+				]
+			});
+		}
+	`, true);
 
 	// MAIN
 	addModification('document.addEventListener("contextmenu",m=>m.preventDefault());', /*js*/`
@@ -1228,8 +1337,17 @@ clientVersion: VERSION$1
 					this.category = category;
 					modules[this.name] = this;
 				}
-				toggle() {
+				/** toggles the module without i.e. the notifications */
+				toggleSilently() {
 					this.setEnabled(!this.enabled);
+				}
+				/** toggles to notification and shows the dynamic island if DynamicIsland */
+				toggle() {
+					this.toggleSilently();
+					// Show Dynamic Island on toggle
+					if (enabledModules["DynamicIsland"]) {
+						moduleToggleDisplay.show(this.name, this.enabled);
+					}
 				}
 				setEnabled(enabled) {
 					this.enabled = enabled;
@@ -1263,6 +1381,219 @@ clientVersion: VERSION$1
 				}
 			}
 
+			// === Dynamic Island System ===
+			let dynamicIslandElement = null;
+			let dynamicIslandContent = null;
+			let dynamicIslandTimeout = null;
+			let dynamicIslandCurrentRequest = null;
+			let dynamicIslandDefaultDisplay = null;
+			let dynamicIslandUpdateInterval = null;
+
+			const dynamicIsland = {
+				/** do NOT use a duration of 0, it is reserved for the default display. */
+				show(request) {
+					if (!dynamicIslandElement) return;
+
+					// Clear existing timeout
+					if (dynamicIslandTimeout) clearTimeout(dynamicIslandTimeout);
+
+					// Check if content is the same (avoid unnecessary re-render)
+					const requestKey = JSON.stringify(request);
+					if (this.lastRequestKey === requestKey) return;
+					this.lastRequestKey = requestKey;
+
+					// Store current request
+					dynamicIslandCurrentRequest = request;
+
+					// Update size
+					dynamicIslandElement.style.width = request.width + "px";
+					dynamicIslandElement.style.height = request.height + "px";
+					
+					// Store dimensions for coordinate conversion
+					this.currentWidth = request.width;
+					this.currentHeight = request.height;
+					
+					// Render elements
+					this.renderElements(request.elements);
+					
+					// Set timeout to return to default
+					if (request.duration > 0) {
+						dynamicIslandTimeout = setTimeout(() => {
+							this.hide();
+						}, request.duration);
+					}
+				},
+				
+				hide() {
+					if (dynamicIslandTimeout) clearTimeout(dynamicIslandTimeout);
+					dynamicIslandCurrentRequest = null;
+					if (dynamicIslandDefaultDisplay) {
+						this.show(dynamicIslandDefaultDisplay);
+					}
+				},
+				
+				renderElements(elements) {
+					if (!dynamicIslandContent) return;
+
+					// Clear existing content
+					dynamicIslandContent.innerHTML = "";
+
+					// Render each element
+					for (const element of elements) {
+						const el = this.createElement(element);
+						if (el) dynamicIslandContent.appendChild(el);
+					}
+				},
+
+				createElement(element) {
+					const el = document.createElement("div");
+					el.style.position = "absolute";
+					el.style.left = element.x + "px";
+					el.style.top = element.y + "px";
+
+					switch (element.type) {
+						case "text":
+							return this.createTextElement(element);
+						case "progress":
+							return this.createProgressElement(element);
+						case "toggle":
+							return this.createToggleElement(element);
+						case "image":
+							return this.createImageElement(element);
+					}
+					return null;
+				},
+
+				createTextElement(element) {
+					const centerX = this.currentWidth / 2;
+					const centerY = this.currentHeight / 2;
+					const el = document.createElement("div");
+					el.style.cssText = \`
+						position: absolute;
+						left: \${centerX + element.x}px;
+						top: \${centerY + element.y}px;
+						color: \${element.color || "#fff"};
+						font-size: \${element.size || 14}px;
+						font-weight: \${element.bold ? "bold" : "normal"};
+						white-space: nowrap;
+						transform: translate(-50%, -50%);
+						\${element.shadow ? "text-shadow: 1px 1px 2px rgba(0,0,0,0.8);" : ""}
+					\`;
+					el.textContent = element.content;
+					return el;
+				},
+				
+				createProgressElement(element) {
+					const centerX = this.currentWidth / 2;
+					const centerY = this.currentHeight / 2;
+					const container = document.createElement("div");
+					container.style.cssText = \`
+						position: absolute;
+						left: \${centerX + element.x}px;
+						top: \${centerY + element.y}px;
+						width: \${element.width}px;
+						height: \${element.height}px;
+						background: \${element.bgColor || "#333"};
+						border-radius: \${element.rounded ? (element.height / 2) + "px" : "0"};
+						overflow: hidden;
+						transform: translate(-50%, -50%);
+					\`;
+					
+					const bar = document.createElement("div");
+					bar.style.cssText = \`
+						width: \${element.value * 100}%;
+						height: 100%;
+						background: \${element.color || "#0FB3A0"};
+						transition: width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+					\`;
+					
+					container.appendChild(bar);
+					return container;
+				},
+				
+				createToggleElement(element) {
+					const centerX = this.currentWidth / 2;
+					const centerY = this.currentHeight / 2;
+					const size = element.size || 30;
+					const container = document.createElement("div");
+					container.style.cssText = \`
+						position: absolute;
+						left: \${centerX + element.x}px;
+						top: \${centerY + element.y}px;
+						width: \${size * 1.8}px;
+						height: \${size}px;
+						background: \${element.state ? "#0FB3A0" : "#555"};
+						border-radius: \${size / 2}px;
+						transition: background 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+						transform: translate(-50%, -50%);
+					\`;
+					
+					const circle = document.createElement("div");
+					const circleSize = size * 0.8;
+					circle.style.cssText = \`
+						width: \${circleSize}px;
+						height: \${circleSize}px;
+						background: #fff;
+						border-radius: 50%;
+						position: absolute;
+						top: \${(size - circleSize) / 2}px;
+						left: \${element.state ? (size * 1.8 - circleSize - (size - circleSize) / 2) : ((size - circleSize) / 2)}px;
+						transition: left 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+						box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+					\`;
+					
+					// Handle animation flag
+					if (element.animate) {
+						// Start from opposite state
+						circle.style.left = element.state ? ((size - circleSize) / 2) + "px" : (size * 1.8 - circleSize - (size - circleSize) / 2) + "px";
+						// Trigger animation immediately after render
+						requestAnimationFrame(() => {
+							circle.style.left = element.state ? (size * 1.8 - circleSize - (size - circleSize) / 2) + "px" : ((size - circleSize) / 2) + "px";
+						});
+					}
+					
+					container.appendChild(circle);
+					return container;
+				},
+				
+				createImageElement(element) {
+					const centerX = this.currentWidth / 2;
+					const centerY = this.currentHeight / 2;
+					const img = document.createElement("img");
+					img.style.cssText = \`
+						position: absolute;
+						left: \${centerX + element.x}px;
+						top: \${centerY + element.y}px;
+						width: \${element.width}px;
+						height: \${element.height}px;
+						transform: translate(-50%, -50%);
+					\`;
+					img.src = typeof element.src === "string" ? element.src : element.src.src;
+					return img;
+				},
+				
+				updateVariables() {
+					// No longer needed, but kept for compatibility
+				}
+			};
+
+			// Module toggle display system
+			const moduleToggleDisplay = {
+				show(moduleName, enabled) {
+					dynamicIsland.show({
+						duration: 1000,
+						width: 300,
+						height: 60,
+						elements: [
+							{ type: "text", content: moduleName, x: 10, y: -8, color: "#fff", size: 18, bold: true },
+							{ type: "text", content: enabled ? "ENABLED" : "DISABLED", x: 10, y: 12, 
+								color: enabled ? "#0FB3A0" : "#ff4444", size: 12, bold: true },
+							{ type: "toggle", state: enabled, x: -100, y: 0, size: 30, animate: true }
+						]
+					});
+				}
+			};
+
 			// === Custom Scripts Storage ===
 			if (typeof globalThis.${storeName} === "undefined") globalThis.${storeName} = {};
 			const customScripts = {};
@@ -1295,7 +1626,7 @@ clientVersion: VERSION$1
 				try {
 					// Try to remove the old module if it exists.
 					if (modules[name]) {
-						if (modules[name].enabled) modules[name].toggle();
+						if (modules[name].enabled) modules[name].toggleSilently();
 						delete modules[name];
 						delete enabledModules[name];
 					}
@@ -1336,7 +1667,7 @@ clientVersion: VERSION$1
 			
 			function deleteCustomScript(name) {
 				if (modules[name]) {
-					if (modules[name].enabled) modules[name].toggle();
+					if (modules[name].enabled) modules[name].toggleSilently();
 					delete modules[name];
 					delete enabledModules[name];
 				}
@@ -1513,10 +1844,27 @@ clientVersion: VERSION$1
 			new Module("AntiVoid", function(callback) {
 				if (callback) {
 					let ticks = 0;
+					let lastVoidWarning = 0;
 					tickLoop["AntiVoid"] = function() {
         				const ray = rayTraceBlocks(player.getEyePos(), player.getEyePos().clone().setY(0), false, false, false, game.world);
 						if (!ray) {
 							player.motion.y = 0;
+							
+							// Show warning every 2 seconds
+							const now = Date.now();
+							if (now - lastVoidWarning > 2000 && enabledModules["DynamicIsland"]) {
+								lastVoidWarning = now;
+								const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+								dynamicIsland.show({
+									duration: 1500,
+									width: 240,
+									height: 60,
+									elements: [
+										{ type: "text", content: "AntiVoid", x: 0, y: -8, color: "#ff4444", size: 13, bold: true },
+										{ type: "text", content: "Void detected", x: 0, y: 12, color: "#888", size: 11 }
+									]
+								});
+							}
 						}
 					};
 				}
@@ -1524,7 +1872,7 @@ clientVersion: VERSION$1
 			}, "Movement",() => "Ignore");
 
 			const criticals = new Module("Criticals", () => {}, "Combat", () => "Packet");
-			criticals.toggle();
+			criticals.toggleSilently();
 
 			// this is a very old crash method,
 			// bread (one of the devs behind atmosphere) found it
@@ -1585,6 +1933,8 @@ clientVersion: VERSION$1
 
 			// Killaura!
 			let attackDelay = Date.now();
+			let lastAttackTime = 0;
+			let killauraShowingDI = false;
 			let didSwing = false;
 			let attacked = 0;
 			let attackedPlayers = {};
@@ -1762,6 +2112,39 @@ clientVersion: VERSION$1
 
 						for(const entity of attackList) killauraAttack(entity, attackList[0] == entity);
 
+						// Update last attack time when attacking
+						if (attacked > 0) {
+							lastAttackTime = Date.now();
+						}
+
+						// Show Dynamic Island with target info (with 1 second grace period)
+						if (enabledModules["DynamicIsland"]) {
+							const timeSinceLastAttack = Date.now() - lastAttackTime;
+							if (attackList.length > 0 && attackList[0] && timeSinceLastAttack < 1000) {
+								const target = attackList[0];
+								const health = target.getHealth();
+								const maxHealth = 20;
+								// Remove rich text formatting
+								const cleanName = target.name.replace(/\\\\[a-z]+\\\\/g, '');
+								
+								dynamicIsland.show({
+									duration: 0,
+									width: 300,
+									height: 60,
+									elements: [
+										{ type: "text", content: cleanName, x: 0, y: -12, color: "#fff", size: 15, bold: true },
+										{ type: "text", content: Math.round(health) + "/" + maxHealth + " HP", x: 0, y: 8, color: "#aaa", size: 11 },
+										{ type: "progress", value: health / maxHealth, x: 0, y: 22, width: 260, height: 4, color: "#ff4444", rounded: true }
+									]
+								});
+								killauraShowingDI = true;
+							} else if (timeSinceLastAttack >= 1000 && killauraShowingDI) {
+								// Only hide if Killaura was showing it
+								dynamicIsland.hide();
+								killauraShowingDI = false;
+							}
+						}
+
 						if (attackList.length > 0) block();
 						else {
 							unblock();
@@ -1788,6 +2171,12 @@ clientVersion: VERSION$1
 					boxMeshes.splice(boxMeshes.length);
 					sendYaw = false;
 					unblock();
+					
+					// Hide Dynamic Island if Killaura was showing it
+					if (killauraShowingDI && enabledModules["DynamicIsland"]) {
+						dynamicIsland.hide();
+						killauraShowingDI = false;
+					}
 				}
 			}, "Combat", () => \`\${killaurarange[1]} block\${killaurarange[1] == 1 ? "" : "s"} \${killaurablock[1] ? "Auto Block" : ""}\`);
 			killaurarange = killaura.addoption("Range", Number, 6);
@@ -1836,7 +2225,7 @@ clientVersion: VERSION$1
 			},"Movement",() => "Desync");
 			flybypass = fly.addoption("Bypass", Boolean, true);
 			flyvalue = fly.addoption("Speed", Number, 0.18);
-			flyvert = fly.addoption("Vertical", Number, 0.3);
+			flyvert = fly.addoption("Vertical", Number, 0.12);
 
 
 			// InfinityFly
@@ -1894,7 +2283,7 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 			new Module("KeepSprint", function() {},"Movement", () => "Ignore");
 			new Module("NoSlowdown", function() {},"Combat", () => "Ignore");
 
-// WSpeed
+// Speed (this has been patched)
 let speedvalue, speedjump, speedauto, speedbypass;
 
 const speed = new Module("Speed", function(callback) {
@@ -1931,8 +2320,8 @@ const speed = new Module("Speed", function(callback) {
 
 // Options
 speedbypass = speed.addoption("Bypass", Boolean, true);
-speedvalue = speed.addoption("Speed", Number, 0.39);
-speedjump = speed.addoption("JumpHeight", Number, 0.42);
+speedvalue = speed.addoption("Speed", Number, 0.19);
+speedjump = speed.addoption("JumpHeight", Number, 0.19);
 speedauto = speed.addoption("AutoJump", Boolean, true);
 
 			const step = new Module("Step", function() {}, "Player", () => \`\${stepheight[1]}\`);
@@ -1940,11 +2329,172 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 
 
 			new Module("ESP", function() {}, "Render",() => "Highlight");
+
+			// let lGlass;
+			// let liquidGlassWaitPromise;
+
+			// function liquidGlass() {
+			// 	if (lGlass) {
+			// 		return Promise.resolve(lGlass);
+			// 	} else {
+			// 		return liquidGlassWaitPromise;
+			// 	}
+			// }
+
+			// liquidGlassWaitPromise = import("https://raw.githack.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/dynamic-island/liquidGlass.js").then(mod => {
+			// 	lGlass = mod;
+			// 	return lGlass;
+			// });
+
+			// === Dynamic Island Module ===
+			// Session start time (global scope)
+			let sessionStartTime = Date.now();
+			
+			const dynamicIslandModule = new Module("DynamicIsland", function(enabled) {
+				if (enabled) {
+					// Create DOM element
+					dynamicIslandElement = document.createElement("div");
+					dynamicIslandElement.id = "dynamic-island";
+					dynamicIslandElement.style.cssText = \`
+						position: fixed;
+						top: 15px;
+						left: 50%;
+						transform: translateX(-50%);
+						background: rgba(20, 20, 20, 0.7);
+						border-radius: 20px;
+						box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+						transition: width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+						z-index: 9999;
+						pointer-events: none;
+						width: 200px;
+						height: 40px;
+						backdrop-filter: blur(20px);
+					\`;
+
+					dynamicIslandContent = document.createElement("div");
+					dynamicIslandContent.style.cssText = \`
+						position: relative;
+						width: 100%;
+						height: 100%;
+						transition: opacity 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+					\`;
+
+					dynamicIslandElement.appendChild(dynamicIslandContent);
+					document.body.appendChild(dynamicIslandElement);
+
+					// Set default display (updated every 550ms)
+					const updateDefaultDisplay = () => {
+						// Only update if no other module is showing (check if current request is the default display itself)
+						if (!enabledModules["DynamicIsland"]) return;
+						
+						// Don't update if another module is actively showing something
+						if (dynamicIslandCurrentRequest && 
+							dynamicIslandCurrentRequest !== dynamicIslandDefaultDisplay) return;
+
+						const fps = Math.floor(game.resourceMonitor.filteredFPS);
+						// do NOT use instantPing, it is never updated. use filteredPing instead.
+						const ping = Math.floor(game.resourceMonitor.filteredPing);
+
+						const inGame = game.inGame();
+						
+						// Calculate session time
+						const sessionTime = Math.floor((Date.now() - sessionStartTime) / 1000);
+						const hours = Math.floor(sessionTime / 3600);
+						const minutes = Math.floor((sessionTime % 3600) / 60);
+						const seconds = sessionTime % 60;
+						const timeStr = hours > 0 
+							? \`\${hours}h \${minutes}m\`
+							: minutes > 0 
+								? \`\${minutes}m \${seconds}s\`
+								: \`\${seconds}s\`;
+
+						// Get server name and player name
+						const serverName = game.serverInfo?.serverName || "Menu";
+						const playerName = player?.name || "Unknown";
+
+						// Pill-shaped horizontal layout with even spacing
+						if (inGame) {
+							dynamicIslandDefaultDisplay = {
+								duration: 0,
+								width: 520,
+								height: 45,
+								elements: [
+									// Logo
+									{ type: "image", src: "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: -240, y: 0, width: 22, height: 22 },
+									// Impact V6
+									{ type: "text", content: "Impact V6", x: -183, y: 0, color: "#fff", size: 13, bold: true },
+									// Separator 
+									{ type: "text", content: "|", x: -134, y: 0, color: "#444", size: 12 },
+									// FPS 
+									{ type: "text", content: \`\${fps} FPS\`, x: -100, y: 0, color: "#0FB3A0", size: 12, bold: true },
+									// Separator 
+									{ type: "text", content: "|", x: -65, y: 0, color: "#444", size: 12 },
+									// Ping 
+									{ type: "text", content: \`\${ping}ms\`, x: -33, y: 0, color: "#888", size: 12 },
+									// Separator 
+									{ type: "text", content: "|", x: 2, y: 0, color: "#444", size: 12 },
+									// Server
+									{ type: "text", content: serverName, x: 44, y: 0, color: "#fff", size: 11, bold: true },
+									// Separator 
+									{ type: "text", content: "|", x: 94, y: 0, color: "#444", size: 12 },
+									// Player 
+									{ type: "text", content: playerName, x: 136, y: 0, color: "#0FB3A0", size: 11, bold: true },
+									// Separator 
+									{ type: "text", content: "|", x: 190, y: 0, color: "#444", size: 12 },
+									// Session time 
+									{ type: "text", content: timeStr, x: 230, y: 0, color: "#ffd700", size: 11, bold: true }
+								]
+							};
+						} else {
+							dynamicIslandDefaultDisplay = {
+								duration: 0,
+								width: 340,
+								height: 45,
+								elements: [
+									// Logo
+									{ type: "image", src: "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: -145, y: 0, width: 22, height: 22 },
+									// Impact V6
+									{ type: "text", content: "Impact V6", x: -88, y: 0, color: "#fff", size: 13, bold: true },
+									// Separator 
+									{ type: "text", content: "|", x: -40, y: 0, color: "#444", size: 12 },
+									// Player 
+									{ type: "text", content: playerName, x: 17, y: 0, color: "#0FB3A0", size: 11, bold: true },
+									// Separator 
+									{ type: "text", content: "|", x: 77, y: 0, color: "#444", size: 12 },
+									// Session time 
+									{ type: "text", content: timeStr, x: 100, y: 0, color: "#ffd700", size: 11, bold: true }
+								]
+							};
+						}
+						
+						dynamicIsland.show(dynamicIslandDefaultDisplay);
+					};
+					
+					// Initial display
+					updateDefaultDisplay();
+					
+					// Update default display every 550ms
+					dynamicIslandUpdateInterval = setInterval(updateDefaultDisplay, 550);
+					
+				} else {
+					// Remove DOM element
+					if (dynamicIslandElement) {
+						dynamicIslandElement.remove();
+						dynamicIslandElement = null;
+						dynamicIslandContent = null;
+					}
+					if (dynamicIslandTimeout) clearTimeout(dynamicIslandTimeout);
+					if (dynamicIslandUpdateInterval) clearInterval(dynamicIslandUpdateInterval);
+					dynamicIslandCurrentRequest = null;
+					dynamicIslandDefaultDisplay = null;
+				}
+			}, "Render", () => "Adaptive");
+			
 			const textgui = new Module("TextGUI", function() {}, "Render");
 			textguifont = textgui.addoption("Font", String, "Poppins");
 			textguisize = textgui.addoption("TextSize", Number, 15);
 			textguishadow = textgui.addoption("Shadow", Boolean, true);
-			textgui.toggle();
+			textgui.toggleSilently();
 			new Module("AutoRespawn", function() {}, "Player");
 
 			// === Script Manager Module ===
@@ -2164,7 +2714,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 				}
 				
 				const closeBtn = createButton("Close", () => {
-					modules["ScriptManager"].toggle();
+					modules["ScriptManager"].toggleSilently();
 				});
 				closeBtn.style.width = "100%";
 				
@@ -2175,7 +2725,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 				modal.appendChild(container);
 				
 				modal.onclick = (e) => {
-					if (e.target === modal) modules["ScriptManager"].toggle();
+					if (e.target === modal) modules["ScriptManager"].toggleSilently();
 				};
 				
 				document.body.appendChild(modal);
@@ -2282,8 +2832,8 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 						modal.remove();
 						// Trigger refresh by reopening Script Manager
 						if (modules["ScriptManager"]) {
-							modules["ScriptManager"].toggle();
-							setTimeout(() => modules["ScriptManager"].toggle(), 100);
+							modules["ScriptManager"].toggleSilently();
+							setTimeout(() => modules["ScriptManager"].toggleSilently(), 100);
 						}
 					} else {
 						alert("Failed to load script: " + name + "\\nCheck console for errors.");
@@ -2390,7 +2940,25 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					tickLoop["Breaker"] = function() {
 						if (breakStart > Date.now()) return;
 						let offset = breakerrange[1];
-						handleInRange(breakerrange[1], b => b instanceof BlockDragonEgg);
+						handleInRange(breakerrange[1], b => {
+							if (b instanceof BlockDragonEgg) {
+								// Show notification on break
+								if (enabledModules["DynamicIsland"]) {
+									const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+									dynamicIsland.show({
+										duration: 1500,
+										width: 220,
+										height: 60,
+										elements: [
+											{ type: "text", content: "Breaker", x: 0, y: -8, color: "#fff", size: 13, bold: true },
+											{ type: "text", content: "Block broken", x: 0, y: 12, color: "#888", size: 11 }
+										]
+									});
+								}
+								return true;
+							}
+							return false;
+						});
 					}
 				}
 				else delete tickLoop["Breaker"];
@@ -2507,10 +3075,12 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			}, "Misc");
 
 			
-// Improved ChestSteal Module
+// Improved ChestSteal Module with Dynamic Island Integration
 let cheststealblocks, cheststealtools, cheststealdelay, cheststealsilent;
 let cheststealignoreFull, cheststealminStack, cheststealEnchantedOnly;
 let lastStealTime = 0;
+let cheststeal_initialQueueSize = 0;
+let showChestStealCloseIsland = false;
 
 const cheststeal = new Module("ChestSteal", function(callback) {
     if (callback) {
@@ -2654,6 +3224,21 @@ const cheststeal = new Module("ChestSteal", function(callback) {
 
                 // Sort queue by priority (highest first)
                 stealQueue.sort((a, b) => b.priority - a.priority);
+                cheststeal_initialQueueSize = stealQueue.length;
+				showChestStealCloseIsland = true;
+
+                // Show chest opened on Dynamic Island
+                if (enabledModules["DynamicIsland"]) {
+                    dynamicIsland.show({
+                        duration: 2000,
+                        width: 300,
+                        height: 70,
+                        elements: [
+                            { type: "text", content: "Chest Opened", x: 0, y: -15, color: "#ffd700", size: 15, bold: true },
+                            { type: "text", content: cheststeal_initialQueueSize + " items found", x: 0, y: 12, color: "#fff", size: 12 }
+                        ]
+                    });
+                }
 
                 // Start stealing process
                 isProcessing = true;
@@ -2686,11 +3271,43 @@ const cheststeal = new Module("ChestSteal", function(callback) {
 
                 lastStealTime = now;
 
+                // Show progress on Dynamic Island
+                if (enabledModules["DynamicIsland"]) {
+                    const stolen = cheststeal_initialQueueSize - stealQueue.length;
+                    const progress = cheststeal_initialQueueSize > 0 ? stolen / cheststeal_initialQueueSize : 0;
+                    const speed = (1000 / cheststealdelay[1]).toFixed(1);
+
+                    dynamicIsland.show({
+                        duration: 0,
+                        width: 320,
+                        height: 85,
+                        elements: [
+                            { type: "text", content: "ChestSteal", x: 0, y: -25, color: "#fff", size: 15, bold: true },
+                            { type: "progress", value: progress, x: 0, y: -8, width: 280, height: 8, color: "#ffd700", rounded: true },
+                            { type: "text", content: stolen + " / " + cheststeal_initialQueueSize, x: -110, y: 10, color: "#ffd700", size: 12, bold: true },
+                            { type: "text", content: stealQueue.length + " left", x: 40, y: 10, color: "#888", size: 11 },
+                            { type: "text", content: speed + " items/s", x: 0, y: 28, color: "#0FB3A0", size: 10 }
+                        ]
+                    });
+                }
+
                 // Close chest when done if silent mode is enabled
                 if (stealQueue.length === 0) {
                     isProcessing = false;
                     if (cheststealsilent[1]) {
                         setTimeout(() => player.closeScreen(), 50);
+                    }
+
+                    // Show completion on Dynamic Island
+                    if (enabledModules["DynamicIsland"]) {
+                        dynamicIsland.show({
+                            duration: 500,
+                            width: 260,
+                            height: 50,
+                            elements: [
+                                { type: "text", content: "✓ Chest Closed", x: 0, y: 0, color: "#0FB3A0", size: 14, bold: true }
+                            ]
+                        });
                     }
                 }
             }
@@ -2700,6 +3317,19 @@ const cheststeal = new Module("ChestSteal", function(callback) {
                 lastContainer = null;
                 isProcessing = false;
                 stealQueue = [];
+
+                // Show closed message if not already shown
+                if (enabledModules["DynamicIsland"] && showChestStealCloseIsland) {
+                    dynamicIsland.show({
+                        duration: 1000,
+                        width: 260,
+                        height: 50,
+                        elements: [
+                            { type: "text", content: "✓ Chest Closed", x: 0, y: 0, color: "#0FB3A0", size: 14, bold: true }
+                        ]
+                    });
+                    showChestStealCloseIsland = false;
+                }
             }
         };
     } else {
@@ -2776,9 +3406,33 @@ function findBlockSlots() {
     return slotsWithBlocks;
 }
 
+function countBlocks() {
+    let totalBlocks = 0;
+    for (let i = 0; i < 36; i++) {
+        const item = player.inventory.main[i];
+        if (item && item.item instanceof ItemBlock && 
+            item.item.block.getBoundingBox().max.y === 1 &&
+            item.item.name !== "tnt") {
+            totalBlocks += item.stackSize;
+        }
+    }
+    return totalBlocks;
+}
+
+let scaffoldInitialBlocks = 0;
+let scaffoldLastPos = null;
+let scaffoldLastTime = 0;
+let scaffoldSpeed = 0;
+
 const scaffold = new Module("Scaffold", function(callback) {
     if (callback) {
-        if (player) oldHeld = game.info.selectedSlot;
+        if (player) {
+            oldHeld = game.info.selectedSlot;
+            scaffoldInitialBlocks = countBlocks();
+            scaffoldLastPos = player.pos.clone();
+            scaffoldLastTime = Date.now();
+            scaffoldSpeed = 0;
+        }
 
         game.chat.addChat({
             text: "V2 Scaffold Bypasser?!",
@@ -2802,6 +3456,38 @@ const scaffold = new Module("Scaffold", function(callback) {
             const item = player.inventory.getCurrentItem();
             if (!item || !(item.getItem() instanceof ItemBlock)) return;
 
+            // Calculate speed (blocks per second)
+            const currentTime = Date.now();
+            const timeDiff = (currentTime - scaffoldLastTime) / 1000; // seconds
+            
+            if (timeDiff >= 0.1) { // Update every 100ms
+                const currentPos = player.pos;
+                const distance = Math.sqrt(
+                    Math.pow(currentPos.x - scaffoldLastPos.x, 2) +
+                    Math.pow(currentPos.z - scaffoldLastPos.z, 2)
+                );
+                scaffoldSpeed = distance / timeDiff;
+                scaffoldLastPos = currentPos.clone();
+                scaffoldLastTime = currentTime;
+            }
+
+            // Show Dynamic Island with block count and speed
+            if (enabledModules["DynamicIsland"]) {
+                const currentBlocks = countBlocks();
+                const progress = scaffoldInitialBlocks > 0 ? currentBlocks / scaffoldInitialBlocks : 0;
+                
+                dynamicIsland.show({
+                    duration: 0,
+                    width: 280,
+                    height: 75,
+                    elements: [
+                        { type: "text", content: "Scaffolding", x: 0, y: -20, color: "#fff", size: 14, bold: true },
+                        { type: "text", content: currentBlocks + "/" + scaffoldInitialBlocks + " blocks", x: 0, y: -2, color: "#aaa", size: 11 },
+                        { type: "text", content: scaffoldSpeed.toFixed(1) + " b/s", x: 0, y: 12, color: "#0FB3A0", size: 11 },
+                        { type: "progress", value: progress, x: 0, y: 28, width: 240, height: 4, color: "#0FB3A0", rounded: true }
+                    ]
+                });
+            }
             // Check if player is moving (any movement key pressed)
             const isMoving = player.moveForwardDump !== 0 || player.moveStrafeDump !== 0;
 
@@ -2956,6 +3642,11 @@ const scaffold = new Module("Scaffold", function(callback) {
             switchSlot(oldHeld);
         }
         delete tickLoop["Scaffold"];
+        
+        // Hide Dynamic Island when disabled
+        if (enabledModules["DynamicIsland"]) {
+            dynamicIsland.hide();
+        }
         lastScaffoldY = null; // Reset the Y coordinate when scaffold is disabled
     }
 }, "World");
@@ -2976,7 +3667,7 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 			const antiban = new Module("AntiBan", function() {}, "Misc", () => useAccountGen[1] ? "Gen" : "Non Account");
 			useAccountGen = antiban.addoption("AccountGen", Boolean, false);
 			accountGenEndpoint = antiban.addoption("GenServer", String, "http://localhost:8000/generate");
-			antiban.toggle();
+			antiban.toggleSilently();
 			new Module("AutoRejoin", function() {}, "Misc");
 			new Module("AutoQueue", function() {}, "Minigames");
 			new Module("AutoVote", function() {}, "Minigames");
@@ -2984,7 +3675,7 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 			chatdisablermsg = chatdisabler.addoption("Message", String, "Your src code suc\\\\ks");
 			new Module("FilterBypass", function() {}, "Exploit", () => "\\\\");
    
-    // InvCleaner
+   // InvCleaner
     const InvCleaner = new Module("InvCleaner", function (callback) {
 		if (!callback) {
 			delete tickLoop["InvCleaner"];
@@ -3418,6 +4109,23 @@ const autofunnychat = new Module("AutoFunnyChat", function(callback) {
         var msg = getRandomMessage(victimName);
         if (ClientSocket && ClientSocket.sendPacket) {
             ClientSocket.sendPacket(new SPacketMessage({text: msg}));
+            
+            // Show Dynamic Island notification
+            if (enabledModules["DynamicIsland"]) {
+                const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+                // Truncate message if too long
+                const displayMsg = msg.length > 40 ? msg.substring(0, 37) + "..." : msg;
+                dynamicIsland.show({
+                    duration: 2000,
+                    width: 320,
+                    height: 70,
+                    elements: [
+                        { type: "text", content: "AutoFunnyChat", x: 0, y: -15, color: "#fff", size: 13, bold: true },
+                        { type: "text", content: displayMsg, x: 0, y: 5, color: "#888", size: 10 },
+                        { type: "text", content: \`Streak: \${state.killStreak}\`, x: 0, y: 22, color: "#ffd700", size: 10, bold: true }
+                    ]
+                });
+            }
         }
 
         // Update state
@@ -3570,6 +4278,7 @@ const longjump = new Module("LongJump", function(callback) {
     desync = ljdesync[1];
     let jumping = false;
     let boostTicks = 0;
+    let maxBoostTicks = 0;
 
     tickLoop["LongJump"] = function() {
         if (!player) return;
@@ -3578,7 +4287,23 @@ const longjump = new Module("LongJump", function(callback) {
         if (keyPressedDump("space") && player.onGround && !jumping) {
             jumping = true;
             boostTicks = ljboost[1];
+            maxBoostTicks = ljboost[1];
             player.motion.y = 0.42; // vanilla jump power
+            
+            // Show initial notification
+            if (enabledModules["DynamicIsland"]) {
+                const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+                dynamicIsland.show({
+                    duration: 0,
+                    width: 240,
+                    height: 70,
+                    elements: [
+                        { type: "text", content: "LongJump", x: 0, y: -15, color: "#fff", size: 13, bold: true },
+                        { type: "progress", value: 1, x: 0, y: 5, width: 200, height: 6, color: "#0FB3A0", rounded: true },
+                        { type: "text", content: boostTicks + " ticks", x: 0, y: 22, color: "#888", size: 10 }
+                    ]
+                });
+            }
         }
 
         if (jumping) {
@@ -3586,9 +4311,30 @@ const longjump = new Module("LongJump", function(callback) {
             player.motion.x = dir.x;
             player.motion.z = dir.z;
 
+            // Update Dynamic Island with progress
+            if (enabledModules["DynamicIsland"] && boostTicks > 0) {
+                const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+                const progress = boostTicks / maxBoostTicks;
+                dynamicIsland.show({
+                    duration: 0,
+                    width: 240,
+                    height: 70,
+                    elements: [
+                        { type: "text", content: "LongJump", x: 0, y: -15, color: "#fff", size: 13, bold: true },
+                        { type: "progress", value: progress, x: 0, y: 5, width: 200, height: 6, color: "#0FB3A0", rounded: true },
+                        { type: "text", content: boostTicks + " ticks", x: 0, y: 22, color: "#888", size: 10 }
+                    ]
+                });
+            }
+
             boostTicks--;
             if (boostTicks <= 0 || player.onGround) {
                 jumping = false;
+                // Hide Dynamic Island when done
+                if (enabledModules["DynamicIsland"]) {
+                    const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+                    dynamicIsland.hide();
+                }
             }
         }
     };
@@ -3602,12 +4348,30 @@ ljdesync = longjump.addoption("Desync", Boolean, true);  // toggle desync mode
 const survival = new Module("SurvivalMode", function(callback) {
 				if (callback) {
 					if (player) player.setGamemode(GameMode.fromId("survival"));
-					survival.toggle();
+					
+					// Dynamic Island notification
+					if (enabledModules["DynamicIsland"]) {
+						const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+						dynamicIsland.show({
+							duration: 2000,
+							width: 280,
+							height: 60,
+							elements: [
+								{ type: "text", content: "Survival Mode", x: 0, y: -8, color: "#fff", size: 14, bold: true },
+								{ type: "text", content: "Gamemode changed", x: 0, y: 12, color: "#888", size: 11 }
+							]
+						});
+					}
+					
+					survival.toggleSilently();
 				}
 			}, "Misc", () => "Spoof");
 
 			globalThis.${storeName}.modules = modules;
 			globalThis.${storeName}.profile = "default";
+			globalThis.${storeName}.dynamicIsland = dynamicIsland;
+
+			window.dynamicIsland = dynamicIsland;
 		})();
 	`);
 
@@ -3637,7 +4401,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 		for (const [name, module] of Object.entries(loaded)) {
 			const realModule = unsafeWindow.globalThis[storeName].modules[name];
 			if (!realModule) continue;
-			if (realModule.enabled != module.enabled) realModule.toggle();
+			if (realModule.enabled != module.enabled) realModule.toggleSilently();
 			if (realModule.bind != module.bind) realModule.setbind(module.bind);
 			if (module.options) {
 				for (const [option, setting] of Object.entries(module.options)) {
