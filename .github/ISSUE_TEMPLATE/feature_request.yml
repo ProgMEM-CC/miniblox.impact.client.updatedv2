@@ -1,8 +1,7 @@
 name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: ''
+description: Suggest an idea for this project
+labels: "enhancement"
+assignees: "6x68"
 
 body:
   - type: textarea
