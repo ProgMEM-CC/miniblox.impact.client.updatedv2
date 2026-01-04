@@ -2399,9 +2399,9 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 						const hours = Math.floor(sessionTime / 3600);
 						const minutes = Math.floor((sessionTime % 3600) / 60);
 						const seconds = sessionTime % 60;
-						const timeStr = hours > 0 
+						const timeStr = hours > 0
 							? \`\${hours}h \${minutes}m\`
-							: minutes > 0 
+							: minutes > 0
 								? \`\${minutes}m \${seconds}s\`
 								: \`\${seconds}s\`;
 
