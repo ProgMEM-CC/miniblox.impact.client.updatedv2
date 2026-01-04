@@ -244,7 +244,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 				width: 250,
 				height: 50,
 				elements: [
-					{ type: "text", content: "Generating account", x: 125, y: 0, size: 18 }
+					{ type: "text", content: "Generating account", x: 0, y: 0, size: 18 }
 				]
 			});
 			const res = await fetch(accountGenEndpoint[1]);
@@ -256,8 +256,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 				width: 255,
 				height: 45,
 				elements: [
-					// centered on x and y
-					{ type: "text", content: \`Generated account: \${j.name}\`, x: 127.5, y: 0, size: 18 }
+					{ type: "text", content: \`Generated account: \${j.name}\`, x: 0, y: 0, size: 18 }
 				]
 			});
 			return j;
@@ -444,7 +443,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 				width: 330,
 				height: 67,
 				elements: [
-					{ type: "text", content: "Voting for #2 (Overpowered)", x: 165, y: 0, size: 18 }
+					{ type: "text", content: "Voting for #2 (Overpowered)", x: 0, y: 0, size: 18 }
 				]
 			});
 			// vote for option 2 (Overpowered)
@@ -460,7 +459,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 				width: 370,
 				height: 67,
 				elements: [
-					{ type: "text", content: "Queueing next game in 1.5 seconds", x: 185, y: 0, size: 18 }
+					{ type: "text", content: "Queueing next game in 1.5 seconds", x: 0, y: 0, size: 18 }
 				]
 			});
 			// I'd hope you could disable auto queue within 3 seconds if you want
