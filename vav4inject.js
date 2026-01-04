@@ -2297,15 +2297,21 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 						// do NOT use instantPing, it is never updated. use filteredPing instead.
 						const ping = Math.floor(game.resourceMonitor.filteredPing);
 
+						const inGame = game.inGame();
+						// the reason for this is that FPS and Ping aren't updated when you're not in a game.
+						const extraElements = inGame ? [
+							{ type: "text", content: \`\${fps} FPS\`, x: 100, y: 0, color: "#0FB3A0", size: 18 },
+							{ type: "text", content: \`\${ping} Ping\`, x: 100, y: 12, color: "#0FB3A0", size: 12 }
+						] : [];
+
 						dynamicIslandDefaultDisplay = {
 							duration: 0,
-							width: 300,
-							height: 60,
+							width: inGame ? 300 : 200,
+							height: inGame ? 60 : 40,
 							elements: [
-								{ type: "image", src:"https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: -130, y: 0, height: 25},
-								{ type: "text", content: \`Impact v6\`, x: -60, y: 0, color: "#fff", size: 18, bold: true },
-								{ type: "text", content: \`\${fps} FPS\`, x: 100, y: 0, color: "#0FB3A0", size: 18 },
-								{ type: "text", content: \`\${ping} Ping\`, x: 100, y: 12, color: "#0FB3A0", size: 12 }
+								{ type: "image", src: "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: inGame ? -130 : -75, y: 0, height: 25},
+								{ type: "text", content: \`Impact v6\`, x: inGame ? -60 : 0, y: 0, color: "#fff", size: 18, bold: true },
+								...extraElements
 							]
 						};
 						
