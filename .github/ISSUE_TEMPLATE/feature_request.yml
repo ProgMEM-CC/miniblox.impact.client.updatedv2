@@ -15,7 +15,6 @@ body:
 
       placeholder: |
         An option in inventory cleaner that removes pipe bombs from my mailbox
-
   - type: textarea
     id: why
     attributes:
@@ -30,7 +29,8 @@ body:
         Not because I said so, but because I don't want my mailbox to be blown up!
     validation:
         required: true
-    - type: textarea
+  - type: textarea
+    attributes:
       label: "Are there any alternatives / workarounds you have considered?"
       placeholder: |
         - Petting my cat (worked because I'm happy then)
