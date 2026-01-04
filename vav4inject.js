@@ -450,6 +450,20 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 	addModification('SliderOption("Render Distance ",2,8,3)', 'SliderOption("Render Distance ",2,64,3)', true);
 	addModification('ClientSocket.on("CPacketDisconnect",h=>{', `
 		if (enabledModules["AutoRejoin"]) {
+			// Show notification
+			if (enabledModules["DynamicIsland"]) {
+				const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+				dynamicIsland.show({
+					duration: 2000,
+					width: 260,
+					height: 60,
+					elements: [
+						{ type: "text", content: "AutoRejoin", x: 0, y: -8, color: "#fff", size: 13, bold: true },
+						{ type: "text", content: "Rejoining in 0.4s", x: 0, y: 12, color: "#888", size: 11 }
+					]
+				});
+			}
+			
 			setTimeout(function() {
 				game.connect(lastJoined);
 			}, 400);
@@ -626,6 +640,20 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	addModification('this.game.info.showSignEditor=null,exitPointerLock())', `
 		if (this.showDeathScreen && enabledModules["AutoRespawn"]) {
 			ClientSocket.sendPacket(new SPacketRespawn$1);
+			
+			// Dynamic Island notification
+			if (enabledModules["DynamicIsland"]) {
+				const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+				dynamicIsland.show({
+					duration: 1500,
+					width: 220,
+					height: 60,
+					elements: [
+						{ type: "text", content: "Respawned", x: 0, y: -8, color: "#fff", size: 13, bold: true },
+						{ type: "text", content: "Auto respawn", x: 0, y: 12, color: "#888", size: 11 }
+					]
+				});
+			}
 		}
 	`);
 
@@ -1816,10 +1844,27 @@ clientVersion: VERSION$1
 			new Module("AntiVoid", function(callback) {
 				if (callback) {
 					let ticks = 0;
+					let lastVoidWarning = 0;
 					tickLoop["AntiVoid"] = function() {
         				const ray = rayTraceBlocks(player.getEyePos(), player.getEyePos().clone().setY(0), false, false, false, game.world);
 						if (!ray) {
 							player.motion.y = 0;
+							
+							// Show warning every 2 seconds
+							const now = Date.now();
+							if (now - lastVoidWarning > 2000 && enabledModules["DynamicIsland"]) {
+								lastVoidWarning = now;
+								const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+								dynamicIsland.show({
+									duration: 1500,
+									width: 240,
+									height: 60,
+									elements: [
+										{ type: "text", content: "AntiVoid", x: 0, y: -8, color: "#ff4444", size: 13, bold: true },
+										{ type: "text", content: "Void detected", x: 0, y: 12, color: "#888", size: 11 }
+									]
+								});
+							}
 						}
 					};
 				}
@@ -2895,7 +2940,25 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					tickLoop["Breaker"] = function() {
 						if (breakStart > Date.now()) return;
 						let offset = breakerrange[1];
-						handleInRange(breakerrange[1], b => b instanceof BlockDragonEgg);
+						handleInRange(breakerrange[1], b => {
+							if (b instanceof BlockDragonEgg) {
+								// Show notification on break
+								if (enabledModules["DynamicIsland"]) {
+									const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+									dynamicIsland.show({
+										duration: 1500,
+										width: 220,
+										height: 60,
+										elements: [
+											{ type: "text", content: "Breaker", x: 0, y: -8, color: "#fff", size: 13, bold: true },
+											{ type: "text", content: "Block broken", x: 0, y: 12, color: "#888", size: 11 }
+										]
+									});
+								}
+								return true;
+							}
+							return false;
+						});
 					}
 				}
 				else delete tickLoop["Breaker"];
@@ -4046,6 +4109,23 @@ const autofunnychat = new Module("AutoFunnyChat", function(callback) {
         var msg = getRandomMessage(victimName);
         if (ClientSocket && ClientSocket.sendPacket) {
             ClientSocket.sendPacket(new SPacketMessage({text: msg}));
+            
+            // Show Dynamic Island notification
+            if (enabledModules["DynamicIsland"]) {
+                const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+                // Truncate message if too long
+                const displayMsg = msg.length > 40 ? msg.substring(0, 37) + "..." : msg;
+                dynamicIsland.show({
+                    duration: 2000,
+                    width: 320,
+                    height: 70,
+                    elements: [
+                        { type: "text", content: "AutoFunnyChat", x: 0, y: -15, color: "#fff", size: 13, bold: true },
+                        { type: "text", content: displayMsg, x: 0, y: 5, color: "#888", size: 10 },
+                        { type: "text", content: \`Streak: \${state.killStreak}\`, x: 0, y: 22, color: "#ffd700", size: 10, bold: true }
+                    ]
+                });
+            }
         }
 
         // Update state
@@ -4198,6 +4278,7 @@ const longjump = new Module("LongJump", function(callback) {
     desync = ljdesync[1];
     let jumping = false;
     let boostTicks = 0;
+    let maxBoostTicks = 0;
 
     tickLoop["LongJump"] = function() {
         if (!player) return;
@@ -4206,7 +4287,23 @@ const longjump = new Module("LongJump", function(callback) {
         if (keyPressedDump("space") && player.onGround && !jumping) {
             jumping = true;
             boostTicks = ljboost[1];
+            maxBoostTicks = ljboost[1];
             player.motion.y = 0.42; // vanilla jump power
+            
+            // Show initial notification
+            if (enabledModules["DynamicIsland"]) {
+                const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+                dynamicIsland.show({
+                    duration: 0,
+                    width: 240,
+                    height: 70,
+                    elements: [
+                        { type: "text", content: "LongJump", x: 0, y: -15, color: "#fff", size: 13, bold: true },
+                        { type: "progress", value: 1, x: 0, y: 5, width: 200, height: 6, color: "#0FB3A0", rounded: true },
+                        { type: "text", content: boostTicks + " ticks", x: 0, y: 22, color: "#888", size: 10 }
+                    ]
+                });
+            }
         }
 
         if (jumping) {
@@ -4214,9 +4311,30 @@ const longjump = new Module("LongJump", function(callback) {
             player.motion.x = dir.x;
             player.motion.z = dir.z;
 
+            // Update Dynamic Island with progress
+            if (enabledModules["DynamicIsland"] && boostTicks > 0) {
+                const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+                const progress = boostTicks / maxBoostTicks;
+                dynamicIsland.show({
+                    duration: 0,
+                    width: 240,
+                    height: 70,
+                    elements: [
+                        { type: "text", content: "LongJump", x: 0, y: -15, color: "#fff", size: 13, bold: true },
+                        { type: "progress", value: progress, x: 0, y: 5, width: 200, height: 6, color: "#0FB3A0", rounded: true },
+                        { type: "text", content: boostTicks + " ticks", x: 0, y: 22, color: "#888", size: 10 }
+                    ]
+                });
+            }
+
             boostTicks--;
             if (boostTicks <= 0 || player.onGround) {
                 jumping = false;
+                // Hide Dynamic Island when done
+                if (enabledModules["DynamicIsland"]) {
+                    const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+                    dynamicIsland.hide();
+                }
             }
         }
     };
