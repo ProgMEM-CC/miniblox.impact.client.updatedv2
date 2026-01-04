@@ -4,8 +4,10 @@
 // @version      6.9
 // @description  The ultimate Miniblox hacked client which is built for total domination of all Miniblox servers with a fully dark-mode optimized modern GUI and high performance guaranteed.
 // @author       7GrandDadPGN, ProgMEM-CC, TheM1ddleM1n, 6x68 (bab), dtkiller-jp
-// @match        https://miniblox.io/
-// @match        https://miniblox.org/
+// @match        https://miniblox.io/*
+// @match        https://miniblox.org/*
+// @match        https://miniblox.online/*
+// @match        https://bloxbattles.io/*
 // @icon         https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/favicon.png
 // @grant        GM_getValue
 // @grant        GM_setValue

@@ -87,12 +87,18 @@
 | Issue                                     | Severity | Status / Notes                    |
 | ----------------------------------------- | -------- | --------------------------------- |
 | AutoFunnyChat – Kill Detection            | Medium   | Incomplete (needs implementation) |
-| InvCleaner – Duplicate Detection          | Medium   | Incomplete (requires fix)         |
-| Bind System – Keybinding Edge Cases       | Low      | Incomplete                        |
+| InvCleaner – Duplicate Detection          | None     | Completed                         |
+| Bind System – Keybinding Edge Cases       | None     | Its fine                          |
 | Tampermonkey Extra Permission Requirement | None     | Documented                        |
 | Error Handling                            | None     | Stability improvements needed     |
 
 For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
+
+## Modules additions (tick when implemented)
+- [ ] ChestAura (with a range of 6)
+- [ ] XRay
+- [ ] AutoEat
+- [ ] ArmorHUD
 
 ## Additional Notes
 
@@ -108,6 +114,7 @@ For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM
 - AutoSync version to v6.9 (by ImpactV6CheatsBot)
 - Velocity Fix by @6x68
 - Music Player added!
+- New Dynamic Island (In Progress..)
 
 ### v6.8.8 (2025-12-14)
 - Added IRC chat system
