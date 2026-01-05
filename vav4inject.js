@@ -1231,6 +1231,9 @@ clientVersion: VERSION$1
 				toggle() {
 					this.setEnabled(!this.enabled);
 				}
+				toggleSilently() {
+					this.setEnabled(!this.enabled);
+				}
 				setEnabled(enabled) {
 					this.enabled = enabled;
 					enabledModules[this.name] = enabled;
