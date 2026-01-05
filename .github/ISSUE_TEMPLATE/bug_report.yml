@@ -1,0 +1,36 @@
+name: Bug report
+description: Report a bug
+labels: "bug"
+assignees: "6x68"
+
+body:
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: A clear and concise description of what you expected to happen.
+      placeholder: |
+        I toggle Fly and the AntiCheat shouldn't pull me down.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Actual Behavior
+      description: A clear description of what actually happens.
+      placeholder: |
+        I toggled Fly and the AntiCheat started pulling me down!
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Console logs
+      description: |
+        If the bug is i.e. sometimes you get frozen, it might be that a module
+        is throwing errors inside of a tick loop handler!
+        Either way, if you see console logs that look like they might be relevant to the bug, add them here!
+  - type: textarea
+    attributes:
+      label: Additional information (optional)
+      description: "Add any extra information that you think might help. Pro tip: 'please fix this bug' doesn't help."
+      placeholder:
+        It only happens maybe every 6 or 7 seconds.
+
