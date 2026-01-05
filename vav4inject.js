@@ -2381,7 +2381,8 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 								+ (Math.max(estimatedFPSLen, estimatedPingLen) + 2)
 								+ estimatedTimeLen;
 							const logoX = - (accountedWidth / 2 - 30);
-							const timeX = (accountedWidth / 2) - (12*2);
+							const timeX = (accountedWidth / 2) - (estimatedTimeLen / 1.2);
+							const perfX = timeX / 2;
 							dynamicIslandDefaultDisplay = {
 								duration: 0,
 								defaultDisplay: true,
@@ -2392,8 +2393,8 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 									{ type: "image", src: "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: logoX, y: 0, width: 22, height: 22 },
 									// Impact V6
 									{ type: "text", content: "Impact V6", x: 0, y: 0, color: "#fff", size: 13, bold: true },
-									{ type: "text", content: fpsLbl, x: 117, y: -4, color: "#0FB3A0", size: 18 },
-									{ type: "text", content: pingLbl, x: 117, y: 12, color: "#0FB3A0", size: 12 },
+									{ type: "text", content: fpsLbl, x: perfX, y: -4, color: "#0FB3A0", size: 18 },
+									{ type: "text", content: pingLbl, x: perfX, y: 12, color: "#0FB3A0", size: 12 },
 									// Session time 
 									{ type: "text", content: timeStr, x: timeX, y: 0, color: "#ffd700", size: 11, bold: true }
 								]
@@ -2404,7 +2405,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 							// a tiny bit of padding
 							const timeAccountedWidth = baseWidth + estimatedTimeLen;
 							const logoX = - (timeAccountedWidth / 2) + 18;
-							const timeX = (timeAccountedWidth / 2) - (12*2);
+							const timeX = (accountedWidth / 2) - (estimatedTimeLen / 1.2);
 							dynamicIslandDefaultDisplay = {
 								duration: 0,
 								defaultDisplay: true,
