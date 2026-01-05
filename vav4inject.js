@@ -1359,7 +1359,6 @@ clientVersion: VERSION$1
 			let dynamicIslandUpdateInterval = null;
 
 			const dynamicIsland = {
-				/** do NOT use a duration of 0, it is reserved for the default display. */
 				show(request) {
 					if (!dynamicIslandElement) return;
 
@@ -2338,7 +2337,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					const updateDefaultDisplay = () => {
 						// duration is 0 for only the default display
 						if (!enabledModules["DynamicIsland"]
-							|| (dynamicIslandCurrentRequest && dynamicIslandCurrentRequest.duration !== 0)) return;
+							|| (dynamicIslandCurrentRequest && !dynamicIslandCurrentRequest.defaultDisplay)) return;
 
 						const fps = Math.floor(game.resourceMonitor.filteredFPS);
 						// do NOT use instantPing, it is never updated. use filteredPing instead.
@@ -2365,6 +2364,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 							const logoX = - (timeAccountedWidth / 2 - 30);
 							dynamicIslandDefaultDisplay = {
 								duration: 0,
+								defaultDisplay: true,
 								width: timeAccountedWidth,
 								height: 45,
 								elements: [
@@ -2386,6 +2386,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 							const logoX = - (timeAccountedWidth / 2) + 18;
 							dynamicIslandDefaultDisplay = {
 								duration: 0,
+								defaultDisplay: true,
 								width: timeAccountedWidth,
 								height: 45,
 								elements: [
