@@ -2361,12 +2361,12 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 							const baseWidth = 406;
 							const estimatedTimeLen = timeStr.length * 11;
 							const timeAccountedWidth = baseWidth + estimatedTimeLen;
-							const logoX = - (timeAccountedWidth / 2 - 30);
+							const logoX = - (baseWidth / 2 - 30);
 							dynamicIslandDefaultDisplay = {
 								duration: 0,
 								defaultDisplay: true,
 								width: timeAccountedWidth,
-								height: 45,
+								height: 47,
 								elements: [
 									// Logo
 									{ type: "image", src: "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: logoX, y: 0, width: 22, height: 22 },
@@ -2388,7 +2388,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 								duration: 0,
 								defaultDisplay: true,
 								width: timeAccountedWidth,
-								height: 45,
+								height: 32,
 								elements: [
 									// Logo
 									{ type: "image", src: "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: logoX, y: 0, width: 22, height: 22 },
