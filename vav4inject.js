@@ -3442,7 +3442,7 @@ const autofunnychat = new Module("AutoFunnyChat", function(callback) {
                     // Extract name that isn't the player's name
                     victimName = match[1];
                 } else {
-					return;
+					return null;
                 }
 
                 // Clean and validate name
