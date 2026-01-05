@@ -3934,7 +3934,7 @@ const autoFunnyChatConfig = {
     enabled: true,                // Can be toggled
     customMessages: [],           // Allow users to add custom messages
     triggerPatterns: [            // More comprehensive kill detection patterns
-        /(.+?) (?:was|has been) eliminated by (.+?)/i,
+        /(.+?) (?:was|has been) eliminated by (.+)!?/gi,
     ],
     blacklistedNames: [],         // Names to never taunt (friends, etc.)
     onlyTauntPlayers: true,       // Don't taunt bots/NPCs if detected
