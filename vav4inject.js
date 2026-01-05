@@ -2385,7 +2385,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 							// a tiny bit of padding
 							const timeAccountedWidth = baseWidth + estimatedTimeLen;
 							const logoX = - (timeAccountedWidth / 2) + 18;
-							const timeX = (baseWidth / 2) + 18;
+							const timeX = (baseWidth / 2) - 18;
 							dynamicIslandDefaultDisplay = {
 								duration: 0,
 								defaultDisplay: true,
