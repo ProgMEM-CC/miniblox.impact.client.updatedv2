@@ -1417,6 +1417,7 @@ clientVersion: VERSION$1
 					startIRC();
 				else stopIRC();
 			}, "Client", () => "Client");
+			Services.toggleSilently();
 			servicesName = Services.addoption("Name", String, SERVICES_UNSET_NAME);
 			systemMessageColor = Services.addoption("SystemMessageColor", String, "blue");
 
