@@ -2361,7 +2361,8 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 							const baseWidth = 406;
 							const estimatedTimeLen = timeStr.length * 11;
 							const timeAccountedWidth = baseWidth + estimatedTimeLen;
-							const logoX = - (baseWidth / 2 - 30);
+							const logoX = - (timeAccountedWidth / 2 - 30);
+							const timeX = (baseWidth / 2) + 18;
 							dynamicIslandDefaultDisplay = {
 								duration: 0,
 								defaultDisplay: true,
@@ -2375,7 +2376,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 									{ type: "text", content: \`\${fps} FPS\`, x: 100, y: -4, color: "#0FB3A0", size: 18 },
 									{ type: "text", content: \`\${ping} Ping\`, x: 100, y: 12, color: "#0FB3A0", size: 12 },
 									// Session time 
-									{ type: "text", content: timeStr, x: -logoX, y: 0, color: "#ffd700", size: 11, bold: true }
+									{ type: "text", content: timeStr, x: timeX, y: 0, color: "#ffd700", size: 11, bold: true }
 								]
 							};
 						} else {
@@ -2383,7 +2384,8 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 							const estimatedTimeLen = timeStr.length * 11;
 							// a tiny bit of padding
 							const timeAccountedWidth = baseWidth + estimatedTimeLen;
-							const logoX = - (baseWidth / 2) + 18;
+							const logoX = - (timeAccountedWidth / 2) + 18;
+							const timeX = (baseWidth / 2) + 18;
 							dynamicIslandDefaultDisplay = {
 								duration: 0,
 								defaultDisplay: true,
@@ -2393,7 +2395,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 									// Logo
 									{ type: "image", src: "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: logoX, y: 0, width: 22, height: 22 },
 									{ type: "text", content: "Impact V6", x: 0, y: 0, color: "#fff", size: 13, bold: true },
-									{ type: "text", content: timeStr, x: -logoX, y: 0, color: "#ffd700", size: 11, bold: true }
+									{ type: "text", content: timeStr, x: timeX, y: 0, color: "#ffd700", size: 11, bold: true }
 								]
 							};
 						}
