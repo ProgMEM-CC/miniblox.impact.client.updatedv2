@@ -2333,15 +2333,20 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					dynamicIslandElement.appendChild(dynamicIslandContent);
 					document.body.appendChild(dynamicIslandElement);
 
+					/**
+					 * length * size
+					 * @param {string} s the string to calculate the estimate width of.
+					 * @param {number} size the size of the string
+					**/
+					function getStringWidth(s, size) {
+						return s.length * size;
+					}
+
 					// Set default display (updated every 550ms)
 					const updateDefaultDisplay = () => {
 						// duration is 0 for only the default display
 						if (!enabledModules["DynamicIsland"]
 							|| (dynamicIslandCurrentRequest && !dynamicIslandCurrentRequest.defaultDisplay)) return;
-
-						const fps = Math.floor(game.resourceMonitor.filteredFPS);
-						// do NOT use instantPing, it is never updated. use filteredPing instead.
-						const ping = Math.floor(game.resourceMonitor.filteredPing);
 
 						const inGame = game.inGame();
 						
@@ -2358,34 +2363,47 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 
 						// Pill-shaped horizontal layout with even spacing
 						if (inGame) {
-							const baseWidth = 406;
-							const estimatedTimeLen = timeStr.length * 11;
-							const timeAccountedWidth = baseWidth + estimatedTimeLen;
-							const logoX = - (timeAccountedWidth / 2 - 30);
-							const timeX = (baseWidth / 2) - 18;
+							const fps = Math.floor(game.resourceMonitor.filteredFPS);
+							// do NOT use instantPing, it is never updated. use filteredPing instead.
+							const ping = Math.floor(game.resourceMonitor.filteredPing);
+							const imgWidth = 47;
+							const fpsLbl = \`\${fps} FPS\`;
+							const pingLbl = \`\${ping} Ping\`;
+							const baseWidth = 267;
+							const estimatedFPSLen = getStringWidth(fpsLbl, 18);
+							const estimatedPingLen = getStringWidth(pingLbl, 12);
+							const estimatedTimeLen = getStringWidth(timeStr, 11);
+							const accountedWidth = baseWidth
+								+ imgWidth
+								// choose whichever one is bigger.
+								// ping doesn't really count since it's on a different line
+								+ (Math.max(estimatedFPSLen, estimatedPingLen) + 2)
+								+ estimatedTimeLen;
+							const logoX = - (accountedWidth / 2 - 30);
+							const timeX = (accountedWidth / 2) - (12*2);
 							dynamicIslandDefaultDisplay = {
 								duration: 0,
 								defaultDisplay: true,
-								width: timeAccountedWidth,
+								width: accountedWidth,
 								height: 47,
 								elements: [
 									// Logo
 									{ type: "image", src: "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/blob/main/logo.png?raw=true", x: logoX, y: 0, width: 22, height: 22 },
 									// Impact V6
 									{ type: "text", content: "Impact V6", x: 0, y: 0, color: "#fff", size: 13, bold: true },
-									{ type: "text", content: \`\${fps} FPS\`, x: 100, y: -4, color: "#0FB3A0", size: 18 },
-									{ type: "text", content: \`\${ping} Ping\`, x: 100, y: 12, color: "#0FB3A0", size: 12 },
+									{ type: "text", content: fpsLbl, x: 117, y: -4, color: "#0FB3A0", size: 18 },
+									{ type: "text", content: pingLbl, x: 100, y: 12, color: "#0FB3A0", size: 12 },
 									// Session time 
 									{ type: "text", content: timeStr, x: timeX, y: 0, color: "#ffd700", size: 11, bold: true }
 								]
 							};
 						} else {
-							const baseWidth = 220;
-							const estimatedTimeLen = timeStr.length * 11;
+							const baseWidth = 150;
+							const estimatedTimeLen = getStringWidth(timeStr, 11);
 							// a tiny bit of padding
 							const timeAccountedWidth = baseWidth + estimatedTimeLen;
 							const logoX = - (timeAccountedWidth / 2) + 18;
-							const timeX = (baseWidth / 2) - 18;
+							const timeX = (timeAccountedWidth / 2) - (12*2);
 							dynamicIslandDefaultDisplay = {
 								duration: 0,
 								defaultDisplay: true,
