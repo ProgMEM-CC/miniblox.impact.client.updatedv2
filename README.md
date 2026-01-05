@@ -86,11 +86,9 @@
 
 | Issue                                     | Severity | Status / Notes                    |
 | ----------------------------------------- | -------- | --------------------------------- |
-| AutoFunnyChat – Kill Detection            | Medium   | Incomplete (needs implementation) |
-| InvCleaner – Duplicate Detection          | None     | Completed                         |
-| Bind System – Keybinding Edge Cases       | None     | Its fine                          |
-| Tampermonkey Extra Permission Requirement | None     | Documented                        |
-| Error Handling                            | None     | Stability improvements needed     |
+| Bind System – Keybinding Edge Cases       | Low      | Its fine                          |
+| Tampermonkey Extra Permission Requirement | Low      | Documented                        |
+| Error Handling                            | Low      | Stability improvements needed     |
 
 For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
 
