@@ -2392,7 +2392,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 									// Impact V6
 									{ type: "text", content: "Impact V6", x: 0, y: 0, color: "#fff", size: 13, bold: true },
 									{ type: "text", content: fpsLbl, x: 117, y: -4, color: "#0FB3A0", size: 18 },
-									{ type: "text", content: pingLbl, x: 100, y: 12, color: "#0FB3A0", size: 12 },
+									{ type: "text", content: pingLbl, x: 117, y: 12, color: "#0FB3A0", size: 12 },
 									// Session time 
 									{ type: "text", content: timeStr, x: timeX, y: 0, color: "#ffd700", size: 11, bold: true }
 								]
