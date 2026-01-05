@@ -1,0 +1,4 @@
+# just enables VSCord's privacy mode (hides workspace names, file names, and git repo links)
+# so people don't see that I'm working on this
+# (people don't like that everyone except me (datamodel) here seems to just use AI and make nothing without it lol)
+.vscode/settings.json
