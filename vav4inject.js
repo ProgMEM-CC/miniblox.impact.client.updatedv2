@@ -3862,7 +3862,6 @@ function dropSlot(index) {
 }
 
 // AutoFunnyChat
-// TODO: it aims at other players i dont kill so i need to fix this.
 // Expanded kill messages with hopefully better grammar :skull:
 const killMessages = [
     "☠️ {name} couldn't survive the wrath of ✦ IMPACT V6 ✦",
@@ -3934,14 +3933,7 @@ const autoFunnyChatConfig = {
     enabled: true,                // Can be toggled
     customMessages: [],           // Allow users to add custom messages
     triggerPatterns: [            // More comprehensive kill detection patterns
-        /You eliminated (.+?)(?:\.|$|,)/i,
-        /You knocked out (.+?)(?:\.|$|,)/i,
-        /You sent (.+?)(?:\.|$|,)/i,
-        /(.+?) (?:was )?eliminated by/i,
-        /You (?:killed|defeated) (.+?)(?:\.|$|,)/i,
-        /(.+?) (?:was|has been) killed by you/i,
-        /You assassinated (.+?)(?:\.|$|,)/i,
-        /(.+?) fell to your/i,
+        /(.+?) (?:was )?eliminated by (.+?)/i,
     ],
     blacklistedNames: [],         // Names to never taunt (friends, etc.)
     onlyTauntPlayers: true,       // Don't taunt bots/NPCs if detected
@@ -4109,8 +4101,7 @@ const autofunnychat = new Module("AutoFunnyChat", function(callback) {
                     // Extract name that isn't the player's name
                     victimName = match[1];
                 } else {
-                    // Use captured group
-                    victimName = match[1];
+					return;
                 }
 
                 // Clean and validate name
