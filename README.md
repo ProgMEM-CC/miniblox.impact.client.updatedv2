@@ -62,10 +62,10 @@
 
 ### Utility Modules
 - **AntiBan 2.0** - Account protection with optional account generation
-- **InvCleaner** - Automatic inventory organization (but needs a recode for duplicate detection)
+- **InvCleaner** - Automatic inventory organization
 - **ServerCrasher** - Server stress testing (requires reconfiguration after patch)
 - **Nuker** - Rapid block breaking
-- **ChestSteal** - Steals items/armor from chest quickly (50ms)
+- **ChestSteal** - Steals items/armor from chest quickly
 
 ### Visual Modules
 - **ClickGUI** - A Modern interface for module management
