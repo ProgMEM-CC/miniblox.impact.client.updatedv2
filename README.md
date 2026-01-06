@@ -62,10 +62,10 @@
 
 ### Utility Modules
 - **AntiBan 2.0** - Account protection with optional account generation
-- **InvCleaner** - Automatic inventory organization (but needs a recode for duplicate detection)
+- **InvCleaner** - Automatic inventory organization
 - **ServerCrasher** - Server stress testing (requires reconfiguration after patch)
 - **Nuker** - Rapid block breaking
-- **ChestSteal** - Steals items/armor from chest quickly (50ms)
+- **ChestSteal** - Steals items/armor from chest quickly
 
 ### Visual Modules
 - **ClickGUI** - A Modern interface for module management
@@ -84,11 +84,10 @@
 
 ## Known Issues
 
-| Issue                                     | Severity | Status / Notes                    |
+| Issues                                    | Severity | Status + Notes                    |
 | ----------------------------------------- | -------- | --------------------------------- |
-| Bind System – Keybinding Edge Cases       | Low      | Its fine                          |
-| Tampermonkey Extra Permission Requirement | Low      | Documented                        |
-| Error Handling                            | Low      | Stability improvements needed     |
+| Tampermonkey Extra Permission Requirement | Low      | This has been documented.         |
+| Error Handling                            | Low      | Stability improvements needed.    |
 
 For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
 
@@ -108,11 +107,17 @@ For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM
 
 ## 🧑‍💻 Recent Update Logs
 
+### v8 (2026-01-06)
+- Big 2026 update!
+- Dynamic Island Progress.. :D
+- Removed FastBreak + AutoFunnyChat Module
+- AutoSync version to v8 (by ImpactV8CheatsBot)
+
 ### v6.9 (2025-12-31)
-- AutoSync version to v6.9 (by ImpactV6CheatsBot)
+- AutoSync version to v6.9 (by old ImpactV6CheatsBot)
 - Velocity Fix by @6x68
 - Music Player added!
-- New Dynamic Island (In Progress..)
+- New Dynamic Island branch
 
 ### v6.8.8 (2025-12-14)
 - Added IRC chat system

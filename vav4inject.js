@@ -5,7 +5,7 @@ let replacements = {};
 let dumpedVarNames = {};
 const storeName = "a" + crypto.randomUUID().replaceAll("-", "").substring(16);
 const vapeName = crypto.randomUUID().replaceAll("-", "").substring(16);
-const VERSION = "6.9";
+const VERSION = "8";
 
 // ANTICHEAT HOOK
 function replaceAndCopyFunction(oldFunc, newFunc) {
@@ -518,7 +518,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 	addModification('ClientSocket.on("CPacketUpdateStatus",h=>{', `
 		if (h.rank && h.rank != "" && RANK.LEVEL[h.rank].permLevel > 2) {
 			game.chat.addChat({
-				text: "STAFF HAS BEEN DETECTED : " + h.rank + "\\n".repeat(10),
+				text: "STAFF DETECTED : " + h.rank + "\\n".repeat(10),
 				color: "red"
 			});
 		}
@@ -590,18 +590,18 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	addModification('updatePlayerMoveState(),this.isUsingItem()', 'updatePlayerMoveState(),(this.isUsingItem() && !enabledModules["NoSlowdown"])', true);
 	addModification('S&&!this.isUsingItem()', 'S&&!(this.isUsingItem() && !enabledModules["NoSlowdown"])', true);
 
-	// DESYNC!
+	// DESYNC
 	addModification("this.inputSequenceNumber++", 'desync ? this.inputSequenceNumber : this.inputSequenceNumber++', true);
 	// addModification("new PBVector3({x:this.pos.x,y:this.pos.y,z:this.pos.z})", "desync ? inputPos : inputPos = this.pos", true);
 
-	// auto-reset the desync variable.
+	// auto-reset the desync variable
 	addModification("reconcileServerPosition(h){", "serverPos = h;");
 
 	// hook into the reconcileServerPosition
 	// so we know our server pos
 
 	// PREDICTION AC FIXER (makes the ac a bit less annoying (e.g. when scaffolding))
-	// ig but this should be done in the desync branch instead lol - DataM0del
+	// ig but this should be done in the desync branch instead lol - 6x68
 	// 	addModification("if(h.reset){this.setPosition(h.x,h.y,h.z),this.reset();return}", "", true);
 	// 	addModification("this.serverDistance=y", `
 	// if (h.reset) {
@@ -624,9 +624,6 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		if (enabledModules["WTap"]) player.serverSprintState = false;
 	`);
 
-	// FASTBREAK
-	addModification('u&&player.mode.isCreative()', `||enabledModules["FastBreak"]`);
-
 	// INVWALK
 	addModification('keyPressed(m)&&Game.isActive(!1)', 'keyPressed(m)&&(Game.isActive(!1)||enabledModules["InvWalk"]&&!game.chat.showInput)', true);
 
@@ -643,7 +640,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		}
 	`);
 
-	// PlayerESP
+	// ESP
 	addModification(')&&(p.mesh.visible=this.shouldRenderEntity(p))', `
   if (p && p.id != player.id) {
     function hslToRgb(h, s, l) {
@@ -815,7 +812,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
   }
 `);
 
-	// LOGIN BYPASS (clean up by DataM0del and TheM1ddleM1n!)
+	// LOGIN BYPASS
 	addModification(
 		'new SPacketLoginStart({' +
 		'requestedUuid:localStorage.getItem(REQUESTED_UUID_KEY)??void 0,' +
@@ -1829,7 +1826,7 @@ clientVersion: VERSION$1
 			// this is a very old crash method,
 			// bread (one of the devs behind atmosphere) found it
 			// and later shared it to me when we were talking
-			// about the upcoming bloxd layer. ooh.
+			// about the upcoming bloxd layer
 
 			let serverCrasherStartX, serverCrasherStartZ;
 			let serverCrasherPacketsPerTick;
@@ -1883,7 +1880,7 @@ clientVersion: VERSION$1
 				}
 			}
 
-			// Killaura!
+			// Killaura
 			let attackDelay = Date.now();
 			let lastAttackTime = 0;
 			let killauraShowingDI = false;
@@ -2139,8 +2136,6 @@ clientVersion: VERSION$1
 			killauraitem = killaura.addoption("LimitToSword", Boolean, false);
 			killAuraAttackInvisible = killaura.addoption("AttackInvisbles", Boolean, true);
 			killauraSwitchDelay = killaura.addoption("SwitchDelay", Number, 100);
-			
-			new Module("FastBreak", function() {}, "Broken", () => "Client-Side");
 
 			function getMoveDirection(moveSpeed) {
 				let moveStrafe = player.moveStrafeDump;
@@ -2155,7 +2150,7 @@ clientVersion: VERSION$1
 				return new Vector3$1(0, 0, 0);
 			}
 
-			// OP_Fly
+			// Fly
 			let flyvalue, flyvert, flybypass;
 			const fly = new Module("Fly", function(callback) {
 				if (!callback) {
@@ -2228,14 +2223,14 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 					}
 				}
 			}, "Movement",  () => \`V \${infiniteFlyVert[1]} \${infiniteFlyLessGlide[1] ? "LessGlide" : "MoreGlide"}\`);
-			infiniteFlyVert = infiniteFly.addoption("Vertical", Number, 0.15);
+			infiniteFlyVert = infiniteFly.addoption("Vertical", Number, 0.12);
 			infiniteFlyLessGlide = infiniteFly.addoption("LessGlide", Boolean, true);
 
 			new Module("InvWalk", function() {},"Movement", () => "Ignore");
 			new Module("KeepSprint", function() {},"Movement", () => "Ignore");
 			new Module("NoSlowdown", function() {},"Combat", () => "Ignore");
 
-// Speed (this has been patched)
+// W Speed
 let speedvalue, speedjump, speedauto, speedbypass;
 
 const speed = new Module("Speed", function(callback) {
@@ -2272,12 +2267,12 @@ const speed = new Module("Speed", function(callback) {
 
 // Options
 speedbypass = speed.addoption("Bypass", Boolean, true);
-speedvalue = speed.addoption("Speed", Number, 0.19);
-speedjump = speed.addoption("JumpHeight", Number, 0.19);
+speedvalue = speed.addoption("Speed", Number, 0.3);
+speedjump = speed.addoption("JumpHeight", Number, 0.3);
 speedauto = speed.addoption("AutoJump", Boolean, true);
 
 			const step = new Module("Step", function() {}, "Player", () => \`\${stepheight[1]}\`);
-			stepheight = step.addoption("Height", Number, 0.5);
+			stepheight = step.addoption("Height", Number, 0.3);
 
 
 			new Module("ESP", function() {}, "Render",() => "Highlight");
@@ -2445,7 +2440,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			
 			const textgui = new Module("TextGUI", function() {}, "Render");
 			textguifont = textgui.addoption("Font", String, "Poppins");
-			textguisize = textgui.addoption("TextSize", Number, 15);
+			textguisize = textgui.addoption("TextSize", Number, 16);
 			textguishadow = textgui.addoption("Shadow", Boolean, true);
 			textgui.toggleSilently();
 			new Module("AutoRespawn", function() {}, "Player");
@@ -2935,7 +2930,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 				}
 				else delete tickLoop["Nuker"];
 			}, "World", () => \`\${nukerRange[1]} block\${nukerRange[1] == 1 ? "" : "s"}\`);
-			nukerRange = nuker.addoption("Range", Number, 5);
+			nukerRange = nuker.addoption("Range", Number, 3);
 			nukerDelay = nuker.addoption("Delay", Number, 1);
 
 			function getItemStrength(stack) {
@@ -3028,7 +3023,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			}, "Misc");
 
 			
-// Improved ChestSteal Module with Dynamic Island Integration
+// ChestSteal
 let cheststealblocks, cheststealtools, cheststealdelay, cheststealsilent;
 let cheststealignoreFull, cheststealminStack, cheststealEnchantedOnly;
 let lastStealTime = 0;
@@ -3322,7 +3317,7 @@ cheststealdelay.range = [0, 500, 10];
 cheststealminStack.range = [1, 64, 1];
 
 
-// Fixed Scaffold Module (should work 99%)
+// Fixed Scaffold Module (should work 99.9%)
 let scaffoldtower, oldHeld, scaffoldextend, scaffoldcycle, scaffoldSameY;
 let tickCount = 0;
 let lastScaffoldY = null; // Track the Y coordinate for sameY mode
@@ -3625,7 +3620,7 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 			new Module("AutoQueue", function() {}, "Minigames");
 			new Module("AutoVote", function() {}, "Minigames");
 			const chatdisabler = new Module("ChatDisabler", function() {}, "Misc", () => "Spam");
-			chatdisablermsg = chatdisabler.addoption("Message", String, "Your src code suc\\\\ks");
+			chatdisablermsg = chatdisabler.addoption("Message", String, "vector not gonna bypass this one 🗣️");
 			new Module("FilterBypass", function() {}, "Exploit", () => "\\\\");
    
    // InvCleaner
@@ -3862,322 +3857,6 @@ function dropSlot(index) {
     playerControllerDump.windowClickDump(windowId, -999, 0, 0, player);
 }
 
-// AutoFunnyChat
-// Expanded kill messages with hopefully better grammar :skull:
-const killMessages = [
-    "☠️ {name} couldn't survive the wrath of ✦ IMPACT V6 ✦",
-    "⚡ {name} got deleted — IMPACT V6 never lags.",
-    "🔥 {name} folded instantly — IMPACT V6 ON TOP.",
-    "💀 R.I.P {name} — system overloaded by IMPACT V6.",
-    "✪ {name} tried to fight perfection. IMPACT V6 responded.",
-    "🚀 {name} launched straight to respawn courtesy of IMPACT V6.",
-    "⚙️ Calculated. Executed. {name} eliminated by IMPACT V6.",
-    "💥 Boom! {name} couldn't handle the force of IMPACT V6.",
-    "🏆 Victory secured. {name} was just another demo target.",
-    "🔧 {name} broke under optimized pressure (IMPACT V6).",
-    "🧠 {name} got out-thought, out-aimed, out-classed.",
-    "❌ {name} = error. IMPACT V6 = success.",
-    "⚡ IMPACT V6 outpaced {name} by light-years.",
-    "💫 {name} met the meta — and the meta won.",
-    "🔥 IMPACT V6 activated. {name} disintegrated.",
-    "⛔ Access denied, {name}. IMPACT V6 firewall engaged.",
-    "💎 Another flawless execution — goodbye {name}.",
-    "🕹️ GG {name}, but IMPACT V6 plays on expert mode.",
-    "💀 {name} forgot rule #1: Don't challenge IMPACT V6.",
-    "⚔️ Outplayed, outclassed, outlasted — {name} destroyed.",
-    "🌐 IMPACT V6 connected. {name} disconnected.",
-    "🔥 {name} evaporated under precision fire.",
-    "⚙️ Advanced algorithms say: {name} = loser.",
-    "💢 IMPACT V6 just rewrote {name}'s respawn code.",
-    "🚨 Critical hit! {name} eliminated with style.",
-    "⚡ Frame-perfect execution on {name}.",
-    "♻️ {name} recycled into experience points.",
-    "💣 {name} detonated by IMPACT V6.",
-    "🔮 {name} predicted defeat, couldn't avoid it.",
-    "💀 System log: {name} — user terminated.",
-    "⚡ Fast reflexes? Not enough, {name}.",
-    "🔥 {name} entered the killzone of IMPACT V6.",
-    "☢️ Danger: {name} exposed to high-impact energy.",
-    "🧩 {name} didn't fit the puzzle. Removed by IMPACT V6.",
-    "⚔️ Duel complete — {name} eliminated cleanly.",
-    "📉 {name}'s K/D ratio just dropped hard.",
-    "🛠️ Patch note: {name} no longer a threat.",
-    "⚙️ Efficiency 100%. {name} 0%.",
-    "💀 {name} deleted by advanced targeting system.",
-    "✨ Another one for the highlight reel. RIP {name}.",
-    "⚡ Instant replay: {name} got obliterated.",
-    "🔥 {name} ran diagnostics — result: IMPACT V6 superiority.",
-    "🧠 IMPACT V6 calculated every frame. {name} didn't.",
-    "💀 End of line, {name}.",
-    "⚡ Shockwave detected — source: IMPACT V6.",
-    "🔥 Execution complete. {name} neutralized.",
-    "♛ IMPACT V6 reigns supreme. {name} dethroned.",
-    "🎯 {name} was the easiest target today.",
-    "💻 {name}'s game just crashed — permanently.",
-    "🔒 {name} tried to escape. Access: DENIED.",
-    "🌟 {name} thought they were the main character. Wrong.",
-    "⚠️ Warning: {name} has been deprecated.",
-    "🎮 {name} rage quit before they could even quit.",
-    "💤 {name} took a dirt nap courtesy of IMPACT V6.",
-    "🎪 {name} just became the circus. 🤡",
-    "📴 {name} disconnected from life.",
-    "🧪 Experiment complete: {name} = failure.",
-];
-
-// Configuration (NEW)
-const autoFunnyChatConfig = {
-    killCooldown: 3000,           // Reduced from 5000ms for faster responses
-    minDelay: 300,                // Reduced from 500ms for quicker reactions
-    maxDelay: 1200,               // Reduced from 1500ms
-    avoidRepeat: true,
-    maxHistorySize: 8,            // Increased from 5 to avoid more repeats
-    enabled: true,                // Can be toggled
-    customMessages: [],           // Allow users to add custom messages
-    triggerPatterns: [            // More comprehensive kill detection patterns
-        /(.+?) (?:was|has been) eliminated by/i,
-    ],
-    blacklistedNames: [],         // Names to never taunt (friends, etc.)
-    onlyTauntPlayers: true,       // Don't taunt bots/NPCs if detected
-};
-
-const autofunnychat = new Module("AutoFunnyChat", function(callback) {
-    if (!callback) {
-        // Cleanup when disabled
-        if (window.__autoFunnyKillMsgListener) {
-            if (ClientSocket && ClientSocket.socket && ClientSocket.socket.off) {
-                ClientSocket.socket.off("CPacketMessage", window.__autoFunnyKillMsgListener);
-            }
-            window.__autoFunnyKillMsgListener = null;
-        }
-        if (window.__autoFunnyState) {
-            window.__autoFunnyState = null;
-        }
-        return;
-    }
-
-    // Initialize state
-    if (!window.__autoFunnyState) {
-        window.__autoFunnyState = {
-            lastKillSent: 0,
-            messageHistory: [],
-            lastVictim: null,
-            killStreak: 0,
-        };
-    }
-
-    var state = window.__autoFunnyState;
-
-    // Helper: Clean victim name (remove colors, extra spaces, etc.)
-    function cleanVictimName(name) {
-        if (!name) return null;
-
-        // Remove common color codes and formatting
-        var cleaned = name
-            .replace(/\\+[a-z]+\\+/gi, '')  // Remove \color\ codes
-            .replace(/White/gi, '')
-            .replace(/§[0-9a-fk-or]/gi, '')  // Minecraft color codes
-            .trim();
-
-        // Filter out empty or very short names
-        if (cleaned.length < 2) return null;
-
-        return cleaned;
-    }
-
-    // Helper: Check if name is blacklisted
-    function isBlacklisted(name) {
-        if (!name) return true;
-        var lowerName = name.toLowerCase();
-        return autoFunnyChatConfig.blacklistedNames.some(function(blocked) {
-            return lowerName.indexOf(blocked.toLowerCase()) !== -1;
-        });
-    }
-
-    // Helper: Get random message with weighted selection for streaks
-    function getRandomMessage(victimName) {
-        var allMessages = killMessages.concat(autoFunnyChatConfig.customMessages);
-
-        // Filter out recently used messages
-        if (autoFunnyChatConfig.avoidRepeat && state.messageHistory.length > 0) {
-            var availableMessages = allMessages.filter(function(msg) {
-                return state.messageHistory.indexOf(msg) === -1;
-            });
-
-            if (availableMessages.length > 0) {
-                allMessages = availableMessages;
-            } else {
-                // Reset history if we've used all messages
-                state.messageHistory = [];
-            }
-        }
-
-        // On kill streaks, prefer more intense messages (those with fire, skull emojis)
-        if (state.killStreak >= 3) {
-            var intenseMessages = allMessages.filter(function(msg) {
-                return msg.indexOf('🔥') !== -1 || msg.indexOf('💀') !== -1 || msg.indexOf('☠️') !== -1;
-            });
-            if (intenseMessages.length > 0) {
-                allMessages = intenseMessages;
-            }
-        }
-
-        // Select random message
-        var msg = allMessages[Math.floor(Math.random() * allMessages.length)];
-
-        // Replace {name} placeholder
-        var finalMsg = msg.replace(/{name}/g, victimName);
-
-        // Update history
-        state.messageHistory.push(msg);
-        if (state.messageHistory.length > autoFunnyChatConfig.maxHistorySize) {
-            state.messageHistory.shift();
-        }
-
-        return finalMsg;
-    }
-
-    // Helper: Send message with rate limiting
-    function sendFunnyMessage(victimName) {
-        var now = Date.now();
-
-        // Check cooldown
-        if (now - state.lastKillSent < autoFunnyChatConfig.killCooldown) {
-            return false;
-        }
-
-        // Check if enabled
-        if (!autoFunnyChatConfig.enabled) {
-            return false;
-        }
-
-        // Get and send message
-        var msg = getRandomMessage(victimName);
-        if (ClientSocket && ClientSocket.sendPacket) {
-            ClientSocket.sendPacket(new SPacketMessage({text: msg}));
-            
-            // Show Dynamic Island notification
-            if (enabledModules["DynamicIsland"]) {
-                const dynamicIsland = globalThis.${storeName}.dynamicIsland;
-                // Truncate message if too long
-                const displayMsg = msg.length > 40 ? msg.substring(0, 37) + "..." : msg;
-                dynamicIsland.show({
-                    duration: 2000,
-                    width: 320,
-                    height: 70,
-                    elements: [
-                        { type: "text", content: "AutoFunnyChat", x: 0, y: -15, color: "#fff", size: 13, bold: true },
-                        { type: "text", content: displayMsg, x: 0, y: 5, color: "#888", size: 10 },
-                        { type: "text", content: \`Streak: \${state.killStreak}\`, x: 0, y: 22, color: "#ffd700", size: 10, bold: true }
-                    ]
-                });
-            }
-        }
-
-        // Update state
-        state.lastKillSent = now;
-        state.lastVictim = victimName;
-
-        // Update kill streak
-        if (state.lastVictim === victimName) {
-            state.killStreak++;
-        } else {
-            state.killStreak = 1;
-        }
-
-        return true;
-    }
-
-    // Helper: Extract victim name from message using patterns
-    function extractVictimName(messageText) {
-        if (!messageText || !player) return null;
-
-        for (var i = 0; i < autoFunnyChatConfig.triggerPatterns.length; i++) {
-            var pattern = autoFunnyChatConfig.triggerPatterns[i];
-            var match = messageText.match(pattern);
-            if (match) {
-                var victimName = null;
-
-                // Check if pattern includes player name (meaning we need to extract victim)
-                if (messageText.indexOf(player.name) !== -1) {
-                    // Extract name that isn't the player's name
-                    victimName = match[1];
-                } else {
-					return null;
-                }
-
-                // Clean and validate name
-                victimName = cleanVictimName(victimName);
-
-                // Don't self-taunt
-                if (victimName === player.name) {
-                    return null;
-                }
-
-                // Check blacklist
-                if (isBlacklisted(victimName)) {
-                    return null;
-                }
-
-                return victimName;
-            }
-        }
-
-        return null;
-    }
-
-    // Remove old listener if exists
-    if (window.__autoFunnyKillMsgListener && ClientSocket && ClientSocket.socket && ClientSocket.socket.off) {
-        ClientSocket.socket.off("CPacketMessage", window.__autoFunnyKillMsgListener);
-    }
-
-    // Create new listener with improved detection
-    window.__autoFunnyKillMsgListener = function(packet) {
-        if (!packet || !packet.text || !player) return;
-
-        // Extract victim name using all patterns
-        var victimName = extractVictimName(packet.text);
-
-        if (victimName) {
-            // Random delay for more human-like behavior
-            var delay = autoFunnyChatConfig.minDelay +
-                Math.random() * (autoFunnyChatConfig.maxDelay - autoFunnyChatConfig.minDelay);
-
-            setTimeout(function() {
-                sendFunnyMessage(victimName);
-            }, delay);
-        }
-    };
-
-    // Register listener
-    if (ClientSocket && ClientSocket.socket && ClientSocket.socket.on) {
-        ClientSocket.socket.on("CPacketMessage", window.__autoFunnyKillMsgListener);
-    }
-}, "Player");
-
-// Add configuration options
-var autoFunnyChatEnabled = autofunnychat.addoption("Enabled", Boolean, true);
-var autoFunnyChatCooldown = autofunnychat.addoption("Cooldown", Number, 3000);
-var autoFunnyChatMinDelay = autofunnychat.addoption("MinDelay", Number, 300);
-var autoFunnyChatMaxDelay = autofunnychat.addoption("MaxDelay", Number, 1200);
-
-// Update config when options change
-(function() {
-    var checkInterval = setInterval(function() {
-        if (autoFunnyChatEnabled[1] !== undefined) {
-            autoFunnyChatConfig.enabled = autoFunnyChatEnabled[1];
-        }
-        if (autoFunnyChatCooldown[1] !== undefined) {
-            autoFunnyChatConfig.killCooldown = autoFunnyChatCooldown[1];
-        }
-        if (autoFunnyChatMinDelay[1] !== undefined) {
-            autoFunnyChatConfig.minDelay = autoFunnyChatMinDelay[1];
-        }
-        if (autoFunnyChatMaxDelay[1] !== undefined) {
-            autoFunnyChatConfig.maxDelay = autoFunnyChatMaxDelay[1];
-        }
-    }, 100);
-})();
-
 // Jesus
 const jesus = new Module("Jesus", function(callback) {
     if (callback) {
@@ -4284,7 +3963,6 @@ const longjump = new Module("LongJump", function(callback) {
     };
 }, "Movement");
 
-// Options
 ljpower  = longjump.addoption("Power", Number, 0.6);   // horizontal boost
 ljboost  = longjump.addoption("BoostTicks", Number, 10); // how long boost lasts
 ljdesync = longjump.addoption("Desync", Boolean, true);  // toggle desync mode
@@ -4694,7 +4372,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 		// === Create Category Panel ===
 		function createCategoryPanel() {
-			const { panel, content } = createPanel("Impact V6", 40, 40, 220);
+			const { panel, content } = createPanel("Impact V8", 40, 40, 220);
 			const baseCategories = ["Combat", "Movement", "Player", "Render", "World","Client","Minigames", "Misc","Exploit","Broken","Music"];
 			const categories = [...baseCategories];
 
@@ -5923,6 +5601,6 @@ function createModuleRow(name, mod, content) {
 		}, true); // Use capture phase to run before other listeners
 
 		// === Startup notification ===
-		setTimeout(() => { showNotif("Press \\\\ to open Impact V6 ClickGUI!", "info", 4000); }, 500);
+		setTimeout(() => { showNotif("Press \\\\ to open Impact V8 ClickGUI!", "info", 4000); }, 500);
 	}
 })();
