@@ -546,9 +546,6 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		if (enabledModules["WTap"]) player.serverSprintState = false;
 	`);
 
-	// FASTBREAK
-	addModification('u&&player.mode.isCreative()', `||enabledModules["FastBreak"]`);
-
 	// INVWALK
 	addModification('keyPressed(m)&&Game.isActive(!1)', 'keyPressed(m)&&(Game.isActive(!1)||enabledModules["InvWalk"]&&!game.chat.showInput)', true);
 
@@ -1802,8 +1799,6 @@ clientVersion: VERSION$1
 			killauraitem = killaura.addoption("LimitToSword", Boolean, false);
 			killAuraAttackInvisible = killaura.addoption("AttackInvisbles", Boolean, true);
 			killauraSwitchDelay = killaura.addoption("SwitchDelay", Number, 100);
-			
-			new Module("FastBreak", function() {}, "Broken", () => "Client-Side");
 
 			function getMoveDirection(moveSpeed) {
 				let moveStrafe = player.moveStrafeDump;
