@@ -440,7 +440,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 	addModification('ClientSocket.on("CPacketUpdateStatus",h=>{', `
 		if (h.rank && h.rank != "" && RANK.LEVEL[h.rank].permLevel > 2) {
 			game.chat.addChat({
-				text: "STAFF HAS BEEN DETECTED : " + h.rank + "\\n".repeat(10),
+				text: "STAFF DETECTED : " + h.rank + "\\n".repeat(10),
 				color: "red"
 			});
 		}
@@ -512,18 +512,18 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	addModification('updatePlayerMoveState(),this.isUsingItem()', 'updatePlayerMoveState(),(this.isUsingItem() && !enabledModules["NoSlowdown"])', true);
 	addModification('S&&!this.isUsingItem()', 'S&&!(this.isUsingItem() && !enabledModules["NoSlowdown"])', true);
 
-	// DESYNC!
+	// DESYNC
 	addModification("this.inputSequenceNumber++", 'desync ? this.inputSequenceNumber : this.inputSequenceNumber++', true);
 	// addModification("new PBVector3({x:this.pos.x,y:this.pos.y,z:this.pos.z})", "desync ? inputPos : inputPos = this.pos", true);
 
-	// auto-reset the desync variable.
+	// auto-reset the desync variable
 	addModification("reconcileServerPosition(h){", "serverPos = h;");
 
 	// hook into the reconcileServerPosition
 	// so we know our server pos
 
 	// PREDICTION AC FIXER (makes the ac a bit less annoying (e.g. when scaffolding))
-	// ig but this should be done in the desync branch instead lol - DataM0del
+	// ig but this should be done in the desync branch instead lol - 6x68
 	// 	addModification("if(h.reset){this.setPosition(h.x,h.y,h.z),this.reset();return}", "", true);
 	// 	addModification("this.serverDistance=y", `
 	// if (h.reset) {
@@ -562,7 +562,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 		}
 	`);
 
-	// PlayerESP
+	// ESP
 	addModification(')&&(p.mesh.visible=this.shouldRenderEntity(p))', `
   if (p && p.id != player.id) {
     function hslToRgb(h, s, l) {
@@ -734,7 +734,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
   }
 `);
 
-	// LOGIN BYPASS (clean up by DataM0del and TheM1ddleM1n!)
+	// LOGIN BYPASS
 	addModification(
 		'new SPacketLoginStart({' +
 		'requestedUuid:localStorage.getItem(REQUESTED_UUID_KEY)??void 0,' +
@@ -1530,7 +1530,7 @@ clientVersion: VERSION$1
 			// this is a very old crash method,
 			// bread (one of the devs behind atmosphere) found it
 			// and later shared it to me when we were talking
-			// about the upcoming bloxd layer. ooh.
+			// about the upcoming bloxd layer
 
 			let serverCrasherStartX, serverCrasherStartZ;
 			let serverCrasherPacketsPerTick;
@@ -1584,7 +1584,7 @@ clientVersion: VERSION$1
 				}
 			}
 
-			// Killaura!
+			// Killaura
 			let attackDelay = Date.now();
 			let didSwing = false;
 			let attacked = 0;
@@ -1813,7 +1813,7 @@ clientVersion: VERSION$1
 				return new Vector3$1(0, 0, 0);
 			}
 
-			// OP_Fly
+			// Fly
 			let flyvalue, flyvert, flybypass;
 			const fly = new Module("Fly", function(callback) {
 				if (!callback) {
@@ -1835,7 +1835,7 @@ clientVersion: VERSION$1
 			},"Movement",() => "Desync");
 			flybypass = fly.addoption("Bypass", Boolean, true);
 			flyvalue = fly.addoption("Speed", Number, 0.18);
-			flyvert = fly.addoption("Vertical", Number, 0.3);
+			flyvert = fly.addoption("Vertical", Number, 0.12);
 
 
 			// InfinityFly
@@ -1886,14 +1886,14 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 					}
 				}
 			}, "Movement",  () => \`V \${infiniteFlyVert[1]} \${infiniteFlyLessGlide[1] ? "LessGlide" : "MoreGlide"}\`);
-			infiniteFlyVert = infiniteFly.addoption("Vertical", Number, 0.15);
+			infiniteFlyVert = infiniteFly.addoption("Vertical", Number, 0.12);
 			infiniteFlyLessGlide = infiniteFly.addoption("LessGlide", Boolean, true);
 
 			new Module("InvWalk", function() {},"Movement", () => "Ignore");
 			new Module("KeepSprint", function() {},"Movement", () => "Ignore");
 			new Module("NoSlowdown", function() {},"Combat", () => "Ignore");
 
-// WSpeed
+// W Speed
 let speedvalue, speedjump, speedauto, speedbypass;
 
 const speed = new Module("Speed", function(callback) {
@@ -1930,18 +1930,18 @@ const speed = new Module("Speed", function(callback) {
 
 // Options
 speedbypass = speed.addoption("Bypass", Boolean, true);
-speedvalue = speed.addoption("Speed", Number, 0.39);
-speedjump = speed.addoption("JumpHeight", Number, 0.42);
+speedvalue = speed.addoption("Speed", Number, 0.3);
+speedjump = speed.addoption("JumpHeight", Number, 0.3);
 speedauto = speed.addoption("AutoJump", Boolean, true);
 
 			const step = new Module("Step", function() {}, "Player", () => \`\${stepheight[1]}\`);
-			stepheight = step.addoption("Height", Number, 0.5);
+			stepheight = step.addoption("Height", Number, 0.3);
 
 
 			new Module("ESP", function() {}, "Render",() => "Highlight");
 			const textgui = new Module("TextGUI", function() {}, "Render");
 			textguifont = textgui.addoption("Font", String, "Poppins");
-			textguisize = textgui.addoption("TextSize", Number, 15);
+			textguisize = textgui.addoption("TextSize", Number, 16);
 			textguishadow = textgui.addoption("Shadow", Boolean, true);
 			textgui.toggle();
 			new Module("AutoRespawn", function() {}, "Player");
@@ -2413,7 +2413,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 				}
 				else delete tickLoop["Nuker"];
 			}, "World", () => \`\${nukerRange[1]} block\${nukerRange[1] == 1 ? "" : "s"}\`);
-			nukerRange = nuker.addoption("Range", Number, 5);
+			nukerRange = nuker.addoption("Range", Number, 3);
 			nukerDelay = nuker.addoption("Delay", Number, 1);
 
 			function getItemStrength(stack) {
@@ -2506,7 +2506,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			}, "Misc");
 
 			
-// Improved ChestSteal Module
+// ChestSteal
 let cheststealblocks, cheststealtools, cheststealdelay, cheststealsilent;
 let cheststealignoreFull, cheststealminStack, cheststealEnchantedOnly;
 let lastStealTime = 0;
@@ -2738,7 +2738,7 @@ cheststealdelay.range = [0, 500, 10];
 cheststealminStack.range = [1, 64, 1];
 
 
-// Fixed Scaffold Module (should work 99%)
+// Fixed Scaffold Module (should work 99.9%)
 let scaffoldtower, oldHeld, scaffoldextend, scaffoldcycle, scaffoldSameY;
 let tickCount = 0;
 let lastScaffoldY = null; // Track the Y coordinate for sameY mode
@@ -2980,7 +2980,7 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 			new Module("AutoQueue", function() {}, "Minigames");
 			new Module("AutoVote", function() {}, "Minigames");
 			const chatdisabler = new Module("ChatDisabler", function() {}, "Misc", () => "Spam");
-			chatdisablermsg = chatdisabler.addoption("Message", String, "Your src code suc\\\\ks");
+			chatdisablermsg = chatdisabler.addoption("Message", String, "vector not gonna bypass this one 🗣️");
 			new Module("FilterBypass", function() {}, "Exploit", () => "\\\\");
    
     // InvCleaner
@@ -3285,7 +3285,6 @@ const longjump = new Module("LongJump", function(callback) {
     };
 }, "Movement");
 
-// Options
 ljpower  = longjump.addoption("Power", Number, 0.6);   // horizontal boost
 ljboost  = longjump.addoption("BoostTicks", Number, 10); // how long boost lasts
 ljdesync = longjump.addoption("Desync", Boolean, true);  // toggle desync mode
