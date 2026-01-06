@@ -84,11 +84,10 @@
 
 ## Known Issues
 
-| Issue                                     | Severity | Status / Notes                    |
+| Issues                                    | Severity | Status + Notes                    |
 | ----------------------------------------- | -------- | --------------------------------- |
-| Bind System – Keybinding Edge Cases       | Low      | Its fine                          |
-| Tampermonkey Extra Permission Requirement | Low      | Documented                        |
-| Error Handling                            | Low      | Stability improvements needed     |
+| Tampermonkey Extra Permission Requirement | Low      | This has been documented.         |
+| Error Handling                            | Low      | Stability improvements needed.    |
 
 For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
 
