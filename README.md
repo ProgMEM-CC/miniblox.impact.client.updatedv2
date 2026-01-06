@@ -111,6 +111,7 @@ For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM
 - Big 2026 update!
 - Dynamic Island Progress.. :D
 - Removed FastBreak + AutoFunnyChat Module
+- AutoSync version to v8 (by ImpactV8CheatsBot)
 
 ### v6.9 (2025-12-31)
 - AutoSync version to v6.9 (by old ImpactV6CheatsBot)
