@@ -3677,7 +3677,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 		// === Create Category Panel ===
 		function createCategoryPanel() {
-			const { panel, content } = createPanel("Impact V6", 40, 40, 220);
+			const { panel, content } = createPanel("Impact V8", 40, 40, 220);
 			const baseCategories = ["Combat", "Movement", "Player", "Render", "World","Client","Minigames", "Misc","Exploit","Broken","Music"];
 			const categories = [...baseCategories];
 
@@ -4906,6 +4906,6 @@ function createModuleRow(name, mod, content) {
 		}, true); // Use capture phase to run before other listeners
 
 		// === Startup notification ===
-		setTimeout(() => { showNotif("Press \\\\ to open Impact V6 ClickGUI!", "info", 4000); }, 500);
+		setTimeout(() => { showNotif("Press \\\\ to open Impact V8 ClickGUI!", "info", 4000); }, 500);
 	}
 })();
