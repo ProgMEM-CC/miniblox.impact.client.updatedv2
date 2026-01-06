@@ -114,10 +114,10 @@ For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM
 - Removed FastBreak + AutoFunnyChat Module
 
 ### v6.9 (2025-12-31)
-- AutoSync version to v6.9 (by ImpactV6CheatsBot)
+- AutoSync version to v6.9 (by old ImpactV6CheatsBot)
 - Velocity Fix by @6x68
 - Music Player added!
-- New Dynamic Island (In Progress..)
+- New Dynamic Island branch
 
 ### v6.8.8 (2025-12-14)
 - Added IRC chat system
