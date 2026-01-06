@@ -108,6 +108,11 @@ For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM
 
 ## 🧑‍💻 Recent Update Logs
 
+### v8 (2026-01-06)
+- Big 2026 update!
+- Dynamic Island Progress.. :D
+- Removed FastBreak + AutoFunnyChat Module
+
 ### v6.9 (2025-12-31)
 - AutoSync version to v6.9 (by ImpactV6CheatsBot)
 - Velocity Fix by @6x68
