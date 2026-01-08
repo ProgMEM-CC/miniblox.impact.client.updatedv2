@@ -89,7 +89,7 @@
 | Tampermonkey Extra Permission Requirement | Low      | This has been documented.         |
 | Error Handling                            | Low      | Stability improvements needed.    |
 
-For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
+For detailed information + workarounds, please see our [FAQ/WIKI](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
 
 ## Modules additions (tick when implemented)
 - [ ] ChestAura (with a range of 6)
