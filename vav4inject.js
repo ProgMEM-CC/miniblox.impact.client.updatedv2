@@ -3143,17 +3143,6 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 
 			// Debug: Log slot structure once
 			if (!window.invManagerDebugLogged) {
-				console.log("[InvManager] DEBUG: Total slots:", slots.length);
-				for (let i = 0; i < Math.min(50, slots.length); i++) {
-					const stack = slots[i]?.getStack();
-					if (stack) {
-						const item = stack.getItem();
-						const isArmor = item instanceof ItemArmor;
-						console.log("[InvManager] DEBUG: Slot", i, "has", stack.getDisplayName(), "isArmor:", isArmor);
-					} else {
-						console.log("[InvManager] DEBUG: Slot", i, "is empty");
-					}
-				}
 				window.invManagerDebugLogged = true;
 			}
 
@@ -3163,9 +3152,9 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 			// Check for external intervention (inventory changed during phase 1-3)
 			if (managementPhase > 0 && currentState !== lastPhaseState) {
 				// External change detected, restart from phase 0
-				console.log("[InvManager] External intervention detected, restarting from Phase 0");
 				managementPhase = 0;
 				fillIndex = 0;
+				currentProcessingSlot = 0;
 				lastInventoryState = currentState;
 				lastPhaseState = currentState;
 				return;
@@ -3176,8 +3165,6 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 				lastInventoryState = currentState;
 				lastPhaseState = currentState;
 			}
-
-			console.log("[InvManager] Phase:", managementPhase);
 
 			// Phase 0: Drop duplicates and junk items
 			if (managementPhase === 0) {
@@ -3245,7 +3232,6 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 					
 					// Drop items beyond keepCount
 					for (let i = keepCount; i < items.length; i++) {
-						console.log("[InvManager] Phase 0: Dropping", category, "from slot", items[i].index, "score:", items[i].score);
 						dropSlot(items[i].index);
 						foundItemToDrop = true;
 						return; // Drop one per tick
@@ -3254,7 +3240,6 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 
 				// No more items to drop, move to next phase
 				if (!foundItemToDrop) {
-					console.log("[InvManager] Phase 0 complete, moving to Phase 1");
 					managementPhase = 1;
 					fillIndex = 0;
 					currentProcessingSlot = 0;
@@ -3267,44 +3252,35 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 			if (managementPhase === 1) {
 				const layout = parseLayout(invmanagerLayout[1]);
 				
-				console.log("[InvManager] Phase 1: Starting hotbar scan");
-				
 				// Hotbar is slots 31-39 (9 slots)
 				for (let i = 0; i < 9; i++) {
 					const slot = 31 + i; // Hotbar starts at slot 31
 					const stack = slots[slot]?.getStack();
 					if (!stack) {
-						console.log("[InvManager] Phase 1: Hotbar slot", i, "(slot", slot, ") is empty");
 						continue; // Empty slot, skip
 					}
 
 					const item = stack.getItem();
 					const category = getItemCategory(item, stack);
 
-					console.log("[InvManager] Phase 1: Hotbar slot", i, "(slot", slot, ") has", category, "needed:", layout[i]);
-
 					// Skip armor
 					if (category === "armor") {
-						console.log("[InvManager] Phase 1: Hotbar slot", i, "is armor, skipping");
 						continue;
 					}
 
 					// Check if this item belongs in this slot
 					const neededCategory = layout[i];
 					if (neededCategory && category === neededCategory) {
-						console.log("[InvManager] Phase 1: Hotbar slot", i, "has correct item, keeping");
 						continue; // Correct item, keep it
 					}
 
 					// Wrong item or no item should be here, move to inventory
-					console.log("[InvManager] Phase 1: Clearing hotbar slot", i, "(slot", slot, ") category:", category, "needed:", neededCategory);
 					playerControllerDump.windowClickDump(windowId, slot, 0, 1, player);
 					lastPhaseState = getInventoryState(slots);
 					return;
 				}
 
 				// All cleared, move to next phase
-				console.log("[InvManager] Phase 1 complete, moving to Phase 2");
 				managementPhase = 2;
 				currentProcessingSlot = 0;
 				lastPhaseState = getInventoryState(slots);
@@ -3332,12 +3308,10 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 						const item = stack.getItem();
 						const category = getItemCategory(item, stack);
 						if (category === neededCategory) {
-							console.log("[InvManager] Phase 2: Hotbar slot", i, "already has correct item:", category);
 							continue;
 						}
 						
 						// Slot has wrong item, need to clear it first
-						console.log("[InvManager] Phase 2: Hotbar slot", i, "has wrong item:", category, "expected:", neededCategory, "- clearing first");
 						playerControllerDump.windowClickDump(windowId, slot, 0, 1, player);
 						lastPhaseState = getInventoryState(slots);
 						return;
@@ -3375,7 +3349,6 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 
 					// If found, pick it up
 					if (bestItem !== null) {
-						console.log("[InvManager] Phase 2: Picking", neededCategory, "from slot", bestItem, "for hotbar slot", i, "(slot", slot, ")");
 						playerControllerDump.windowClickDump(windowId, bestItem, 0, 0, player);
 						pickedItemSlot = bestItem;
 						targetHotbarSlot = slot;
@@ -3383,15 +3356,12 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 						managementPhase = 3;
 						lastPhaseState = getInventoryState(slots);
 						return;
-					} else {
-						console.log("[InvManager] Phase 2: No item found for hotbar slot", i, "category:", neededCategory);
 					}
 					
 					// No item found for this slot, continue to next
 				}
 
 				// All slots processed, reset
-				console.log("[InvManager] Phase 2 complete, resetting to Phase 0");
 				managementPhase = 0;
 				pickedItemSlot = -1;
 				targetHotbarSlot = -1;
@@ -3403,7 +3373,6 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 			// Phase 3: Place picked item into hotbar slot (normal click)
 			if (managementPhase === 3) {
 				if (targetHotbarSlot >= 31 && targetHotbarSlot <= 39) {
-					console.log("[InvManager] Phase 3: Placing item into hotbar slot", targetHotbarSlot);
 					playerControllerDump.windowClickDump(windowId, targetHotbarSlot, 0, 0, player);
 					
 					// Move to next slot
@@ -3416,7 +3385,6 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 				}
 				
 				// Something went wrong, reset
-				console.log("[InvManager] Phase 3 error, resetting to Phase 0");
 				managementPhase = 0;
 				pickedItemSlot = -1;
 				targetHotbarSlot = -1;
