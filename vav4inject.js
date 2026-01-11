@@ -317,10 +317,10 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 		let filtered = Object.values(modules).filter(m => m.enabled && m.name !== "TextGUI");
 
 		filtered.sort((a, b) => {
-			const aName = a.name;
-			const bName = b.name;
-			const compA = ctx$5.measureText(aName).width;
-			const compB = ctx$5.measureText(bName).width;
+			const aFullText = a.name + (a.tag?.trim() ? " " + a.tag.trim() : "");
+			const bFullText = b.name + (b.tag?.trim() ? " " + b.tag.trim() : "");
+			const compA = ctx$5.measureText(aFullText).width;
+			const compB = ctx$5.measureText(bFullText).width;
 			return compA < compB ? 1 : -1;
 		});
 
