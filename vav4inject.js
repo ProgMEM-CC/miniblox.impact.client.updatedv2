@@ -2995,9 +2995,13 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 		const essentials = ["gapple", "golden apple", "ender pearl", "fire charge", "ember stone"];
 		const customKeep = ["god helmet", "legend boots"];
 		let lastRun = 0;
-		let managementPhase = 0; // 0: drop duplicates, 1: organize hotbar, 2: drop junk
-		let lastInventoryState = ""; // Track inventory changes
-		let targetHotbar = []; // Target hotbar layout (packed to left)
+		let managementPhase = 0; // 0: drop duplicates and junk, 1: clear hotbar, 2: pick item, 3: place item
+		let lastInventoryState = "";
+		let lastPhaseState = "";
+		let fillIndex = 0;
+		let pickedItemSlot = -1; // Track which slot we picked from
+		let targetHotbarSlot = -1; // Track which hotbar slot we're filling
+		let currentProcessingSlot = 0; // Track which hotbar slot we're currently processing
 
 		function getMaterialScore(name) {
 			name = name.toLowerCase();
@@ -3065,6 +3069,12 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 		}
 
 		function getItemCategory(item, stack) {
+			// Check name-based categories first (for special items)
+			const name = stack.getDisplayName().toLowerCase();
+			if (name.includes("ender pearl") || name.includes("pearl")) return "pearl";
+			if (name.includes("golden apple") || name.includes("gapple")) return "gapple";
+			if (name.includes("tnt")) return "misc"; // TNT is not a placeable block for scaffold
+			
 			// Armor is not managed by InvManager
 			if (item instanceof ItemArmor) return "armor";
 			
@@ -3075,10 +3085,6 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 			if (item instanceof ItemSpade) return "shovel";
 			if (item instanceof ItemBlock) return "blocks";
 			if (item instanceof ItemFood) return "food";
-			
-			const name = stack.getDisplayName().toLowerCase();
-			if (name.includes("ender pearl")) return "pearl";
-			if (name.includes("golden apple") || name.includes("gapple")) return "gapple";
 			
 			return "misc";
 		}
@@ -3101,7 +3107,11 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 			for (const pair of pairs) {
 				const [slot, category] = pair.split(":").map(s => s.trim());
 				if (slot !== undefined && category) {
-					layout[parseInt(slot)] = category;
+					// Convert 1-9 to 0-8 for internal use
+					const slotNum = parseInt(slot);
+					if (slotNum >= 1 && slotNum <= 9) {
+						layout[slotNum - 1] = category;
+					}
 				}
 			}
 			return layout;
@@ -3109,8 +3119,9 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 
 		function getInventoryState(slots) {
 			// Create a hash of inventory state to detect changes
+			// Slots 0-39 (inventory + hotbar)
 			let state = "";
-			for (let i = 0; i < 36; i++) {
+			for (let i = 0; i < 40; i++) {
 				const stack = slots[i]?.getStack();
 				if (stack) {
 					state += i + ":" + stack.getDisplayName() + ":" + stack.stackSize + ";";
@@ -3130,20 +3141,51 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 			const windowId = player.openContainer.windowId;
 			const layout = parseLayout(invmanagerLayout[1]);
 
-			// Check if inventory changed - if so, restart management
-			const currentState = getInventoryState(slots);
-			if (currentState !== lastInventoryState) {
-				lastInventoryState = currentState;
-				managementPhase = 0;
-				targetHotbar = [];
+			// Debug: Log slot structure once
+			if (!window.invManagerDebugLogged) {
+				console.log("[InvManager] DEBUG: Total slots:", slots.length);
+				for (let i = 0; i < Math.min(50, slots.length); i++) {
+					const stack = slots[i]?.getStack();
+					if (stack) {
+						const item = stack.getItem();
+						const isArmor = item instanceof ItemArmor;
+						console.log("[InvManager] DEBUG: Slot", i, "has", stack.getDisplayName(), "isArmor:", isArmor);
+					} else {
+						console.log("[InvManager] DEBUG: Slot", i, "is empty");
+					}
+				}
+				window.invManagerDebugLogged = true;
 			}
 
-			// Phase 0: Drop duplicate weapons/tools (keep only the best one of each type)
+			// Get current inventory state
+			const currentState = getInventoryState(slots);
+
+			// Check for external intervention (inventory changed during phase 1-3)
+			if (managementPhase > 0 && currentState !== lastPhaseState) {
+				// External change detected, restart from phase 0
+				console.log("[InvManager] External intervention detected, restarting from Phase 0");
+				managementPhase = 0;
+				fillIndex = 0;
+				lastInventoryState = currentState;
+				lastPhaseState = currentState;
+				return;
+			}
+
+			// Update state only in phase 0
+			if (managementPhase === 0) {
+				lastInventoryState = currentState;
+				lastPhaseState = currentState;
+			}
+
+			console.log("[InvManager] Phase:", managementPhase);
+
+			// Phase 0: Drop duplicates and junk items
 			if (managementPhase === 0) {
 				const categoryItems = {};
 
 				// Scan all inventory slots (including hotbar)
-				for (let i = 0; i < 36; i++) {
+				// Slots 0-30: inventory, 31-39: hotbar
+				for (let i = 0; i < 40; i++) {
 					const stack = slots[i]?.getStack();
 					if (!stack) continue;
 
@@ -3151,164 +3193,6 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 					const category = getItemCategory(item, stack);
 
 					// Skip armor
-					if (category === "armor") continue;
-
-					// Only track single-instance categories (weapons/tools)
-					const singleInstanceCategories = ["sword", "bow", "pickaxe", "axe", "shovel"];
-					if (!singleInstanceCategories.includes(category)) continue;
-
-					let score = 0;
-					if (item instanceof ItemSword || item instanceof ItemBow) {
-						score = getWeaponScore(stack, item);
-					} else if (item instanceof ItemPickaxe || item instanceof ItemAxe || 
-					           item instanceof ItemSpade || item instanceof ItemHoe || item instanceof ItemTool) {
-						score = getToolScore(stack, item);
-					}
-
-					if (!categoryItems[category]) {
-						categoryItems[category] = [];
-					}
-					categoryItems[category].push({ stack, index: i, score });
-				}
-
-				// Find duplicates to drop
-				for (const [category, items] of Object.entries(categoryItems)) {
-					if (items.length <= 1) continue; // No duplicates
-
-					// Sort by score (best first)
-					items.sort((a, b) => b.score - a.score);
-
-					// Drop all except the best one
-					for (let i = 1; i < items.length; i++) {
-						dropSlot(items[i].index);
-						return; // Drop one per tick
-					}
-				}
-
-				// Build target hotbar layout (packed to left, only items that exist)
-				targetHotbar = [];
-				for (let slot = 0; slot < 9; slot++) {
-					const targetCategory = layout[slot];
-					if (!targetCategory) continue;
-
-					// Check if this category exists anywhere in inventory
-					let found = false;
-					for (let i = 0; i < 36; i++) {
-						const stack = slots[i]?.getStack();
-						if (!stack) continue;
-						const item = stack.getItem();
-						const category = getItemCategory(item, stack);
-						if (category === targetCategory) {
-							found = true;
-							break;
-						}
-					}
-
-					if (found) {
-						targetHotbar.push(targetCategory);
-					}
-				}
-
-				// No more duplicates, move to next phase
-				managementPhase = 1;
-				return;
-			}
-
-			// Phase 1: Organize hotbar to match target layout
-			if (managementPhase === 1) {
-				// Clear any items that shouldn't be in hotbar or are in wrong positions
-				for (let slot = 0; slot < 9; slot++) {
-					const stack = slots[slot]?.getStack();
-					if (!stack) continue;
-
-					const item = stack.getItem();
-					const category = getItemCategory(item, stack);
-
-					// Skip armor - never touch it
-					if (category === "armor") continue;
-
-					// Check if this item should be here
-					const expectedCategory = targetHotbar[slot];
-					if (category !== expectedCategory) {
-						// Wrong item or wrong position, move to inventory
-						playerControllerDump.windowClickDump(windowId, slot, 0, 1, player);
-						return;
-					}
-				}
-
-				// Fill in missing items from left to right
-				for (let slot = 0; slot < targetHotbar.length; slot++) {
-					const neededCategory = targetHotbar[slot];
-					const currentStack = slots[slot]?.getStack();
-
-					// Check if already correct
-					if (currentStack) {
-						const currentCategory = getItemCategory(currentStack.getItem(), currentStack);
-						if (currentCategory === neededCategory) {
-							continue; // Already correct
-						}
-					}
-
-					// Find best item of this category in inventory (slots 9-35)
-					let bestItem = null;
-					let bestScore = -1;
-
-					for (let i = 9; i < 36; i++) {
-						const stack = slots[i]?.getStack();
-						if (!stack) continue;
-
-						const item = stack.getItem();
-						const category = getItemCategory(item, stack);
-
-						if (category === neededCategory) {
-							let score = 0;
-							if (item instanceof ItemSword || item instanceof ItemBow) {
-								score = getWeaponScore(stack, item);
-							} else if (item instanceof ItemPickaxe || item instanceof ItemAxe || 
-							           item instanceof ItemSpade || item instanceof ItemHoe || item instanceof ItemTool) {
-								score = getToolScore(stack, item);
-							} else {
-								score = 100;
-							}
-
-							if (score > bestScore) {
-								bestScore = score;
-								bestItem = i;
-							}
-						}
-					}
-
-					// Place item (will go to leftmost empty slot)
-					if (bestItem !== null) {
-						playerControllerDump.windowClickDump(windowId, bestItem, 0, 1, player);
-						return;
-					}
-				}
-
-				// All slots organized, move to cleanup
-				managementPhase = 2;
-				return;
-			}
-
-			// Phase 2: Drop junk items from inventory (slots 9-35)
-			if (managementPhase === 2) {
-				if (!invmanagerDropJunk[1]) {
-					managementPhase = 0;
-					return;
-				}
-
-				const categoryItems = {};
-				const layoutCategories = new Set(Object.values(layout));
-
-				// Scan inventory (excluding hotbar and armor)
-				for (let i = 9; i < 36; i++) {
-					const stack = slots[i]?.getStack();
-					if (!stack) continue;
-
-					const item = stack.getItem();
-					const category = getItemCategory(item, stack);
-
-					// Skip armor - AutoArmor handles it
 					if (category === "armor") continue;
 
 					let score = 0;
@@ -3324,43 +3208,220 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 					if (!categoryItems[category]) {
 						categoryItems[category] = [];
 					}
-					categoryItems[category].push({ stack, index: i, score, category });
+					categoryItems[category].push({ stack, index: i, score });
 				}
 
-				// Determine what to drop
-				const toDrop = [];
+				// Drop duplicates and junk
+				const layout = parseLayout(invmanagerLayout[1]);
+				const layoutCategories = new Set(Object.values(layout));
+				const keepMultiple = ["blocks", "food", "misc", "pearl", "gapple"];
+				let foundItemToDrop = false;
+
 				for (const [category, items] of Object.entries(categoryItems)) {
-					items.sort((a, b) => b.score - a.score);
+					// Sort by score (descending), then by index (ascending) for stable sort
+					items.sort((a, b) => {
+						if (b.score !== a.score) {
+							return b.score - a.score;
+						}
+						return a.index - b.index; // Prefer lower index when scores are equal
+					});
 					
-					// If category is in layout, keep only the best one
-					// Otherwise, keep multiple (blocks, food, etc.)
-					const keepMultiple = ["blocks", "food", "misc", "pearl", "gapple"];
 					let keepCount;
+					const singleInstanceCategories = ["sword", "bow", "pickaxe", "axe", "shovel"];
 					
-					if (layoutCategories.has(category)) {
-						// Category is in hotbar layout - keep only 1 extra in inventory
+					if (singleInstanceCategories.includes(category)) {
+						// Weapons/tools: keep only 1
 						keepCount = 1;
+					} else if (layoutCategories.has(category)) {
+						// In layout but not weapon/tool: keep 1 in hotbar + 1 in inventory
+						keepCount = 2;
 					} else if (keepMultiple.includes(category)) {
-						// Not in layout but useful - keep all
+						// Useful items not in layout: keep all
 						keepCount = items.length;
 					} else {
-						// Not in layout and not useful - drop all
+						// Junk: drop all
 						keepCount = 0;
 					}
 					
+					// Drop items beyond keepCount
 					for (let i = keepCount; i < items.length; i++) {
-						toDrop.push(items[i].index);
+						console.log("[InvManager] Phase 0: Dropping", category, "from slot", items[i].index, "score:", items[i].score);
+						dropSlot(items[i].index);
+						foundItemToDrop = true;
+						return; // Drop one per tick
 					}
 				}
 
-				// Drop one junk item per tick
-				if (toDrop.length > 0) {
-					dropSlot(toDrop[0]);
+				// No more items to drop, move to next phase
+				if (!foundItemToDrop) {
+					console.log("[InvManager] Phase 0 complete, moving to Phase 1");
+					managementPhase = 1;
+					fillIndex = 0;
+					currentProcessingSlot = 0;
+					lastPhaseState = getInventoryState(slots);
+				}
+				return;
+			}
+
+			// Phase 1: Clear incorrect items from hotbar (shift-click to inventory)
+			if (managementPhase === 1) {
+				const layout = parseLayout(invmanagerLayout[1]);
+				
+				console.log("[InvManager] Phase 1: Starting hotbar scan");
+				
+				// Hotbar is slots 31-39 (9 slots)
+				for (let i = 0; i < 9; i++) {
+					const slot = 31 + i; // Hotbar starts at slot 31
+					const stack = slots[slot]?.getStack();
+					if (!stack) {
+						console.log("[InvManager] Phase 1: Hotbar slot", i, "(slot", slot, ") is empty");
+						continue; // Empty slot, skip
+					}
+
+					const item = stack.getItem();
+					const category = getItemCategory(item, stack);
+
+					console.log("[InvManager] Phase 1: Hotbar slot", i, "(slot", slot, ") has", category, "needed:", layout[i]);
+
+					// Skip armor
+					if (category === "armor") {
+						console.log("[InvManager] Phase 1: Hotbar slot", i, "is armor, skipping");
+						continue;
+					}
+
+					// Check if this item belongs in this slot
+					const neededCategory = layout[i];
+					if (neededCategory && category === neededCategory) {
+						console.log("[InvManager] Phase 1: Hotbar slot", i, "has correct item, keeping");
+						continue; // Correct item, keep it
+					}
+
+					// Wrong item or no item should be here, move to inventory
+					console.log("[InvManager] Phase 1: Clearing hotbar slot", i, "(slot", slot, ") category:", category, "needed:", neededCategory);
+					playerControllerDump.windowClickDump(windowId, slot, 0, 1, player);
+					lastPhaseState = getInventoryState(slots);
 					return;
 				}
 
-				// All done, reset to phase 0
+				// All cleared, move to next phase
+				console.log("[InvManager] Phase 1 complete, moving to Phase 2");
+				managementPhase = 2;
+				currentProcessingSlot = 0;
+				lastPhaseState = getInventoryState(slots);
+				return;
+			}
+
+			// Phase 2: Pick item from inventory (normal click)
+			if (managementPhase === 2) {
+				const layout = parseLayout(invmanagerLayout[1]);
+				
+				// Start from currentProcessingSlot and find next slot that needs filling
+				// Hotbar is slots 31-39
+				for (let i = currentProcessingSlot; i < 9; i++) {
+					const slot = 31 + i; // Hotbar starts at slot 31
+					const stack = slots[slot]?.getStack();
+					const neededCategory = layout[i];
+					
+					// Skip if no category needed for this slot
+					if (!neededCategory) {
+						continue;
+					}
+					
+					// Check if slot already has correct item
+					if (stack) {
+						const item = stack.getItem();
+						const category = getItemCategory(item, stack);
+						if (category === neededCategory) {
+							console.log("[InvManager] Phase 2: Hotbar slot", i, "already has correct item:", category);
+							continue;
+						}
+						
+						// Slot has wrong item, need to clear it first
+						console.log("[InvManager] Phase 2: Hotbar slot", i, "has wrong item:", category, "expected:", neededCategory, "- clearing first");
+						playerControllerDump.windowClickDump(windowId, slot, 0, 1, player);
+						lastPhaseState = getInventoryState(slots);
+						return;
+					}
+
+					// Slot is empty, find best item in inventory for this category
+					// Inventory is slots 0-30 (31 slots)
+					let bestItem = null;
+					let bestScore = -1;
+
+					for (let invSlot = 0; invSlot < 31; invSlot++) {
+						const invStack = slots[invSlot]?.getStack();
+						if (!invStack) continue;
+
+						const item = invStack.getItem();
+						const category = getItemCategory(item, invStack);
+
+						if (category === neededCategory) {
+							let score = 0;
+							if (item instanceof ItemSword || item instanceof ItemBow) {
+								score = getWeaponScore(invStack, item);
+							} else if (item instanceof ItemPickaxe || item instanceof ItemAxe || 
+							           item instanceof ItemSpade || item instanceof ItemHoe || item instanceof ItemTool) {
+								score = getToolScore(invStack, item);
+							} else {
+								score = 100;
+							}
+
+							if (score > bestScore) {
+								bestScore = score;
+								bestItem = invSlot;
+							}
+						}
+					}
+
+					// If found, pick it up
+					if (bestItem !== null) {
+						console.log("[InvManager] Phase 2: Picking", neededCategory, "from slot", bestItem, "for hotbar slot", i, "(slot", slot, ")");
+						playerControllerDump.windowClickDump(windowId, bestItem, 0, 0, player);
+						pickedItemSlot = bestItem;
+						targetHotbarSlot = slot;
+						currentProcessingSlot = i; // Remember which hotbar index we're filling
+						managementPhase = 3;
+						lastPhaseState = getInventoryState(slots);
+						return;
+					} else {
+						console.log("[InvManager] Phase 2: No item found for hotbar slot", i, "category:", neededCategory);
+					}
+					
+					// No item found for this slot, continue to next
+				}
+
+				// All slots processed, reset
+				console.log("[InvManager] Phase 2 complete, resetting to Phase 0");
 				managementPhase = 0;
+				pickedItemSlot = -1;
+				targetHotbarSlot = -1;
+				currentProcessingSlot = 0;
+				lastPhaseState = getInventoryState(slots);
+				return;
+			}
+
+			// Phase 3: Place picked item into hotbar slot (normal click)
+			if (managementPhase === 3) {
+				if (targetHotbarSlot >= 31 && targetHotbarSlot <= 39) {
+					console.log("[InvManager] Phase 3: Placing item into hotbar slot", targetHotbarSlot);
+					playerControllerDump.windowClickDump(windowId, targetHotbarSlot, 0, 0, player);
+					
+					// Move to next slot
+					currentProcessingSlot = currentProcessingSlot + 1;
+					managementPhase = 2; // Go back to phase 2 to continue filling
+					pickedItemSlot = -1;
+					targetHotbarSlot = -1;
+					lastPhaseState = getInventoryState(slots);
+					return;
+				}
+				
+				// Something went wrong, reset
+				console.log("[InvManager] Phase 3 error, resetting to Phase 0");
+				managementPhase = 0;
+				pickedItemSlot = -1;
+				targetHotbarSlot = -1;
+				currentProcessingSlot = 0;
+				lastPhaseState = getInventoryState(slots);
 			}
 		};
 }, "Player");
@@ -3372,7 +3433,7 @@ function dropSlot(index) {
 }
 
 // InvManager options
-invmanagerLayout = InvManager.addoption("Layout", String, "0:sword,1:pickaxe,2:axe,3:blocks,4:bow,5:food,6:pearl,7:gapple,8:misc");
+invmanagerLayout = InvManager.addoption("Layout", String, "1:sword,2:pickaxe,3:bow,4:blocks,5:blocks,6:blocks,7:food,8:pearl,9:gapple");
 invmanagerDelay = InvManager.addoption("Delay", Number, 150);
 invmanagerDropJunk = InvManager.addoption("DropJunk", Boolean, true);
 invmanagerDelay.range = [50, 500, 50];
