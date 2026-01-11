@@ -133,11 +133,11 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			const name = servicesName[1];
 			if (name == SERVICES_UNSET_NAME) {
 				game.chat.addChat({
-					text: "Please set your nickname in the \`Services\` module in order to use IRC! (set it via ClickGUI)",
+					text: "Please set your nickname in the \`Services\` module in order to use IRC! (set it via the ClickGUI)",
 					color: "red"
 				});
 				game.chat.addChat({
-					text: "You can also set your nickname via .setoption: .setoption Services Name <your nickname, surround with double quotes if it contains spaces>",
+					text: "You can also set your nickname via .setoption: .setoption Services Name <your nickname, surround with double quotes if it contains any spaces>",
 					color: "green"
 				});
 				return;
@@ -167,7 +167,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 		let breakStart = Date.now();
 		let noMove = Date.now();
 
-		// a list of miniblox usernames to not attack / ignore (friends)
+		// a list of miniblox usernames to not attack + ignore (friends)
 		/** @type string[] **/
 		const friends = [];
 		let ignoreFriends = false;
@@ -206,14 +206,14 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 		function autoToggleShowNametagStuff() {
 			if (!showNametags.enabled) {
 				toast({
-					title: "Turned on show nametags automatically",
+					title: "Turned on show nametags automatically!",
 					status: "success"
 				});
 				showNametags.setEnabled(true);
 			}
 			if (tagsInMM[1] !== true) {
 				tagsInMM[1] = true;
-				toast({title: "Turned on Murder Mystery setting in show nametags module" });
+				toast({title: "Turned on Murder Mystery setting in show nametags module!" });
 			}
 		}
 
@@ -239,7 +239,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 		}
 		async function generateAccount() {
 			toast({
-				title: "generating miniblox account via integration...",
+				title: "Generating miniblox account via integration...",
 				status: "info",
 				duration: 0.3e3
 			});
@@ -271,7 +271,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 	`);
 
 	addModification('VERSION$1," | ",', `"${vapeName} v${VERSION}"," | ",`);
-	addModification('if(!x.canConnect){', 'x.errorMessage = x.errorMessage === "Could not join server. You are connected to a VPN or proxy. Please disconnect from it and refresh this page." ? "You\'re possibly IP banned or you\'re using a VPN " : x.errorMessage;');
+	addModification('if(!x.canConnect){', 'x.errorMessage = x.errorMessage === "Could not join server. You are (probably) connected to a VPN or a proxy. Please disconnect from it and refresh (F5) this page." ? "You\'re possibly IP banned or you\'re using a VPN " : x.errorMessage;');
 
 	// DRAWING SETUP
 	addModification('I(this,"glintTexture");', `
@@ -302,7 +302,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
         if (color) ctx.globalCompositeOperation = "source-over";
     }
 `);
-	// TEXT GUI
+	// TEXTGUI
 	addModification('(this.drawSelectedItemStack(),this.drawHintBox())', /*js*/`
 	if (ctx$5 && enabledModules["TextGUI"]) {
 		const canvasW = ctx$5.canvas.width;
@@ -339,7 +339,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			const x = canvasW - textWidth - posX;
 			const y = posY + (textguisize[1] + 3) * offset;
 
-			// Shadow for both parts
+			// Shadow
 			ctx$5.shadowColor = "black";
 			ctx$5.shadowBlur = 4;
 			ctx$5.shadowOffsetX = 1;
@@ -453,7 +453,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 	// SPRINT
 	addModification('b=keyPressedDump("shift")||touchcontrols.sprinting', '||enabledModules["Sprint"]');
 
-		// VELOCITY
+    // VELOCITY
 	addModification('"CPacketEntityVelocity",h=>{const p=m.world.entitiesDump.get(h.id);', `
 		if (player && h.id == player.id && enabledModules["Velocity"]) {
 			const [, vH] = velocityhori;
@@ -523,7 +523,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	// so we know our server pos
 
 	// PREDICTION AC FIXER (makes the ac a bit less annoying (e.g. when scaffolding))
-	// ig but this should be done in the desync branch instead lol - 6x68
+	// ig but this should be done in the desync branch instead - 6x68
 	// 	addModification("if(h.reset){this.setPosition(h.x,h.y,h.z),this.reset();return}", "", true);
 	// 	addModification("this.serverDistance=y", `
 	// if (h.reset) {
@@ -861,7 +861,7 @@ clientVersion: VERSION$1
 				args.shift();
 				const msg = args.join(" ");
 				sendIRCMessage(msg);
-				return this.closeInput();
+				
 				
 			case ".config":
 			case ".profile":
@@ -887,6 +887,10 @@ clientVersion: VERSION$1
 					}
 				}
 				return this.closeInput();
+			case ".shop": {
+				ClientSocket.sendPacket(new SPacketOpenShop({}));
+				return this.closeInput();
+			}
 			case ".friend": {
 				const mode = args[1];
 				if (!mode) {
@@ -2738,7 +2742,7 @@ cheststealdelay.range = [0, 500, 10];
 cheststealminStack.range = [1, 64, 1];
 
 
-// Fixed Scaffold Module (should work 99.9%)
+// Scaffold (works 99.9%)
 let scaffoldtower, oldHeld, scaffoldextend, scaffoldcycle, scaffoldSameY;
 let tickCount = 0;
 let lastScaffoldY = null; // Track the Y coordinate for sameY mode
@@ -2969,7 +2973,7 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 			const timer = new Module("Timer", function(callback) {
 				reloadTickLoop(callback ? 50 / timervalue[1] : 50);
 			}, "World", () => \`\${timervalue[1]} MSPT\`);
-			timervalue = timer.addoption("Value", Number, 1.2);
+			timervalue = timer.addoption("Value", Number, 1);
 			new Module("Phase", function() {}, "World");
 
 			const antiban = new Module("AntiBan", function() {}, "Misc", () => useAccountGen[1] ? "Gen" : "Non Account");
@@ -2980,7 +2984,7 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 			new Module("AutoQueue", function() {}, "Minigames");
 			new Module("AutoVote", function() {}, "Minigames");
 			const chatdisabler = new Module("ChatDisabler", function() {}, "Misc", () => "Spam");
-			chatdisablermsg = chatdisabler.addoption("Message", String, "vector not gonna bypass this one 🗣️");
+			chatdisablermsg = chatdisabler.addoption("Message", String, "Vector not gonna bypass this one 🗣️"); // V stands for Value Patch lmao
 			new Module("FilterBypass", function() {}, "Exploit", () => "\\\\");
    
     // InvCleaner
@@ -3206,7 +3210,7 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 				}
 			}
 
-			// Drop items
+			// Items that get dropped
 			toDrop.forEach(dropSlot);
 		};
 }, "Player");
@@ -3285,9 +3289,9 @@ const longjump = new Module("LongJump", function(callback) {
     };
 }, "Movement");
 
-ljpower  = longjump.addoption("Power", Number, 0.6);   // horizontal boost
-ljboost  = longjump.addoption("BoostTicks", Number, 10); // how long boost lasts
-ljdesync = longjump.addoption("Desync", Boolean, true);  // toggle desync mode
+ljpower  = longjump.addoption("Power", Number, 0.6);
+ljboost  = longjump.addoption("BoostTicks", Number, 10);
+ljdesync = longjump.addoption("Desync", Boolean, true);
 
 const survival = new Module("SurvivalMode", function(callback) {
 				if (callback) {
