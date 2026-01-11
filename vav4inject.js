@@ -861,7 +861,7 @@ clientVersion: VERSION$1
 				args.shift();
 				const msg = args.join(" ");
 				sendIRCMessage(msg);
-				return this.closeInput();
+				
 				
 			case ".config":
 			case ".profile":
@@ -887,6 +887,10 @@ clientVersion: VERSION$1
 					}
 				}
 				return this.closeInput();
+			case ".shop": {
+				ClientSocket.sendPacket(new SPacketOpenShop({}));
+				return this.closeInput();
+			}
 			case ".friend": {
 				const mode = args[1];
 				if (!mode) {
