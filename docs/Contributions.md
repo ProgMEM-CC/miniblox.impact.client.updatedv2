@@ -1,14 +1,18 @@
 ## 💡 Contribution Guidelines
 
-Keep your code modular and lightweight.
+Keep your code modular, lightweight, and maintainable.
 
-Use clear naming conventions. (this refers to the agreed-upon rules or patterns that devs follow to keep the codebase clean, consistent, and easy to understand.)
+Follow clear and consistent naming conventions to ensure the codebase remains readable and easy to understand.
 
-Test **THOROUGHLY** before submitting or ask me to test it for you!
+Test thoroughly before submitting a contribution. If you’re unsure, feel free to ask me to test it for you.
 
-### 💬 Do you need any further assistance?
+💬 Need Further Assistance?
 
-Please raise a issue on GitHub or reach out to the Impact Community on Discord via this link here - [ImpactV4Cheats](https://discord.gg/PwpGemYhJx)
+If you have questions, encounter issues, or want feedback:
 
+Open an issue on GitHub
+OR
+Reach out to the Impact Community on Discord:
+👉 [ImpactV4Cheats](https://discord.gg/PwpGemYhJx)
 
-Authored by [@TheM1ddleM1n](https://github.com/TheM1ddleM1n)
+Authored by @TheM1ddleM1n

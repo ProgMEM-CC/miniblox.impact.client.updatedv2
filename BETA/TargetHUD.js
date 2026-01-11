@@ -1,4 +1,4 @@
-    // === IMPROVED TARGETHUD CODE (no delay, gradient bar, rounded box :D) ===
+    // TargetHUD
     if (
       ctx$5 &&
       enabledModules["TargetHUD"] &&
