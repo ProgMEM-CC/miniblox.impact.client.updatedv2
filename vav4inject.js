@@ -862,7 +862,6 @@ clientVersion: VERSION$1
 				const msg = args.join(" ");
 				sendIRCMessage(msg);
 				
-				
 			case ".config":
 			case ".profile":
 				if (args.length > 1) {
@@ -1441,7 +1440,17 @@ clientVersion: VERSION$1
 					}
 				} else delete tickLoop["AutoClicker"];
 			}, "Combat");
-			
+
+			new Module("ClickTP", function(callback){
+				const pos = playerControllerDump.objectMouseOver.hitVec;
+				if(callback){
+					tickLoop["ClickTP"] = function() {
+						if(playerControllerDump.key.middleClick){
+							player.setPosition(pos.x,pos.y,pos.z);
+						}
+					};
+				}else delete tickLoop["ClickTP"];
+			}, "Combat");
 			new Module("AntiBlind", function() {}, "Render");
 			
 			new Module("AntiCheat", function(callback) {
