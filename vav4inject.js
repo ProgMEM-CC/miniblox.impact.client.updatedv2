@@ -2505,69 +2505,6 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			nukerRange = nuker.addoption("Range", Number, 3);
 			nukerDelay = nuker.addoption("Delay", Number, 1);
 
-			function getItemStrength(stack) {
-				if (stack == null) return 0;
-				const itemBase = stack.getItem();
-				let base = 1;
-
-				if (itemBase instanceof ItemSword) base += itemBase.attackDamage;
-				else if (itemBase instanceof ItemArmor) base += itemBase.damageReduceAmountDump;
-
-				const nbttaglist = stack.getEnchantmentTagList();
-				if (nbttaglist != null) {
-					for (let i = 0; i < nbttaglist.length; ++i) {
-						const id = nbttaglist[i].id;
-						const lvl = nbttaglist[i].lvl;
-
-						if (id == Enchantments.sharpness.effectId) base += lvl * 1.25;
-						else if (id == Enchantments.protection.effectId) base += Math.floor(((6 + lvl * lvl) / 3) * 0.75);
-						else if (id == Enchantments.efficiency.effectId) base += (lvl * lvl + 1);
-						else if (id == Enchantments.power.effectId) base += lvl;
-						else base += lvl * 0.01;
-					}
-				}
-
-				return base * stack.stackSize;
-			}
-
-			// AutoArmor
-			function getArmorSlot(armorSlot, slots) {
-				let returned = armorSlot;
-				let dist = 0;
-				for(let i = 0; i < 40; i++) {
-					const stack = slots[i].getHasStack() ? slots[i].getStack() : null;
-					if (stack && stack.getItem() instanceof ItemArmor && (3 - stack.getItem().armorType) == armorSlot) {
-						const strength = getItemStrength(stack);
-						if (strength > dist) {
-							returned = i;
-							dist = strength;
-						}
-					}
-				}
-				return returned;
-			}
-
-			new Module("AutoArmor", function(callback) {
-				if (callback) {
-					tickLoop["AutoArmor"] = function() {
-						if (player.openContainer == player.inventoryContainer) {
-							for(let i = 0; i < 4; i++) {
-								const slots = player.inventoryContainer.inventorySlots;
-								const slot = getArmorSlot(i, slots);
-								if (slot != i) {
-									if (slots[i].getHasStack()) {
-										playerControllerDump.windowClickDump(player.openContainer.windowId, i, 0, 0, player);
-										playerControllerDump.windowClickDump(player.openContainer.windowId, -999, 0, 0, player);
-									}
-									playerControllerDump.windowClickDump(player.openContainer.windowId, slot, 0, 1, player);
-								}
-							}
-						}
-					}
-				}
-				else delete tickLoop["AutoArmor"];
-			}, "Player");
-
 			function craftRecipe(recipe) {
 				if (canCraftItem(player.inventory, recipe)) {
 					craftItem(player.inventory, recipe, false);
@@ -3072,29 +3009,25 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 			chatdisablermsg = chatdisabler.addoption("Message", String, "Vector not gonna bypass this one 🗣️"); // V stands for Value Patch lmao
 			new Module("FilterBypass", function() {}, "Exploit", () => "\\\\");
    
-    // InvCleaner
-    const InvCleaner = new Module("InvCleaner", function (callback) {
+    // InvManager - Inventory management with item positioning
+    let invmanagerLayout, invmanagerDelay, invmanagerDropJunk, invmanagerAutoArmor;
+    
+    const InvManager = new Module("InvManager", function (callback) {
 		if (!callback) {
-			delete tickLoop["InvCleaner"];
+			delete tickLoop["InvManager"];
 			return;
 		}
 
-		const armorPriority = ["leather", "chain", "iron", "diamond"];
 		const essentials = ["gapple", "golden apple", "ender pearl", "fire charge", "ember stone"];
 		const customKeep = ["god helmet", "legend boots"];
-		const bestArmor = {};
-		const bestWeapons = {}; // Separate weapons from tools
-		const bestTools = {}; // Pickaxe, Axe, Shovel, etc.
 		let lastRun = 0;
-
-		function getArmorScore(stack) {
-			const item = stack.getItem();
-			const material = item.getArmorMaterial?.()?.toLowerCase?.() ?? "unknown";
-			const priority = armorPriority.indexOf(material);
-			const durability = stack.getMaxDamage() - stack.getItemDamage();
-			const enchants = stack.getEnchantmentTagList()?.length ?? 0;
-			return (priority === -1 ? -999 : priority * 10000) + durability + (enchants * 500);
-		}
+		let managementPhase = -1; // -1: equip armor, 0: drop duplicates and junk, 1: clear hotbar, 2: pick item, 3: place item
+		let lastInventoryState = "";
+		let lastPhaseState = "";
+		let fillIndex = 0;
+		let pickedItemSlot = -1; // Track which slot we picked from
+		let targetHotbarSlot = -1; // Track which hotbar slot we're filling
+		let currentProcessingSlot = 0; // Track which hotbar slot we're currently processing
 
 		function getMaterialScore(name) {
 			name = name.toLowerCase();
@@ -3102,7 +3035,7 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 			if (name.includes("iron")) return 500;
 			if (name.includes("stone")) return 100;
 			if (name.includes("wood")) return 50;
-			if (name.includes("gold")) return 300; // Gold is weak but valuable
+			if (name.includes("gold")) return 300;
 			return 0;
 		}
 
@@ -3115,13 +3048,12 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 				const level = enchant.lvl ?? 1;
 				const id = enchant.id ?? 0;
 				
-				// High value enchants
-				if (id === 16 || id === 20) score += level * 200; // Sharpness, Fire Aspect
-				else if (id === 19 || id === 21) score += level * 150; // Knockback, Looting
-				else if (id === 0 || id === 1 || id === 3 || id === 4) score += level * 180; // Protection, Fire Protection, Blast Protection, Projectile Protection
-				else if (id === 32 || id === 34) score += level * 100; // Efficiency, Unbreaking
-				else if (id === 48 || id === 49 || id === 50 || id === 51) score += level * 120; // Power, Punch, Flame, Infinity
-				else score += level * 50; // Other enchants
+				if (id === 16 || id === 20) score += level * 200;
+				else if (id === 19 || id === 21) score += level * 150;
+				else if (id === 0 || id === 1 || id === 3 || id === 4) score += level * 180;
+				else if (id === 32 || id === 34) score += level * 100;
+				else if (id === 48 || id === 49 || id === 50 || id === 51) score += level * 120;
+				else score += level * 50;
 			}
 			return score;
 		}
@@ -3139,7 +3071,6 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 				baseScore = 900;
 			}
 			
-			// Material is VERY important - diamond should always beat stone even with enchants
 			return baseScore + (material * 2) + enchantScore + (durability * 0.1);
 		}
 
@@ -3163,140 +3094,389 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 			return baseScore + (material * 2) + enchantScore + (durability * 0.1);
 		}
 
-		function getToolType(item) {
+		function getArmorStrength(stack) {
+			if (stack == null) return 0;
+			const itemBase = stack.getItem();
+			let base = 1;
+
+			if (itemBase instanceof ItemArmor) base += itemBase.damageReduceAmountDump;
+
+			const nbttaglist = stack.getEnchantmentTagList();
+			if (nbttaglist != null) {
+				for (let i = 0; i < nbttaglist.length; ++i) {
+					const id = nbttaglist[i].id;
+					const lvl = nbttaglist[i].lvl;
+
+					if (id == Enchantments.protection.effectId) base += Math.floor(((6 + lvl * lvl) / 3) * 0.75);
+					else base += lvl * 0.01;
+				}
+			}
+
+			return base * stack.stackSize;
+		}
+
+		function getBestArmorSlot(armorSlot, slots) {
+			// Get current equipped armor strength
+			const currentStack = slots[armorSlot].getHasStack() ? slots[armorSlot].getStack() : null;
+			let bestStrength = currentStack ? getArmorStrength(currentStack) : 0;
+			let bestSlot = -1; // -1 means no better armor found
+			
+			// Search inventory and hotbar (slots 0-39) for better armor
+			for(let i = 0; i < 40; i++) {
+				// Skip armor slots (0-3)
+				if (i < 4) continue;
+				
+				const stack = slots[i].getHasStack() ? slots[i].getStack() : null;
+				if (stack && stack.getItem() instanceof ItemArmor && (3 - stack.getItem().armorType) == armorSlot) {
+					const strength = getArmorStrength(stack);
+					if (strength > bestStrength) {
+						bestSlot = i;
+						bestStrength = strength;
+					}
+				}
+			}
+			return bestSlot;
+		}
+
+		function getItemCategory(item, stack) {
+			// Check name-based categories first (for special items)
+			const name = stack.getDisplayName().toLowerCase();
+			if (name.includes("ender pearl") || name.includes("pearl")) return "pearl";
+			if (name.includes("golden apple") || name.includes("gapple")) return "gapple";
+			if (name.includes("tnt")) return "misc"; // TNT is not a placeable block for scaffold
+			
+			// Armor category
+			if (item instanceof ItemArmor) return "armor";
+			
+			if (item instanceof ItemSword) return "sword";
+			if (item instanceof ItemBow) return "bow";
 			if (item instanceof ItemPickaxe) return "pickaxe";
 			if (item instanceof ItemAxe) return "axe";
 			if (item instanceof ItemSpade) return "shovel";
-			if (item instanceof ItemHoe) return "hoe";
-			return "tool";
+			if (item instanceof ItemBlock) return "blocks";
+			if (item instanceof ItemFood) return "food";
+			
+			return "misc";
 		}
 
 		function shouldKeep(stack) {
 			const name = stack.getDisplayName().toLowerCase();
 			const item = stack.getItem();
 			
-			// Always keep essentials
 			if (essentials.some(k => name.includes(k))) return true;
 			if (customKeep.some(k => name.includes(k))) return true;
-			
-			// Always keep blocks
 			if (item instanceof ItemBlock) return true;
-			
-			// Keep food
 			if (item instanceof ItemFood) return true;
 			
 			return false;
 		}
 
-		tickLoop["InvCleaner"] = function () {
+		function parseLayout(layoutString) {
+			const layout = {};
+			const pairs = layoutString.split(",");
+			for (const pair of pairs) {
+				const [slot, category] = pair.split(":").map(s => s.trim());
+				if (slot !== undefined && category) {
+					// Convert 1-9 to 0-8 for internal use
+					const slotNum = parseInt(slot);
+					if (slotNum >= 1 && slotNum <= 9) {
+						layout[slotNum - 1] = category;
+					}
+				}
+			}
+			return layout;
+		}
+
+		function getInventoryState(slots) {
+			// Create a hash of inventory state to detect changes
+			// Slots 0-39 (inventory + hotbar)
+			let state = "";
+			for (let i = 0; i < 40; i++) {
+				const stack = slots[i]?.getStack();
+				if (stack) {
+					state += i + ":" + stack.getDisplayName() + ":" + stack.stackSize + ";";
+				}
+			}
+			return state;
+		}
+
+		tickLoop["InvManager"] = function () {
 			const now = Date.now();
-			if (now - lastRun < 200) return;
+			if (now - lastRun < invmanagerDelay[1]) return;
 			lastRun = now;
 
 			const slots = player?.inventoryContainer?.inventorySlots;
 			if (!player.openContainer || player.openContainer !== player.inventoryContainer || !slots || slots.length < 36) return;
 
-			Object.keys(bestArmor).forEach(k => delete bestArmor[k]);
-			Object.keys(bestWeapons).forEach(k => delete bestWeapons[k]);
-			Object.keys(bestTools).forEach(k => delete bestTools[k]);
+			const windowId = player.openContainer.windowId;
+			const layout = parseLayout(invmanagerLayout[1]);
 
-			const toDrop = [];
-
-			// Preload equipped armor
-			[5, 6, 7, 8].forEach(i => {
-				const stack = slots[i]?.getStack();
-				if (stack?.getItem() instanceof ItemArmor) {
-					const armorType = stack.getItem().armorType ?? "unknown";
-					bestArmor["armor_" + armorType] = { stack, index: i, score: getArmorScore(stack) };
-				}
-			});
-
-			for (let i = 0; i < 36; i++) {
-				const stack = slots[i]?.getStack();
-				if (!stack) continue;
-
-				const item = stack.getItem();
-
-				// Skip items that should always be kept
-				if (shouldKeep(stack)) continue;
-
-				// Handle armor
-				if (item instanceof ItemArmor) {
-					const armorType = item.armorType ?? "unknown";
-					const key = "armor_" + armorType;
-					const score = getArmorScore(stack);
-					const existing = bestArmor[key];
-
-					if (!existing) {
-						bestArmor[key] = { stack, index: i, score };
-					} else {
-						if (score > existing.score) {
-							// Only drop the old armor if it's in inventory (not equipped)
-							if (existing.index < 36) {
-								toDrop.push(existing.index);
-							}
-							bestArmor[key] = { stack, index: i, score };
-						} else {
-							toDrop.push(i);
-						}
-					}
-					continue;
-				}
-
-				// Handle weapons (Sword and Bow)
-				if (item instanceof ItemSword) {
-					const key = "sword";
-					const score = getWeaponScore(stack, item);
-					const existing = bestWeapons[key];
-
-					if (!existing) {
-						bestWeapons[key] = { stack, score, index: i };
-					} else if (score > existing.score) {
-						toDrop.push(existing.index);
-						bestWeapons[key] = { stack, score, index: i };
-					} else {
-						toDrop.push(i);
-					}
-					continue;
-				}
-
-				if (item instanceof ItemBow) {
-					const key = "bow";
-					const score = getWeaponScore(stack, item);
-					const existing = bestWeapons[key];
-
-					if (!existing) {
-						bestWeapons[key] = { stack, score, index: i };
-					} else if (score > existing.score) {
-						toDrop.push(existing.index);
-						bestWeapons[key] = { stack, score, index: i };
-					} else {
-						toDrop.push(i);
-					}
-					continue;
-				}
-
-				// Handle tools (Pickaxe, Axe, Shovel, etc.) - Keep only ONE of each type
-				if (item instanceof ItemPickaxe || item instanceof ItemAxe || 
-				    item instanceof ItemSpade || item instanceof ItemHoe || item instanceof ItemTool) {
-					const toolType = getToolType(item);
-					const score = getToolScore(stack, item);
-					const existing = bestTools[toolType];
-
-					if (!existing) {
-						bestTools[toolType] = { stack, score, index: i };
-					} else if (score > existing.score) {
-						toDrop.push(existing.index);
-						bestTools[toolType] = { stack, score, index: i };
-					} else {
-						toDrop.push(i);
-					}
-					continue;
-				}
+			// Debug: Log slot structure once
+			if (!window.invManagerDebugLogged) {
+				window.invManagerDebugLogged = true;
 			}
 
-			// Items that get dropped
-			toDrop.forEach(dropSlot);
+			// Get current inventory state
+			const currentState = getInventoryState(slots);
+
+			// Check for external intervention (inventory changed during phase 1-3)
+			if (managementPhase > 0 && currentState !== lastPhaseState) {
+				// External change detected, restart from phase -1
+				managementPhase = -1;
+				fillIndex = 0;
+				currentProcessingSlot = 0;
+				lastInventoryState = currentState;
+				lastPhaseState = currentState;
+				return;
+			}
+
+			// Update state only in phase -1
+			if (managementPhase === -1) {
+				lastInventoryState = currentState;
+				lastPhaseState = currentState;
+			}
+
+			// Phase -1: Auto equip best armor (if enabled)
+			if (managementPhase === -1) {
+				if (invmanagerAutoArmor[1]) {
+					// Armor slots are 0-3 (helmet, chestplate, leggings, boots)
+					for(let i = 0; i < 4; i++) {
+						const bestSlot = getBestArmorSlot(i, slots);
+						// bestSlot is -1 if no better armor found, or the slot index of better armor
+						if (bestSlot !== -1) {
+							// Found better armor in inventory, shift-click to equip it
+							playerControllerDump.windowClickDump(windowId, bestSlot, 0, 1, player);
+							lastPhaseState = getInventoryState(slots);
+							return;
+						}
+					}
+				}
+				
+				// Armor equipped or disabled, move to next phase
+				managementPhase = 0;
+				lastPhaseState = getInventoryState(slots);
+				return;
+			}
+
+			// Phase 0: Drop duplicates and junk items
+			if (managementPhase === 0) {
+				const categoryItems = {};
+
+				// Scan all inventory slots (including hotbar)
+				// Slots 0-3: armor slots (skip these)
+				// Slots 4-30: inventory
+				// Slots 31-39: hotbar
+				for (let i = 4; i < 40; i++) {
+					const stack = slots[i]?.getStack();
+					if (!stack) continue;
+
+					const item = stack.getItem();
+					const category = getItemCategory(item, stack);
+
+					let score = 0;
+					if (item instanceof ItemSword || item instanceof ItemBow) {
+						score = getWeaponScore(stack, item);
+					} else if (item instanceof ItemPickaxe || item instanceof ItemAxe || 
+					           item instanceof ItemSpade || item instanceof ItemHoe || item instanceof ItemTool) {
+						score = getToolScore(stack, item);
+					} else if (shouldKeep(stack)) {
+						score = 100;
+					}
+
+					if (!categoryItems[category]) {
+						categoryItems[category] = [];
+					}
+					categoryItems[category].push({ stack, index: i, score });
+				}
+
+				// Drop duplicates and junk
+				const layout = parseLayout(invmanagerLayout[1]);
+				const layoutCategories = new Set(Object.values(layout));
+				const keepMultiple = ["blocks", "food", "misc", "pearl", "gapple"];
+				let foundItemToDrop = false;
+
+				for (const [category, items] of Object.entries(categoryItems)) {
+					// Sort by score (descending), then by index (ascending) for stable sort
+					items.sort((a, b) => {
+						if (b.score !== a.score) {
+							return b.score - a.score;
+						}
+						return a.index - b.index; // Prefer lower index when scores are equal
+					});
+					
+					let keepCount;
+					const singleInstanceCategories = ["sword", "bow", "pickaxe", "axe", "shovel"];
+					
+					if (singleInstanceCategories.includes(category)) {
+						// Weapons/tools: keep only 1
+						keepCount = 1;
+					} else if (layoutCategories.has(category)) {
+						// In layout but not weapon/tool: keep 1 in hotbar + 1 in inventory
+						keepCount = 2;
+					} else if (keepMultiple.includes(category)) {
+						// Useful items not in layout: keep all
+						keepCount = items.length;
+					} else {
+						// Junk: drop all
+						keepCount = 0;
+					}
+					
+					// Drop items beyond keepCount
+					for (let i = keepCount; i < items.length; i++) {
+						dropSlot(items[i].index);
+						foundItemToDrop = true;
+						return; // Drop one per tick
+					}
+				}
+
+				// No more items to drop, move to next phase
+				if (!foundItemToDrop) {
+					managementPhase = 1;
+					fillIndex = 0;
+					currentProcessingSlot = 0;
+					lastPhaseState = getInventoryState(slots);
+				}
+				return;
+			}
+
+			// Phase 1: Clear incorrect items from hotbar (shift-click to inventory)
+			if (managementPhase === 1) {
+				const layout = parseLayout(invmanagerLayout[1]);
+				
+				// Hotbar is slots 31-39 (9 slots)
+				for (let i = 0; i < 9; i++) {
+					const slot = 31 + i; // Hotbar starts at slot 31
+					const stack = slots[slot]?.getStack();
+					if (!stack) {
+						continue; // Empty slot, skip
+					}
+
+					const item = stack.getItem();
+					const category = getItemCategory(item, stack);
+
+					// Check if this item belongs in this slot
+					const neededCategory = layout[i];
+					if (neededCategory && category === neededCategory) {
+						continue; // Correct item, keep it
+					}
+
+					// Wrong item or no item should be here, move to inventory
+					playerControllerDump.windowClickDump(windowId, slot, 0, 1, player);
+					lastPhaseState = getInventoryState(slots);
+					return;
+				}
+
+				// All cleared, move to next phase
+				managementPhase = 2;
+				currentProcessingSlot = 0;
+				lastPhaseState = getInventoryState(slots);
+				return;
+			}
+
+			// Phase 2: Pick item from inventory (normal click)
+			if (managementPhase === 2) {
+				const layout = parseLayout(invmanagerLayout[1]);
+				
+				// Start from currentProcessingSlot and find next slot that needs filling
+				// Hotbar is slots 31-39
+				for (let i = currentProcessingSlot; i < 9; i++) {
+					const slot = 31 + i; // Hotbar starts at slot 31
+					const stack = slots[slot]?.getStack();
+					const neededCategory = layout[i];
+					
+					// Skip if no category needed for this slot
+					if (!neededCategory) {
+						continue;
+					}
+					
+					// Check if slot already has correct item
+					if (stack) {
+						const item = stack.getItem();
+						const category = getItemCategory(item, stack);
+						if (category === neededCategory) {
+							continue;
+						}
+						
+						// Slot has wrong item, need to clear it first
+						playerControllerDump.windowClickDump(windowId, slot, 0, 1, player);
+						lastPhaseState = getInventoryState(slots);
+						return;
+					}
+
+					// Slot is empty, find best item in inventory for this category
+					// Inventory is slots 0-30 (31 slots)
+					let bestItem = null;
+					let bestScore = -1;
+
+					for (let invSlot = 0; invSlot < 31; invSlot++) {
+						const invStack = slots[invSlot]?.getStack();
+						if (!invStack) continue;
+
+						const item = invStack.getItem();
+						const category = getItemCategory(item, invStack);
+
+						if (category === neededCategory) {
+							let score = 0;
+							if (item instanceof ItemSword || item instanceof ItemBow) {
+								score = getWeaponScore(invStack, item);
+							} else if (item instanceof ItemPickaxe || item instanceof ItemAxe || 
+							           item instanceof ItemSpade || item instanceof ItemHoe || item instanceof ItemTool) {
+								score = getToolScore(invStack, item);
+							} else {
+								score = 100;
+							}
+
+							if (score > bestScore) {
+								bestScore = score;
+								bestItem = invSlot;
+							}
+						}
+					}
+
+					// If found, pick it up
+					if (bestItem !== null) {
+						playerControllerDump.windowClickDump(windowId, bestItem, 0, 0, player);
+						pickedItemSlot = bestItem;
+						targetHotbarSlot = slot;
+						currentProcessingSlot = i; // Remember which hotbar index we're filling
+						managementPhase = 3;
+						lastPhaseState = getInventoryState(slots);
+						return;
+					}
+					
+					// No item found for this slot, continue to next
+				}
+
+				// All slots processed, reset
+				managementPhase = 0;
+				pickedItemSlot = -1;
+				targetHotbarSlot = -1;
+				currentProcessingSlot = 0;
+				lastPhaseState = getInventoryState(slots);
+				return;
+			}
+
+			// Phase 3: Place picked item into hotbar slot (normal click)
+			if (managementPhase === 3) {
+				if (targetHotbarSlot >= 31 && targetHotbarSlot <= 39) {
+					playerControllerDump.windowClickDump(windowId, targetHotbarSlot, 0, 0, player);
+					
+					// Move to next slot
+					currentProcessingSlot = currentProcessingSlot + 1;
+					managementPhase = 2; // Go back to phase 2 to continue filling
+					pickedItemSlot = -1;
+					targetHotbarSlot = -1;
+					lastPhaseState = getInventoryState(slots);
+					return;
+				}
+				
+				// Something went wrong, reset
+				managementPhase = 0;
+				pickedItemSlot = -1;
+				targetHotbarSlot = -1;
+				currentProcessingSlot = 0;
+				lastPhaseState = getInventoryState(slots);
+			}
 		};
 }, "Player");
 
@@ -3305,6 +3485,13 @@ function dropSlot(index) {
     playerControllerDump.windowClickDump(windowId, index, 0, 0, player);
     playerControllerDump.windowClickDump(windowId, -999, 0, 0, player);
 }
+
+// InvManager options
+invmanagerLayout = InvManager.addoption("Layout", String, "1:sword,2:pickaxe,3:bow,4:blocks,5:blocks,6:blocks,7:food,8:pearl,9:gapple");
+invmanagerDelay = InvManager.addoption("Delay", Number, 150);
+invmanagerDropJunk = InvManager.addoption("DropJunk", Boolean, true);
+invmanagerAutoArmor = InvManager.addoption("AutoArmor", Boolean, true);
+invmanagerDelay.range = [50, 500, 50];
 
 // Jesus
 const jesus = new Module("Jesus", function(callback) {
