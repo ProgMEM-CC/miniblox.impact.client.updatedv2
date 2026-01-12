@@ -162,6 +162,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 		let showNametags, Services, murderMystery, tagsWhileSneaking, tagsInMM;
 		let blocking = false;
 		let sendYaw = false;
+		let isMiddleClickDown = false;
 		let sendY = false;
         let desync = false;
 		let breakStart = Date.now();
@@ -1205,6 +1206,9 @@ clientVersion: VERSION$1
 	// ANTIBLIND
 	addModification("player.isPotionActive(Potions.blindness)", 'player.isPotionActive(Potions.blindness) && !enabledModules["AntiBlind"]', true);
 
+	addModification('document.addEventListener("mousedown",m=>{', "if (m.which === 2) isMiddleClickDown = true;");
+	addModification('document.addEventListener("mouseup",m=>{', "if (m.which === 2) isMiddleClickDown = false;");
+
 	// MAIN
 	addModification('document.addEventListener("contextmenu",m=>m.preventDefault());', /*js*/`
 		// my code lol
@@ -1445,7 +1449,7 @@ clientVersion: VERSION$1
 				const pos = playerControllerDump.objectMouseOver.hitVec;
 				if(callback) {
 					tickLoop["ClickTP"] = function() {
-						if(playerControllerDump.key.middleClick) {
+						if (isMiddleClickDown) {
 							player.setPosition(pos.x,pos.y,pos.z);
 						}
 					};
