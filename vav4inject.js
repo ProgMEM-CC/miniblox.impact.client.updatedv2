@@ -1446,11 +1446,27 @@ clientVersion: VERSION$1
 			}, "Combat");
 
 			new Module("ClickTP", function(callback) {
-				const pos = playerControllerDump.objectMouseOver.hitVec;
 				if(callback) {
 					tickLoop["ClickTP"] = function() {
 						if (isMiddleClickDown) {
-							player.setPosition(pos.x,pos.y,pos.z);
+							const pos = playerControllerDump.objectMouseOver.hitVec;
+							// ClientSocket.sendPacket(new SPacketPlayerPosLook({
+							// 	pos: {
+							// 		x: pos.x + 1.2,
+							// 		y: pos.y - 0.08,
+							// 		z: pos.z
+							// 	},
+							// 	onGround: false
+							// }));
+							// ClientSocket.sendPacket(new SPacketPlayerPosLook({
+							// 	pos: {
+							// 		x: pos.x,
+							// 		y: pos.y,
+							// 		z: pos.z
+							// 	},
+							// 	onGround: true
+							// }));
+							player.setPosition(pos.x, pos.y, pos.z);
 						}
 					};
 				} else delete tickLoop["ClickTP"];
