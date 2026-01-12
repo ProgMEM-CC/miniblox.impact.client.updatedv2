@@ -201,9 +201,23 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 		}
 
 		let lastJoined, velocityhori, velocityvert, chatdisablermsg, textguifont, textguisize, textguishadow, attackedEntity, stepheight;
+		let anim17Enabled;
 		let useAccountGen, accountGenEndpoint;
 		let attackTime = Date.now();
 		let chatDelay = Date.now();
+		
+		const ANIM_17_SETTINGS = {
+			rotationZ: Math.PI / 4,
+			rotationX: 0,
+			rotationY: Math.PI / 2,
+			positionX: 0.2,
+			positionY: 0.1,
+			positionZ: 0,
+			scale: 0.8,
+			swingRotationZ: 1.6,
+			swingRotationX: 0.8
+		};
+		
 		function autoToggleShowNametagStuff() {
 			if (!showNametags.enabled) {
 				toast({
@@ -492,8 +506,50 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	`, true);
 
 	// PRE KILLAURA
-	addModification('else player.isBlocking()?', 'else (player.isBlocking() || blocking)?', true);
 	addModification('this.entity.isBlocking()', '(this.entity.isBlocking() || this.entity == player && blocking)', true);
+	
+	// 1.7 BLOCKING ANIMATION - must be before the killaura modification
+	addModification(
+		'else player.isBlocking()?(this.position.copy(swordBlockPos),this.quaternion.copy(swordBlockRot)):',
+		`else player.isBlocking()?(
+			this.position.copy(swordBlockPos),
+			this.quaternion.copy(swordBlockRot),
+			this.item.scale.set(1,1,1),
+			(function(){
+				if(modules["1.7Animation"] && modules["1.7Animation"].enabled){
+					if(g <= 1){
+						this.item.rotation.z = Math.sin(g * Math.PI) * ANIM_17_SETTINGS.swingRotationZ + ANIM_17_SETTINGS.rotationZ;
+						this.item.rotation.x = -Math.sin(g * Math.PI) * ANIM_17_SETTINGS.swingRotationX + ANIM_17_SETTINGS.rotationX;
+						this.item.rotation.y = ANIM_17_SETTINGS.rotationY;
+						this.item.position.x += ANIM_17_SETTINGS.positionX;
+						this.item.position.y += ANIM_17_SETTINGS.positionY;
+						this.item.position.z += ANIM_17_SETTINGS.positionZ;
+						this.item.scale.setScalar(ANIM_17_SETTINGS.scale);
+					} else {
+						this.item.rotation.z = ANIM_17_SETTINGS.rotationZ;
+						this.item.rotation.x = ANIM_17_SETTINGS.rotationX;
+						this.item.rotation.y = ANIM_17_SETTINGS.rotationY;
+						this.item.position.x += ANIM_17_SETTINGS.positionX;
+						this.item.position.y += ANIM_17_SETTINGS.positionY;
+						this.item.position.z += ANIM_17_SETTINGS.positionZ;
+						this.item.scale.setScalar(ANIM_17_SETTINGS.scale);
+					}
+				}
+			}).call(this)
+		):`,
+		true
+	);
+	
+	// Now apply killaura modification
+	addModification('else player.isBlocking()?', 'else (player.isBlocking() || blocking)?', true);
+	
+	// Allow attacking while blocking (for 1.7 animation)
+	addModification(
+		'!player.isBlocking()',
+		'!(player.isBlocking() && !(modules["1.7Animation"] && modules["1.7Animation"].enabled))',
+		true
+	);
+	
 	addModification('this.yaw-this.', '(sendYaw || this.yaw)-this.', true);
 	addModification("x.yaw=player.yaw", 'x.yaw=(sendYaw || this.yaw)', true);
 	addModification('this.lastReportedYawDump=this.yaw,', 'this.lastReportedYawDump=(sendYaw || this.yaw),', true);
@@ -1969,6 +2025,9 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 
 
 			new Module("ESP", function() {}, "Render",() => "Highlight");
+			
+			new Module("1.7Animation", function() {}, "Render", () => "Block Swing");
+			
 			const textgui = new Module("TextGUI", function() {}, "Render");
 			textguifont = textgui.addoption("Font", String, "Poppins");
 			textguisize = textgui.addoption("TextSize", Number, 16);
