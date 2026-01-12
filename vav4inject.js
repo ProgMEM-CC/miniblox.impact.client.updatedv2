@@ -1441,15 +1441,15 @@ clientVersion: VERSION$1
 				} else delete tickLoop["AutoClicker"];
 			}, "Combat");
 
-			new Module("ClickTP", function(callback){
+			new Module("ClickTP", function(callback) {
 				const pos = playerControllerDump.objectMouseOver.hitVec;
-				if(callback){
+				if(callback) {
 					tickLoop["ClickTP"] = function() {
-						if(playerControllerDump.key.middleClick){
+						if(playerControllerDump.key.middleClick) {
 							player.setPosition(pos.x,pos.y,pos.z);
 						}
 					};
-				}else delete tickLoop["ClickTP"];
+				} else delete tickLoop["ClickTP"];
 			}, "Combat");
 			new Module("AntiBlind", function() {}, "Render");
 			
