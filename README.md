@@ -1,4 +1,4 @@
-# [![Impact for Miniblox.io!](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=2500&pause=1000&color=FF0000&width=435&lines=Impact+Client+for+Miniblox)](https://git.io/typing-svg)
+# [![Impact V8](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=3500&pause=2000&color=FF0000&width=435&lines=Impact+Client+V8)](https://git.io/typing-svg)
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&duration=2500&pause=1000&color=abe0e4&vCenter=true&width=600&lines=The+ultimate+Miniblox+hacked+client!;Built+for+stealth+(from+AntiCheats)%2C+speed%2C+and+total+domination.;Fully+dark-mode+optimized+with+a+modern+GUI)](https://git.io/typing-svg)
 
 ## A feature-rich client modification for Miniblox.io with enhanced gameplay capabilities, stealth optimization, and a modern, dark-mode user interface.
@@ -63,7 +63,7 @@
 ### Utility Modules
 - **AntiBan 2.0** - Account protection with optional account generation
 - **InvCleaner** - Automatic inventory organization
-- **ServerCrasher** - Server stress testing (requires reconfiguration after patch)
+- **ServerCrasher** - Server stress testing (requires reconfiguration after patch) (use the new settings)
 - **Nuker** - Rapid block breaking
 - **ChestSteal** - Steals items/armor from chest quickly
 
