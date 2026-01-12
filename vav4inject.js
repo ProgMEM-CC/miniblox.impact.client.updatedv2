@@ -1772,10 +1772,11 @@ clientVersion: VERSION$1
 				ircSource = undefined;
 			}
 
+			// TODO(move-code): change to progmem-cc once merged
 			// Fetch and eval module scripts
 			const moduleUrls = [
-				'https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/modules/speed.js',
-				'https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/modules/cheststeal.js'
+				'https://raw.githubusercontent.com/6x67/miniblox.impact.client.updatedv2/refs/heads/main/modules/speed.js',
+				'https://raw.githubusercontent.com/6x67/miniblox.impact.client.updatedv2/refs/heads/main/modules/cheststeal.js'
 			];
 			Promise.all(moduleUrls.map(url => fetch(url).then(r => r.text()))).then(codes => {
 				codes.forEach(code => eval(code));
