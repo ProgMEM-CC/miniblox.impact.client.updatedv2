@@ -13,6 +13,7 @@
 // @grant        GM_setValue
 // @grant        unsafeWindow
 // @require      https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/vav4inject.js
+// @require      https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/unlocker.js
 // @run-at       document-start
 // @updateURL    https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/main/tampermonkey.user.js
 // @downloadURL  https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/main/tampermonkey.user.js
