@@ -1,4 +1,5 @@
 // Take code from here 
+// Shoutout to wytlines100, joudaALT, heythereu etc
 (function () {
   'use strict'
   const normalWatermark = document.createElement('div')
