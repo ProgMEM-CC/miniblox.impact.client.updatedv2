@@ -45,7 +45,21 @@ function addDump(replacement, code) {
 }
 
 /**
- *
+ * Replaces dumped variable names in the provided code.
+ * @param {string} code
+ * @returns {string}
+ */
+function handleDumps(code) {
+	for (const [name, regex] of Object.entries(dumpedVarNames)) {
+		const matched = code.match(regex);
+		if (matched) {
+			code = code.replace(new RegExp(name, "g"), matched[1]);
+		}
+	}
+	return code;
+}
+
+/**
  * @param {string} text
  */
 function modifyCode(text) {
@@ -1663,7 +1677,7 @@ clientVersion: VERSION$1
 					const existingModules = new Set(Object.keys(modules));
 					
 					// Simply eval the code in the same scope
-					eval(code);
+					eval(handleDumps(code));
 					
 					// Find the newly created modules
 					const newModules = Object.keys(modules).filter(m => !existingModules.has(m));
@@ -1779,7 +1793,7 @@ clientVersion: VERSION$1
 				'https://raw.githubusercontent.com/6x67/miniblox.impact.client.updatedv2/refs/heads/main/modules/cheststeal.js'
 			];
 			Promise.all(moduleUrls.map(url => fetch(url).then(r => r.text()))).then(codes => {
-				codes.forEach(code => eval(code));
+				codes.forEach(code => eval(handleDumps(code)));
 			}).catch(err => console.error('Failed to load modules:', err));
 
 			Services = new Module("Services", function(enabled) {
