@@ -63,7 +63,7 @@
 ### Utility Modules
 - **AntiBan 2.0** - Account protection with optional account generation
 - **InvManager** - Automatic inventory organization
-- **ServerCrasher** - Server stress testing (requires reconfiguration after patch) (use the new settings)
+- **ServerCrasher** - Server "stress testing" (now it should work since the working settings are hardcoded into the server crasher module)
 - **Nuker** - Rapid block breaking
 - **ChestSteal** - Steals items/armor from chest quickly
 
@@ -106,6 +106,12 @@ For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM
 ---
 
 ## 🧑‍💻 Recent Update Logs
+
+## v8.1 (2026-01-12)
+
+speechbubbel update real
+- (unrelated) @6x68's discord account (datamodel.1) got nuked (told someone in DMs to scan a QR code with their home address (tuff) and discord made it so I had to verify my email... that I lost access to, yay!)
+- Merged PR [#101](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/pull/101) (had 67 commits, so it HAD to be done before someone ruined the commit number)
 
 ### v8 (2026-01-06)
 - Big 2026 update!
