@@ -54,8 +54,8 @@ jobs:
 
       - name: 🔒 Configure Git for commit
         run: |
-          git config user.name "ImpactV8CheatsBot"
-          git config user.email "impactv8cheatsbot@users.noreply.github.com"
+          git config user.name "copilot-swe-agent[bot]"
+          git config user.email "198982749+Copilot@users.noreply.github.com"
 
       - name: 💾 Commit updated files
         run: |
