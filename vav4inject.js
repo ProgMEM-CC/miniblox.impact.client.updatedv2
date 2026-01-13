@@ -58,6 +58,7 @@ function handleDumps(code) {
 	}
 	return code;
 }
+globalThis[storeName].handleDumps = handleDumps;
 
 /**
  * @param {string} text
@@ -1677,8 +1678,8 @@ clientVersion: VERSION$1
 					const existingModules = new Set(Object.keys(modules));
 					
 					// Simply eval the code in the same scope
-					eval(handleDumps(code));
-					
+					eval(window.${storeName}.handleDumps(code));
+
 					// Find the newly created modules
 					const newModules = Object.keys(modules).filter(m => !existingModules.has(m));
 					console.log("New modules created:", newModules);
@@ -1793,7 +1794,7 @@ clientVersion: VERSION$1
 				'https://raw.githubusercontent.com/6x67/miniblox.impact.client.updatedv2/refs/heads/main/modules/cheststeal.js'
 			];
 			Promise.all(moduleUrls.map(url => fetch(url).then(r => r.text()))).then(codes => {
-				codes.forEach(code => eval(handleDumps(code)));
+				codes.forEach(code => eval(window.${storeName}.handleDumps(code)));
 			}).catch(err => console.error('Failed to load modules:', err));
 
 			Services = new Module("Services", function(enabled) {
