@@ -58,7 +58,6 @@ function handleDumps(code) {
 	}
 	return code;
 }
-globalThis[storeName].handleDumps = handleDumps;
 
 /**
  * @param {string} text
@@ -4030,6 +4029,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 				}
 			}, 10);
 		});
+		unsafeWindow.globalThis[storeName].handleDumps = handleDumps;
 		unsafeWindow.globalThis[storeName].saveVapeConfig = saveVapeConfig;
 		unsafeWindow.globalThis[storeName].loadVapeConfig = loadVapeConfig;
 		unsafeWindow.globalThis[storeName].exportVapeConfig = exportVapeConfig;
