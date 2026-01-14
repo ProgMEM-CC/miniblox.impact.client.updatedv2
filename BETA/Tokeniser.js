@@ -1,5 +1,3 @@
-// Tokeniser is to get more tokens, try implementing that
-// Maybe you could add a sessionStealer feature that steals the session id of all playes in the server around u in ur ender.
 function startRewardLoop(interval = 5000) {
   const SESSION_PROVIDER = "https://session.coolmathblox.ca/";
   const sessionToken = localStorage.getItem("session_v1");
