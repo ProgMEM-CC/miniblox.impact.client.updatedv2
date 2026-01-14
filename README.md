@@ -91,12 +91,6 @@
 
 For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
 
-## Modules additions (tick when implemented)
-- [ ] ChestAura (with a range of 6)
-- [ ] XRay
-- [ ] AutoEat
-- [ ] ArmorHUD
-
 ## Additional Notes
 
 - **KillAura Air Hits**: Server-side issue, not fixable client-side (low severity)
@@ -143,8 +137,6 @@ speechbubbel update real
 - Music Player branch improvements
 - Version synchronization
 
-## (v5-v6.8.4) etc
-
 ---
 
 ## Project History
@@ -157,10 +149,6 @@ Before the original client was deleted ([xylex fake quit moment](https://github.
 But it was fully usable 3 days after that comment, and then, the first updated version of Vape, 3.0.0, was released.
 
 ---
-
-### For Developers
-
-**Version Management**: Always update `VERSIONFILE`, `tampermonkey.user.js`, and `injection.js` together. (TheM1ddleM1n's job)
 
 **Branch Strategy**: 
 - `main` - Stable releases only
@@ -196,7 +184,7 @@ Want your video featured? [Submit here](https://github.com/ProgMEM-CC/miniblox.i
 | --------------------------------------------------------------------------- | -------------------------------------- |
 | [7GrandDadPGN](https://github.com/7GrandDadPGN)                             | Original creator of Vape V4            |
 | [DataM0del](https://github.com/DataM0del) / [6x68](https://github.com/6x68) | Core developer                         |
-| [TheM1ddleM1n](https://github.com/TheM1ddleM1n)                             | Core developer & GitHub maintainer     |
+| [TheM1ddleM1n](https://github.com/TheM1ddleM1n)                             | Core developer + GitHub maintainer     |
 | [ProgMEM-CC](https://github.com/ProgMEM-CC)                                 | Repository management & infrastructure |
 | [dtkiller-jp](https://github.com/dtkiller-jp)                               | GUI developer                          |
 
@@ -215,6 +203,4 @@ This software is provided as-is without any warranties. Users are solely respons
 - Check the [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ) first
 - Search the existing [GitHub Issues](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/issues)
 - Ask in our [Discord Server](https://discord.gg/PwpGemYhJx)
-- Create a new issue with detailed info.
-
-Enjoy! 🤑
+- Create a new issue with detailed info
