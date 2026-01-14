@@ -1,4 +1,3 @@
-// A Simple test script - dtkiller-jp
 new Module("TestScript", function (enabled) {
     if (enabled) {
         console.log("TestScript has been enabled!");
