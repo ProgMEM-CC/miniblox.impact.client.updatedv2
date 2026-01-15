@@ -6,7 +6,7 @@
 > [!NOTE]
 > (Do not remove this unless Impact updates to use the new Miniblox client as a base (or it dies for 2 years or gets archived or discontinued), otherwise you're bad)
 > A new Miniblox client is being made! It isn't ready for use, but you can track its progress!
-> See [this discussion](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/discussions/118) and [this milestone](https://codeberg.org/Miniblox/Vape/issues/6) for more updates on.
+> See [this discussion](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/discussions/118) and [this issue](https://codeberg.org/Miniblox/Vape/issues/6) for more updates on.
 > If you want to use it (I recommend not using it *yet*, due to not even having a KillAura and many other things), then you will need to build it yourself
 > with a custom fork of Rollup that supports using Top-level await in IIFE output mode (I have one, and it's like 3 lines to make it not error when building code that uses top-level-await in IIFE output mode, modifying 1 line (`isAsync: false` -> `isAsync: usesTopLevelAwait`)
 > and adding an extra one to get `usesTopLevelAwait` from `FinaliserOptions` in `src/finalisers/iife.ts`)
