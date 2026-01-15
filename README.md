@@ -3,6 +3,14 @@
 
 ## A feature-rich client modification for Miniblox.io with enhanced gameplay capabilities, stealth optimization, and a modern, dark-mode user interface
 
+> [!NOTE]
+> (Do not remove this unless Impact updates to use the new Miniblox client as a base (or it dies for 2 years or gets archived or discontinued), otherwise you're bad)
+> A new Miniblox client is being made! It isn't ready for use, but you can track its progress!
+> See [this discussion](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/discussions/118) and [this milestone](https://codeberg.org/Miniblox/Vape/issues/6) for more updates on.
+> If you want to use it (I recommend not using it *yet*, due to not even having a KillAura and many other things), then you will need to build it yourself
+> with a custom fork of Rollup that supports using Top-level await in IIFE output mode (I have one, and it's like 3 lines to make it not error when building code that uses top-level-await in IIFE output mode, modifying 1 line (`isAsync: false` -> `isAsync: usesTopLevelAwait`)
+> and adding an extra one to get `usesTopLevelAwait` from `FinaliserOptions` in `src/finalisers/iife.ts`)
+
 [![Discord](https://img.shields.io/badge/Discord-Join%20Us-5865F2)](https://discord.gg/PwpGemYhJx)
 [![Website](https://img.shields.io/badge/Website-impactminiblox.js.org-blue)](https://impactminiblox.js.org)
 
