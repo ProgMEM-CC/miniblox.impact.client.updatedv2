@@ -1,4 +1,3 @@
-// Why this?
 Add "BlockBreak" module to prevent block destruction during high-speed movement
 Add "InvWalk" module to allow walking while the inventory screen is open
 Add "KeepSprint" feature to prevent sprint interruption during high-speed movement
