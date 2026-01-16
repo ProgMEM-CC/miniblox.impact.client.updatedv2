@@ -3485,7 +3485,11 @@ const scaffold = new Module("Scaffold", function(callback) {
                 }
             } else {
                 // Normal mode: always place under player
-                targetY = playerY - 1;
+				if(lastScaffoldY == playerY-1){
+					targetY = playerY+2;
+				} else {
+                	targetY = playerY - 1;
+				}
                 lastScaffoldY = targetY;
             }
 
