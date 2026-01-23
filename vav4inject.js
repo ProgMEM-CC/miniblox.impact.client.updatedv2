@@ -2099,7 +2099,7 @@ clientVersion: VERSION$1
 					if (wallCheck) return false;
 					return true;
 				})
-
+				console.log(targets)
 				return targets;
 			}
 			function lol() {
