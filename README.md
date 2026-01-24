@@ -59,6 +59,7 @@
 ## Features
 
 ### Movement Modules
+
 - **Fly** - Enhanced movement with customizable speed (With desync created by 6x68)
 - **NoFall** / **NoFallBeta** - Prevents fall damage (Use NoFallBeta lol.)
 - **Scaffold** - Automatic block placement under player
@@ -66,22 +67,26 @@
 - **LongJump** - Extended jump distance with desync
 
 ### Combat Modules
+
 - **KillAura** - Automated combat (limited to 6 block reach because of anticheat)
 
 ### Utility Modules
-- **AntiBan 2.0** - Account protection with optional account generation
+
+- **AntiBan 2.0** - Account protection with optional account generation (ACCOUNT GENERATION REQUIRES AN EXTERNAL PROGRAM RUNNING!!!)
 - **InvManager** - Automatic inventory organization (is bugged 6x68 tested it and told me on codeberg)
 - **ServerCrasher** - Server "stress testing" (now it should work since the working settings are hardcoded into the server crasher module)
 - **Nuker** - Rapid block breaking
 - **ChestSteal** - Steals items/armor from chest quickly
 
 ### Visual Modules
+
 - **ClickGUI** - A Modern interface for module management
 - **TextGUI** - A Alternative for a text-based interface
 - **MurderMystery** - Player role detection for Murder Mystery gamemode!
 - **ShowNametags** - Enhanced nametag visibility options
 
 ### Social Features
+
 - **IRC Integration** - In-game chat system (`.chat` command, enable the `Services` module first AND set the name to whatever you want)
 - **Discord Bridge** - Connect IRC with Discord server (when @6x68 is online, and is hosting the bot (almost never))
 - **Friend System** - Manage trusted players (`.friend` command)
@@ -101,6 +106,13 @@ For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM
 ---
 
 ## 🧑‍💻 Recent Update Logs
+
+## v8.1 (2026-01-24)
+
+Vape Rewrite is going along well, it has a Velocity and a semi-functioning KillAura (it doesn't show the blocking thing + it doesn't rotate, so if you're not looking in their direction then you'll get your hits cancelled).
+
+Vape Rewrite is the current focus of ProgMEM-CC & @6x68's time, and Impact Rewrite apparently won't happen.
+(TheM1ddleM1n should create their Codeberg account again and come join us in cooking, probably shouldn't have roasted Impact too much in my release notes so he wouldn't have done that 😭 lol)
 
 ## v8.1 (2026-01-12)
 
