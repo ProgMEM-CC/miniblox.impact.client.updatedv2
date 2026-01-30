@@ -5,7 +5,7 @@ let replacements = {};
 let dumpedVarNames = {};
 const storeName = "a" + crypto.randomUUID().replaceAll("-", "").substring(16);
 const vapeName = crypto.randomUUID().replaceAll("-", "").substring(16);
-const VERSION = "9-FINAL";
+const VERSION = "9-FINAL2";
 
 // ANTICHEAT HOOK
 function replaceAndCopyFunction(oldFunc, newFunc) {
@@ -121,7 +121,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			&& (tagsInMM[1] || game.serverInfo.serverCategory !== "murder");
 `, true);
 	addModification('Potions.jump.getId(),"5");', `
-		const SERVICES_SERVER = new URL("https://imchat-server.vercel.app/");
+		const SERVICES_SERVER = new URL("https://impactchat-server.vercel.app/");
 		const SERVICES_SEND_ENDPOINT = new URL("/send", SERVICES_SERVER);
 		let servicesName;
 		const SERVICES_UNSET_NAME = "Unset name";
