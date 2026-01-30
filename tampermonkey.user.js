@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Impact For Miniblox
 // @namespace    https://github.com/progmem-cc
-// @version      9-FINAL
+// @version      9-FINAL2
 // @description  The ultimate Miniblox hacked client which is built for total domination of all Miniblox servers with a fully dark-mode optimized modern GUI and high performance guaranteed.
 // @author       7GrandDadPGN, ProgMEM-CC, TheM1ddleM1n, 6x68 (bab), dtkiller-jp
 // @match        https://miniblox.io/*
