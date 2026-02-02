@@ -1,4 +1,4 @@
-# [![Impact V8](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=3500&pause=2000&color=FF0000&width=435&lines=Impact+Client+V8)](https://git.io/typing-svg)
+# [![Impact V8](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=3500&pause=2000&color=FF0000&width=435&lines=Impact+Client+V9)](https://git.io/typing-svg)
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&duration=2500&pause=1000&color=abe0e4&vCenter=true&width=600&lines=The+ultimate+Miniblox+hacked+client;Built+for+stealth+(from+AntiCheats)%2C+speed%2C+and+total+domination.;Fully+dark-mode+optimized+with+a+modern+GUI)](https://git.io/typing-svg)
 
 ## A feature-rich client modification for Miniblox.io with enhanced gameplay capabilities, stealth optimization, and a modern, dark-mode user interface
@@ -60,7 +60,7 @@
 ### Movement Modules
 
 - **Fly** - Enhanced movement with customizable speed (With desync created by 6x68)
-- **NoFall** / **NoFallBeta** - Prevents fall damage (Use NoFallBeta lol.)
+- **NoFall** / **NoFallBeta** - Prevents fall damage (none of these work btw 😭 progmem skidding old code and they don't work bypass)
 - **Scaffold** - Automatic block placement under player
 - **Jetpack** - Legacy fly mode with desync support
 - **LongJump** - Extended jump distance with desync
@@ -106,33 +106,43 @@ For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM
 
 ## 🧑‍💻 Recent Update Logs
 
-## v8.1 (2026-01-24)
+### v9-FINAL2 (2026-02-02)
+
+Switched to ProgMEM-CC's IMChat deployment since mine is now dead due to my usage limits being exceeded (mainly because vercel doesn't like SSE for whatever reason)
+
+<img width="404" height="415" alt="image" src="https://github.com/user-attachments/assets/842a00a1-d612-4b01-9cfc-d0fd15486842" />
+
+### v9-FINAL (2026-01-27)
+
+Only bumped the version and added a new notice in the `tampermonkey.user.js` file.
+
+### v8.1 (2026-01-24)
 
 Vape Rewrite is going along well, it has a Velocity and a semi-functioning KillAura (it doesn't show the blocking thing + it doesn't rotate, so if you're not looking in their direction then you'll get your hits cancelled).
 
 Vape Rewrite is the current focus of ProgMEM-CC & @6x68's time, and Impact Rewrite apparently won't happen.
 (TheM1ddleM1n should create their Codeberg account again and come join us in cooking, probably shouldn't have roasted Impact too much in my release notes so he wouldn't have done that 😭 lol)
 
-## v8.1 (2026-01-12)
+### v8.1 (2026-01-12)
 
 speechbubbel update real
 - (unrelated) @6x68's discord account (datamodel.1) got nuked (told someone in DMs to scan a QR code with their home address (tuff) and discord made it so I had to verify my email... that I lost access to, yay!)
 - Merged PR [#101](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/pull/101) (had 67 commits, so it HAD to be done before someone ruined the commit number)
 
-### v8 (2026-01-06)
+#### v8 (2026-01-06)
 - Big 2026 update
 - Dynamic Island
 - Removed FastBreak + AutoFunnyChat Module
 - AutoSync version to v8
 - (2026-01-04) `Services` module is toggled on by default.
 
-### v6.9 (2025-12-31)
+#### v6.9 (2025-12-31)
 - AutoSync version to v6.9
 - Velocity Fix by 6x68
 - Music Player added
 - New Dynamic Island branch
 
-### v6.8.8 (2025-12-14)
+#### v6.8.8 (2025-12-14)
 - Added IRC chat system
 - New MurderMystery module for role detection
 - ShowNametags module with enhanced visibility options
@@ -140,11 +150,11 @@ speechbubbel update real
 - (2025-12-27) AutoFunnyChat update
 - (2025-12-30) ChestSteal recode
 
-### v6.8.7 (2025-11-11)
+#### v6.8.7 (2025-11-11)
 - Improved update consistency
 - Documentation updates
 
-### v6.8.5 (2025-11-08)
+#### v6.8.5 (2025-11-08)
 - Multiple contribution updates
 - Music Player branch improvements
 - Version synchronization
@@ -153,8 +163,8 @@ speechbubbel update real
 
 ## Project History
 
-**Impact For Miniblox** is a fork of the **Vape V4** project by `6x68`
-(which is a continuation of the discontinued **Vape V4** project by `7GrandDadPGN`).
+**Impact For Miniblox** is a fork of the **Vape for Miniblox** project by `6x68`
+(which is a continuation of the discontinued **Vape for Miniblox** project by `7GrandDadPGN`).
 Before the original client was deleted ([xylex fake quit moment](https://github.com/7GrandDadPGN/7granddadpgn/commit/46a3b9e9afea226f730b9d9eaf10788b993d43ee#commitcomment-152355396)) 🥀
 <!-- why am I adding all of these dates, this isn't history class LOL -->
 **6x68** started updating it 13 days before that comment, and then stopped 2 days after.
