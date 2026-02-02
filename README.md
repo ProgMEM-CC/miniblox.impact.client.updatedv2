@@ -11,7 +11,7 @@
 > We patch rollup for you now, so you don't need a custom Rollup fork to build it.
 
 [![Discord](https://img.shields.io/badge/Discord-Join%20Us-5865F2)](https://discord.gg/PwpGemYhJx)
-[![Website](https://img.shields.io/badge/Website-impactminiblox.js.org-blue)](https://impactminiblox.js.org)
+[![Website](https://img.shields.io/badge/Website-minibloxhacks.netlify.app-blue)](https://minibloxhacks.netlify.app/)
 
 ---
 
