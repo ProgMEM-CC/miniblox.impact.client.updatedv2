@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/png" href="favicon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Impact V6 for Miniblox!</title>
+  <title>Impact V9 for Miniblox!</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -13,6 +13,8 @@
       --surface: rgba(20, 20, 20, 0.7);
       --text: #e0e0e0;
       --accent: #00c853;
+      --warning-bg: linear-gradient(90deg, #ffb347, #ffcc33);
+      --warning-text: #2b2b2b;
     }
 
     * {
@@ -31,6 +33,27 @@
       align-items: center;
       min-height: 100vh;
       animation: fadeInBody 1s ease-in-out;
+    }
+
+    .sunset-banner {
+      max-width: 720px;
+      width: calc(100% - 40px);
+      margin: 1rem auto;
+      padding: 1rem 1.25rem;
+      border-radius: 12px;
+      background: var(--warning-bg);
+      color: var(--warning-text);
+      box-shadow: 0 8px 32px rgba(255, 180, 60, 0.12);
+      border: 1px solid rgba(0,0,0,0.08);
+      text-align: left;
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .sunset-banner strong {
+      display: block;
+      font-size: 1.05rem;
+      margin-bottom: 0.25rem;
     }
 
     .glass {
@@ -144,17 +167,28 @@
   </style>
 </head>
 <body>
+  <div class="sunset-banner" role="note" aria-live="polite">
+    <strong>Sunset notice — Impact will soon be deprecated in favor of Vape Rewrite</strong>
+    This page now marks Impact as effectively sunset and points contributors and users toward <a href="https://codeberg.org/Miniblox/VapeRewrite/">Vape Rewrite</a>, a new utility userscript being developed by the same team.
+    <a href="https://codeberg.org/Miniblox/VapeRewrite/">Vape Rewrite</a> is intended to be the single, actively maintained Miniblox utility mod (inspired by <a href="https://codeberg.org/Miniblox/Spherical">Spherical</a>).
+    It focuses on more modules, a ClickGUI, lag modules (i.e. FakeLag), and other improvements that are difficult to maintain in a single-file client.
+    If you're using Impact, please consider testing <a href="https://codeberg.org/Miniblox/VapeRewrite/">Vape Rewrite</a> when we release builds.
+    Impact will still be maintained (by everyone except @6x68 / bab) until Vape Rewrite is considered ready for use and out of beta.
+    Also, if you need a client that can be injected via developer console and bookmarklets, <a href="https://github.com/crackbob/ballcrack/">ballcrack</a> is an alternative to Impact.
+    Note that it is missing some features (i.e. Velocity and the KillAura doesn't rotate towards the target when you're looking too far away from them, so your hits might miss), but it is an alternative to consider.
+  </div>
+
   <div class="glass">
-    <h1>Impact V6 for Miniblox!</h1>
+    <h1>Impact V9 for Miniblox!</h1>
     <p>The ultimate Miniblox hacked client. Built for stealth, speed, and total domination. Fully dark-mode optimized with a modern UI and high performance.</p>
-    <p>Impact V6 is powered by plain JavaScript — no frameworks, just raw code and creativity. It leverages custom APIs and runtime hooks to implement advanced client modifications in real time.</p>
+    <p>Impact V9 is powered by plain JavaScript — no frameworks, just raw code and creativity. It leverages custom APIs and runtime hooks to implement advanced client modifications in real time.</p>
     <a href="https://raw.githubusercontent.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/main/tampermonkey.js" class="download-btn">Download Now</a>
   </div>
 
   <details class="dropdown">
     <summary>How JavaScript Enables Client-Side Hacking</summary>
     <p>
-      Impact V6 uses JavaScript to directly intercept and alter game packets at runtime. This is done through a system of hooks and modifications, where JavaScript functions inject new logic into game code dynamically.
+      Impact V9 uses JavaScript to directly intercept and alter game packets at runtime. This is done through a system of hooks and modifications, where JavaScript functions inject new logic into game code dynamically.
     </p>
     <p>
       For example, the following snippet modifies the behavior of <code>CPacketEntityVelocity</code> to reduce knockback:
@@ -179,7 +213,7 @@
 `, true);</code></pre>
 
     <p>
-      This method allows for modular control over client behavior (like <code>Velocity</code>, <code>NoSlowdown</code>, <code>KillAura</code>, <code>Step</code>, <code>WTap</code>), making the client fast, lightweight, and easy to extend — all with plain JavaScript.
+      This method allows for modular control over client behavior (like <code>Velocity</code>, <code>NoSlowdown</code>, <code>KillAura</code>, <code>Step</code>, <code>WTap</code>), making the client [...]
     </p>
   </details>
 
