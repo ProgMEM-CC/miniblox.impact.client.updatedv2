@@ -356,7 +356,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
         if (color) ctx.globalCompositeOperation = "source-over";
     }
 `);
-	// TEXTGUI
+	// TEXT GUI
 	addModification('(this.drawSelectedItemStack(),this.drawHintBox())', /*js*/`
 	if (ctx$5 && enabledModules["TextGUI"]) {
 		const canvasW = ctx$5.canvas.width;
@@ -384,7 +384,6 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			const fontStyle = \`\${textguisize[1]}px \${textguifont[1]}\`;
 			ctx$5.font = fontStyle;
 
-			// Build strings
 			const rainbowText = module.name;
 			const modeText = module.tag?.trim();
 
@@ -393,13 +392,11 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			const x = canvasW - textWidth - posX;
 			const y = posY + (textguisize[1] + 3) * offset;
 
-			// Shadow
 			ctx$5.shadowColor = "black";
 			ctx$5.shadowBlur = 4;
 			ctx$5.shadowOffsetX = 1;
 			ctx$5.shadowOffsetY = 1;
 
-			// Draw rainbow part
 			drawText(
 				ctx$5,
 				rainbowText,
@@ -413,7 +410,6 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 				textguishadow[1]
 			);
 
-			// Draw grey text-mode part (after rainbow width)
 			if (modeText) {
 				const rainbowWidth = ctx$5.measureText(rainbowText).width;
 				drawText(
@@ -430,14 +426,12 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 				);
 			}
 
-			// Reset the shadow
 			ctx$5.shadowColor = "transparent";
 			ctx$5.shadowBlur = 0;
 			ctx$5.shadowOffsetX = 0;
 			ctx$5.shadowOffsetY = 0;
 		}
 
-		// === Draw logo (bottom-right) ===
 		const logo = textureManager.vapeTexture.image;
 		const scale = 0.9;
 		const logoW = logo.width * scale;
@@ -586,7 +580,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	// PRE KILLAURA
 	addModification('this.entity.isBlocking()', '(this.entity.isBlocking() || this.entity == player && blocking)', true);
 	
-	// 1.7 BLOCKING ANIMATION - must be before the killaura modification
+	// 1.7 BLOCKING ANIMATION - this must be before the killaura modification
 	addModification(
 		'else player.isBlocking()?(this.position.copy(swordBlockPos),this.quaternion.copy(swordBlockRot)):',
 		`else player.isBlocking()?(
@@ -639,7 +633,6 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	// but that makes the server setback us
 	// when we go too far from the predicted pos since we don't do correction
 	// TODO, would it be better to send an empty input packet with the sendYaw instead?
-	// I can't be asked to work on fixing this not working on the prediction ac
 	addModification("this.yaw=h.yaw,this.pitch=h.pitch,", "", true);
 	addModification(",this.setPositionAndRotation(this.pos.x,this.pos.y,this.pos.z,h.yaw,h.pitch)", "", true);
 
@@ -658,7 +651,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	// so we know our server pos
 
 	// PREDICTION AC FIXER (makes the ac a bit less annoying (e.g. when scaffolding))
-	// ig but this should be done in the desync branch instead - 6x68
+	// ig but this should be done in the desync branch instead - bab
 	// 	addModification("if(h.reset){this.setPosition(h.x,h.y,h.z),this.reset();return}", "", true);
 	// 	addModification("this.serverDistance=y", `
 	// if (h.reset) {
@@ -1775,7 +1768,7 @@ clientVersion: VERSION$1
 				if (enabled)
 					startIRC();
 				else stopIRC();
-			}, "Client", () => "Client");
+			}, "Broken", () => "Client");
 			Services.toggleSilently();
 			servicesName = Services.addoption("Name", String, SERVICES_UNSET_NAME);
 			systemMessageColor = Services.addoption("SystemMessageColor", String, "blue");
@@ -1822,7 +1815,7 @@ clientVersion: VERSION$1
 						}
 					};
 				} else delete tickLoop["ClickTP"];
-			}, "Combat");
+			}, "Broken"); // it will tp you back to where your last saved pos was. 
 			new Module("AntiBlind", function() {}, "Render");
 			
 			new Module("AntiCheat", function(callback) {
@@ -1885,7 +1878,7 @@ clientVersion: VERSION$1
 				let shouldDesync = false;
 				tickLoop["NoFall"] = function() {
 					if (!desync && shouldDesync) desync = true;
-	 				// this will force desync off even if fly is on, but I'm too lazy to make an entire priority system.
+	 				// this will force desync off even if fly is on.
 	  				// or something just to fix the 0 uses of fly while you're on the ground.
 	 				else if (player.onGround && shouldDesync && desync) desync = false;
 	  				shouldDesync = !player.onGround && player.motionY < -0.6 && player.fallDistance >= 2.5;
@@ -1914,8 +1907,7 @@ clientVersion: VERSION$1
 
 			// this is a very old crash method,
 			// bread (one of the devs behind atmosphere) found it
-			// and later shared it to me when we were talking
-			// about the upcoming bloxd layer
+			// And later shared it with me when we were talking about the upcoming bloxd layer.
 
 			let serverCrasherPacketsPerTick;
 			// if I recall, each chunk is 16 blocks or something.
@@ -3044,7 +3036,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					}
 				}
 				else delete tickLoop["AutoCraft"];
-			}, "Misc");
+			}, "Minigames"); // this is for eggwars i think. Not that it matters now.
 
 			
 // ChestSteal
@@ -3341,10 +3333,10 @@ cheststealdelay.range = [0, 500, 10];
 cheststealminStack.range = [1, 64, 1];
 
 
-// Scaffold (works 99.9%)
+// Scaffold
 let scaffoldtower, oldHeld, scaffoldextend, scaffoldcycle, scaffoldSameY;
 let tickCount = 0;
-let lastScaffoldY = null; // Track the Y coordinate for sameY mode
+let lastScaffoldY = null; // Tracks the Y coordinate for sameY mode
 
 function getPossibleSides(pos) {
     const possibleSides = [];
@@ -3407,14 +3399,13 @@ const scaffold = new Module("Scaffold", function(callback) {
         }
 
         game.chat.addChat({
-            text: "V2 Scaffold Bypasser?!",
+            text: "real bypasser!",
             color: "royalblue"
         });
 
         tickLoop["Scaffold"] = function() {
             tickCount++;
 
-            // Auto-select blocks & cycle
             const blockSlots = findBlockSlots();
             if (blockSlots.length === 0) return;
 
@@ -3463,7 +3454,7 @@ const scaffold = new Module("Scaffold", function(callback) {
             // Check if player is moving (any movement key pressed)
             const isMoving = player.moveForwardDump !== 0 || player.moveStrafeDump !== 0;
 
-            // Calculate positions - MORE AGGRESSIVE PREDICTION
+            // Calculate positions - MORE AGGRESSIVE PREDICTION!
             const playerX = Math.floor(player.pos.x);
             const playerY = Math.floor(player.pos.y);
             const playerZ = Math.floor(player.pos.z);
@@ -3623,7 +3614,7 @@ const scaffold = new Module("Scaffold", function(callback) {
         if (enabledModules["DynamicIsland"]) {
             dynamicIsland.hide();
         }
-        lastScaffoldY = null; // Reset the Y coordinate when scaffold is disabled
+        lastScaffoldY = null; // Resets the Y coordinate when scaffold is disabled.
     }
 }, "World");
 
@@ -3648,10 +3639,10 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 			new Module("AutoQueue", function() {}, "Minigames");
 			new Module("AutoVote", function() {}, "Minigames");
 			const chatdisabler = new Module("ChatDisabler", function() {}, "Misc", () => "Spam");
-			chatdisablermsg = chatdisabler.addoption("Message", String, "Vector not gonna bypass this one 🗣️"); // V stands for Value Patch lmao
+			chatdisablermsg = chatdisabler.addoption("Message", String, "Vector not gonna bypass this one 🗣️"); // V stands for Value Patch
 			new Module("FilterBypass", function() {}, "Exploit", () => "\\\\");
    
-    // InvManager - Inventory management with item positioning
+    // InvManager
     let invmanagerLayout, invmanagerDelay, invmanagerDropJunk, invmanagerAutoArmor;
     
     const InvManager = new Module("InvManager", function (callback) {
@@ -4383,8 +4374,6 @@ const survival = new Module("SurvivalMode", function(callback) {
 	}
 })();
 
-
-
 (async function () {
 	try {
 		const fontLink = document.createElement("link");
@@ -4403,7 +4392,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 		injectGUI(unsafeWindow.globalThis[storeName]);
 	} catch (err) {
-		console.error("[Cl1ckGU1] Init failed:", err);
+		console.error("[Clickgui] Init failed:", err);
 	}
 
 	function injectGUI(store) {
@@ -4440,7 +4429,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 			}
 		};
 
-		// === Vape V4 Styles ===
+		// Old vape Styles
 		const style = document.createElement("style");
 		style.textContent = `
       @keyframes vapeEnter {0%{opacity:0;transform:translateY(-10px);}100%{opacity:1;transform:translateY(0);}}
@@ -4494,7 +4483,7 @@ const survival = new Module("SurvivalMode", function(callback) {
     `;
 		document.head.appendChild(style);
 
-		// === Notifications ===
+		// Notifications
 		const notifWrap = document.createElement("div");
 		notifWrap.className = "notif-wrap";
 		document.body.appendChild(notifWrap);
@@ -4509,14 +4498,14 @@ const survival = new Module("SurvivalMode", function(callback) {
 			setTimeout(() => n.remove(), dur + 400);
 		}
 
-		// === Vape V4 GUI State ===
+		// Vape V4 GUI State
 		let categoryPanel = null;
 		let modulePanels = {};
 		let settingsPanel = null;
 		let selectedCategory = null;
 		let bindingModule = null;
 
-		// === Save/Load GUI State ===
+		// Save/Load GUI State
 		function saveGUIState() {
 			const openPanels = Object.keys(modulePanels);
 			localStorage.setItem("vape-gui-open-panels", JSON.stringify(openPanels));
@@ -4537,29 +4526,24 @@ const survival = new Module("SurvivalMode", function(callback) {
 		// === Helper: Set Accent Color ===
 		function setAccentColor(color) {
 			document.documentElement.style.setProperty("--vape-accent", color);
-			// Convert hex to rgba for alpha variants
 			const r = parseInt(color.slice(1, 3), 16);
 			const g = parseInt(color.slice(3, 5), 16);
 			const b = parseInt(color.slice(5, 7), 16);
 			document.documentElement.style.setProperty("--vape-accent-alpha", `rgba(${r},${g},${b},0.12)`);
 			document.documentElement.style.setProperty("--vape-accent-shadow", `rgba(${r},${g},${b},0.2)`);
-			// Save to localStorage
 			localStorage.setItem("vape-accent-color", color);
 		}
 
-		// Load saved accent color
 		const savedColor = localStorage.getItem("vape-accent-color");
 		if (savedColor) {
 			setAccentColor(savedColor);
 		}
 
-		// === Helper: Create draggable panel ===
 		function createPanel(title, x, y, width, showCollapseButton = false) {
 			const panel = document.createElement("div");
 			panel.className = "vape-panel";
 			panel.style.position = "absolute";
-
-			// Load saved position if exists
+			
 			const savedPos = localStorage.getItem("vape-panel-pos-" + title);
 			if (savedPos) {
 				const pos = JSON.parse(savedPos);
@@ -4584,7 +4568,6 @@ const survival = new Module("SurvivalMode", function(callback) {
 			panel.appendChild(header);
 			panel.appendChild(content);
 
-			// Add collapse button if requested
 			if (showCollapseButton) {
 				const collapseBtn = document.createElement("div");
 				collapseBtn.className = "vape-collapse-btn";
@@ -4592,7 +4575,6 @@ const survival = new Module("SurvivalMode", function(callback) {
 				collapseBtn.style.cssText = "width:20px;height:20px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);border-radius:4px;cursor:pointer;font-size:16px;font-weight:700;transition:all 0.2s;user-select:none;";
 				collapseBtn.title = "Collapse";
 
-				// Load saved collapse state
 				let isCollapsed = localStorage.getItem("vape-panel-collapsed-" + title) === "true";
 
 				if (isCollapsed) {
@@ -4618,7 +4600,6 @@ const survival = new Module("SurvivalMode", function(callback) {
 				header.appendChild(collapseBtn);
 			}
 
-			// Dragging
 			let dragging = false, offsetX, offsetY;
 			const onMouseDown = (e) => {
 				if (e.target.classList.contains("vape-collapse-btn")) return;
@@ -4648,9 +4629,9 @@ const survival = new Module("SurvivalMode", function(callback) {
 			return { panel, content };
 		}
 
-		// === Create Category Panel ===
+		// Create Category Panel
 		function createCategoryPanel() {
-			const { panel, content } = createPanel("Impact V8", 40, 40, 220);
+			const { panel, content } = createPanel("Impact V9 FINAL UPDATE", 40, 40, 220);
 			const baseCategories = ["Combat", "Movement", "Player", "Render", "World","Client","Minigames", "Misc","Exploit","Broken","Music"];
 			const categories = [...baseCategories];
 
@@ -4691,7 +4672,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 			return panel;
 		}
 
-		// === Update category highlights based on open panels ===
+		// Update category highlights based on open panels
 		function updateCategoryHighlights() {
 			if (!categoryPanel) return;
 			const items = categoryPanel.querySelectorAll(".vape-cat-item");
@@ -4727,11 +4708,11 @@ function createModuleRow(name, mod, content) {
     const right = document.createElement("div");
     right.className = "vape-module-right";
 
-    // Bind display - FIXED VERSION!
+    // Bind display
     const bindDisplay = document.createElement("span");
     bindDisplay.className = "vape-bind-display";
 
-    // FIXED: Check if module has a bind when creating the display
+    // Check if module has a bind when creating the display
     if (mod.bind && mod.bind !== "") {
         bindDisplay.textContent = mod.bind.toUpperCase();
         bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:30px;text-align:center;flex-shrink:0;background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-weight:700;";
@@ -4794,11 +4775,11 @@ function createModuleRow(name, mod, content) {
 
         // Populate options if first time
         if (!isVisible && optionsBox.children.length === 0) {
-            // Bind display at top - FIXED VERSION
+            // Bind display at top
             const bindKeyDisplay = document.createElement("div");
             bindKeyDisplay.className = "vape-bind-key-display";
 
-            // FIX: Show current bind or "CLICK TO BIND"
+            // Show current bind or "CLICK TO BIND"
             if (mod.bind && mod.bind !== "") {
                 bindKeyDisplay.textContent = mod.bind.toUpperCase();
                 bindKeyDisplay.style.cssText = "background:rgba(255,255,255,0.08);padding:6px 12px;border-radius:6px;font-weight:700;font-size:11px;text-align:center;margin-bottom:8px;cursor:pointer;";
@@ -4906,7 +4887,7 @@ function createModuleRow(name, mod, content) {
     return { row, optionsBox };
 }
 
-		// === Close Panel with Animation ===
+		// Close Panel with Animation
 		function closePanelWithAnimation(panel, callback) {
 			panel.classList.add("closing");
 			setTimeout(() => {
@@ -4915,7 +4896,7 @@ function createModuleRow(name, mod, content) {
 			}, 200);
 		}
 
-		// === Open Module Panel ===
+		// Open Module Panel
 		function openModulePanel(category) {
 			console.log("Opening module panel for category:", category);
 			
@@ -5782,7 +5763,7 @@ function createModuleRow(name, mod, content) {
 			}
 		}
 
-		// === Toggle ClickGUI ===
+		// Toggle GUI
 		let visible = false;
 		// Use capture phase to ensure this runs before other listeners
 		document.addEventListener("keydown", (e) => {
@@ -5861,7 +5842,7 @@ function createModuleRow(name, mod, content) {
 					const key = e.code.toLowerCase().replace("key", "").replace("digit", "");
 					if (key && bindingModule.mod.setbind) {
 						bindingModule.mod.setbind(key);
-						// Update both displays
+						// Updates both displays
 						if (bindingModule.bindDisplay) {
 							bindingModule.bindDisplay.textContent = key.toUpperCase();
 							bindingModule.bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:30px;text-align:center;flex-shrink:0;background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-weight:700;";
@@ -5879,6 +5860,6 @@ function createModuleRow(name, mod, content) {
 		}, true); // Use capture phase to run before other listeners
 
 		// === Startup notification ===
-		setTimeout(() => { showNotif("Press \\\\ to open Impact V8 ClickGUI!", "info", 4000); }, 500);
+		setTimeout(() => { showNotif("Press \\\\ to open Impact V9 FINAL", "info", 4000); }, 500);
 	}
 })();
