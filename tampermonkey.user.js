@@ -34,6 +34,5 @@
  * Fun fact: Impact doesn't work on the Crazy Games site, but Vape Rewrite does.
  * Oh, and by the way, it has a ClickGUI... An obnoxious one (will fix in 2038!), since it is always displayed.
  * Vape doesn't, and Impact vibe coded an easily detectable one.
- * I'm going to cut the yap and leave it here.
- * (P.S. TheM1ddleM1n, make an account on Codeberg again and join us... Or we will wait for me to move it over to GitHub)
+ * I'm going to cut the yap and leave it here. - bab
  */
