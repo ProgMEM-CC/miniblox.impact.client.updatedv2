@@ -1870,7 +1870,7 @@ clientVersion: VERSION$1
 				} else {
 					delete tickLoop["NoFallBeta"];
 				}
-			},"Movement",() => "Packet");
+			},"Broken",() => "Packet");
 			noFallExtraYBeta = NoFallBeta.addoption("extraY", Number, .41);
 
 
@@ -1890,7 +1890,7 @@ clientVersion: VERSION$1
 	 				else if (player.onGround && shouldDesync && desync) desync = false;
 	  				shouldDesync = !player.onGround && player.motionY < -0.6 && player.fallDistance >= 2.5;
 				};
-			},"Movement",() => "Desync");
+			},"Broken",() => "Desync");
 
 			// WTap
 			new Module("WTap", function() {}, "Movement",() => "Packet");
@@ -1938,7 +1938,7 @@ clientVersion: VERSION$1
 				} else {
 					delete tickLoop["ServerCrasher"];
 				}
-			}, "Exploit", () => "Spam Chunk Load");
+			}, "Broken", () => "Spam Chunk Load");
 
 			serverCrasherPacketsPerTick = serverCrasher.addoption("PacketsPerTick", Number, 10);
 
@@ -2315,7 +2315,7 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 			new Module("KeepSprint", function() {},"Movement", () => "Ignore");
 			new Module("NoSlowdown", function() {},"Combat", () => "Ignore");
 
-// W Speed
+// Speed
 let speedvalue, speedjump, speedauto, speedbypass;
 
 const speed = new Module("Speed", function(callback) {
@@ -2352,12 +2352,12 @@ const speed = new Module("Speed", function(callback) {
 
 // Options
 speedbypass = speed.addoption("Bypass", Boolean, true);
-speedvalue = speed.addoption("Speed", Number, 0.3);
-speedjump = speed.addoption("JumpHeight", Number, 0.3);
+speedvalue = speed.addoption("Speed", Number, 0.2);
+speedjump = speed.addoption("JumpHeight", Number, 0.25);
 speedauto = speed.addoption("AutoJump", Boolean, true);
 
 			const step = new Module("Step", function() {}, "Player", () => \`\${stepheight[1]}\`);
-			stepheight = step.addoption("Height", Number, 0.3);
+			stepheight = step.addoption("Height", Number, 0.18);
 
 
 			new Module("ESP", function() {}, "Render",() => "Highlight");
