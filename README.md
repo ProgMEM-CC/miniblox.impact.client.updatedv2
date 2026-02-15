@@ -9,6 +9,7 @@
 > See [this discussion](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/discussions/118) and [this issue](https://codeberg.org/Miniblox/Vape/issues/6) for more updates on.
 > If you want to use it (I recommend not using it *yet*, due to not even having a KillAura and many other things), then you will need to build it yourself.
 > We patch rollup for you now, so you don't need a custom Rollup fork to build it.
+> Good progress rn added some more modules like cheststealer and autosword etc.
 
 [![Discord](https://img.shields.io/badge/Discord-Join%20Us-5865F2)](https://discord.gg/PwpGemYhJx)
 [![Website](https://img.shields.io/badge/Website-impactminiblox.js.org-blue)](https://impactminiblox.js.org)
