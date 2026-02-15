@@ -17,7 +17,7 @@
 
 ## ⚠️ Important Disclaimer.
 
-**PLEASE READ BEFORE INSTALLING**: This client modification may violate Miniblox.io's Terms of Service. Use at your **own risk**. The Developers of Impact are not responsible for any account actions, bans, or consequences resulting from use of this software. By installing this client, **you acknowledge and accept these risks**.
+**PLEASE READ BEFORE INSTALLING**: This client modification may violate Miniblox.io's TOS. Use this client at your **own risk**. The Developers of Impact are not responsible for any account actions, bans, or consequences resulting from use of this software. By installing this client, **YOU WILL acknowledge and accept these risks**
 
 ---
 
@@ -25,7 +25,7 @@
 
 ### Prerequisites
 
-- A userscript manager extension (Tampermonkey, Violentmonkey, or Greasemonkey)
+- A userscript manager extension (Tampermonkey, Violentmonkey)
 - Chrome, Firefox, or Edge browser
 
 ### Installation
@@ -33,13 +33,12 @@
 1. **Install one of the three main userscript managers** from your browser's extension store (if you haven't already)
    - [Tampermonkey](https://www.tampermonkey.net/) (this is recommended)
    - [Violentmonkey](https://violentmonkey.github.io/) (MV2 / Manifest v2, but some users reported success in using this userscript manager when Tampermonkey fails)
-   - [Greasemonkey](https://www.greasespot.net/) (**not recommended** as it is old, please use Tampermonkey or Violentmonkey.)
 
 2. **Copy the script**
    - Open `tampermonkey.user.js` from this repository
    - Copy all contents
 
-3. **Create new userscript**
+3. **Create a new userscript**
    - Click your userscript manager icon
    - Select "Create new script"
    - Paste the copied contents
@@ -60,9 +59,9 @@
 ### Movement Modules
 
 - **Fly** - Enhanced movement with customizable speed (With desync created by 6x68)
-- **NoFall** / **NoFallBeta** - Prevents fall damage (none of these work btw 😭 progmem skidding old code and they don't work bypass)
+- **NoFall** / **NoFallBeta** - Prevents fall damage (none of these work btw 😭😭 progmem skidding old code and they don't work bypass)
 - **Scaffold** - Automatic block placement under player
-- **Jetpack** - Legacy fly mode with desync support
+- **Jetpack** - Legacy fly mode with desync support (not in injection lol. Its in BETA folder.)
 - **LongJump** - Extended jump distance with desync
 
 ### Combat Modules
@@ -72,8 +71,8 @@
 ### Utility Modules
 
 - **AntiBan 2.0** - Account protection with optional account generation (ACCOUNT GENERATION REQUIRES AN EXTERNAL PROGRAM RUNNING!!!)
-- **InvManager** - Automatic inventory organization (is bugged 6x68 tested it and told me on codeberg)
-- **ServerCrasher** - Server "stress testing" (now it should work since the working settings are hardcoded into the server crasher module)
+- **InvManager** - Automatic inventory organization (is bugged)
+- **ServerCrasher** - Server "stress testing" (got patched)
 - **Nuker** - Rapid block breaking
 - **ChestSteal** - Steals items/armor from chest quickly
 
@@ -81,7 +80,7 @@
 
 - **ClickGUI** - A Modern interface for module management
 - **TextGUI** - A Alternative for a text-based interface
-- **MurderMystery** - Player role detection for Murder Mystery gamemode!
+- **MurderMystery** - Player role detection for Murder Mystery gamemode
 - **ShowNametags** - Enhanced nametag visibility options
 
 ### Social Features
@@ -94,12 +93,6 @@
 
 ---
 
-## Known Issues
-
-| Issues                                    | Severity | Status + Notes                    |
-| ----------------------------------------- | -------- | --------------------------------- |
-| Tampermonkey Extra Permission Requirement | Low      | This has been documented.         |
-
 For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/FAQ).
 
 ---
@@ -109,6 +102,7 @@ For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM
 ### v9-FINAL2 (2026-02-02)
 
 Switched to ProgMEM-CC's IMChat deployment since mine is now dead due to my usage limits being exceeded (mainly because vercel doesn't like SSE for whatever reason)
+- (btw ProgMEM-CC's IMChat comes up with 404 message to say "Not Found")
 
 <img width="404" height="415" alt="image" src="https://github.com/user-attachments/assets/842a00a1-d612-4b01-9cfc-d0fd15486842" />
 
@@ -121,7 +115,6 @@ Only bumped the version and added a new notice in the `tampermonkey.user.js` fil
 Vape Rewrite is going along well, it has a Velocity and a semi-functioning KillAura (it doesn't show the blocking thing + it doesn't rotate, so if you're not looking in their direction then you'll get your hits cancelled).
 
 Vape Rewrite is the current focus of ProgMEM-CC & @6x68's time, and Impact Rewrite apparently won't happen.
-(TheM1ddleM1n should create their Codeberg account again and come join us in cooking, probably shouldn't have roasted Impact too much in my release notes so he wouldn't have done that 😭 lol)
 
 ### v8.1 (2026-01-12)
 
@@ -155,7 +148,6 @@ speechbubbel update real
 - Documentation updates
 
 #### v6.8.5 (2025-11-08)
-- Multiple contribution updates
 - Music Player branch improvements
 - Version synchronization
 
@@ -211,7 +203,7 @@ Want your video featured? [Submit here](https://github.com/ProgMEM-CC/miniblox.i
 
 This software is provided as-is without any warranties. Users are solely responsible for compliance with Miniblox.io's Terms of Service and any applicable laws. The developers disclaim all liability for misuse or consequences of using this software.
 
-**By using this client, you WILL accept the full responsibility for any actions taken against your account.**
+**By using this client, you WILL accept the full responsibility for any actions taken against your account. (ie. ban)**
 
 ---
 
