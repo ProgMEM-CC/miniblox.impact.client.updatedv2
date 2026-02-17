@@ -7,7 +7,7 @@ const storeName = "a" + crypto.randomUUID().replaceAll("-", "").substring(16);
 const vapeName = crypto.randomUUID().replaceAll("-", "").substring(16);
 const VERSION = "9-FINAL2";
 
-// ANTICHEAT HOOK
+// Anticheat hooking
 function replaceAndCopyFunction(oldFunc, newFunc) {
 	return new Proxy(oldFunc, {
 		apply(orig, origIden, origArgs) {
@@ -83,7 +83,7 @@ function modifyCode(text) {
 (function () {
 	'use strict';
 
-	// DUMPS
+	// Dumps
 	addDump('moveStrafeDump', 'this\\.([a-zA-Z]+)=\\([a-zA-Z]+\\.right');
 	addDump('moveForwardDump', 'this\\.([a-zA-Z]+)=\\([a-zA-Z]+\\.(up|down)');
 	addDump('keyPressedDump', 'function ([a-zA-Z]*)\\([a-zA-Z]*\\)\{return keyPressed\\([a-zA-Z]*\\)');
