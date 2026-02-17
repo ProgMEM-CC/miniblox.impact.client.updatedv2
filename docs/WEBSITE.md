@@ -1,2 +1,2 @@
-Note to self:
-Info about Index.html:  DO NOT TOUCH, UNLESS MODIFYING THE WEBSITE CODE
+**Note to self/devs:**
+**Info about `Index.html`:  PLEASE DO NOT TOUCH THIS, UNLESS MODIFYING THE WEBSITE CODE**
