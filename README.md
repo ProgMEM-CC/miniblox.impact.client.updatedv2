@@ -59,8 +59,8 @@
 
 ### Movement Modules
 
-- **Fly** - Enhanced movement with customizable speed (With desync created by 6x68)
-- **NoFall** / **NoFallBeta** - Prevents fall damage (none of these work btw 😭😭 progmem skidding old code and they don't work bypass)
+- **Fly** - Enhanced movement with customizable speed (With desync)
+- **NoFall** / **NoFallBeta** - Prevents fall damage (none of these work btw 😭😭 progmem skidding old code and they don't bypass)
 - **Scaffold** - Automatic block placement under player
 - **Jetpack** - Legacy fly mode with desync support (not in injection lol. Its in BETA folder.)
 - **LongJump** - Extended jump distance with desync
@@ -194,9 +194,9 @@ Want your video featured? [Submit here](https://github.com/ProgMEM-CC/miniblox.i
 | Contributor                                                                 | Role                                   |
 | --------------------------------------------------------------------------- | -------------------------------------- |
 | [7GrandDad](https://github.com/7GrandDadPGN)                                | Original creator of Vape V4            |
-| [DataM0del](https://github.com/DataM0del) / [6x68](https://github.com/6x68) | Core developer                         |
+| [DataM0del](https://github.com/DataM0del) / [6x68](https://github.com/6x68) | Core dev                               |
 | [ProgMEM-CC](https://github.com/ProgMEM-CC)                                 | Repository management                  |
-| [dtkiller-jp](https://github.com/dtkiller-jp)                               | GUI developer                          |
+| [dtkiller-jp](https://github.com/dtkiller-jp)                               | GUI dev                                |
 
 ---
 
