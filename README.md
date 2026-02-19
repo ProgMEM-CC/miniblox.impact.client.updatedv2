@@ -60,7 +60,7 @@
 ### Movement Modules
 
 - **Fly** - Enhanced movement with customizable speed (With desync)
-- **NoFall** / **NoFallBeta** - Prevents fall damage (none of these work btw 😭😭 progmem skidding old code and they don't bypass)
+- **NoFall** / **NoFallBeta** - Prevents fall damage (none of these work btw 😭😭 progmem skidding old code and they never bypassed)
 - **Scaffold** - Automatic block placement under player
 - **Jetpack** - Legacy fly mode with desync support (not in injection lol. Its in BETA folder.)
 - **LongJump** - Extended jump distance with desync
