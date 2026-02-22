@@ -31,7 +31,7 @@
 
 ### Installation
 
-1. **Install one of the three main userscript managers** from your browser's extension store (if you haven't already)
+1. **Install one of the two main userscript managers** from your browser's extension store (if you haven't already)
    - [Tampermonkey](https://www.tampermonkey.net/) (this is recommended)
    - [Violentmonkey](https://violentmonkey.github.io/) (MV2 / Manifest v2, but some users reported success in using this userscript manager when Tampermonkey fails)
 
@@ -98,7 +98,7 @@ For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM
 
 ---
 
-## 🧑‍💻 Recent Update Logs
+## 🧑‍💻 Update Logs 
 
 ### v9-FINAL2 (2026-02-02)
 
@@ -124,15 +124,14 @@ speechbubbel update real
 - Merged PR [#101](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/pull/101) (had 67 commits, so it HAD to be done before someone ruined the commit number)
 
 #### v8 (2026-01-06)
-- Big 2026 update
-- Dynamic Island
-- Removed FastBreak + AutoFunnyChat Module
-- AutoSync version to v8
+- + Dynamic Island
+- - Removed FastBreak + AutoFunnyChat Module
+- ✔️ AutoSync version to v8
 - (2026-01-04) `Services` module is toggled on by default.
 
 #### v6.9 (2025-12-31)
 - AutoSync version to v6.9
-- Velocity Fix by 6x68
+- Velocity Fixed by 6x68
 - Music Player added
 - New Dynamic Island branch
 
@@ -143,15 +142,6 @@ speechbubbel update real
 - (2025-12-26) Added a tiny delay to Nuker in order to fix
 - (2025-12-27) AutoFunnyChat update
 - (2025-12-30) ChestSteal recode
-
-#### v6.8.7 (2025-11-11)
-- Improved update consistency
-- Documentation updates
-
-#### v6.8.5 (2025-11-08)
-- Music Player branch improvements
-- Version synchronization
-
 ---
 
 ## Project History
