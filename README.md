@@ -26,7 +26,7 @@
 
 ### Prerequisites
 
-- A userscript manager extension (Tampermonkey, Violentmonkey)
+- A userscript manager extension (Tampermonkey or Violentmonkey)
 - Chrome, Firefox, or Edge browser
 
 ### Installation
