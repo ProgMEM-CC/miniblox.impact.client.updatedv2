@@ -155,10 +155,8 @@ But it was fully usable 3 days after that comment, and then, the first updated v
 
 ---
 
-**Branch Strategy**: 
+**Branch**: 
 - `main` - Stable releases only
-- `beta` - Testing and experimental features
-**Code Standards**: Follow existing code style and comment logic.
 
 ### Feature Requests & Bug Reports
 
