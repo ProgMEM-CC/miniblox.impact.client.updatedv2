@@ -1761,7 +1761,7 @@ clientVersion: VERSION$1
 				const {"default": IRCConnection} = await irc();
 				ircConnection = new IRCConnection(SERVICES_SERVER);
 			}
-			async function stopIRC() {
+			function stopIRC() {
 				ircConnection?.disconnect();
 				ircConnection = undefined;
 			}

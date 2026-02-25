@@ -1,7 +1,7 @@
 /**
  * @module
  */
-import { ProtocolVersion, BinMsg } from "./imchat";
+import { ProtocolVersion, BinMsg } from "./imchat.js";
 
 const HTTPS_OR_HTTP = location.protocol.endsWith("s:") ? "https" : "http";
 const WSS_OR_WS = location.protocol.endsWith("s:") ? "wss" : "ws";
