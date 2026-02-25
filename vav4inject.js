@@ -158,22 +158,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 				});
 				return;
 			}
-			fetch(\`\${SERVICES_SEND_ENDPOINT}?author=\${name}&platformID=impact:client\`, {
-				method: "POST",
-				body: message
-			}).then(async r => {
-				if (!r.ok) {
-					game.chat.addChat({
-						text: \`Failed sending IRC message (response not OK): \${r.status} \${r.statusText} \${await r.text()}\`,
-						color: "red"
-					});
-				}
-			}).catch(r => {
-				game.chat.addChat({
-					text: \`Failed sending IRC message (server down?): \${r} \`,
-					color: "red"
-				});
-			});
+			ircConnection.send(message);
 		}
 		let showNametags, Services, murderMystery, tagsWhileSneaking, tagsInMM;
 		let blocking = false;
