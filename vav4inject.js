@@ -121,7 +121,8 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			&& (tagsInMM[1] || game.serverInfo.serverCategory !== "murder");
 `, true);
 	addModification('Potions.jump.getId(),"5");', `
-		const SERVICES_SERVER = new URL("wss://localhost:3000/");
+		const SERVICES_SERVER = new URL("https://impactchat-server.vercel.app/");
+		const SERVICES_SEND_ENDPOINT = new URL("/send", SERVICES_SERVER);
 		let servicesName;
 		const SERVICES_UNSET_NAME = "Unset name";
 		/**
@@ -141,7 +142,22 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 				});
 				return;
 			}
-			ircSocket.send(message);
+			fetch(\`\${SERVICES_SEND_ENDPOINT}?author=\${name}&platformID=impact:client\`, {
+				method: "POST",
+				body: message
+			}).then(async r => {
+				if (!r.ok) {
+					game.chat.addChat({
+						text: \`Failed sending IRC message (response not OK): \${r.status} \${r.statusText} \${await r.text()}\`,
+						color: "red"
+					});
+				}
+			}).catch(r => {
+				game.chat.addChat({
+					text: \`Failed sending IRC message (server down?): \${r} \`,
+					color: "red"
+				});
+			});
 		}
 		let showNametags, Services, murderMystery, tagsWhileSneaking, tagsInMM;
 		let blocking = false;
@@ -1701,9 +1717,9 @@ clientVersion: VERSION$1
 			}
 
 			let clickDelay = Date.now();
-			const SERVICES_LISTEN_ENDPOINT = new URL("/v1/ws", SERVICES_SERVER);
+			const SERVICES_LISTEN_ENDPOINT = new URL("/listen", SERVICES_SERVER);
 			/** @type {EventSource} */
-			let ircSocket;
+			let ircSource;
 			let systemMessageColor;
 			// maps an IRC PlatformID to a "readable" name,
 			// e.g. "impact:discord" is a protected platform ID (requires auth) used by our discord
@@ -1713,7 +1729,6 @@ clientVersion: VERSION$1
 			// we have no way of being able to trust the client without this e.g. being possible to emulate the client.
 			const PID_REG = "https://raw.githubusercontent.com/Impact-IMChat/platform-id-registry/refs/heads/main/registry.json";
 			const PLATFORM_ID_TO_READABLE = await fetch(PID_REG).then(r => r.json());
-
 			/** @param {MessageEvent} e */
 			function onIRCMessage(e) {
 				const { message, author, platformID } = JSON.parse(e.data);
@@ -1731,11 +1746,10 @@ clientVersion: VERSION$1
 			}
 			function startIRC() {
 				// it's already connected, what is the point?
-				if (ircSocket !== undefined) return;
-				ircSocket = new WebSocket(SERVICES_LISTEN_ENDPOINT);
-				ircSocket.binaryType = "arraybuffer";
-				ircSocket.addEventListener("message", onIRCMessage);
-				ircSocket.addEventListener("error", e => {
+				if (ircSource !== undefined) return;
+				ircSource = new EventSource(SERVICES_LISTEN_ENDPOINT);
+				ircSource.addEventListener("message", onIRCMessage);
+				ircSource.addEventListener("error", e => {
 					game.chat.addChat({
 						text: "[Impact] Error while connecting to IMChat / IRC, see console! (reconnecting in 3s)",
 					});
@@ -1746,9 +1760,9 @@ clientVersion: VERSION$1
 			}
 			function stopIRC() {
 				// don't try to close it, if it's already closed or not connected.
-				if (ircSocket === undefined) return;
-				ircSocket.close();
-				ircSocket = undefined;
+				if (ircSource === undefined) return;
+				ircSource.close();
+				ircSource = undefined;
 			}
 			Services = new Module("Services", function(enabled) {
 				if (enabled)
