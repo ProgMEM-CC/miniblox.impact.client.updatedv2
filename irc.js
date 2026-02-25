@@ -242,6 +242,12 @@ export default class IRCConnection extends IRCConnectionBase {
     #currentIdx = 0;
     #currentConnection = new order[this.#currentIdx](this._server);
     /**
+     * @param {string} message the message to send
+     */
+    send(message) {
+        return this.#currentConnection.send(message);
+    }
+    /**
        * @param {string} user
        * @param {PlatformID} platformID
        * @returns {void}
@@ -262,6 +268,9 @@ export default class IRCConnection extends IRCConnectionBase {
             this.#currentConnection = new order[next](this._server);
             return this.connect(user, platformID);
         }
+    }
+    disconnect() {
+        this.#currentConnection.disconnect();
     }
 }
 /** @typedef {`${string}:${string}`} PlatformID */

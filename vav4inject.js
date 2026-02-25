@@ -124,6 +124,23 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 		const SERVICES_SERVER = new URL("https://imchat-server.vercel.app/");
 		let servicesName;
 		const SERVICES_UNSET_NAME = "Unset name";
+
+		let ircV;
+		let ircWaitPromise;
+
+		function irc() {
+			if (ircV) {
+				return Promise.resolve(ircV);
+			} else {
+				return ircWaitPromise;
+			}
+		}
+
+		ircWaitPromise = import("https://raw.githack.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/feat/imchat-v2/irc.js").then(mod => {
+			ircV = mod;
+			return ircV;
+		});
+
 		/**
 		 * Sends an IRC message to IMChat with our current player's username
 		 * @param {string} message
@@ -1716,8 +1733,7 @@ clientVersion: VERSION$1
 			}
 
 			let clickDelay = Date.now();
-			/** @type {EventSource} */
-			let ircSource;
+			let ircConnection;
 			let systemMessageColor;
 			// maps an IRC PlatformID to a "readable" name,
 			// e.g. "impact:discord" is a protected platform ID (requires auth) used by our discord
@@ -1727,9 +1743,7 @@ clientVersion: VERSION$1
 			// we have no way of being able to trust the client without this e.g. being possible to emulate the client.
 			const PID_REG = "https://raw.githubusercontent.com/Impact-IMChat/platform-id-registry/refs/heads/main/registry.json";
 			const PLATFORM_ID_TO_READABLE = await fetch(PID_REG).then(r => r.json());
-			/** @param {MessageEvent} e */
-			function onIRCMessage(e) {
-				const { message, author, platformID } = JSON.parse(e.data);
+			function onIRCMessage({message, author, platformID}) {
 				if (author === null && platformID === undefined) {
 					game.chat.addChat({
 						text: \`[Impact] IRC server: \${message}\`,
@@ -1742,11 +1756,16 @@ clientVersion: VERSION$1
 					text: \`[Impact IRC] \${author} via \${readable}: \${message}\`
 				});
 			}
-			function startIRC() {
+			async function startIRC() {
+				if (ircConnection !== undefined) return; // already started
+				const {"default": IRCConnection} = await irc();
+				ircConnection = new IRCConnection(SERVICES_SERVER);
 			}
-			function stopIRC() {
+			async function stopIRC() {
+				ircConnection?.disconnect();
+				ircConnection = undefined;
 			}
-			Services = new Module("Services", function(enabled) {
+			Services = new Module("Services", async function(enabled) {
 				if (enabled)
 					startIRC();
 				else stopIRC();
