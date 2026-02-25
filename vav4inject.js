@@ -121,8 +121,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			&& (tagsInMM[1] || game.serverInfo.serverCategory !== "murder");
 `, true);
 	addModification('Potions.jump.getId(),"5");', `
-		const SERVICES_SERVER = new URL("https://impactchat-server.vercel.app/");
-		const SERVICES_SEND_ENDPOINT = new URL("/send", SERVICES_SERVER);
+		const SERVICES_SERVER = new URL("https://imchat-server.vercel.app/");
 		let servicesName;
 		const SERVICES_UNSET_NAME = "Unset name";
 		/**
@@ -1717,7 +1716,6 @@ clientVersion: VERSION$1
 			}
 
 			let clickDelay = Date.now();
-			const SERVICES_LISTEN_ENDPOINT = new URL("/listen", SERVICES_SERVER);
 			/** @type {EventSource} */
 			let ircSource;
 			let systemMessageColor;
@@ -1745,30 +1743,14 @@ clientVersion: VERSION$1
 				});
 			}
 			function startIRC() {
-				// it's already connected, what is the point?
-				if (ircSource !== undefined) return;
-				ircSource = new EventSource(SERVICES_LISTEN_ENDPOINT);
-				ircSource.addEventListener("message", onIRCMessage);
-				ircSource.addEventListener("error", e => {
-					game.chat.addChat({
-						text: "[Impact] Error while connecting to IMChat / IRC, see console! (reconnecting in 3s)",
-					});
-					console.error(e);
-					stopIRC();
-					setTimeout(startIRC, 3e3);
-				});
 			}
 			function stopIRC() {
-				// don't try to close it, if it's already closed or not connected.
-				if (ircSource === undefined) return;
-				ircSource.close();
-				ircSource = undefined;
 			}
 			Services = new Module("Services", function(enabled) {
 				if (enabled)
 					startIRC();
 				else stopIRC();
-			}, "Broken", () => "Client");
+			}, "Client", () => "Client");
 			Services.toggleSilently();
 			servicesName = Services.addoption("Name", String, SERVICES_UNSET_NAME);
 			systemMessageColor = Services.addoption("SystemMessageColor", String, "blue");

@@ -3,6 +3,20 @@
  */
 import { ProtocolVersion, BinMsg } from "./imchat";
 
+const HTTPS_OR_HTTP = location.protocol.endsWith("s:") ? "https" : "http";
+const WSS_OR_WS = location.protocol.endsWith("s:") ? "wss" : "ws";
+
+/**
+ * Assigns a certain protocol for a URL
+ * @param {URL} url the URL
+ * @param {string} protocol the protocol to use
+ * @returns {URL}
+ */
+function withProtocol(url, protocol) {
+    url.protocol = protocol;
+    return url;
+}
+
 class IRCConnectionBase {
     /** @type {URL}
        * @protected
@@ -106,10 +120,10 @@ class IRCConnectionV1 extends IRCConnectionBase {
         return this.#source !== undefined;
     }
     /** @default URL */
-    #listenEndpoint = new URL("/listen", this._server);
+    #listenEndpoint = withProtocol(new URL("/listen", this._server), `${HTTPS_OR_HTTP}:`);
     // not implementing protected platform ID sending because I'm lazy.
     /** @default URL */
-    #sendEndpoint = new URL("/send", this._server);
+    #sendEndpoint = withProtocol(new URL("/send", this._server), `${HTTPS_OR_HTTP}:`);
     /**
      * Sends a message via IRC
        * @param {string} message the message to send
@@ -161,12 +175,10 @@ class IRCConnectionV1 extends IRCConnectionBase {
  */
 class IRCConnectionV2 extends IRCConnectionBase {
     #socket;
-    /** @default URL */
-    #listenEndpoint = new URL("/v1/ws", this._server);
+    #listenEndpoint = withProtocol(new URL("/v1/ws", this._server), WSS_OR_WS);
     /**
        * @static
        * @readonly
-       * @default ProtocolVersion
        */
     static #protocolVersion = ProtocolVersion.INITIAL;
     /**
