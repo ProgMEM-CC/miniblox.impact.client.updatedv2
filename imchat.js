@@ -37,17 +37,6 @@ export class BinMsg {
     /**
      * @static
      * @param {BufParser} bp
-     * @param {string} [author]
-     * @returns {void}
-     */
-    static writeOptString(bp, author) {
-        bp.writeBoolean(!!author); // why lol
-        if (author)
-            bp.writeString(author);
-    }
-    /**
-     * @static
-     * @param {BufParser} bp
      * @returns {string | undefined}
      */
     static readOptString(bp) {
