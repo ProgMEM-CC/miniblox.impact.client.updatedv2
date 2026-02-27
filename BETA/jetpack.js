@@ -1,4 +1,4 @@
-// jetpack (NO DESYNC)
+// jetpack 
 let jetpackvalue, jetpackvert, jetpackUpMotion, jetpackGlide;
 			const jetpack = new Module("JetPack", function(callback) {
 				if (callback) {
