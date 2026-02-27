@@ -1,7 +1,7 @@
 # [![Impact V8](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=3500&pause=2000&color=FF0000&width=435&lines=Impact+Client+V9)](https://git.io/typing-svg)
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&duration=2500&pause=1000&color=abe0e4&vCenter=true&width=600&lines=The+ultimate+Miniblox+hacked+client;Built+for+stealth+(from+AntiCheats)%2C+speed%2C+and+total+domination.;Fully+dark-mode+optimized+with+a+modern+GUI)](https://git.io/typing-svg)
 
-## A feature-rich client modification for Miniblox.io with enhanced gameplay capabilities, stealth optimization, and a modern, dark-mode user interface
+## A feature-rich client modification for miniblox.io with enhanced gameplay capabilities, stealth optimization, and a modern, dark-mode user interface
 
 > [!NOTE]
 > (Do not remove this unless Impact updates to use the new Miniblox client as a base (or it dies for 2 years or gets archived or discontinued), otherwise you're bad)
@@ -37,13 +37,13 @@
 
 2. **Copy the script**
    - Open `tampermonkey.user.js` from this repository
-   - Copy all contents
+   - Copy all its contents
 
 3. **Create a new userscript**
    - Click your userscript manager icon
    - Select "Create new script"
    - Paste the copied contents
-   - Save (Ctrl+S or Cmd+S)
+   - Save with (Ctrl+S - Windows/Chromebook or Cmd+S - MacOS)
 
 4. **Launch the client**
    - Navigate to [miniblox.io](https://miniblox.io)
@@ -62,7 +62,6 @@
 - **Fly** - Enhanced movement with customizable speed (With desync)
 - **NoFall** / **NoFallBeta** - Prevents fall damage (none of these work btw 😭😭 progmem skidding old code and they never bypassed)
 - **Scaffold** - Automatic block placement under player
-- **Jetpack** - Legacy fly mode with desync support (not in injection lol. Its in BETA folder.)
 - **LongJump** - Extended jump distance with desync
 
 ### Combat Modules
@@ -102,20 +101,19 @@ For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM
 
 ### v9-FINAL2 (2026-02-02)
 
-Switched to ProgMEM-CC's IMChat deployment since mine is now dead due to my usage limits being exceeded (mainly because vercel doesn't like SSE for whatever reason)
-- (btw ProgMEM-CC's IMChat comes up with 404 message to say "Not Found")
+- Switched to ProgMEM-CC's IMChat deployment since mine is now dead due to my usage limits being exceeded (mainly because vercel doesn't like SSE for whatever reason)
 
 <img width="404" height="415" alt="image" src="https://github.com/user-attachments/assets/842a00a1-d612-4b01-9cfc-d0fd15486842" />
 
 ### v9-FINAL (2026-01-27)
 
-Only bumped the version and added a new notice in the `tampermonkey.user.js` file.
+Bumped the version and added a new notice in the `tampermonkey.user.js` file.
 
 ### v8.1 (2026-01-24)
 
 Vape Rewrite is going along well, it has a Velocity and a semi-functioning KillAura (it doesn't show the blocking thing + it doesn't rotate, so if you're not looking in their direction then you'll get your hits cancelled).
 
-Vape Rewrite is the current focus of ProgMEM-CC & @6x68's time, and Impact Rewrite apparently won't happen.
+Vape Rewrite is the current focus of ProgMEM-CC & @6x68's time, and Impact Rewrite apparently **won't happen**.
 
 ### v8.1 (2026-01-12)
 
@@ -125,23 +123,22 @@ speechbubbel update real
 
 #### v8 (2026-01-06)
 - + Dynamic Island
-- - Removed FastBreak + AutoFunnyChat Module
+- - Removed the FastBreak module.
 - ✔️ AutoSync version to v8
 - (2026-01-04) `Services` module is toggled on by default.
 
 #### v6.9 (2025-12-31)
-- AutoSync version to v6.9
+- ✔️ AutoSync version to v6.9
 - Velocity Fixed by 6x68
-- Music Player added
-- New Dynamic Island branch
+- + Music Player added
+- + New Dynamic Island branch
 
 #### v6.8.8 (2025-12-14)
 - Added IRC chat system
 - New MurderMystery module for role detection
 - ShowNametags module with enhanced visibility options
-- (2025-12-26) Added a tiny delay to Nuker in order to fix
-- (2025-12-27) AutoFunnyChat update
-- (2025-12-30) ChestSteal recode
+- (2025-12-26) Added a tiny delay to Nuker in order to fix (kick bug for too many packets)
+- (2025-12-30) ChestSteal recoded
 ---
 
 ## Project History
