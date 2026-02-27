@@ -5857,9 +5857,8 @@ function createModuleRow(name, mod, content) {
 					}
 				}
 			}
-		}, true); // Use capture phase to run before other listeners
+		}, true);
 
-		// === Startup notification ===
 		setTimeout(() => { showNotif("Press \\\\ to open Impact V9 FINAL", "info", 4000); }, 500);
 	}
 })();
