@@ -121,10 +121,26 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 			&& (tagsInMM[1] || game.serverInfo.serverCategory !== "murder");
 `, true);
 	addModification('Potions.jump.getId(),"5");', `
-		const SERVICES_SERVER = new URL("https://impactchat-server.vercel.app/");
-		const SERVICES_SEND_ENDPOINT = new URL("/send", SERVICES_SERVER);
+		const SERVICES_SERVER = new URL("https://imchat-server.vercel.app/");
 		let servicesName;
 		const SERVICES_UNSET_NAME = "Unset name";
+
+		let ircV;
+		let ircWaitPromise;
+
+		function irc() {
+			if (ircV) {
+				return Promise.resolve(ircV);
+			} else {
+				return ircWaitPromise;
+			}
+		}
+
+		ircWaitPromise = import("https://raw.githack.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/feat/imchat-v2/irc.js").then(mod => {
+			ircV = mod;
+			return ircV;
+		});
+
 		/**
 		 * Sends an IRC message to IMChat with our current player's username
 		 * @param {string} message
@@ -142,22 +158,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 				});
 				return;
 			}
-			fetch(\`\${SERVICES_SEND_ENDPOINT}?author=\${name}&platformID=impact:client\`, {
-				method: "POST",
-				body: message
-			}).then(async r => {
-				if (!r.ok) {
-					game.chat.addChat({
-						text: \`Failed sending IRC message (response not OK): \${r.status} \${r.statusText} \${await r.text()}\`,
-						color: "red"
-					});
-				}
-			}).catch(r => {
-				game.chat.addChat({
-					text: \`Failed sending IRC message (server down?): \${r} \`,
-					color: "red"
-				});
-			});
+			ircConnection.send(message);
 		}
 		let showNametags, Services, murderMystery, tagsWhileSneaking, tagsInMM;
 		let blocking = false;
@@ -1717,9 +1718,7 @@ clientVersion: VERSION$1
 			}
 
 			let clickDelay = Date.now();
-			const SERVICES_LISTEN_ENDPOINT = new URL("/listen", SERVICES_SERVER);
-			/** @type {EventSource} */
-			let ircSource;
+			let ircConnection;
 			let systemMessageColor;
 			// maps an IRC PlatformID to a "readable" name,
 			// e.g. "impact:discord" is a protected platform ID (requires auth) used by our discord
@@ -1729,9 +1728,7 @@ clientVersion: VERSION$1
 			// we have no way of being able to trust the client without this e.g. being possible to emulate the client.
 			const PID_REG = "https://raw.githubusercontent.com/Impact-IMChat/platform-id-registry/refs/heads/main/registry.json";
 			const PLATFORM_ID_TO_READABLE = await fetch(PID_REG).then(r => r.json());
-			/** @param {MessageEvent} e */
-			function onIRCMessage(e) {
-				const { message, author, platformID } = JSON.parse(e.data);
+			function onIRCMessage({message, author, platformID}) {
 				if (author === null && platformID === undefined) {
 					game.chat.addChat({
 						text: \`[Impact] IRC server: \${message}\`,
@@ -1744,31 +1741,20 @@ clientVersion: VERSION$1
 					text: \`[Impact IRC] \${author} via \${readable}: \${message}\`
 				});
 			}
-			function startIRC() {
-				// it's already connected, what is the point?
-				if (ircSource !== undefined) return;
-				ircSource = new EventSource(SERVICES_LISTEN_ENDPOINT);
-				ircSource.addEventListener("message", onIRCMessage);
-				ircSource.addEventListener("error", e => {
-					game.chat.addChat({
-						text: "[Impact] Error while connecting to IMChat / IRC, see console! (reconnecting in 3s)",
-					});
-					console.error(e);
-					stopIRC();
-					setTimeout(startIRC, 3e3);
-				});
+			async function startIRC() {
+				if (ircConnection !== undefined) return; // already started
+				const {"default": IRCConnection} = await irc();
+				ircConnection = new IRCConnection(SERVICES_SERVER);
 			}
 			function stopIRC() {
-				// don't try to close it, if it's already closed or not connected.
-				if (ircSource === undefined) return;
-				ircSource.close();
-				ircSource = undefined;
+				ircConnection?.disconnect();
+				ircConnection = undefined;
 			}
-			Services = new Module("Services", function(enabled) {
+			Services = new Module("Services", async function(enabled) {
 				if (enabled)
 					startIRC();
 				else stopIRC();
-			}, "Broken", () => "Client");
+			}, "Client", () => "Client");
 			Services.toggleSilently();
 			servicesName = Services.addoption("Name", String, SERVICES_UNSET_NAME);
 			systemMessageColor = Services.addoption("SystemMessageColor", String, "blue");
