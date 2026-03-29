@@ -25,7 +25,7 @@ body:
         If it only helps i.e. you, it doesn't really make a difference for everyone except you.
         And if a feature takes a lot of effort and it only helps you, then why would we implement it?
         In those cases, if your feature is rejected / not implemented,
-        you can either fork the repository and edit `vav4inject.js` or make a script [using the script manager](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/Script-Manager-(Quick-Start-for-developers)).
+        you can either fork the repository and edit `vav4inject.js` or make a script [using the script manager](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/wiki/Developers:-Script-Manager-(Quick-Start)).
       placeholder: |
         Not because I said so, but because I don't want my mailbox to be blown up!
     validations:
