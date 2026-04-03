@@ -2307,7 +2307,7 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 			new Module("KeepSprint", function() {},"Movement", () => "Ignore");
 			new Module("NoSlowdown", function() {},"Combat", () => "Ignore");
 
-// Speed
+// Speed (BROKEN due to anticheat) 
 let speedvalue, speedjump, speedauto, speedbypass;
 
 const speed = new Module("Speed", function(callback) {
