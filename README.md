@@ -70,8 +70,7 @@
 ### Utility Modules
 
 - **AntiBan 2.0** - Account protection with optional account generation (ACCOUNT GENERATION REQUIRES AN EXTERNAL PROGRAM RUNNING!!!)
-- **InvManager** - Automatic inventory organization (is bugged)
-- **ServerCrasher** - Server "stress testing" (got patched)
+- **InvManager** - Automatic inventory organization (buggy)
 - **Nuker** - Rapid block breaking
 - **ChestSteal** - Steals items/armor from chest quickly
 
@@ -123,11 +122,9 @@ speechbubbel update real
 #### v8 (2026-01-06)
 - + Dynamic Island
 - - Removed the FastBreak module.
-- ✔️ AutoSync version to v8
 - (2026-01-04) `Services` module is toggled on by default.
 
 #### v6.9 (2025-12-31)
-- ✔️ AutoSync version to v6.9
 - Velocity Fixed by 6x68
 - + Music Player added
 - + New Dynamic Island branch
@@ -150,9 +147,6 @@ Before the original client was deleted ([xylex fake quit moment](https://github.
 But it was fully usable 3 days after that comment, and then, the first updated version of Vape, 3.0.0, was released.
 
 ---
-
-**Branch**: 
-- `main` - Stable releases only
 
 ### Feature Requests & Bug Reports
 
@@ -177,7 +171,6 @@ Want your video featured? [Submit here](https://github.com/ProgMEM-CC/miniblox.i
 
 | Contributor                                                                 | Role                                   |
 | --------------------------------------------------------------------------- | -------------------------------------- |
-| [7GrandDad](https://github.com/7GrandDadPGN)                                | Original creator of Vape V4            |
 | [DataM0del](https://github.com/DataM0del) / [6x68](https://github.com/6x68) | Core dev                               |
 | [ProgMEM-CC](https://github.com/ProgMEM-CC)                                 | Repository management                  |
 | [dtkiller-jp](https://github.com/dtkiller-jp)                               | GUI dev                                |
