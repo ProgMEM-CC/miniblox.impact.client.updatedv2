@@ -1747,6 +1747,7 @@ clientVersion: VERSION$1
 			function startIRC() {
 				// it's already connected, what is the point?
 				if (ircSource !== undefined) return;
+				if (!Services.enabled) return;
 				ircSource = new EventSource(SERVICES_LISTEN_ENDPOINT);
 				ircSource.addEventListener("message", onIRCMessage);
 				ircSource.addEventListener("error", e => {
