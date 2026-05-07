@@ -4378,7 +4378,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 (async function () {
 	try {
 		const fontLink = document.createElement("link");
-		fontLink.href = "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap";
+		fontLink.href = "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap";
 		fontLink.rel = "stylesheet";
 		document.head.appendChild(fontLink);
 
@@ -4430,57 +4430,84 @@ const survival = new Module("SurvivalMode", function(callback) {
 			}
 		};
 
-		// Old vape Styles
+		// ★改造：最新のグラスモーフィズム＆ポップなCSSスタイル★
 		const style = document.createElement("style");
 		style.textContent = `
-      @keyframes vapeEnter {0%{opacity:0;transform:translateY(-10px);}100%{opacity:1;transform:translateY(0);}}
-      @keyframes vapeExit {0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-10px);}}
-      @keyframes glowPulse {0%{box-shadow:0 2px 8px rgba(15,179,160,0);}50%{box-shadow:0 4px 16px rgba(15,179,160,0.4);}100%{box-shadow:0 2px 8px rgba(15,179,160,0);}}
-      .vape-panel { position:absolute; background:linear-gradient(180deg, rgba(28,30,32,0.98), rgba(23,25,27,0.98)); border-radius:12px; border:1px solid rgba(255,255,255,0.06); box-shadow:0 12px 30px rgba(0,0,0,0.7); backdrop-filter:blur(8px); font-family:Inter,system-ui,sans-serif; color:#E6E9EA; animation:vapeEnter .2s ease-out; z-index:100000; overflow:hidden; min-width:260px; }
+      @keyframes vapeEnter {0%{opacity:0;transform:translateY(-15px) scale(0.95);}100%{opacity:1;transform:translateY(0) scale(1);}}
+      @keyframes vapeExit {0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-10px) scale(0.95);}}
+      
+      .vape-panel { 
+        position:absolute; 
+        background: rgba(18, 18, 22, 0.65); /* すりガラス風の半透明背景 */
+        border-radius: 16px; /* 角を大きく丸める */
+        border: 1px solid rgba(255,255,255,0.15); 
+        box-shadow: 0 12px 40px rgba(0,0,0,0.6); 
+        backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+        font-family: 'Poppins', Inter, system-ui, sans-serif; 
+        color: #E6E9EA; 
+        animation: vapeEnter .3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 少し跳ねるアニメーション */
+        z-index: 100000; overflow: hidden; min-width: 270px; 
+      }
       .vape-panel.closing { animation:vapeExit .2s ease-out; }
-      .vape-header { padding:12px 14px; background:rgba(0,0,0,0.2); border-bottom:1px solid rgba(255,255,255,0.04); font-weight:700; font-size:13px; letter-spacing:0.5px; cursor:move; user-select:none; display:flex; align-items:center; justify-content:space-between; }
-      .vape-content { padding:8px; max-height:500px; overflow-y:auto; overflow-x:hidden; transition:max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease; }
-      .vape-content.collapsing { max-height:0; opacity:0; padding-top:0; padding-bottom:0; }
-      .vape-content::-webkit-scrollbar { width:6px; }
-      .vape-content::-webkit-scrollbar-thumb { background:var(--vape-accent, #0FB3A0); border-radius:10px; }
-      .vape-content::-webkit-scrollbar-track { background:transparent; }
-      .vape-cat-item { display:flex; align-items:center; gap:10px; padding:10px 12px; margin:4px 0; border-radius:8px; cursor:pointer; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); user-select:none; border:1px solid transparent; }
-      .vape-cat-item:hover { background:linear-gradient(90deg,var(--vape-accent-alpha, rgba(15,179,160,0.08)),transparent); box-shadow:0 4px 12px var(--vape-accent-shadow, rgba(15,179,160,0.15)); }
-      .vape-cat-item.active { background:linear-gradient(90deg,var(--vape-accent-alpha, rgba(15,179,160,0.12)),transparent); border:1px solid var(--vape-accent-alpha, rgba(15,179,160,0.12)); }
-      .vape-cat-icon { width:18px; height:18px; border-radius:4px; background:linear-gradient(135deg,var(--vape-accent, #0FB3A0),var(--vape-accent, #13a695)); box-shadow:0 2px 6px var(--vape-accent-shadow, rgba(15,179,160,0.2)); transition:all 0.3s ease; }
-      .vape-cat-item:hover .vape-cat-icon { box-shadow:0 4px 12px var(--vape-accent-shadow, rgba(15,179,160,0.4)); transform:scale(1.05); }
-      .vape-cat-text { font-weight:600; font-size:13px; }
-      .vape-module-row { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; margin:4px 0; border-radius:8px; background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent); border:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position:relative; }
-      .vape-module-row::after { content:''; position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:0; height:2px; background:var(--vape-accent, #0FB3A0); transition:width 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-radius:2px; }
-      .vape-module-row:hover::after { width:90%; }
-      .vape-module-row:hover { background:linear-gradient(180deg,rgba(255,255,255,0.05),var(--vape-accent-alpha, rgba(15,179,160,0.03))); box-shadow:0 8px 24px var(--vape-accent-shadow, rgba(15,179,160,0.25)); transform:translateY(-2px); }
-      .vape-module-left { display:flex; align-items:center; gap:10px; flex:1; min-width:0; }
-      .vape-module-icon { width:32px; height:32px; border-radius:6px; background:linear-gradient(135deg,#2b2d30,#131415); display:flex; align-items:center; justify-content:center; color:#8F9498; font-weight:700; font-size:12px; flex-shrink:0; }
-      .vape-module-title { font-weight:600; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-      .vape-module-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
-      .vape-toggle { width:42px; height:22px; border-radius:20px; background:rgba(255,255,255,0.05); position:relative; transition:all 0.18s; cursor:pointer; flex-shrink:0; }
-      .vape-toggle.on { background:var(--vape-accent, #0FB3A0); }
-      .vape-toggle-knob { position:absolute; left:3px; top:3px; width:16px; height:16px; border-radius:50%; background:#0d0f10; box-shadow:0 4px 10px rgba(0,0,0,0.6); transition:all 0.18s; }
-      .vape-toggle.on .vape-toggle-knob { left:23px; background:white; }
-      .vape-bind-display { font-size:11px; color:#8F9498; margin-right:8px; min-width:30px; text-align:right; flex-shrink:0; }
-      .vape-settings-row { margin:8px 0; }
-      .vape-settings-label { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:12px; }
-      .vape-settings-value { color:#8F9498; }
-      .vape-slider { width:100%; height:6px; border-radius:999px; background:rgba(255,255,255,0.08); outline:none; appearance:none; }
-      .vape-slider::-webkit-slider-thumb { appearance:none; width:16px; height:16px; border-radius:50%; background:var(--vape-accent, #0FB3A0); box-shadow:0 6px 12px rgba(0,0,0,0.4); cursor:pointer; }
-      .vape-bind-row { padding:8px 10px; margin:4px 0; background:rgba(0,0,0,0.2); border-radius:6px; font-size:12px; color:#8F9498; }
-      .vape-bind-change { color:#0FB3A0; cursor:pointer; margin-left:8px; }
-      .vape-bind-change:hover { text-decoration:underline; }
-      .vape-options { display:none; flex-direction:column; gap:4px; padding:8px 12px; background:rgba(0,0,0,0.3); border-top:1px solid rgba(255,255,255,0.05); animation:vapeEnter .2s ease-out; }
-      .vape-options.show { display:flex; }
-      .vape-options label { font-size:12px; display:flex; justify-content:space-between; color:white; }
-      .vape-options input[type="text"], .vape-options input[type="range"] { flex:1; margin-left:4px; }
-      .notif-wrap { position:fixed; bottom:40px; right:30px; display:flex; flex-direction:column; align-items:flex-end; pointer-events:none; z-index:999999; }
-      .notif { display:flex; align-items:center; gap:8px; background:rgba(20,20,20,0.85); color:white; padding:10px 14px; margin-top:8px; border-radius:10px; font-family:Inter,system-ui,sans-serif; font-size:13px; backdrop-filter:blur(6px); box-shadow:0 4px 12px rgba(0,0,0,0.4); opacity:1; transform:translateX(120%); transition:opacity .3s, transform .3s ease; border-left:4px solid; }
-      .notif.info { border-color:#3498db; }
-      .notif.success { border-color:#2ecc71; }
-      .notif.warn { border-color:#f1c40f; }
-      .notif.error { border-color:#e74c3c; }
+      
+      .vape-header { 
+        padding: 16px 18px; 
+        background: rgba(0,0,0,0.25); 
+        border-bottom: 3px solid var(--vape-accent, #0FB3A0); /* 太めのアクセントライン */
+        font-weight: 800; font-size: 14px; letter-spacing: 0.5px; 
+        cursor: move; user-select: none; display: flex; align-items: center; justify-content: space-between; 
+      }
+      
+      .vape-content { padding: 12px; max-height: 500px; overflow-y: auto; overflow-x: hidden; transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease; }
+      .vape-content.collapsing { max-height: 0; opacity: 0; padding-top: 0; padding-bottom: 0; }
+      .vape-content::-webkit-scrollbar { width: 6px; }
+      .vape-content::-webkit-scrollbar-thumb { background: var(--vape-accent, #0FB3A0); border-radius: 10px; }
+      .vape-content::-webkit-scrollbar-track { background: transparent; }
+      
+      .vape-cat-item { 
+        display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin: 6px 0; 
+        border-radius: 20px; /* 超丸いピル形状 */
+        cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); user-select: none; border: 1px solid transparent; 
+      }
+      .vape-cat-item:hover { background: rgba(255,255,255,0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.2); transform: translateX(4px); }
+      .vape-cat-item.active { background: linear-gradient(90deg, var(--vape-accent-alpha, rgba(15,179,160,0.2)), transparent); border-left: 4px solid var(--vape-accent, #0FB3A0); border-radius: 8px 20px 20px 8px; }
+      
+      .vape-cat-icon { width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(135deg, var(--vape-accent, #0FB3A0), var(--vape-accent, #13a695)); box-shadow: 0 4px 10px var(--vape-accent-shadow, rgba(15,179,160,0.3)); transition: all 0.3s ease; }
+      .vape-cat-item:hover .vape-cat-icon { transform: scale(1.1) rotate(5deg); }
+      .vape-cat-text { font-weight: 600; font-size: 13px; }
+      
+      .vape-module-row { 
+        display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; margin: 6px 0; 
+        border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05); 
+        cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; 
+      }
+      .vape-module-row:hover { background: rgba(255,255,255,0.08); box-shadow: 0 6px 20px rgba(0,0,0,0.3); transform: translateY(-2px); border-color: rgba(255,255,255,0.1); }
+      
+      .vape-module-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+      .vape-module-icon { width: 34px; height: 34px; border-radius: 10px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+      .vape-module-title { font-weight: 600; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .vape-module-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+      
+      .vape-toggle { width: 42px; height: 22px; border-radius: 20px; background: rgba(255,255,255,0.15); position: relative; transition: all 0.2s ease; cursor: pointer; flex-shrink: 0; }
+      .vape-toggle.on { background: var(--vape-accent, #0FB3A0); box-shadow: 0 0 12px var(--vape-accent-shadow, rgba(15,179,160,0.6)); } /* オン時に光る */
+      .vape-toggle-knob { position: absolute; left: 3px; top: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.3); transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+      .vape-toggle.on .vape-toggle-knob { left: 23px; }
+      
+      .vape-bind-display { font-size: 11px; color: #8F9498; margin-right: 8px; min-width: 30px; text-align: right; flex-shrink: 0; }
+      .vape-options { display: none; flex-direction: column; gap: 8px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 6px; animation: vapeEnter .2s ease-out; }
+      .vape-options.show { display: flex; }
+      .vape-options label { font-size: 12px; display: flex; justify-content: space-between; color: white; }
+      
+      .vape-slider { width: 100%; height: 6px; border-radius: 999px; background: rgba(255,255,255,0.1); outline: none; appearance: none; }
+      .vape-slider::-webkit-slider-thumb { appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--vape-accent, #0FB3A0); box-shadow: 0 0 10px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.1s; }
+      .vape-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+      
+      .notif-wrap { position: fixed; bottom: 40px; right: 30px; display: flex; flex-direction: column; align-items: flex-end; pointer-events: none; z-index: 999999; }
+      .notif { display: flex; align-items: center; gap: 10px; background: rgba(20, 20, 25, 0.85); color: white; padding: 12px 18px; margin-top: 10px; border-radius: 12px; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; backdrop-filter: blur(10px); box-shadow: 0 8px 24px rgba(0,0,0,0.5); opacity: 1; transform: translateX(120%); transition: opacity .3s, transform .3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-left: 5px solid; }
+      .notif.info { border-color: #3498db; }
+      .notif.success { border-color: #2ecc71; }
+      .notif.warn { border-color: #f1c40f; }
+      .notif.error { border-color: #e74c3c; }
     `;
 		document.head.appendChild(style);
 
@@ -4531,7 +4558,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 			const g = parseInt(color.slice(3, 5), 16);
 			const b = parseInt(color.slice(5, 7), 16);
 			document.documentElement.style.setProperty("--vape-accent-alpha", `rgba(${r},${g},${b},0.12)`);
-			document.documentElement.style.setProperty("--vape-accent-shadow", `rgba(${r},${g},${b},0.2)`);
+			document.documentElement.style.setProperty("--vape-accent-shadow", `rgba(${r},${g},${b},0.4)`); // シャドウを少し濃く
 			localStorage.setItem("vape-accent-color", color);
 		}
 
@@ -4573,7 +4600,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 				const collapseBtn = document.createElement("div");
 				collapseBtn.className = "vape-collapse-btn";
 				collapseBtn.textContent = "−";
-				collapseBtn.style.cssText = "width:20px;height:20px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);border-radius:4px;cursor:pointer;font-size:16px;font-weight:700;transition:all 0.2s;user-select:none;";
+				collapseBtn.style.cssText = "width:24px;height:24px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.1);border-radius:6px;cursor:pointer;font-size:16px;font-weight:700;transition:all 0.2s;user-select:none;";
 				collapseBtn.title = "Collapse";
 
 				let isCollapsed = localStorage.getItem("vape-panel-collapsed-" + title) === "true";
@@ -4583,8 +4610,8 @@ const survival = new Module("SurvivalMode", function(callback) {
 					collapseBtn.textContent = "+";
 				}
 
-				collapseBtn.onmouseenter = () => collapseBtn.style.background = "rgba(255,255,255,0.1)";
-				collapseBtn.onmouseleave = () => collapseBtn.style.background = "rgba(255,255,255,0.05)";
+				collapseBtn.onmouseenter = () => collapseBtn.style.background = "var(--vape-accent, #0FB3A0)";
+				collapseBtn.onmouseleave = () => collapseBtn.style.background = "rgba(255,255,255,0.1)";
 				collapseBtn.onclick = (e) => {
 					e.stopPropagation();
 					isCollapsed = !isCollapsed;
@@ -4632,17 +4659,15 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 		// Create Category Panel
 		function createCategoryPanel() {
-			const { panel, content } = createPanel("Impact V9 FINAL UPDATE", 40, 40, 220);
+			const { panel, content } = createPanel("Impact V9 FINAL", 40, 40, 240);
 			const baseCategories = ["Combat", "Movement", "Player", "Render", "World","Client","Minigames", "Misc","Exploit","Broken","Music"];
 			const categories = [...baseCategories];
 
 			if (scripts > 0) {
-				console.log("Adding Scripts category!");
 				categories.push("Scripts");
 			}
 
 			categories.push("Settings");
-			console.log("Final categories:", categories);
 
 			categories.forEach(cat => {
 				const item = document.createElement("div");
@@ -4713,10 +4738,9 @@ function createModuleRow(name, mod, content) {
     const bindDisplay = document.createElement("span");
     bindDisplay.className = "vape-bind-display";
 
-    // Check if module has a bind when creating the display
     if (mod.bind && mod.bind !== "") {
         bindDisplay.textContent = mod.bind.toUpperCase();
-        bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:30px;text-align:center;flex-shrink:0;background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-weight:700;";
+        bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:30px;text-align:center;flex-shrink:0;background:rgba(255,255,255,0.1);padding:3px 8px;border-radius:6px;font-weight:700;";
     } else {
         bindDisplay.textContent = "";
         bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:0;text-align:center;flex-shrink:0;";
@@ -4763,7 +4787,7 @@ function createModuleRow(name, mod, content) {
         if (e.button === 1) {
             e.preventDefault();
             bindDisplay.textContent = "waiting...";
-            bindDisplay.style.color = "#0FB3A0";
+            bindDisplay.style.color = "var(--vape-accent, #0FB3A0)";
             bindingModule = { name, mod, bindDisplay };
         }
     };
@@ -4780,13 +4804,12 @@ function createModuleRow(name, mod, content) {
             const bindKeyDisplay = document.createElement("div");
             bindKeyDisplay.className = "vape-bind-key-display";
 
-            // Show current bind or "CLICK TO BIND"
             if (mod.bind && mod.bind !== "") {
                 bindKeyDisplay.textContent = mod.bind.toUpperCase();
-                bindKeyDisplay.style.cssText = "background:rgba(255,255,255,0.08);padding:6px 12px;border-radius:6px;font-weight:700;font-size:11px;text-align:center;margin-bottom:8px;cursor:pointer;";
+                bindKeyDisplay.style.cssText = "background:rgba(255,255,255,0.1);padding:8px 12px;border-radius:8px;font-weight:700;font-size:11px;text-align:center;margin-bottom:8px;cursor:pointer;";
             } else {
                 bindKeyDisplay.textContent = "CLICK TO BIND";
-                bindKeyDisplay.style.cssText = "background:rgba(255,255,255,0.05);padding:6px 12px;border-radius:6px;font-weight:700;font-size:11px;text-align:center;margin-bottom:8px;cursor:pointer;color:#8F9498;";
+                bindKeyDisplay.style.cssText = "background:rgba(255,255,255,0.05);padding:8px 12px;border-radius:8px;font-weight:700;font-size:11px;text-align:center;margin-bottom:8px;cursor:pointer;color:#8F9498;";
             }
 
             bindKeyDisplay.title = "Click to change bind";
@@ -4814,25 +4837,29 @@ function createModuleRow(name, mod, content) {
                     if (type === Boolean) {
                         const optToggle = document.createElement("div");
                         optToggle.className = "vape-toggle" + (val ? " on" : "");
-                        optToggle.style.cssText = "width:42px;height:22px;border-radius:20px;background:rgba(255,255,255,0.05);position:relative;transition:all 0.18s;cursor:pointer;flex-shrink:0;";
+                        optToggle.style.cssText = "width:42px;height:22px;border-radius:20px;background:rgba(255,255,255,0.15);position:relative;transition:all 0.2s ease;cursor:pointer;flex-shrink:0;";
+                        
                         if (val) {
                             optToggle.style.background = "var(--vape-accent, #0FB3A0)";
+                            optToggle.style.boxShadow = "0 0 10px var(--vape-accent-shadow, rgba(15,179,160,0.5))";
                         }
+                        
                         const optKnob = document.createElement("div");
                         optKnob.className = "vape-toggle-knob";
-                        optKnob.style.cssText = "position:absolute;left:" + (val ? "23px" : "3px") + ";top:3px;width:16px;height:16px;border-radius:50%;background:" + (val ? "white" : "#0d0f10") + ";box-shadow:0 4px 10px rgba(0,0,0,0.6);transition:all 0.18s;";
+                        optKnob.style.cssText = "position:absolute;left:" + (val ? "23px" : "3px") + ";top:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);transition:all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);";
+                        
                         optToggle.appendChild(optKnob);
                         optToggle.addEventListener("click", (e) => {
                             e.stopPropagation();
                             opt[1] = !opt[1];
                             if (opt[1]) {
                                 optToggle.style.background = "var(--vape-accent, #0FB3A0)";
+                                optToggle.style.boxShadow = "0 0 10px var(--vape-accent-shadow, rgba(15,179,160,0.5))";
                                 optKnob.style.left = "23px";
-                                optKnob.style.background = "white";
                             } else {
-                                optToggle.style.background = "rgba(255,255,255,0.05)";
+                                optToggle.style.background = "rgba(255,255,255,0.15)";
+                                optToggle.style.boxShadow = "none";
                                 optKnob.style.left = "3px";
-                                optKnob.style.background = "#0d0f10";
                             }
                         });
                         line.appendChild(optToggle);
@@ -4851,7 +4878,7 @@ function createModuleRow(name, mod, content) {
 
                         const valueSpan = document.createElement("span");
                         valueSpan.textContent = val;
-                        valueSpan.style.cssText = "color:#8F9498;font-size:11px;min-width:35px;text-align:right;font-weight:600;";
+                        valueSpan.style.cssText = "color:#fff;font-size:11px;min-width:35px;text-align:right;font-weight:600;background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;";
 
                         slider.addEventListener("click", (e) => e.stopPropagation());
                         slider.addEventListener("mousedown", (e) => e.stopPropagation());
@@ -4867,7 +4894,7 @@ function createModuleRow(name, mod, content) {
                         const input = document.createElement("input");
                         input.type = "text";
                         input.value = val;
-                        input.style.cssText = "flex:1;margin-left:8px;max-width:150px;background:rgba(255,255,255,0.05);color:#E6E9EA;border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 8px;font-size:12px;outline:none;";
+                        input.style.cssText = "flex:1;margin-left:8px;max-width:150px;background:rgba(255,255,255,0.1);color:#E6E9EA;border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:6px 10px;font-size:12px;outline:none;transition:border-color 0.2s;";
                         input.addEventListener("click", (e) => e.stopPropagation());
                         input.addEventListener("focus", () => {
                             input.style.borderColor = "var(--vape-accent, #0FB3A0)";
@@ -4929,7 +4956,7 @@ function createModuleRow(name, mod, content) {
 
 			// Position panels in a cascade
 			const panelCount = Object.keys(modulePanels).length;
-			const { panel, content } = createPanel(category.toUpperCase(), 280 + panelCount * 30, 40 + panelCount * 30, 260, true);
+			const { panel, content } = createPanel(category.toUpperCase(), 300 + panelCount * 40, 40 + panelCount * 30, 280, true);
 			modulePanels[category] = panel;
 			document.body.appendChild(panel);
 
@@ -4956,7 +4983,7 @@ function createModuleRow(name, mod, content) {
 				return;
 			}
 
-			const { panel, content } = createPanel("SETTINGS", 280, 40, 300, true);
+			const { panel, content } = createPanel("SETTINGS", 300, 40, 300, true);
 			modulePanels["Settings"] = panel;
 			document.body.appendChild(panel);
 
@@ -5056,25 +5083,20 @@ function createModuleRow(name, mod, content) {
 				return;
 			}
 
-			// Create horizontal music player panel (wider than normal)
 			const panelCount = Object.keys(modulePanels).length;
-			const { panel, content } = createPanel("MUSIC PLAYER", 280 + panelCount * 30, 40 + panelCount * 30, 400, true);
+			const { panel, content } = createPanel("MUSIC PLAYER", 300 + panelCount * 40, 40 + panelCount * 30, 400, true);
 			
-			// Make the panel compact
 			panel.style.width = "320px";
 			panel.style.height = "142px";
 			
 			modulePanels["Music"] = panel;
 			document.body.appendChild(panel);
-
-			// Create music player content
 			createMusicPlayerContent(content);
 
 			updateCategoryHighlights();
 			saveGUIState();
 		}
 
-		// === Global Music Player State ===
 		let globalMusicState = {
 			currentTrack: null,
 			audioElement: null,
@@ -5083,45 +5105,21 @@ function createModuleRow(name, mod, content) {
 			audioContext: null
 		};
 
-		// === Create Always-Visible Visualizer ===
 		function createAlwaysVisibleVisualizer() {
 			const container = document.createElement("div");
 			container.id = "music-visualizer-container";
-			container.style.cssText = `
-				position: fixed;
-				bottom: 0;
-				left: 0;
-				display: none;
-				z-index: 9999;
-				pointer-events: none;
-			`;
+			container.style.cssText = `position: fixed; bottom: 0; left: 0; display: none; z-index: 9999; pointer-events: none;`;
 
-			// Cover image - small, bottom-left corner
 			const coverImg = document.createElement("img");
 			coverImg.id = "visualizer-cover";
-			coverImg.style.cssText = `
-				position: fixed;
-				bottom: 0;
-				left: 0;
-				width: 100px;
-				height: 100px;
-				object-fit: cover;
-				pointer-events: auto;
-			`;
+			coverImg.style.cssText = `position: fixed; bottom: 0; left: 0; width: 100px; height: 100px; object-fit: cover; pointer-events: auto; border-top-right-radius: 12px;`;
 			coverImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23333'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='0.3em' fill='%23888' font-size='30'%3E🎵%3C/text%3E%3C/svg%3E";
 
-			// Canvas for visualizer - large, extends to center
 			const canvas = document.createElement("canvas");
 			canvas.id = "visualizer-canvas";
 			canvas.width = 800;
 			canvas.height = 100;
-			canvas.style.cssText = `
-				position: fixed;
-				bottom: 0;
-				left: 100px;
-				width: 800px;
-				height: 100px;
-			`;
+			canvas.style.cssText = `position: fixed; bottom: 0; left: 100px; width: 800px; height: 100px;`;
 
 			container.appendChild(coverImg);
 			container.appendChild(canvas);
@@ -5132,7 +5130,6 @@ function createModuleRow(name, mod, content) {
 
 		const visualizerElements = createAlwaysVisibleVisualizer();
 
-		// === Visualizer Animation ===
 		function startVisualizer() {
 			if (!globalMusicState.audioElement || !globalMusicState.analyser) return;
 
@@ -5144,15 +5141,12 @@ function createModuleRow(name, mod, content) {
 
 			function draw() {
 				if (!globalMusicState.isPlaying) {
-					// Clear canvas when not playing
 					ctx.clearRect(0, 0, canvas.width, canvas.height);
 					return;
 				}
 
 				requestAnimationFrame(draw);
 				analyser.getByteFrequencyData(dataArray);
-
-				// Clear canvas (transparent background)
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 				const barCount = 64;
@@ -5168,195 +5162,90 @@ function createModuleRow(name, mod, content) {
 					gradient.addColorStop(1, accentColor + "60");
 					
 					ctx.fillStyle = gradient;
-					ctx.fillRect(
-						i * barWidth + 1,
-						canvas.height - barHeight,
-						barWidth - 2,
-						barHeight
-					);
+					ctx.fillRect(i * barWidth + 1, canvas.height - barHeight, barWidth - 2, barHeight);
 				}
 			}
-
 			draw();
 		}
 
-		// === Setup Audio Context and Analyser ===
 		function setupAudioAnalyser(audioElement) {
 			try {
 				if (!globalMusicState.audioContext) {
 					globalMusicState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-					console.log("AudioContext created");
 				}
-
-				// Only create analyser once
 				if (!globalMusicState.analyser) {
 					globalMusicState.analyser = globalMusicState.audioContext.createAnalyser();
 					globalMusicState.analyser.fftSize = 256;
-					console.log("Analyser created");
 				}
-
-				// Only create source once per audio element
 				if (!audioElement._audioSource) {
 					const source = globalMusicState.audioContext.createMediaElementSource(audioElement);
 					source.connect(globalMusicState.analyser);
 					globalMusicState.analyser.connect(globalMusicState.audioContext.destination);
 					audioElement._audioSource = source;
-					console.log("Audio source connected");
 				}
 			} catch (error) {
 				console.error("Failed to setup audio analyser:", error);
 			}
 		}
 
-		// === Create Music Player Content ===
 		function createMusicPlayerContent(content) {
 			const JAMENDO_API_KEY = "0c5e9d9e";
-			
-			// Use global state instead of local variables
 			let currentTrack = globalMusicState.currentTrack;
 			let audioElement = globalMusicState.audioElement;
 			let isPlaying = globalMusicState.isPlaying;
 
-			// Main container
 			const playerContainer = document.createElement("div");
-			playerContainer.style.cssText = `
-				display: flex;
-				padding: 8px;
-				gap: 8px;
-				height: 100%;
-				color: var(--vape-text-color, #ffffff);
-			`;
+			playerContainer.style.cssText = `display: flex; padding: 8px; gap: 12px; height: 100%; color: var(--vape-text-color, #ffffff); align-items: center;`;
 
-			// Left side - Album cover
 			const coverContainer = document.createElement("div");
-			coverContainer.style.cssText = `
-				position: relative;
-				width: 70px;
-				height: 70px;
-				background: #333;
-				border-radius: 8px;
-				overflow: hidden;
-				cursor: pointer;
-				flex-shrink: 0;
-			`;
+			coverContainer.style.cssText = `position: relative; width: 75px; height: 75px; background: #333; border-radius: 12px; overflow: hidden; cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.4);`;
 
 			const coverImage = document.createElement("img");
-			coverImage.style.cssText = `
-				width: 100%;
-				height: 100%;
-				object-fit: cover;
-				transition: opacity 0.3s;
-			`;
+			coverImage.style.cssText = `width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s;`;
 			coverImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect width='120' height='120' fill='%23444'/%3E%3Ctext x='60' y='60' text-anchor='middle' dy='0.3em' fill='%23888' font-size='40'%3E🎵%3C/text%3E%3C/svg%3E";
 
 			const searchOverlay = document.createElement("div");
-			searchOverlay.style.cssText = `
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background: rgba(0,0,0,0.7);
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				opacity: 0;
-				transition: opacity 0.3s;
-				font-size: 24px;
-			`;
+			searchOverlay.style.cssText = `position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; font-size: 24px;`;
 			searchOverlay.innerHTML = "🔍";
 
 			coverContainer.appendChild(coverImage);
 			coverContainer.appendChild(searchOverlay);
 
-			// Hover effect
-			coverContainer.addEventListener("mouseenter", () => {
-				searchOverlay.style.opacity = "1";
-			});
-			coverContainer.addEventListener("mouseleave", () => {
-				searchOverlay.style.opacity = "0";
-			});
+			coverContainer.addEventListener("mouseenter", () => searchOverlay.style.opacity = "1");
+			coverContainer.addEventListener("mouseleave", () => searchOverlay.style.opacity = "0");
+			coverContainer.addEventListener("click", () => openMusicSearchModal());
 
-			// Click to search
-			coverContainer.addEventListener("click", () => {
-				openMusicSearchModal();
-			});
-
-			// Right side - Controls and info
 			const controlsContainer = document.createElement("div");
-			controlsContainer.style.cssText = `
-				flex: 1;
-				display: flex;
-				flex-direction: row;
-				gap: 8px;
-				align-items: center;
-				min-width: 0;
-			`;
+			controlsContainer.style.cssText = `flex: 1; display: flex; flex-direction: row; gap: 8px; align-items: center; min-width: 0;`;
 
-			// Left part: Track info (vertical)
 			const infoContainer = document.createElement("div");
-			infoContainer.style.cssText = `
-				flex: 1;
-				display: flex;
-				flex-direction: column;
-				justify-content: center;
-				min-width: 0;
-			`;
+			infoContainer.style.cssText = `flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0;`;
 
-			// Right part: Control buttons (fixed width)
 			const buttonContainer = document.createElement("div");
-			buttonContainer.style.cssText = `
-				display: flex;
-				gap: 8px;
-				align-items: center;
-				flex-shrink: 0;
-			`;
+			buttonContainer.style.cssText = `display: flex; gap: 8px; align-items: center; flex-shrink: 0;`;
 
-			// Track info
-			// Track info elements
 			const trackTitle = document.createElement("div");
-			trackTitle.style.cssText = `
-				font-size: 12px;
-				font-weight: bold;
-				margin-bottom: 4px;
-				color: var(--vape-accent-color, #0FB3A0);
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			`;
+			trackTitle.style.cssText = `font-size: 13px; font-weight: 800; margin-bottom: 4px; color: var(--vape-accent, #0FB3A0); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;`;
 			trackTitle.textContent = "No track selected";
 
 			const trackArtist = document.createElement("div");
-			trackArtist.style.cssText = `
-				font-size: 10px;
-				opacity: 0.7;
-				margin-bottom: 4px;
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			`;
-			trackArtist.textContent = "Click cover to search music";
+			trackArtist.style.cssText = `font-size: 11px; opacity: 0.8; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;`;
+			trackArtist.textContent = "Click cover to search";
 
 			const trackDuration = document.createElement("div");
-			trackDuration.style.cssText = `
-				font-size: 9px;
-				opacity: 0.5;
-			`;
+			trackDuration.style.cssText = `font-size: 10px; opacity: 0.5; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; display: inline-block; width: max-content;`;
 			trackDuration.textContent = "00:00 / 00:00";
 
 			infoContainer.appendChild(trackTitle);
 			infoContainer.appendChild(trackArtist);
 			infoContainer.appendChild(trackDuration);
 
-			// Control buttons
-			let playButton = createControlButton("▶️", 36);
-
+			let playButton = createControlButton("▶️", 40);
 			buttonContainer.appendChild(playButton);
 
 			controlsContainer.appendChild(infoContainer);
 			controlsContainer.appendChild(buttonContainer);
 
-			// Initialize UI with global state
 			if (globalMusicState.currentTrack) {
 				currentTrack = globalMusicState.currentTrack;
 				audioElement = globalMusicState.audioElement;
@@ -5367,22 +5256,14 @@ function createModuleRow(name, mod, content) {
 				if (coverImage) coverImage.src = currentTrack.image || coverImage.src;
 				if (playButton) playButton.textContent = isPlaying ? "⏸️" : "▶️";
 				
-				// Reconnect audio element event listeners for time updates
 				if (audioElement) {
-					// Remove old listeners if any
 					audioElement.removeEventListener("timeupdate", audioElement._timeupdateHandler);
-					
-					// Create new handler
 					audioElement._timeupdateHandler = () => {
 						const current = formatTime(audioElement.currentTime || 0);
 						const duration = formatTime(audioElement.duration || 0);
 						if (trackDuration) trackDuration.textContent = `${current} / ${duration}`;
 					};
-					
-					// Add new listener
 					audioElement.addEventListener("timeupdate", audioElement._timeupdateHandler);
-					
-					// Update duration immediately
 					if (audioElement.duration) {
 						const current = formatTime(audioElement.currentTime || 0);
 						const duration = formatTime(audioElement.duration || 0);
@@ -5391,11 +5272,8 @@ function createModuleRow(name, mod, content) {
 				}
 			}
 
-			// Update functions to use current state
 			function updatePlayButton() {
-				if (playButton) {
-					playButton.textContent = globalMusicState.isPlaying ? "⏸️" : "▶️";
-				}
+				if (playButton) playButton.textContent = globalMusicState.isPlaying ? "⏸️" : "▶️";
 			}
 			
 			function formatTime(seconds) {
@@ -5406,103 +5284,52 @@ function createModuleRow(name, mod, content) {
 			}
 
 			playButton.addEventListener("click", () => {
-				console.log("Play button clicked, globalState.isPlaying:", globalMusicState.isPlaying, "globalState.currentTrack:", globalMusicState.currentTrack);
 				if (!globalMusicState.currentTrack) return;
-				
-				if (globalMusicState.isPlaying) {
-					pauseTrack();
-				} else {
-					playTrack();
-				}
+				if (globalMusicState.isPlaying) pauseTrack();
+				else playTrack();
 			});
 
 			playerContainer.appendChild(coverContainer);
 			playerContainer.appendChild(controlsContainer);
 			content.appendChild(playerContainer);
 
-			// Helper functions
 			function createControlButton(text, size) {
 				const button = document.createElement("button");
-				button.style.cssText = `
-					background: transparent;
-					border: 2px solid var(--vape-accent-color, #0FB3A0);
-					border-radius: 50%;
-					width: ${size}px;
-					height: ${size}px;
-					color: var(--vape-accent-color, #0FB3A0);
-					cursor: pointer;
-					font-size: ${size === 36 ? '16px' : '12px'};
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					transition: all 0.2s;
-					font-family: inherit;
-				`;
+				button.style.cssText = `background: var(--vape-accent, #0FB3A0); border: none; border-radius: 50%; width: ${size}px; height: ${size}px; color: white; cursor: pointer; font-size: ${size === 40 ? '18px' : '12px'}; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.3);`;
 				button.textContent = text;
-				
-				button.addEventListener("mouseenter", () => {
-					button.style.transform = "scale(1.1)";
-					button.style.background = "var(--vape-accent-color, #0FB3A0)";
-					button.style.color = "white";
-				});
-				button.addEventListener("mouseleave", () => {
-					button.style.transform = "scale(1)";
-					button.style.background = "transparent";
-					button.style.color = "var(--vape-accent-color, #0FB3A0)";
-				});
-
+				button.addEventListener("mouseenter", () => { button.style.transform = "scale(1.15)"; });
+				button.addEventListener("mouseleave", () => { button.style.transform = "scale(1)"; });
 				return button;
 			}
 
 			function playTrack() {
-				if (!globalMusicState.audioElement || !globalMusicState.currentTrack) {
-					console.log("No audio element or track in global state");
-					return;
-				}
-				
+				if (!globalMusicState.audioElement || !globalMusicState.currentTrack) return;
 				globalMusicState.audioElement.play().then(() => {
 					globalMusicState.isPlaying = true;
 					updatePlayButton();
-					
-					// Show visualizer and start animation
 					visualizerElements.container.style.display = "block";
 					startVisualizer();
-					
-					console.log("Playing:", globalMusicState.currentTrack.name);
 				}).catch(error => {
-					console.error("Play error:", error);
 					if (trackDuration) trackDuration.textContent = "Play failed";
 				});
 			}
 
 			function pauseTrack() {
 				if (!globalMusicState.audioElement) return;
-				
 				globalMusicState.audioElement.pause();
 				globalMusicState.isPlaying = false;
 				updatePlayButton();
-				console.log("Paused");
 			}
 
 			function loadTrack(track) {
 				currentTrack = track;
 				globalMusicState.currentTrack = track;
-				
-				// Update UI
 				if (trackTitle) trackTitle.textContent = track.name;
 				if (trackArtist) trackArtist.textContent = track.artist_name;
 				if (coverImage) coverImage.src = track.image || coverImage.src;
 				
-				// Create audio element
-				if (audioElement) {
-					audioElement.pause();
-					audioElement.src = "";
-					audioElement = null;
-				}
-				
-				// Get the correct audio URL from Jamendo
+				if (audioElement) { audioElement.pause(); audioElement.src = ""; audioElement = null; }
 				const audioUrl = `https://prod-1.storage.jamendo.com/?trackid=${track.id}&format=mp31&from=app-97dab294`;
-				
 				audioElement = new Audio();
 				globalMusicState.audioElement = audioElement;
 				audioElement.crossOrigin = "anonymous";
@@ -5511,10 +5338,8 @@ function createModuleRow(name, mod, content) {
 				audioElement.addEventListener("loadedmetadata", () => {
 					const duration = formatTime(audioElement.duration || 0);
 					if (trackDuration) trackDuration.textContent = `00:00 / ${duration}`;
-					console.log("Track loaded:", track.name, "Duration:", audioElement.duration);
 				});
 				
-				// Store handler for reconnection
 				audioElement._timeupdateHandler = () => {
 					const current = formatTime(audioElement.currentTime || 0);
 					const duration = formatTime(audioElement.duration || 0);
@@ -5522,125 +5347,50 @@ function createModuleRow(name, mod, content) {
 				};
 				audioElement.addEventListener("timeupdate", audioElement._timeupdateHandler);
 				
-				audioElement.addEventListener("ended", () => {
-					globalMusicState.isPlaying = false;
-					updatePlayButton();
-				});
-				
-				audioElement.addEventListener("error", (e) => {
-					console.error("Audio error:", e);
-					if (trackDuration) trackDuration.textContent = "Error loading audio";
-				});
-				
-				audioElement.addEventListener("canplay", () => {
-					console.log("Audio can play");
-				});
-				
-				// Set the source and load
+				audioElement.addEventListener("ended", () => { globalMusicState.isPlaying = false; updatePlayButton(); });
 				audioElement.src = audioUrl;
 				audioElement.load();
 				
-				// Setup audio analyser for visualizer
-				try {
-					setupAudioAnalyser(audioElement);
-				} catch (e) {
-					console.error("Failed to setup audio analyser:", e);
-				}
-				
-				// Update visualizer cover image
-				if (visualizerElements.coverImg) {
-					visualizerElements.coverImg.src = track.image || visualizerElements.coverImg.src;
-				}
-				
-				// Reset play state
+				try { setupAudioAnalyser(audioElement); } catch (e) { }
+				if (visualizerElements.coverImg) visualizerElements.coverImg.src = track.image || visualizerElements.coverImg.src;
 				globalMusicState.isPlaying = false;
 				updatePlayButton();
 			}
 
-			// Music search modal
 			function openMusicSearchModal() {
-				// Prevent multiple modals
-				if (document.querySelector('.music-search-modal')) {
-					return;
-				}
+				if (document.querySelector('.music-search-modal')) return;
 
-				// Create modal overlay
 				const modalOverlay = document.createElement("div");
 				modalOverlay.className = "music-search-modal";
-				modalOverlay.style.cssText = `
-					position: fixed;
-					top: 0;
-					left: 0;
-					width: 100vw;
-					height: 100vh;
-					background: rgba(0,0,0,0.8);
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					z-index: 9999999;
-				`;
+				modalOverlay.style.cssText = `position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 9999999;`;
 
 				const modal = document.createElement("div");
-				modal.style.cssText = `
-					background: var(--vape-bg-color, #1a1a1a);
-					border-radius: 12px;
-					width: 500px;
-					height: 400px;
-					padding: 20px;
-					color: var(--vape-text-color, #ffffff);
-					display: flex;
-					flex-direction: column;
-				`;
+				modal.style.cssText = `background: rgba(25, 25, 30, 0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; width: 500px; height: 450px; padding: 24px; color: white; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.5);`;
 
 				const modalHeader = document.createElement("div");
-				modalHeader.style.cssText = `
-					display: flex;
-					justify-content: space-between;
-					align-items: center;
-					margin-bottom: 20px;
-				`;
+				modalHeader.style.cssText = `display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;`;
 
 				const modalTitle = document.createElement("h3");
 				modalTitle.textContent = "Search Music";
-				modalTitle.style.cssText = `
-					margin: 0;
-					color: var(--vape-accent-color, #0FB3A0);
-				`;
+				modalTitle.style.cssText = `margin: 0; color: var(--vape-accent, #0FB3A0); font-weight: 800;`;
 
 				const closeButton = document.createElement("button");
 				closeButton.textContent = "✕";
-				closeButton.style.cssText = `
-					background: none;
-					border: none;
-					color: var(--vape-text-color, #ffffff);
-					font-size: 18px;
-					cursor: pointer;
-				`;
-				closeButton.addEventListener("click", () => {
-					document.body.removeChild(modalOverlay);
-				});
+				closeButton.style.cssText = `background: rgba(255,255,255,0.1); border: none; border-radius: 50%; width: 30px; height: 30px; color: white; cursor: pointer; font-weight: bold; transition: background 0.2s;`;
+				closeButton.addEventListener("mouseenter", () => closeButton.style.background = "rgba(255,0,0,0.5)");
+				closeButton.addEventListener("mouseleave", () => closeButton.style.background = "rgba(255,255,255,0.1)");
+				closeButton.addEventListener("click", () => document.body.removeChild(modalOverlay));
 
 				const searchInput = document.createElement("input");
 				searchInput.type = "text";
-				searchInput.placeholder = "Search for music...";
-				searchInput.style.cssText = `
-					width: 100%;
-					padding: 10px;
-					border: 1px solid #333;
-					border-radius: 6px;
-					background: #333;
-					color: white;
-					margin-bottom: 15px;
-				`;
+				searchInput.placeholder = "Type a song name...";
+				searchInput.style.cssText = `width: 100%; padding: 12px 16px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(0,0,0,0.3); color: white; margin-bottom: 15px; font-family: inherit; outline: none; transition: border-color 0.2s;`;
+				searchInput.addEventListener("focus", () => searchInput.style.borderColor = "var(--vape-accent, #0FB3A0)");
+				searchInput.addEventListener("blur", () => searchInput.style.borderColor = "rgba(255,255,255,0.2)");
 
 				const searchResults = document.createElement("div");
-				searchResults.style.cssText = `
-					flex: 1;
-					overflow-y: auto;
-					border: 1px solid #333;
-					border-radius: 6px;
-					padding: 10px;
-				`;
+				searchResults.style.cssText = `flex: 1; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; background: rgba(0,0,0,0.2);`;
+				searchResults.innerHTML = "<p style='opacity: 0.5; text-align: center; margin-top: 50px;'>Type something to search jamming tracks 🎵</p>";
 
 				modalHeader.appendChild(modalTitle);
 				modalHeader.appendChild(closeButton);
@@ -5650,118 +5400,162 @@ function createModuleRow(name, mod, content) {
 				modalOverlay.appendChild(modal);
 				document.body.appendChild(modalOverlay);
 
-				// Search functionality
 				let searchTimeout;
 				searchInput.addEventListener("input", () => {
 					clearTimeout(searchTimeout);
-					searchTimeout = setTimeout(() => {
-						searchMusic(searchInput.value, searchResults, modalOverlay);
-					}, 500);
+					searchTimeout = setTimeout(() => searchMusic(searchInput.value, searchResults, modalOverlay), 500);
 				});
 
-				// Close modal on overlay click
-				modalOverlay.addEventListener("click", (e) => {
-					if (e.target === modalOverlay) {
-						document.body.removeChild(modalOverlay);
-					}
-				});
-
-				// Close modal on Escape key
-				const handleEscape = (e) => {
-					if (e.key === "Escape") {
-						document.body.removeChild(modalOverlay);
-						document.removeEventListener("keydown", handleEscape);
-					}
-				};
+				modalOverlay.addEventListener("click", (e) => { if (e.target === modalOverlay) document.body.removeChild(modalOverlay); });
+				const handleEscape = (e) => { if (e.key === "Escape") { document.body.removeChild(modalOverlay); document.removeEventListener("keydown", handleEscape); } };
 				document.addEventListener("keydown", handleEscape);
-
-				// Auto-focus search input
 				setTimeout(() => searchInput.focus(), 100);
 			}
 
 			async function searchMusic(query, resultsContainer, modalOverlay) {
-				if (!query.trim()) {
-					resultsContainer.innerHTML = "<p style='opacity: 0.5; text-align: center;'>Enter a search term</p>";
-					return;
-				}
-
-				resultsContainer.innerHTML = "<p style='opacity: 0.5; text-align: center;'>Searching...</p>";
-
+				if (!query.trim()) { resultsContainer.innerHTML = "<p style='opacity: 0.5; text-align: center; margin-top: 50px;'>Type something to search jamming tracks 🎵</p>"; return; }
+				resultsContainer.innerHTML = "<p style='opacity: 0.5; text-align: center; margin-top: 50px;'>Searching the database...</p>";
 				try {
-					const response = await fetch(`https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_API_KEY}&format=json&limit=10&search=${encodeURIComponent(query)}&include=musicinfo`);
+					const response = await fetch(`https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_API_KEY}&format=json&limit=15&search=${encodeURIComponent(query)}&include=musicinfo`);
 					const data = await response.json();
-
 					if (data.results && data.results.length > 0) {
 						resultsContainer.innerHTML = "";
 						data.results.forEach(track => {
 							const resultItem = document.createElement("div");
-							resultItem.style.cssText = `
-								display: flex;
-								align-items: center;
-								gap: 10px;
-								padding: 10px;
-								border-radius: 6px;
-								cursor: pointer;
-								transition: background 0.2s;
-								margin-bottom: 5px;
-							`;
-
-							resultItem.addEventListener("mouseenter", () => {
-								resultItem.style.background = "rgba(255,255,255,0.1)";
-							});
-							resultItem.addEventListener("mouseleave", () => {
-								resultItem.style.background = "transparent";
-							});
+							resultItem.style.cssText = `display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.2s; margin-bottom: 6px; background: rgba(255,255,255,0.03);`;
+							resultItem.addEventListener("mouseenter", () => resultItem.style.background = "rgba(255,255,255,0.1)");
+							resultItem.addEventListener("mouseleave", () => resultItem.style.background = "rgba(255,255,255,0.03)");
 
 							const trackImage = document.createElement("img");
 							trackImage.src = track.image || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23444'/%3E%3Ctext x='20' y='20' text-anchor='middle' dy='0.3em' fill='%23888' font-size='16'%3E🎵%3C/text%3E%3C/svg%3E";
-							trackImage.style.cssText = `
-								width: 40px;
-								height: 40px;
-								border-radius: 4px;
-								object-fit: cover;
-							`;
+							trackImage.style.cssText = `width: 46px; height: 46px; border-radius: 6px; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.3);`;
 
 							const trackInfo = document.createElement("div");
-							trackInfo.style.cssText = `
-								flex: 1;
-							`;
+							trackInfo.style.cssText = `flex: 1; min-width: 0;`;
 
 							const trackName = document.createElement("div");
 							trackName.textContent = track.name;
-							trackName.style.cssText = `
-								font-weight: bold;
-								margin-bottom: 2px;
-							`;
+							trackName.style.cssText = `font-weight: 700; margin-bottom: 4px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;`;
 
 							const artistName = document.createElement("div");
 							artistName.textContent = track.artist_name;
-							artistName.style.cssText = `
-								opacity: 0.7;
-								font-size: 12px;
-							`;
+							artistName.style.cssText = `opacity: 0.7; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;`;
 
 							trackInfo.appendChild(trackName);
 							trackInfo.appendChild(artistName);
 							resultItem.appendChild(trackImage);
 							resultItem.appendChild(trackInfo);
-
-							resultItem.addEventListener("click", () => {
-								loadTrack(track);
-								// Close modal properly
-								document.body.removeChild(modalOverlay);
-							});
-
+							resultItem.addEventListener("click", () => { loadTrack(track); document.body.removeChild(modalOverlay); });
 							resultsContainer.appendChild(resultItem);
 						});
 					} else {
-						resultsContainer.innerHTML = "<p style='opacity: 0.5; text-align: center;'>No results found</p>";
+						resultsContainer.innerHTML = "<p style='opacity: 0.5; text-align: center; margin-top: 50px;'>No results found</p>";
 					}
 				} catch (error) {
-					console.error("Search error:", error);
-					resultsContainer.innerHTML = "<p style='opacity: 0.5; text-align: center; color: red;'>Search failed</p>";
+					resultsContainer.innerHTML = "<p style='opacity: 0.5; text-align: center; color: #ff5555; margin-top: 50px;'>Search failed. Try again.</p>";
 				}
 			}
+		}
+
+		// Toggle GUI
+		let visible = false;
+		// Use capture phase to ensure this runs before other listeners
+		document.addEventListener("keydown", (e) => {
+			if (e.key === "u") {
+				e.preventDefault();
+				e.stopPropagation();
+				e.stopImmediatePropagation();
+				visible = !visible;
+
+				if (visible) {
+					// Exit pointer lock when opening GUI
+					if (document.pointerLockElement) {
+						document.exitPointerLock();
+					}
+
+					// Show category panel
+					if (categoryPanel) categoryPanel.remove();
+					categoryPanel = createCategoryPanel();
+					document.body.appendChild(categoryPanel);
+
+					// Restore previously open panels
+					const openPanels = loadGUIState();
+					openPanels.forEach(panelName => {
+						if (panelName === "Settings") {
+							openSettingsPanel();
+						} else {
+							openModulePanel(panelName);
+						}
+					});
+				} else {
+					// Save state before closing
+					saveGUIState();
+
+					// Hide all panels with animation
+					if (categoryPanel) {
+						closePanelWithAnimation(categoryPanel, () => {
+							categoryPanel = null;
+						});
+					}
+					Object.entries(modulePanels).forEach(([key, panel]) => {
+						closePanelWithAnimation(panel, () => {
+							delete modulePanels[key];
+						});
+					});
+					if (settingsPanel) {
+						closePanelWithAnimation(settingsPanel, () => {
+							settingsPanel = null;
+						});
+					}
+					selectedCategory = null;
+
+					// Re-request pointer lock when closing GUI
+					if (typeof game !== 'undefined' && game?.canvas) {
+						game.canvas.requestPointerLock();
+					}
+				}
+			}
+
+			// Handle keybinding
+			if (bindingModule) {
+				if (e.code === "Escape") {
+					// Unbind (set to empty)
+					bindingModule.mod.setbind("");
+					if (bindingModule.bindDisplay) {
+						bindingModule.bindDisplay.textContent = "";
+						bindingModule.bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:0;text-align:center;flex-shrink:0;";
+					}
+					if (bindingModule.optionBindDisplay) {
+						bindingModule.optionBindDisplay.textContent = "CLICK TO BIND";
+						bindingModule.optionBindDisplay.style.background = "rgba(255,255,255,0.05)";
+						bindingModule.optionBindDisplay.style.color = "#8F9498";
+					}
+					bindingModule = null;
+					showNotif("Bind removed", "info", 1000);
+				} else {
+					const key = e.code.toLowerCase().replace("key", "").replace("digit", "");
+					if (key && bindingModule.mod.setbind) {
+						bindingModule.mod.setbind(key);
+						// Updates both displays
+						if (bindingModule.bindDisplay) {
+							bindingModule.bindDisplay.textContent = key.toUpperCase();
+							bindingModule.bindDisplay.style.cssText = "font-size:10px;color:#E6E9EA;margin-right:8px;min-width:30px;text-align:center;flex-shrink:0;background:rgba(255,255,255,0.15);padding:3px 8px;border-radius:6px;font-weight:700;";
+						}
+						if (bindingModule.optionBindDisplay) {
+							bindingModule.optionBindDisplay.textContent = key.toUpperCase();
+							bindingModule.optionBindDisplay.style.background = "rgba(255,255,255,0.15)";
+							bindingModule.optionBindDisplay.style.color = "#E6E9EA";
+						}
+						showNotif("Bound " + bindingModule.name + " to " + key, "success", 2000);
+						bindingModule = null;
+					}
+				}
+			}
+		}, true);
+
+		setTimeout(() => { showNotif("Press U to open Impact V9 FINAL", "info", 4000); }, 500);
+	}
+})();
 		}
 
 		// Toggle GUI
