@@ -1743,6 +1743,7 @@ clientVersion: VERSION$1
 			}
 			async function startIRC() {
 				if (ircConnection !== undefined) return; // already started
+				if (!Services.enabled) return;
 				const {"default": IRCConnection} = await irc();
 				ircConnection = new IRCConnection(SERVICES_SERVER);
 			}
@@ -2293,7 +2294,7 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 			new Module("KeepSprint", function() {},"Movement", () => "Ignore");
 			new Module("NoSlowdown", function() {},"Combat", () => "Ignore");
 
-// Speed
+// Speed (BROKEN due to anticheat) 
 let speedvalue, speedjump, speedauto, speedbypass;
 
 const speed = new Module("Speed", function(callback) {
@@ -5843,9 +5844,8 @@ function createModuleRow(name, mod, content) {
 					}
 				}
 			}
-		}, true); // Use capture phase to run before other listeners
+		}, true);
 
-		// === Startup notification ===
 		setTimeout(() => { showNotif("Press \\\\ to open Impact V9 FINAL", "info", 4000); }, 500);
 	}
 })();
