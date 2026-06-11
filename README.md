@@ -97,6 +97,14 @@ For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM
 
 ## 🧑‍💻 Update Logs 
 
+### v9-FINAL3 (2026-06-11)
+
+A very small update. I haven't actually tested it, but it should work since it was just 2 variable name changes to fix 2 modules.
+DM me on Matrix (@opsec.one), Signal (@opsec.02), or Discord (@opsec.one, or @opsec.2 if that somehow happens to get termed since its at risk)
+if something doesn't work because of the update and isn't anticheat related (I don't update Impact other than for keeping it working whenever it breaks)
+
+- Fixed Sprint and NoSlowdown breaking due to the game updating variable names used in their replacements.
+
 ### v9-FINAL2 (2026-02-02)
 
 - Switched to ProgMEM-CC's IMChat deployment since mine is now dead due to my usage limits being exceeded (mainly because vercel doesn't like SSE for whatever reason)
