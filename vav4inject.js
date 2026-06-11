@@ -5,7 +5,7 @@ let replacements = {};
 let dumpedVarNames = {};
 const storeName = "a" + crypto.randomUUID().replaceAll("-", "").substring(16);
 const vapeName = crypto.randomUUID().replaceAll("-", "").substring(16);
-const VERSION = "9-FINAL2";
+const VERSION = "9-FINAL3";
 
 // Anticheat hooking
 function replaceAndCopyFunction(oldFunc, newFunc) {
@@ -538,7 +538,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 	addModification('bindKeysWithDefaults("i",m=>{', 'bindKeysWithDefaults("apostrophe",m=>{', true);
 
 	// SPRINT
-	addModification('b=keyPressedDump("shift")||touchcontrols.sprinting', '||enabledModules["Sprint"]');
+	addModification('w=keyPressedDump("shift")||touchcontrols.sprinting', '||enabledModules["Sprint"]');
 
     // VELOCITY
 	addModification('"CPacketEntityVelocity",h=>{const p=m.world.entitiesDump.get(h.id);', `
@@ -638,7 +638,7 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 
 	// NOSLOWDOWN
 	addModification('updatePlayerMoveState(),this.isUsingItem()', 'updatePlayerMoveState(),(this.isUsingItem() && !enabledModules["NoSlowdown"])', true);
-	addModification('S&&!this.isUsingItem()', 'S&&!(this.isUsingItem() && !enabledModules["NoSlowdown"])', true);
+	addModification('v&&!this.isUsingItem()', 'v&&!(this.isUsingItem() && !enabledModules["NoSlowdown"])', true);
 
 	// DESYNC
 	addModification("this.inputSequenceNumber++", 'desync ? this.inputSequenceNumber : this.inputSequenceNumber++', true);
