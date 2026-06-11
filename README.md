@@ -3,12 +3,11 @@
 
 ## A feature-rich client modification for miniblox.io with enhanced gameplay capabilities, stealth optimization, and a modern, dark-mode user interface
 
-> [!NOTE]
+> [!IMPORTANT]
 > (Do not remove this unless Impact updates to use the new Miniblox client as a base (or it dies for 2 years or gets archived or discontinued), otherwise you're bad)
 > A new Miniblox client is being made! It isn't ready for use, but you can track its progress!
 > See [this discussion](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/discussions/118) and [this issue](https://codeberg.org/Miniblox/Vape/issues/6) for more updates on.
-> If you want to use it (I recommend not using it *yet*, due to not even having a KillAura and many other things), then you will need to build it yourself.
-> We patch rollup for you now, so you don't need a custom Rollup fork to build it.
+> If you want to use it (it's very close to), ~~then you will need to build it yourself~~ see [this wiki in the VapeRewrite repo](https://codeberg.org/Miniblox/VapeRewrite/wiki/How-to-use-without-compiling-(User)).
 
 [![Discord](https://img.shields.io/badge/Discord-Join%20Us-5865F2)](https://discord.gg/PwpGemYhJx)
 [![Website](https://img.shields.io/badge/Website-impactminiblox.js.org-blue)](https://impactminiblox.js.org)
