@@ -177,6 +177,7 @@ But it was fully usable 3 days after that comment, and then, the first updated v
 - **Website**: [impactminiblox.js.org](https://impactminiblox.js.org)
 
 [![Video Showcase](https://i.ytimg.com/vi/dSR7u0OQcrQ/hqdefault.jpg)](https://www.youtube.com/watch?v=dSR7u0OQcrQ)
+[![Video Showcase](https://i.ytimg.com/vi/kkMZmQwcCmg/hqdefault.jpg)](https://youtube.com/watch?v=kkMZmQwcCmg)
 
 Want your video featured? [Submit here](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/discussions/new?category=media-addition-requests)
 
