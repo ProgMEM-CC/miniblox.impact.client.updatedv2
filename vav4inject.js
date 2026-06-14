@@ -170,7 +170,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 
 		// a list of miniblox usernames to not attack + ignore (friends)
 		/** @type string[] **/
-		const friends = [];
+		const clientFriends = [];
 		let ignoreFriends = false;
 
 		let enabledModules = {};
@@ -1031,21 +1031,21 @@ clientVersion: VERSION$1
 				}
 				switch (args[1]) {
 					case "add":
-						friends.push(name);
+						clientFriends.push(name);
 						game.chat.addChat({text: \`\\\\green\\\\added\\\\reset\\\\ \${name} as a friend \`});
 						break;
 					case "remove": {
-						const idx = friends.indexOf(name);
+						const idx = clientFriends.indexOf(name);
 						if (idx === -1) {
 							game.chat.addChat({text:
 								\`\\\\red\\\\Unknown\\\\reset\\\\ friend: \${name}\`});
 							break;
 						}
-						friends.splice(idx, 1);
+						clientFriends.splice(idx, 1);
 						break;
 					}
 					case "list":
-						if (friends.length === 0) {
+						if (clientFriends.length === 0) {
 							game.chat.addChat({text: "You have no friends added yet!", color: "red"});
 							game.chat.addChat({text:
 								\`\\\\green\\\\Add\\\\reset\\\\ing friends using \\\\yellow\\\\.friend add <friend name>\\\\reset\\\\
@@ -1060,7 +1060,7 @@ clientVersion: VERSION$1
 							break;
 						}
 						game.chat.addChat({text: "Friends:", color: "yellow"});
-						for (const friend of friends) {
+						for (const friend of clientFriends) {
 							game.chat.addChat({text: friend, color: "blue"});
 						}
 						break;
@@ -2078,7 +2078,7 @@ clientVersion: VERSION$1
 					if (!base) return false;
 					const distCheck = player.getDistanceSqToEntity(e) < sqRange;
 					if (!distCheck) return false;
-					const isFriend = friends.includes(e.name);
+					const isFriend = clientFriends.includes(e.name);
 					const friendCheck = !ignoreFriends && isFriend;
 					if (friendCheck) return false;
 					// pasted
