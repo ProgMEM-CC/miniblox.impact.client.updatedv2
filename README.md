@@ -3,6 +3,10 @@
 
 ## A feature-rich client modification for miniblox.io with enhanced gameplay capabilities, stealth optimization, and a modern, dark-mode user interface
 
+> [!CAUTION]
+> As time passes on, Vector keeps updating Miniblox and sometimes breaking Impact.
+> I'll try to update it, but you need to spam ping me on i.e. Discord or GitHub for me to notice.
+
 > [!IMPORTANT]
 > (Do not remove this unless Impact updates to use the new Miniblox client as a base (or it dies for 2 years or gets archived or discontinued), otherwise you're bad)
 > A new Miniblox client is being made! It isn't ready for use, but you can track its progress!
@@ -95,6 +99,10 @@ For detailed information + workarounds, see our [FAQ](https://github.com/ProgMEM
 ---
 
 ## 🧑‍💻 Update Logs 
+
+### v9-FINAL4 (2026-06-14)
+
+Another update, just updated to the latest version. Can't go to sleep without Vector updating for the 30th time to break some clients.
 
 ### v9-FINAL3 (2026-06-11)
 
