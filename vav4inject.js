@@ -40,6 +40,10 @@ function addModification(replacement, code, replace) {
 	replacements[replacement] = [code, replace];
 }
 
+/**
+ * @param {string} replacement
+ * @param {string | RegExp} code
+ */
 function addDump(replacement, code) {
 	dumpedVarNames[replacement] = code;
 }
@@ -88,13 +92,14 @@ function modifyCode(text) {
 	addDump('moveForwardDump', 'this\\.([a-zA-Z]+)=\\([a-zA-Z]+\\.(up|down)');
 	addDump('keyPressedDump', 'function ([a-zA-Z]*)\\([a-zA-Z]*\\)\{return keyPressed\\([a-zA-Z]*\\)');
 	addDump('entitiesDump', 'this\.([a-zA-Z]*)\.values\\(\\)\\)[a-zA-Z]* instanceof EntityTNTPrimed');
-	addDump('isInvisibleDump', '\\.mode\\.isSpectator\\(\\)\\s*\\|\\|\\s*[a-zA-Z]*\\.([a-zA-Z]*)\\(\\)');
-	addDump('attackDump', 'player\\.inputSequenceNumber\\}\\)\\),player\.([a-zA-Z]*)');
+	// PlayerControllerMP#updateMouseOver
+	addDump('isInvisibleDump', /\.mode\.isSpectator\(\)\s*\|\|\s*[a-zA-Z]*\.([a-zA-Z]*)\(\)/m);
+	addDump('attackDump', /player\.inputSequenceNumber\}\)\),player\.([a-zA-Z]*)/);
 	addDump('lastReportedYawDump', 'this\.([a-zA-Z]*)=this\.yaw,this\.last');
 	addDump('windowClickDump', '([a-zA-Z]*)\\(this\.inventorySlots\.windowId');
 	addDump('playerControllerDump', 'const ([a-zA-Z]*)=new PlayerController,');
 	addDump('damageReduceAmountDump', 'ItemArmor&&\\([a-zA-Z]*\\+\\=[a-zA-Z]*\.([a-zA-Z]*)');
-	addDump('boxGeometryDump', '\\s*=\\s*new\\s+Mesh\\s*\\(new ([a-zA-Z]*)\\(1');
+	addDump('boxGeometryDump', /\s*=\s*new\s+Mesh\s*\(new ([a-zA-Z]*)\(1/m);
 	addDump('syncItemDump', 'playerControllerMP\\.([a-zA-Z]*)\\(\\),ClientSocket\\.sendPacket');
 
 	// PRE
