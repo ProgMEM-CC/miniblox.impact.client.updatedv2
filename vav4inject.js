@@ -697,8 +697,8 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	`);
 
 	// ESP
-	addModification(')&&(p.mesh.visible=this.shouldRenderEntity(p))', `
-  if (p && p.id != player.id) {
+	addModification(')&&(p.mesh.visible=this.shouldRenderEntity(h))', `
+  if (h && h.id != player.id) {
     function hslToRgb(h, s, l) {
       let r, g, b;
       if(s === 0){ r = g = b = l; }
@@ -753,9 +753,9 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
       const rgb = hslToRgb(hue, 1, 0.5);
       const colorHex = (rgb.r << 16) + (rgb.g << 8) + rgb.b;
 
-      if (p.mesh.meshes) {
-        for (const key in p.mesh.meshes) {
-          const mesh = p.mesh.meshes[key];
+      if (h.mesh.meshes) {
+        for (const key in h.mesh.meshes) {
+          const mesh = h.mesh.meshes[key];
           if (!mesh?.material) continue;
           mesh.material.depthTest = false;
           mesh.renderOrder = 3;
@@ -766,9 +766,9 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
         }
       }
 
-      if (p.mesh.armorMesh) {
-        for (const key in p.mesh.armorMesh) {
-          const mesh = p.mesh.armorMesh[key];
+      if (h.mesh.armorMesh) {
+        for (const key in h.mesh.armorMesh) {
+          const mesh = h.mesh.armorMesh[key];
           if (!mesh?.material) continue;
           mesh.material.depthTest = false;
           mesh.renderOrder = 4;
@@ -779,8 +779,8 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
         }
       }
 
-      if (p.mesh.capeMesh && p.mesh.capeMesh.children.length > 0) {
-        const cape = p.mesh.capeMesh.children[0];
+      if (h.mesh.capeMesh && h.mesh.capeMesh.children.length > 0) {
+        const cape = h.mesh.capeMesh.children[0];
         if (cape.material) {
           cape.material.depthTest = false;
           cape.renderOrder = 5;
@@ -791,8 +791,8 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
         }
       }
 
-      if (p.mesh.hatMesh && p.mesh.hatMesh.children.length > 0) {
-        for (const mesh of p.mesh.hatMesh.children[0].children) {
+      if (h.mesh.hatMesh && h.mesh.hatMesh.children.length > 0) {
+        for (const mesh of h.mesh.hatMesh.children[0].children) {
           if (!mesh.material) continue;
           mesh.material.depthTest = false;
           mesh.renderOrder = 4;
@@ -803,9 +803,9 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
         }
       }
     } else {
-      if (p.mesh.meshes) {
-        for (const key in p.mesh.meshes) {
-          const mesh = p.mesh.meshes[key];
+      if (h.mesh.meshes) {
+        for (const key in h.mesh.meshes) {
+          const mesh = h.mesh.meshes[key];
           if (!mesh?.material) continue;
           mesh.material.depthTest = true;
           mesh.renderOrder = 0;
@@ -819,9 +819,9 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
         }
       }
 
-      if (p.mesh.armorMesh) {
-        for (const key in p.mesh.armorMesh) {
-          const mesh = p.mesh.armorMesh[key];
+      if (h.mesh.armorMesh) {
+        for (const key in h.mesh.armorMesh) {
+          const mesh = h.mesh.armorMesh[key];
           if (!mesh?.material) continue;
           mesh.material.depthTest = true;
           mesh.renderOrder = 0;
@@ -835,8 +835,8 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
         }
       }
 
-      if (p.mesh.capeMesh && p.mesh.capeMesh.children.length > 0) {
-        const cape = p.mesh.capeMesh.children[0];
+      if (h.mesh.capeMesh && h.mesh.capeMesh.children.length > 0) {
+        const cape = h.mesh.capeMesh.children[0];
         if (cape.material) {
           cape.material.depthTest = true;
           cape.renderOrder = 0;
@@ -850,8 +850,8 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
         }
       }
 
-      if (p.mesh.hatMesh && p.mesh.hatMesh.children.length > 0) {
-        for (const mesh of p.mesh.hatMesh.children[0].children) {
+      if (h.mesh.hatMesh && h.mesh.hatMesh.children.length > 0) {
+        for (const mesh of h.mesh.hatMesh.children[0].children) {
           if (!mesh.material) continue;
           mesh.material.depthTest = true;
           mesh.renderOrder = 0;
