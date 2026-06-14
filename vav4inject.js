@@ -88,13 +88,13 @@ function modifyCode(text) {
 	addDump('moveForwardDump', 'this\\.([a-zA-Z]+)=\\([a-zA-Z]+\\.(up|down)');
 	addDump('keyPressedDump', 'function ([a-zA-Z]*)\\([a-zA-Z]*\\)\{return keyPressed\\([a-zA-Z]*\\)');
 	addDump('entitiesDump', 'this\.([a-zA-Z]*)\.values\\(\\)\\)[a-zA-Z]* instanceof EntityTNTPrimed');
-	addDump('isInvisibleDump', '[a-zA-Z]*\.([a-zA-Z]*)\\(\\)\\)&&\\([a-zA-Z]*=new ([a-zA-Z]*)\\(new');
-	addDump('attackDump', 'hitVec.z\}\\)\}\\)\\),player\.([a-zA-Z]*)');
+	addDump('isInvisibleDump', '\.mode\.isSpectator\(\)\s*\|\|\s*[a-zA-Z]*\.([a-zA-Z]*)\(\)');
+	addDump('attackDump', 'player\.inputSequenceNumber\}\)\),player\.([a-zA-Z]*)');
 	addDump('lastReportedYawDump', 'this\.([a-zA-Z]*)=this\.yaw,this\.last');
 	addDump('windowClickDump', '([a-zA-Z]*)\\(this\.inventorySlots\.windowId');
 	addDump('playerControllerDump', 'const ([a-zA-Z]*)=new PlayerController,');
 	addDump('damageReduceAmountDump', 'ItemArmor&&\\([a-zA-Z]*\\+\\=[a-zA-Z]*\.([a-zA-Z]*)');
-	addDump('boxGeometryDump', 'w=new Mesh\\(new ([a-zA-Z]*)\\(1');
+	addDump('boxGeometryDump', '\s*=\s*new\s+Mesh\s*\(new ([a-zA-Z]*)\(1');
 	addDump('syncItemDump', 'playerControllerMP\.([a-zA-Z]*)\\(\\),ClientSocket\.sendPacket');
 
 	// PRE
@@ -115,9 +115,9 @@ p.slot===Equipment_Slot.MAIN_HAND
 // your position will only update every 20 ticks.
 let serverPos = player.pos.clone();
 `);
-	addModification('this.nameTag.visible=!this.entity.sneak&&!Options$1.streamerMode.value&&game.serverInfo.serverCategory!=="murder"', `
+	addModification('this.nameTag.visible=!this.entity.sneak&&!Options.streamerMode.value&&game.serverInfo.serverCategory!=="murder"', `
 this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
-			&& !Options$1.streamerMode.value
+			&& !Options.streamerMode.value
 			&& (tagsInMM[1] || game.serverInfo.serverCategory !== "murder");
 `, true);
 	addModification('Potions.jump.getId(),"5");', `
@@ -453,7 +453,8 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 		}
 	`);
 	addModification('this.game.unleash.isEnabled("disable-ads")', 'true', true);
-	addModification('h.render()})', '; for(const [index, func] of Object.entries(renderTickLoop)) if (func) func();');
+	// in EntityManager, renderEntities function
+	addModification('applyEntityLighting(p);', '; for(const [index, func] of Object.entries(renderTickLoop)) if (func) func();');
 	addModification('updateNameTag(){let h="white",p=1;', 'this.entity.team = this.entity.profile.cosmetics.color;');
 	addModification('connect(u,h=!1,p=!1){', 'lastJoined = u;');
 	addModification('SliderOption("Render Distance ",2,8,3)', 'SliderOption("Render Distance ",2,64,3)', true);
@@ -678,9 +679,9 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 	addModification('keyPressed(m)&&Game.isActive(!1)', 'keyPressed(m)&&(Game.isActive(!1)||enabledModules["InvWalk"]&&!game.chat.showInput)', true);
 
 	// PHASE
-	addModification('calculateXOffset(A,this.getEntityBoundingBox(),g.x)', 'enabledModules["Phase"] ? g.x : calculateXOffset(A,this.getEntityBoundingBox(),g.x)', true);
-	addModification('calculateYOffset(A,this.getEntityBoundingBox(),g.y)', 'enabledModules["Phase"] && !enabledModules["Scaffold"] && keyPressedDump("shift") ? g.y : calculateYOffset(A,this.getEntityBoundingBox(),g.y)', true);
-	addModification('calculateZOffset(A,this.getEntityBoundingBox(),g.z)', 'enabledModules["Phase"] ? g.z : calculateZOffset(A,this.getEntityBoundingBox(),g.z)', true);
+	addModification('calculateXOffset(B,this.getEntityBoundingBox(),g.x)', 'enabledModules["Phase"] ? g.x : calculateXOffset(B,this.getEntityBoundingBox(),g.x)', true);
+	addModification('calculateYOffset(B,this.getEntityBoundingBox(),g.y)', 'enabledModules["Phase"] && !enabledModules["Scaffold"] && keyPressedDump("shift") ? g.y : calculateYOffset(B,this.getEntityBoundingBox(),g.y)', true);
+	addModification('calculateZOffset(B,this.getEntityBoundingBox(),g.z)', 'enabledModules["Phase"] ? g.z : calculateZOffset(B,this.getEntityBoundingBox(),g.z)', true);
 	addModification('pushOutOfBlocks(u,h,p){', 'if (enabledModules["Phase"]) return;');
 
 	// AUTORESPAWN
@@ -864,13 +865,14 @@ h.addVelocity(-Math.sin(this.yaw) * g * .5, .1, -Math.cos(this.yaw) * g * .5);
 
 	// LOGIN BYPASS
 	addModification(
-		'new SPacketLoginStart({' +
-		'requestedUuid:localStorage.getItem(REQUESTED_UUID_KEY)??void 0,' +
+		"new SPacketLoginStart({" +
+		"requestedUuid:localStorage.getItem(REQUESTED_UUID_KEY)??void 0," +
 		'session:localStorage.getItem(SESSION_TOKEN_KEY)??"",' +
 		'hydration:localStorage.getItem("hydration")??"0",' +
 		'metricsId:localStorage.getItem("metrics_id")??"",' +
-		'clientVersion:VERSION$1' +
-		'})',
+		"clientVersion:VERSION$1," +
+		"language:Options.language.value" +
+		"})",
 		`new SPacketLoginStart({
 requestedUuid: undefined,
 session: (enabledModules["AntiBan"]
@@ -880,7 +882,8 @@ session: (enabledModules["AntiBan"]
 	: (localStorage.getItem(SESSION_TOKEN_KEY) ?? "")),
 hydration: "0",
 metricsId: uuid$1(),
-clientVersion: VERSION$1
+clientVersion: VERSION$1,
+language: Options.language.value
 })`,
 		true
 	);
