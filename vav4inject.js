@@ -459,7 +459,7 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 	`);
 	addModification('this.game.unleash.isEnabled("disable-ads")', 'true', true);
 	// in EntityManager, renderEntities function
-	addModification('applyEntityLighting(p);', '; for(const [index, func] of Object.entries(renderTickLoop)) if (func) func();');
+	addModification('applyEntityLighting(p)', '; for(const [index, func] of Object.entries(renderTickLoop)) if (func) func();');
 	addModification('updateNameTag(){let h="white",p=1;', 'this.entity.team = this.entity.profile.cosmetics.color;');
 	addModification('connect(u,h=!1,p=!1){', 'lastJoined = u;');
 	addModification('SliderOption("Render Distance ",2,8,3)', 'SliderOption("Render Distance ",2,64,3)', true);
