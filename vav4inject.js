@@ -328,8 +328,8 @@ this.nameTag.visible = (tagsWhileSneaking[1] || !this.entity.sneak)
 	addModification('if(!x.canConnect){', 'x.errorMessage = x.errorMessage === "Could not join server. You are (probably) connected to a VPN or a proxy. Please disconnect from it and refresh (F5) this page." ? "You\'re possibly IP banned or you\'re using a VPN " : x.errorMessage;');
 
 	// DRAWING SETUP
-	addModification('I(this,"glintTexture");', `
-		I(this, "vapeTexture");
+	addModification('A(this,"glintTexture");', `
+		A(this, "vapeTexture");
 	`);
 	addModification('skinManager.loadTextures(),', ',this.loadVape(),');
 	addModification('async loadSpritesheet(){', `
