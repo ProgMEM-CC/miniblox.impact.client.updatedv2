@@ -1,11 +1,12 @@
+
+> [!CAUTION]
+> Vector has patched Impact, Vape, Vape Rewrite, and all other clients that use code replacement-based hooking that directly patches the game's script.
+> There might be a way to do it that might only be available via extensions (you could hook requests to miniblox's index-{...}.js and then patch it from there so imports work and etc), but I'm not going to bother. Vape Rewrite is the only client (at least that I'm working on) that will get updates if I bother to fix this (I'm working on porting Vape Rewrite to wang's hooking method now).
+
 # [![Impact V8](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=3500&pause=2000&color=FF0000&width=435&lines=Impact+Client+V9)](https://git.io/typing-svg)
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&duration=2500&pause=1000&color=abe0e4&vCenter=true&width=600&lines=The+ultimate+Miniblox+hacked+client;Built+for+stealth+(from+AntiCheats)%2C+speed%2C+and+total+domination.;Fully+dark-mode+optimized+with+a+modern+GUI)](https://git.io/typing-svg)
 
 ## A feature-rich client modification for miniblox.io with enhanced gameplay capabilities, stealth optimization, and a modern, dark-mode user interface
-
-> [!CAUTION]
-> As time passes on, Vector keeps updating Miniblox and sometimes breaking Impact.
-> I'll try to update it, but you need to spam ping me on i.e. Discord or GitHub for me to notice.
 
 > [!IMPORTANT]
 > (Do not remove this unless Impact updates to use the new Miniblox client as a base (or it dies for 2 years or gets archived or discontinued), otherwise you're bad)
