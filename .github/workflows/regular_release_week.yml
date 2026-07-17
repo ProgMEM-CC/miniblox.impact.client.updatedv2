@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up date variables
         id: dates
@@ -58,19 +58,6 @@ jobs:
           echo "$FORMATTED" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: minify js to paste in console
-        uses: devatherock/minify-js@v3.1.0
-        with:
-          output: 'minify/' 
-
-      - name: Read minified JS for pasting
-        id: paste_js
-        run: |
-          # Read the entire content of minify/paste.js and escape backticks for Markdown code block safety
-          PASTE_CONTENT=$(cat minify/vav4inject.min.js | sed 's/`/\\`/g')
-          echo "content<<EOF" >> $GITHUB_OUTPUT
-          echo "$PASTE_CONTENT" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
       - name: currentVersion appender
         id: currentver
         run: |
@@ -110,14 +97,9 @@ jobs:
             ${{ github.event.inputs.desc }}
             ---
             ${{ steps.commitlog_section.outputs.text }}
-            ---
-            ## Paste in Console (minified) (currently not working, trying to fix)
-            ```
-            ${{ steps.paste_js.outputs.content }}
             ```
           files: |
-            minify/vav4inject.min.js
-            tampermonkey.js
+            tampermonkey.user.js
             vav4inject.js
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
