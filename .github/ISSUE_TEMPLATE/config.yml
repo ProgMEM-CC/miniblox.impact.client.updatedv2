@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Vape Rewrite
+    url: https://codeberg.org/Miniblox/VapeRewrite
+    about: Please use this instead of Impact.
