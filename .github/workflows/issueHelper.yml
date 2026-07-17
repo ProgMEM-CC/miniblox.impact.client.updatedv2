@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Issues Helper
-        uses: actions-cool/issues-helper@v3.6.2
+        uses: actions-cool/issues-helper-backup@main # TODO: github is black and disabled the original repo, so we have to use this.
         with:
           actions: |
             close-issues
