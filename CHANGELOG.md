@@ -1,5 +1,9 @@
 # Changelog
 
+**Archived** changelogs for this client. It's now discontinued, so I'm not adding anything new.
+Want a good client that **will probably soon support console injection**, **works on the latest version**, and **has a MaceKill + NoFall that doesn't make the mace useless**?
+Check out [Vape Rewrite]!
+
 ## v9-FINAL4 (2026-06-14)
 
 Another update, just updated to the latest version. Can't go to sleep without Vector updating for the 30th time to break some clients.
@@ -24,9 +28,9 @@ Bumped the version and added a new notice in the `tampermonkey.user.js` file.
 
 ## v8.1 (2026-01-24)
 
-Vape Rewrite is going along well, it has a Velocity and a semi-functioning KillAura (it doesn't show the blocking thing + it doesn't rotate, so if you're not looking in their direction then you'll get your hits cancelled).
+[Vape Rewrite] is going along well, it has a Velocity and a semi-functioning KillAura (it doesn't show the blocking thing + it doesn't rotate, so if you're not looking in their direction then you'll get your hits cancelled).
 
-Vape Rewrite is the current focus of ProgMEM-CC & @6x68's time, and Impact Rewrite apparently **won't happen**.
+[Vape Rewrite] is the current focus of ~~ProgMEM-CC~~ (this goobener barely commits and only pushed a broken + ChatGPT'd telly scaffold, what else could you expect from a skid + paster) & @6x68's time, and Impact Rewrite apparently **won't happen**.
 
 ## v8.1 (2026-01-12)
 
@@ -51,3 +55,14 @@ speechbubbel update real
 - (2025-12-26) Added a tiny delay to Nuker in order to fix (kick bug for too many packets)
 - (2025-12-30) ChestSteal recoded
 ---
+
+
+
+
+
+
+
+
+
+[Vape Rewrite]: codeberg.org/Miniblox/VapeRewrite/
+<!-- yes, I did add that many newlines just for it to be on line 67 -->
