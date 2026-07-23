@@ -1,7 +1,8 @@
 
 > [!CAUTION]
-> Vector has patched Impact, Vape, Vape Rewrite, and all other clients that use code replacement-based hooking that directly patches the game's script.
-> There might be a way to do it that might only be available via extensions (you could hook requests to miniblox's index-{...}.js and then patch it from there so imports work and etc), but I'm not going to bother. Vape Rewrite is the only client (at least that I'm working on) that will get updates if I bother to fix this (I'm working on porting Vape Rewrite to wang's hooking method now).
+> Vector has patched Impact, Vape, and all other clients that use code replacement-based hooking that directly patches the game's script.
+> There might be a way to do it that might only be available via extensions (you could hook requests to miniblox's index-{...}.js and then patch it from there so imports work and etc), but I'm not going to bother.
+> If you paid attention, you'd notice that, Vape Rewrite is NOT mentioned in that list! that is because I'm very close to porting it to latest Miniblox! See [here](https://codeberg.org/Miniblox/VapeRewrite/src/branch/fix/unpatch). Vape Rewrite also has a Mace Kill and a NoFall.
 
 # [![Impact V8](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=3500&pause=2000&color=FF0000&width=435&lines=Impact+Client+V9)](https://git.io/typing-svg)
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&duration=2500&pause=1000&color=abe0e4&vCenter=true&width=600&lines=The+ultimate+Miniblox+hacked+client;Built+for+stealth+(from+AntiCheats)%2C+speed%2C+and+total+domination.;Fully+dark-mode+optimized+with+a+modern+GUI)](https://git.io/typing-svg)
@@ -9,12 +10,12 @@
 ## A feature-rich client modification for miniblox.io with enhanced gameplay capabilities, stealth optimization, and a modern, dark-mode user interface
 
 > [!IMPORTANT]
-> (Do not remove this unless Impact updates to use the new Miniblox client as a base (or it dies for 2 years or gets archived or discontinued), otherwise you're bad)
-> A new Miniblox client is being made! It isn't ready for use, but you can track its progress!
+> (Do not remove this, otherwise you're bad)
+> A new Miniblox client is being made! It is ready for use, but you can track its progress!
 > See [this discussion](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/discussions/118) and [this issue](https://codeberg.org/Miniblox/Vape/issues/6) for more updates on.
 > If you want to use it (it's very close to), ~~then you will need to build it yourself~~ see [this wiki in the VapeRewrite repo](https://codeberg.org/Miniblox/VapeRewrite/wiki/How-to-use-without-compiling-(User)).
 
-[![Discord](https://img.shields.io/badge/Discord-Join%20Us-5865F2)](https://discord.gg/PwpGemYhJx)
+[![Discord](https://img.shields.io/badge/Discord-Join%20Us-5865F2)](https://discord.gg/qDEkUGv3AD)
 [![Website](https://img.shields.io/badge/Website-impactminiblox.js.org-blue)](https://impactminiblox.js.org)
 
 ---
@@ -188,8 +189,8 @@ Want your video featured? [Submit here](https://github.com/ProgMEM-CC/miniblox.i
 
 | Contributor                                                                 | Role                                   |
 | --------------------------------------------------------------------------- | -------------------------------------- |
-| [DataM0del](https://github.com/DataM0del) / [6x68](https://github.com/6x68) | Core dev                               |
-| [ProgMEM-CC](https://github.com/ProgMEM-CC)                                 | Repository management                  |
+| [6x68](https://github.com/6x68)                                             | Core dev                               |
+| [ProgMEM-CC](https://github.com/ProgMEM-CC)                                 | Skid                                   |
 | [dtkiller-jp](https://github.com/dtkiller-jp)                               | GUI dev                                |
 
 ---
