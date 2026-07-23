@@ -31,7 +31,7 @@ Vape Rewrite is the current focus of ProgMEM-CC & @6x68's time, and Impact Rewri
 ## v8.1 (2026-01-12)
 
 speechbubbel update real
-- (unrelated) @6x68's discord account (datamodel.1) got nuked (told someone in DMs to scan a QR code with their home address (tuff) and discord made it so I had to verify my email... that I lost access to, yay!)
+- (unrelated) @6x68's old discord account got nuked (told someone in DMs to scan a QR code with their home address (tuff) and discord made it so I had to verify my email... that I lost access to, yay!)
 - Merged PR [#101](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/pull/101) (had 67 commits, so it HAD to be done before someone ruined the commit number)
 
 ### v8 (2026-01-06)
