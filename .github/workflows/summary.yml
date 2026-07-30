@@ -1,4 +1,4 @@
-name: Summarize new issues
+name: Ping 6x68
 
 on:
   issues:
@@ -16,18 +16,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run AI inference
-        id: inference
-        uses: actions/ai-inference@v2
-        with:
-          prompt: |
-            Summarize the following GitHub issue in one paragraph:
-            Title: ${{ github.event.issue.title }}
-            Body: ${{ github.event.issue.body }}
-
-      - name: Comment with AI summary
+      - name: Ping 6x68
         run: |
-          gh issue comment $ISSUE_NUMBER --body "$RESPONSE"
+          gh issue comment $ISSUE_NUMBER --body "@6x68"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
