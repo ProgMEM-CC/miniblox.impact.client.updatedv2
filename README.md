@@ -7,10 +7,9 @@
 # [![Impact V8](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=3500&pause=2000&color=FF0000&width=435&lines=Impact+Client+V9+is+discontinued;Use+Vape+Rewrite;codeberg.org/Miniblox/VapeRewrite;It+on+latest+Miniblox+and+with+more+games+supported+soon;Impact+doesn't+even+work+on+Miniblox+anymore)](https://git.io/typing-svg)
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&duration=2500&pause=1000&color=abe0e4&vCenter=true&width=600&lines=What+are+you+waiting+for;Use+Vape+Rewrite+instead.)](https://git.io/typing-svg)
 
-## A feature-rich client modification for miniblox.io with enhanced gameplay capabilities, stealth optimization, and a modern, dark-mode user interface
+## A now discontinued feature-rich client modification for miniblox.io with enhanced gameplay capabilities, stealth optimization, and a modern, dark-mode user interface
 
 > [!IMPORTANT]
-> (Do not remove this, otherwise you're bad)
 > A new Miniblox client is being made! It is ready for use, but you can track its progress!
 > See [this discussion](https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/discussions/118) and [this issue](https://codeberg.org/Miniblox/Vape/issues/6) for more updates on.
 > If you want to use it (it's very close to), ~~then you will need to build it yourself~~ see [this wiki in the VapeRewrite repo](https://codeberg.org/Miniblox/VapeRewrite/wiki/How-to-use-without-compiling-(User)).
