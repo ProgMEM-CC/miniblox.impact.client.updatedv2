@@ -2,7 +2,7 @@
 > [!CAUTION]
 > Vector has patched Impact, Vape, and all other clients that use code replacement-based hooking that directly patches the game's script.
 > There might be a way to do it that might only be available via extensions (you could hook requests to miniblox's index-{...}.js and then patch it from there so imports work and etc), but I'm not going to bother.
-> If you paid attention, you'd notice that, Vape Rewrite is NOT mentioned in that list! that is because I'm very close to porting it to latest Miniblox! See [here](https://codeberg.org/Miniblox/VapeRewrite). Vape Rewrite also has a Mace Kill and a NoFall.
+> If you paid attention, you'd notice that, Vape Rewrite is NOT mentioned in that list! that is because it works on latest Miniblox! See [here](https://codeberg.org/Miniblox/VapeRewrite). Vape Rewrite also has a Mace Kill and a NoFall.
 
 # [![Impact V8](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=3500&pause=2000&color=FF0000&width=435&lines=Impact+Client+V9)](https://git.io/typing-svg)
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&duration=2500&pause=1000&color=abe0e4&vCenter=true&width=600&lines=The+ultimate+Miniblox+hacked+client;Built+for+stealth+(from+AntiCheats)%2C+speed%2C+and+total+domination.;Fully+dark-mode+optimized+with+a+modern+GUI)](https://git.io/typing-svg)
