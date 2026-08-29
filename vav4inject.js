@@ -4327,6 +4327,9 @@ const survival = new Module("SurvivalMode", function(callback) {
 
 	let loadedConfig = false;
 	async function execute(src, oldScript) {
+		if (!/^https:\/\/miniblox\.io\//.test(src)) {
+			throw new Error("execute() blocked: untrusted script source " + src);
+		}
 		Object.defineProperty(unsafeWindow.globalThis, storeName, { value: {}, enumerable: false });
 		if (oldScript) oldScript.type = 'javascript/blocked';
 		await fetch(src).then(e => e.text()).then(e => modifyCode(e));
