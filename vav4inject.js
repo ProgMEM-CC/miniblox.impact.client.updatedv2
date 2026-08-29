@@ -4325,9 +4325,22 @@ const survival = new Module("SurvivalMode", function(callback) {
 		loadVapeConfig();
 	};
 
+	function isMinibloxAsset(url) {
+		try {
+			const parsed = new URL(url);
+			return (
+				parsed.protocol === "https:" &&
+				parsed.hostname === "miniblox.io" &&
+				parsed.pathname.startsWith("/assets/index")
+			);
+		} catch {
+			return false;
+		}
+	}
+
 	let loadedConfig = false;
 	async function execute(src, oldScript) {
-		if (!/^https:\/\/miniblox\.io\//.test(src)) {
+		if (!isMinibloxAsset(src)) {
 			throw new Error("execute() blocked: untrusted script source " + src);
 		}
 		Object.defineProperty(unsafeWindow.globalThis, storeName, { value: {}, enumerable: false });
