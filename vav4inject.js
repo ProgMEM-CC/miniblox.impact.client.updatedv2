@@ -1,9 +1,23 @@
-const storeName = "a" + crypto.randomUUID().replaceAll("-", "").substring(16);
-const vapeName = crypto.randomUUID().replaceAll("-", "").substring(16);
 const VERSION = "10-UNPATCHED1";
 
-// Anticheat hooking (hide our store) + toString-safe proxy helper.
-// See VapeRewrite packages/core/src/utils/helpers/proxy.ts and hooks/hide.ts:
+// Shared client state. Everything (cheat + ClickGUI + config) runs in this
+// script's own scope now, so plain variable access replaces the old
+// random-keyed global store (which only existed to bridge the injected page
+// context and the sandbox context).
+const Impact = {
+	modules: null,
+	profile: "default",
+	dynamicIsland: null,
+	customScripts: null,
+	updateScriptsCategory: null,
+	saveVapeConfig: null,
+	loadVapeConfig: null,
+	exportVapeConfig: null,
+	importVapeConfig: null,
+};
+
+// toString-safe proxy helper.
+// See VapeRewrite packages/core/src/utils/helpers/proxy.ts:
 // a plain `new Proxy(fn, ...)` makes `fn.toString()` return
 // `function () { [native code] }` even for JS functions, which is detectable.
 function createProxy(target, handler) {
@@ -15,41 +29,6 @@ function createProxy(target, handler) {
 		}
 	});
 }
-function replaceAndCopyFunction(oldFunc, newFunc) {
-	return createProxy(oldFunc, {
-		apply(orig, origIden, origArgs) {
-			const result = orig.apply(origIden, origArgs);
-			newFunc(result);
-			return result;
-		}
-	});
-}
-function __spliceIt(list, item) {
-	const idx = list.indexOf(item);
-	if (idx !== -1) list.splice(idx, 1);
-	return list;
-}
-
-Object.getOwnPropertyNames = replaceAndCopyFunction(Object.getOwnPropertyNames, function (list) {
-	__spliceIt(list, storeName);
-	return list;
-});
-Object.keys = replaceAndCopyFunction(Object.keys, function (list) {
-	__spliceIt(list, storeName);
-	return list;
-});
-Object.values = replaceAndCopyFunction(Object.values, function (list) {
-	try {
-		const store = Object.getOwnPropertyDescriptor(globalThis, storeName)?.value;
-		if (store !== undefined) __spliceIt(list, store);
-	} catch { /* noop */ }
-	return list;
-});
-Object.getOwnPropertyDescriptors = replaceAndCopyFunction(Object.getOwnPropertyDescriptors, function (list) {
-	delete list[storeName];
-	return list;
-});
-
 function initOrR(field, initializer) {
 	return field ?? initializer();
 }
@@ -1041,7 +1020,7 @@ async function waitUntilReady() {
 				
 				// Dynamic Island notification
 				if (enabledModules["DynamicIsland"]) {
-					const dynamicIsland = globalThis[storeName].dynamicIsland;
+					const dynamicIsland = Impact.dynamicIsland;
 					const cleanName = entity.name.replace(/\\[a-z]+\\/g, '');
 					dynamicIsland.show({
 						duration: 4000,
@@ -1064,7 +1043,7 @@ async function waitUntilReady() {
 				
 				// Dynamic Island notification
 				if (enabledModules["DynamicIsland"]) {
-					const dynamicIsland = globalThis[storeName].dynamicIsland;
+					const dynamicIsland = Impact.dynamicIsland;
 					const cleanName = entity.name.replace(/\\[a-z]+\\/g, '');
 					dynamicIsland.show({
 						duration: 4000,
@@ -1081,7 +1060,7 @@ async function waitUntilReady() {
 			console.log(`${entity.name} is holding`, item);
 		}
 		async function generateAccount() {
-			const dynamicIsland = globalThis[storeName].dynamicIsland;
+			const dynamicIsland = Impact.dynamicIsland;
 			dynamicIsland.show({
 				duration: 1.5e3,
 				width: 250,
@@ -1400,9 +1379,8 @@ async function waitUntilReady() {
 			};
 
 			// === Custom Scripts Storage ===
-			if (typeof globalThis[storeName] === "undefined") globalThis[storeName] = {};
 			const customScripts = {};
-			globalThis[storeName].customScripts = customScripts;
+			Impact.customScripts = customScripts;
 			
 			function saveCustomScripts() {
 				const scriptsData = Object.entries(customScripts).map(([name, data]) => ({
@@ -1456,8 +1434,8 @@ async function waitUntilReady() {
 					if (save) saveCustomScripts();
 					
 					// Update ClickGUI category if needed
-					if (typeof globalThis[storeName].updateScriptsCategory === 'function') {
-						globalThis[storeName].updateScriptsCategory();
+					if (typeof Impact.updateScriptsCategory === 'function') {
+						Impact.updateScriptsCategory();
 					}
 					
 					return true;
@@ -1480,8 +1458,8 @@ async function waitUntilReady() {
 				saveCustomScripts();
 				
 				// Update Scripts category
-				if (typeof globalThis[storeName].updateScriptsCategory === 'function') {
-					globalThis[storeName].updateScriptsCategory();
+				if (typeof Impact.updateScriptsCategory === 'function') {
+					Impact.updateScriptsCategory();
 				}
 			}
 			
@@ -2515,8 +2493,8 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					scriptList.innerHTML = "";
 					
 					// Update Scripts category in ClickGUI
-					if (typeof globalThis[storeName].updateScriptsCategory === 'function') {
-						globalThis[storeName].updateScriptsCategory();
+					if (typeof Impact.updateScriptsCategory === 'function') {
+						Impact.updateScriptsCategory();
 					}
 					
 					Object.entries(customScripts).forEach(([name, data]) => {
@@ -2820,7 +2798,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 							if (typeof BlockDragonEgg === "function" && b instanceof BlockDragonEgg) {
 								// Show notification on break
 								if (enabledModules["DynamicIsland"]) {
-									const dynamicIsland = globalThis[storeName].dynamicIsland;
+									const dynamicIsland = Impact.dynamicIsland;
 									dynamicIsland.show({
 										duration: 1500,
 										width: 220,
@@ -4023,7 +4001,7 @@ const longjump = new Module("LongJump", function(callback) {
             
             // Show initial notification
             if (enabledModules["DynamicIsland"]) {
-                const dynamicIsland = globalThis[storeName].dynamicIsland;
+                const dynamicIsland = Impact.dynamicIsland;
                 dynamicIsland.show({
                     duration: 0,
                     width: 240,
@@ -4044,7 +4022,7 @@ const longjump = new Module("LongJump", function(callback) {
 
             // Update Dynamic Island with progress
             if (enabledModules["DynamicIsland"] && boostTicks > 0) {
-                const dynamicIsland = globalThis[storeName].dynamicIsland;
+                const dynamicIsland = Impact.dynamicIsland;
                 const progress = boostTicks / maxBoostTicks;
                 dynamicIsland.show({
                     duration: 0,
@@ -4063,7 +4041,7 @@ const longjump = new Module("LongJump", function(callback) {
                 jumping = false;
                 // Hide Dynamic Island when done
                 if (enabledModules["DynamicIsland"]) {
-                    const dynamicIsland = globalThis[storeName].dynamicIsland;
+                    const dynamicIsland = Impact.dynamicIsland;
                     dynamicIsland.hide();
                 }
             }
@@ -4083,7 +4061,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 					
 					// Dynamic Island notification
 					if (enabledModules["DynamicIsland"]) {
-						const dynamicIsland = globalThis[storeName].dynamicIsland;
+						const dynamicIsland = Impact.dynamicIsland;
 						dynamicIsland.show({
 							duration: 2000,
 							width: 280,
@@ -4099,9 +4077,9 @@ const survival = new Module("SurvivalMode", function(callback) {
 				}
 			}, "Misc", () => "Spoof");
 
-			globalThis[storeName].modules = modules;
-			globalThis[storeName].profile = "default";
-			globalThis[storeName].dynamicIsland = dynamicIsland;
+			Impact.modules = modules;
+			Impact.profile = "default";
+			Impact.dynamicIsland = dynamicIsland;
 
 			window.dynamicIsland = dynamicIsland;
 		})();
@@ -4339,7 +4317,7 @@ function __handleCommandPacket(w, pkt) {
 	const args = text.split(" ");
 	args[0] = verb;
 	let chatString;
-	const gstore = globalThis[storeName];
+	const gstore = Impact;
 	switch (args[0]) {
 		case ".bind": {
 			const module = args.length > 2 && getModule(args[1]);
@@ -4571,7 +4549,7 @@ Bus.on("receivePacket", function (w) {
 			if (enabledModules["AutoRejoin"]) {
 				try {
 					if (enabledModules["DynamicIsland"]) {
-						globalThis[storeName].dynamicIsland.show({
+						Impact.dynamicIsland.show({
 							duration: 2000, width: 260, height: 60,
 							elements: [
 								{ type: "text", content: "AutoRejoin", x: 0, y: -8, color: "#fff", size: 13, bold: true },
@@ -4632,7 +4610,7 @@ Bus.on("receivePacket", function (w) {
 			}
 			if (h.text && h.text.indexOf("Poll started") != -1 && h.id == undefined && enabledModules["AutoVote"]) {
 				try {
-					globalThis[storeName].dynamicIsland.show({
+					Impact.dynamicIsland.show({
 						duration: 3e3, width: 330, height: 67,
 						elements: [{ type: "text", content: "Voting for #2 (Overpowered)", x: 0, y: 0, size: 18 }]
 					});
@@ -4641,7 +4619,7 @@ Bus.on("receivePacket", function (w) {
 			}
 			if (h.text && h.text.endsWith && h.text.endsWith("Press N to queue for the next game!") && h.id == undefined && enabledModules["AutoQueue"]) {
 				try {
-					globalThis[storeName].dynamicIsland.show({
+					Impact.dynamicIsland.show({
 						duration: 1.55e3, width: 370, height: 67,
 						elements: [{ type: "text", content: "Queueing next game in 1.5 seconds", x: 0, y: 0, size: 18 }]
 					});
@@ -4910,17 +4888,17 @@ Bus.on("render", function () {
 		await new Promise(function (resolve) {
 			const loop = setInterval(function () {
 				try {
-					if (globalThis[storeName] && globalThis[storeName].modules) {
+					if (Impact && Impact.modules) {
 						clearInterval(loop);
 						resolve();
 					}
 				} catch (e) { /* noop */ }
 			}, 10);
 		});
-		globalThis[storeName].saveVapeConfig = saveVapeConfig;
-		globalThis[storeName].loadVapeConfig = loadVapeConfig;
-		globalThis[storeName].exportVapeConfig = exportVapeConfig;
-		globalThis[storeName].importVapeConfig = importVapeConfig;
+		Impact.saveVapeConfig = saveVapeConfig;
+		Impact.loadVapeConfig = loadVapeConfig;
+		Impact.exportVapeConfig = exportVapeConfig;
+		Impact.importVapeConfig = importVapeConfig;
 		await loadVapeConfig().catch(function (e) { console.error("[Impact] loadVapeConfig failed:", e); });
 		setInterval(function () {
 			saveVapeConfig();
@@ -4931,20 +4909,19 @@ Bus.on("render", function () {
 	async function saveVapeConfig(profile) {
 		if (!loadedConfig) return;
 		let saveList = {};
-		for (const [name, module] of Object.entries(globalThis[storeName].modules)) {
+		for (const [name, module] of Object.entries(Impact.modules)) {
 			saveList[name] = { enabled: module.enabled, bind: module.bind, options: {} };
 			for (const [option, setting] of Object.entries(module.options)) {
 				saveList[name].options[option] = setting[1];
 			}
 		}
-		GM_setValue("vapeConfig" + (profile ?? globalThis[storeName].profile), JSON.stringify(saveList));
-		GM_setValue("mainVapeConfig", JSON.stringify({ profile: globalThis[storeName].profile }));
+		GM_setValue("vapeConfig" + (profile ?? Impact.profile), JSON.stringify(saveList));
+		GM_setValue("mainVapeConfig", JSON.stringify({ profile: Impact.profile }));
 	};
 
 	async function loadVapeConfig(switched) {
 		loadedConfig = false;
-		const S = globalThis[storeName];
-		if (!S) throw new Error("[Impact] store missing in loadVapeConfig");
+		const S = Impact;
 		const loadedMain = JSON.parse(await GM_getValue("mainVapeConfig", "{}")) ?? { profile: "default" };
 		S.profile = switched ?? loadedMain.profile;
 		const loaded = JSON.parse(await GM_getValue("vapeConfig" + S.profile, "{}"));
@@ -4970,22 +4947,19 @@ Bus.on("render", function () {
 	};
 
 	async function exportVapeConfig() {
-		navigator.clipboard.writeText(await GM_getValue("vapeConfig" + globalThis[storeName].profile, "{}"));
+		navigator.clipboard.writeText(await GM_getValue("vapeConfig" + Impact.profile, "{}"));
 	};
 
 	async function importVapeConfig() {
 		const arg = await navigator.clipboard.readText();
 		if (!arg) return;
-		GM_setValue("vapeConfig" + globalThis[storeName].profile, arg);
+		GM_setValue("vapeConfig" + Impact.profile, arg);
 		await loadVapeConfig().catch(function (e) { console.error("[Impact] loadVapeConfig failed:", e); });
 	};
 
 
 	let loadedConfig = false;
 	async function execute() {
-		if (!globalThis[storeName]) {
-			Object.defineProperty(globalThis, storeName, { value: {}, enumerable: false, configurable: true });
-		}
 		await initCheat();
 	}
 	// No bundle blocking anymore: the game script runs untouched. We only
@@ -5009,14 +4983,14 @@ Bus.on("render", function () {
 
 		await new Promise((resolve) => {
 			const loop = setInterval(() => {
-				if (globalThis[storeName]?.modules) {
+				if (Impact?.modules) {
 					clearInterval(loop);
 					resolve();
 				}
 			}, 20);
 		});
 
-		injectGUI(globalThis[storeName]);
+		injectGUI(Impact);
 	} catch (err) {
 		console.error("[Clickgui] Init failed:", err);
 	}
@@ -5593,7 +5567,7 @@ function createModuleRow(name, mod, content) {
 			saveConfigBtn.addEventListener("click", () => {
 				const configName = prompt("Enter config name:", "default");
 				if (configName) {
-					globalThis[storeName].saveVapeConfig(configName);
+					Impact.saveVapeConfig(configName);
 					showNotif("Config saved: " + configName, "success");
 				}
 			});
@@ -5606,8 +5580,8 @@ function createModuleRow(name, mod, content) {
 			loadConfigBtn.addEventListener("click", () => {
 				const configName = prompt("Enter config name to load:", "default");
 				if (configName) {
-					globalThis[storeName].saveVapeConfig();
-					globalThis[storeName].loadVapeConfig(configName);
+					Impact.saveVapeConfig();
+					Impact.loadVapeConfig(configName);
 					showNotif("Config loaded: " + configName, "success");
 				}
 			});
