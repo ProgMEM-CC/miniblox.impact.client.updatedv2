@@ -1,7 +1,9 @@
-
 > [!CAUTION]
 > Vector has patched Impact, Vape, and all other clients that use code replacement-based hooking that directly patches the game's script.
-> There might be a way to do it that might only be available via extensions (you could hook requests to miniblox's index-{...}.js and then patch it from there so imports work and etc), but I'm not going to bother.
+> This branch (`migrate/unpatch`) migrates Impact to the same approach as [VapeRewrite's fix/unpatch](https://codeberg.org/Miniblox/VapeRewrite/pulls/37): the game bundle is only *read* (dump regexes) and `import()`ed for export scanning, and all behavior is hooked at runtime (proxies + event bus). No game code is modified or re-injected.
+> Since it's migrated, the client *should* also now work on the latest versions of Miniblox.
+> Note that Vape Rewrite is still 20x better since it has lag modules and Mace Kill, but [people still wanted this](https://discord.com/channels/1529374058016149504/1529377077776879736/1556783790284738681), so...
+> note that this change is entirely vibecoded because I could care less about this.
 > If you paid attention, you'd notice that, Vape Rewrite is NOT mentioned in that list! that is because it works on latest Miniblox! See [here](https://codeberg.org/Miniblox/VapeRewrite). Vape Rewrite also has a Mace Kill and a NoFall.
 
 # [![Impact V8](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=3500&pause=2000&color=FF0000&width=435&lines=Impact+Client+V9+is+discontinued;Use+Vape+Rewrite;codeberg.org/Miniblox/VapeRewrite;It+works+on+latest+Miniblox+and+with+more+games+supported+soon;Impact+doesn't+even+work+on+Miniblox+anymore)](https://git.io/typing-svg)

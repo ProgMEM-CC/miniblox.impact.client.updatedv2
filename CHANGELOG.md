@@ -4,6 +4,17 @@
 Want a good client that **will probably soon support console injection**, **works on the latest version**, and **has a MaceKill + NoFall that doesn't make the mace useless**?
 Check out [Vape Rewrite]!
 
+## v10-UNPATCHED1 (migrate/unpatch branch)
+
+- Migrated off code replacement-based injection (string-patching `assets/index-*.js`, which Vector broke via chunk splitting + top-level symbol minification) to export scanning + runtime hooks, following [VapeRewrite's fix/unpatch](https://codeberg.org/Miniblox/VapeRewrite/pulls/37):
+  - Bundle source is only fetched to run (read-only) dump regexes; the reference dump patterns are used (verified against the live bundle — only the unused `isConverting` fails to match).
+  - Game refs (`ClientSocket`, `game`/`player`/`world`, `Items`, packets, three.js, …) come from `import(script.src)` + shape scanning, with React-fiber/`unsafeWindow` fallbacks for chunk-split pieces.
+  - The reference remap proxy maps readable names to minified fields (`Mappings` + `aliasRemap`, so legacy `*Dump` names keep working).
+  - Ticks/packets/connect/render go through an event bus + method proxies instead of inline patches (Killaura, Velocity, Sprint, Step, ESP, TextGUI overlay, commands, login bypass, desync/silent-yaw, …).
+  - Cannot-be-proxied inline patches are documented TODOs, same as upstream: Phase X/Y/Z collision scaling, 1.7 viewmodel animation, swing-cancel check, server-correction removal.
+  - No `eval` of game/cheat code anymore: the migrated bodies are plain inlined code (the only remaining `eval` is the pre-existing custom user-script loader).
+  - `.report` uses a prompt + GitHub link instead of the old modal; `.chat`/commands no longer lowercase message bodies.
+
 ## v9-FINAL4 (2026-06-14)
 
 Another update, just updated to the latest version. Can't go to sleep without Vector updating for the 30th time to break some clients.
