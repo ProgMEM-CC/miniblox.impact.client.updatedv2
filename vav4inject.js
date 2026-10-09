@@ -812,7 +812,111 @@ async function waitUntilReady() {
 		} catch (e) { return 0; }
 	}
 
-	const CHEAT_PART1 = `
+
+
+
+	async function initCheat() {
+		await waitUntilReady();
+		game = Miniblox.game;
+		player = Miniblox.player;
+		world = Miniblox.world;
+		chat = Miniblox.chat;
+		controls = Miniblox.controls;
+		hud3D = Miniblox.hud3D;
+		ClientSocket = Miniblox.ClientSocket;
+		playerControllerMP = Miniblox.playerControllerMP;
+		playerControllerDump = Miniblox.playerController;
+		Items = Miniblox.Items; Blocks = Miniblox.Blocks; Materials = Miniblox.Materials;
+		Enchantments = Miniblox.Enchantments; Potions = Miniblox.Potions; Options = Miniblox.Options;
+		RANK = Miniblox.RANK; GameMode = Miniblox.GameMode; Game = Miniblox.Game;
+		textureManager = Miniblox.textureManager; skinManager = Miniblox.skinManager;
+		ItemSword = Miniblox.ItemSword; ItemArmor = Miniblox.ItemArmor;
+		ItemBow = Miniblox.ItemBow; ItemBlock = Miniblox.ItemBlock; ItemStack = Miniblox.ItemStack;
+		try {
+			if (Items) {
+				if (Items.iron_pickaxe) ItemPickaxe = Items.iron_pickaxe.constructor;
+				if (Items.iron_axe) ItemAxe = Items.iron_axe.constructor;
+				if (Items.iron_shovel) ItemSpade = Items.iron_shovel.constructor;
+				if (Items.iron_hoe) ItemHoe = Items.iron_hoe.constructor;
+				if (Items.apple) ItemFood = Items.apple.constructor;
+				if (Items.golden_apple) ItemAppleGold = Items.golden_apple.constructor;
+				try { ItemTool = (ItemPickaxe && Object.getPrototypeOf(ItemPickaxe)) || ItemPickaxe; } catch (e) { ItemTool = ItemPickaxe; }
+			}
+		} catch (e) { /* noop */ }
+		try {
+			if (Blocks) {
+				if (Blocks.air) BlockAir = Blocks.air.constructor || Blocks.air;
+				if (Blocks.dragon_egg) BlockDragonEgg = Blocks.dragon_egg.constructor || Blocks.dragon_egg;
+			}
+		} catch (e) { /* noop */ }
+		try {
+			ContainerChest = findExport(function (x) {
+				return typeof x === "function" && x.prototype && ("numRows" in x.prototype);
+			});
+		} catch (e) { ContainerChest = undefined; }
+		try { EntityPlayer = undefined; } catch (e) { /* noop */ }
+		// instanceof-against-undefined throws, so backstop every class ref
+		// that minification/chunk-splitting may have taken away. A dummy
+		// class simply never matches (safe degradation, caught per-tick).
+		function __dummyIfMissing(v) { return (typeof v === "function") ? v : (class {}); }
+		ItemSword = __dummyIfMissing(ItemSword);
+		ItemArmor = __dummyIfMissing(ItemArmor);
+		ItemBow = __dummyIfMissing(ItemBow);
+		ItemBlock = __dummyIfMissing(ItemBlock);
+		ItemStack = __dummyIfMissing(ItemStack);
+		ItemTool = __dummyIfMissing(ItemTool);
+		ItemPickaxe = __dummyIfMissing(ItemPickaxe);
+		ItemAxe = __dummyIfMissing(ItemAxe);
+		ItemSpade = __dummyIfMissing(ItemSpade);
+		ItemHoe = __dummyIfMissing(ItemHoe);
+		ItemFood = __dummyIfMissing(ItemFood);
+		ItemAppleGold = __dummyIfMissing(ItemAppleGold);
+		BlockAir = __dummyIfMissing(BlockAir);
+		BlockDragonEgg = __dummyIfMissing(BlockDragonEgg);
+		ContainerChest = __dummyIfMissing(ContainerChest);
+		BlockPos = Miniblox.BlockPos;
+		EnumFacing = Miniblox.EnumFacing;
+		try {
+			Equipment_Slot = findExport(function (x) {
+				return x && typeof x === "object" && ("MAIN_HAND" in x);
+			});
+		} catch (e) { Equipment_Slot = undefined; }
+		Vector3$1 = (THREE && THREE.Vec3) || (player && player.pos && player.pos.constructor) || undefined;
+		Mesh = (THREE && THREE.Mesh) || undefined;
+		boxGeometryDump = (THREE && THREE.BoxGeometry) || undefined;
+		SPacketUseEntity = getPacket("SPacketUseEntity");
+		SPacketClick = getPacket("SPacketClick");
+		SPacketUseItem = getPacket("SPacketUseItem");
+		SPacketPlayerAction = getPacket("SPacketPlayerAction");
+		SPacketPlayerPosLook = getPacket("SPacketPlayerPosLook");
+		SPacketPlayerInput = getPacket("SPacketPlayerInput");
+		SPacketMessage = getPacket("SPacketMessage");
+		SPacketTabComplete = getPacket("SPacketTabComplete");
+		SPacketRequestChunk = getPacket("SPacketRequestChunk");
+		SPacketBreakBlock = getPacket("SPacketBreakBlock");
+		SPacketCraftItem = getPacket("SPacketCraftItem");
+		SPacketRespawn = getPacket("SPacketRespawn");
+		SPacketOpenShop = getPacket("SPacketOpenShop");
+		SPacketLoginStart = getPacket("SPacketLoginStart");
+		toast = function (o) {
+			try {
+				const t = (o && o.title) || (o && o.description) || "toast";
+				if (game && game.chat) game.chat.addChat({ text: String(t), color: "yellow" });
+			} catch (e) { /* noop */ }
+		};
+		// vape logo texture (replaces glintTexture/loadVape/loadSpritesheet anchors)
+		try {
+			if (textureManager && textureManager.loader && !textureManager.vapeTexture) {
+				textureManager.loader.loadAsync("https://raw.githubusercontent.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/main/favicon.png").then(function (t) {
+					textureManager.vapeTexture = t;
+				}).catch(function () { /* noop */ });
+			}
+		} catch (e) { /* noop */ }
+		installCoreHooks();
+		// NOTE: cheat bodies below were previously string-patched into the
+		// game bundle. They now run here, in our own scope, against refs.
+		// Cheat bodies (were string-patched into the bundle; now plain code).
+
 		const SERVICES_SERVER = new URL("https://impactchat-server.vercel.app/");
 		const SERVICES_SEND_ENDPOINT = new URL("/send", SERVICES_SERVER);
 		let servicesName;
@@ -825,7 +929,7 @@ async function waitUntilReady() {
 			const name = servicesName[1];
 			if (name == SERVICES_UNSET_NAME) {
 				game.chat.addChat({
-					text: "Please set your nickname in the \`Services\` module in order to use IRC! (set it via the ClickGUI)",
+					text: "Please set your nickname in the `Services` module in order to use IRC! (set it via the ClickGUI)",
 					color: "red"
 				});
 				game.chat.addChat({
@@ -834,19 +938,19 @@ async function waitUntilReady() {
 				});
 				return;
 			}
-			fetch(\`\${SERVICES_SEND_ENDPOINT}?author=\${name}&platformID=impact:client\`, {
+			fetch(`${SERVICES_SEND_ENDPOINT}?author=${name}&platformID=impact:client`, {
 				method: "POST",
 				body: message
 			}).then(async r => {
 				if (!r.ok) {
 					game.chat.addChat({
-						text: \`Failed sending IRC message (response not OK): \${r.status} \${r.statusText} \${await r.text()}\`,
+						text: `Failed sending IRC message (response not OK): ${r.status} ${r.statusText} ${await r.text()}`,
 						color: "red"
 					});
 				}
 			}).catch(r => {
 				game.chat.addChat({
-					text: \`Failed sending IRC message (server down?): \${r} \`,
+					text: `Failed sending IRC message (server down?): ${r} `,
 					color: "red"
 				});
 			});
@@ -931,14 +1035,14 @@ async function waitUntilReady() {
 			if (item instanceof ItemSword) {
 				autoToggleShowNametagStuff();
 				toast({
-					title: \`\${entity.name} IS THE MURDERER!\`,
+					title: `${entity.name} IS THE MURDERER!`,
 					status: "warning"
 				});
 				
 				// Dynamic Island notification
 				if (enabledModules["DynamicIsland"]) {
-					const dynamicIsland = globalThis.${storeName}.dynamicIsland;
-					const cleanName = entity.name.replace(/\\\\[a-z]+\\\\/g, '');
+					const dynamicIsland = globalThis[storeName].dynamicIsland;
+					const cleanName = entity.name.replace(/\\[a-z]+\\/g, '');
 					dynamicIsland.show({
 						duration: 4000,
 						width: 300,
@@ -954,14 +1058,14 @@ async function waitUntilReady() {
 			if (item instanceof ItemBow) {
 				autoToggleShowNametagStuff();
 				toast({
-					title: \`\${entity.name} has a bow.\`,
+					title: `${entity.name} has a bow.`,
 					color: "blue"
 				});
 				
 				// Dynamic Island notification
 				if (enabledModules["DynamicIsland"]) {
-					const dynamicIsland = globalThis.${storeName}.dynamicIsland;
-					const cleanName = entity.name.replace(/\\\\[a-z]+\\\\/g, '');
+					const dynamicIsland = globalThis[storeName].dynamicIsland;
+					const cleanName = entity.name.replace(/\\[a-z]+\\/g, '');
 					dynamicIsland.show({
 						duration: 4000,
 						width: 300,
@@ -974,10 +1078,10 @@ async function waitUntilReady() {
 					});
 				}
 			}
-			console.log(\`\${entity.name} is holding\`, item);
+			console.log(`${entity.name} is holding`, item);
 		}
 		async function generateAccount() {
-			const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+			const dynamicIsland = globalThis[storeName].dynamicIsland;
 			dynamicIsland.show({
 				duration: 1.5e3,
 				width: 250,
@@ -995,7 +1099,7 @@ async function waitUntilReady() {
 				width: 255,
 				height: 45,
 				elements: [
-					{ type: "text", content: \`Generated account: \${j.name}\`, x: 0, y: 0, size: 18 }
+					{ type: "text", content: `Generated account: ${j.name}`, x: 0, y: 0, size: 18 }
 				]
 			});
 			return j;
@@ -1014,9 +1118,8 @@ async function waitUntilReady() {
 			const func = keybindCallbacks[keybindList[key.code]];
 			if (func) func(key);
 		});
-	`;
+	
 
-	const CHEAT_PART2 = `
 		// my code lol
 		(async function() {
 			class Module {
@@ -1170,17 +1273,17 @@ async function waitUntilReady() {
 					const centerX = this.currentWidth / 2;
 					const centerY = this.currentHeight / 2;
 					const el = document.createElement("div");
-					el.style.cssText = \`
+					el.style.cssText = `
 						position: absolute;
-						left: \${centerX + element.x}px;
-						top: \${centerY + element.y}px;
-						color: \${element.color || "#fff"};
-						font-size: \${element.size || 14}px;
-						font-weight: \${element.bold ? "bold" : "normal"};
+						left: ${centerX + element.x}px;
+						top: ${centerY + element.y}px;
+						color: ${element.color || "#fff"};
+						font-size: ${element.size || 14}px;
+						font-weight: ${element.bold ? "bold" : "normal"};
 						white-space: nowrap;
 						transform: translate(-50%, -50%);
-						\${element.shadow ? "text-shadow: 1px 1px 2px rgba(0,0,0,0.8);" : ""}
-					\`;
+						${element.shadow ? "text-shadow: 1px 1px 2px rgba(0,0,0,0.8);" : ""}
+					`;
 					el.textContent = element.content;
 					return el;
 				},
@@ -1189,25 +1292,25 @@ async function waitUntilReady() {
 					const centerX = this.currentWidth / 2;
 					const centerY = this.currentHeight / 2;
 					const container = document.createElement("div");
-					container.style.cssText = \`
+					container.style.cssText = `
 						position: absolute;
-						left: \${centerX + element.x}px;
-						top: \${centerY + element.y}px;
-						width: \${element.width}px;
-						height: \${element.height}px;
-						background: \${element.bgColor || "#333"};
-						border-radius: \${element.rounded ? (element.height / 2) + "px" : "0"};
+						left: ${centerX + element.x}px;
+						top: ${centerY + element.y}px;
+						width: ${element.width}px;
+						height: ${element.height}px;
+						background: ${element.bgColor || "#333"};
+						border-radius: ${element.rounded ? (element.height / 2) + "px" : "0"};
 						overflow: hidden;
 						transform: translate(-50%, -50%);
-					\`;
+					`;
 					
 					const bar = document.createElement("div");
-					bar.style.cssText = \`
-						width: \${element.value * 100}%;
+					bar.style.cssText = `
+						width: ${element.value * 100}%;
 						height: 100%;
-						background: \${element.color || "#0FB3A0"};
+						background: ${element.color || "#0FB3A0"};
 						transition: width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-					\`;
+					`;
 					
 					container.appendChild(bar);
 					return container;
@@ -1218,31 +1321,31 @@ async function waitUntilReady() {
 					const centerY = this.currentHeight / 2;
 					const size = element.size || 30;
 					const container = document.createElement("div");
-					container.style.cssText = \`
+					container.style.cssText = `
 						position: absolute;
-						left: \${centerX + element.x}px;
-						top: \${centerY + element.y}px;
-						width: \${size * 1.8}px;
-						height: \${size}px;
-						background: \${element.state ? "#0FB3A0" : "#555"};
-						border-radius: \${size / 2}px;
+						left: ${centerX + element.x}px;
+						top: ${centerY + element.y}px;
+						width: ${size * 1.8}px;
+						height: ${size}px;
+						background: ${element.state ? "#0FB3A0" : "#555"};
+						border-radius: ${size / 2}px;
 						transition: background 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 						transform: translate(-50%, -50%);
-					\`;
+					`;
 					
 					const circle = document.createElement("div");
 					const circleSize = size * 0.8;
-					circle.style.cssText = \`
-						width: \${circleSize}px;
-						height: \${circleSize}px;
+					circle.style.cssText = `
+						width: ${circleSize}px;
+						height: ${circleSize}px;
 						background: #fff;
 						border-radius: 50%;
 						position: absolute;
-						top: \${(size - circleSize) / 2}px;
-						left: \${element.state ? (size * 1.8 - circleSize - (size - circleSize) / 2) : ((size - circleSize) / 2)}px;
+						top: ${(size - circleSize) / 2}px;
+						left: ${element.state ? (size * 1.8 - circleSize - (size - circleSize) / 2) : ((size - circleSize) / 2)}px;
 						transition: left 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 						box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-					\`;
+					`;
 					
 					// Handle animation flag
 					if (element.animate) {
@@ -1262,14 +1365,14 @@ async function waitUntilReady() {
 					const centerX = this.currentWidth / 2;
 					const centerY = this.currentHeight / 2;
 					const img = document.createElement("img");
-					img.style.cssText = \`
+					img.style.cssText = `
 						position: absolute;
-						left: \${centerX + element.x}px;
-						top: \${centerY + element.y}px;
-						width: \${element.width}px;
-						height: \${element.height}px;
+						left: ${centerX + element.x}px;
+						top: ${centerY + element.y}px;
+						width: ${element.width}px;
+						height: ${element.height}px;
 						transform: translate(-50%, -50%);
-					\`;
+					`;
 					img.src = typeof element.src === "string" ? element.src : element.src.src;
 					return img;
 				},
@@ -1297,9 +1400,9 @@ async function waitUntilReady() {
 			};
 
 			// === Custom Scripts Storage ===
-			if (typeof globalThis.${storeName} === "undefined") globalThis.${storeName} = {};
+			if (typeof globalThis[storeName] === "undefined") globalThis[storeName] = {};
 			const customScripts = {};
-			globalThis.${storeName}.customScripts = customScripts;
+			globalThis[storeName].customScripts = customScripts;
 			
 			function saveCustomScripts() {
 				const scriptsData = Object.entries(customScripts).map(([name, data]) => ({
@@ -1353,8 +1456,8 @@ async function waitUntilReady() {
 					if (save) saveCustomScripts();
 					
 					// Update ClickGUI category if needed
-					if (typeof globalThis.${storeName}.updateScriptsCategory === 'function') {
-						globalThis.${storeName}.updateScriptsCategory();
+					if (typeof globalThis[storeName].updateScriptsCategory === 'function') {
+						globalThis[storeName].updateScriptsCategory();
 					}
 					
 					return true;
@@ -1362,7 +1465,7 @@ async function waitUntilReady() {
 					console.error("Failed to execute script:", e);
 					console.error("Script name:", name);
 					console.error("Script code:", code);
-					alert("Script error: " + e.message + "\\n\\nCheck console for details.");
+					alert("Script error: " + e.message + "\n\nCheck console for details.");
 					return false;
 				}
 			}
@@ -1377,8 +1480,8 @@ async function waitUntilReady() {
 				saveCustomScripts();
 				
 				// Update Scripts category
-				if (typeof globalThis.${storeName}.updateScriptsCategory === 'function') {
-					globalThis.${storeName}.updateScriptsCategory();
+				if (typeof globalThis[storeName].updateScriptsCategory === 'function') {
+					globalThis[storeName].updateScriptsCategory();
 				}
 			}
 			
@@ -1415,14 +1518,14 @@ async function waitUntilReady() {
 				const { message, author, platformID } = JSON.parse(e.data);
 				if (author === null && platformID === undefined) {
 					game.chat.addChat({
-						text: \`[Impact] IRC server: \${message}\`,
+						text: `[Impact] IRC server: ${message}`,
 						color: systemMessageColor[1]
 					});
 					return;
 				}
 				const readable = PLATFORM_ID_TO_READABLE[platformID] ?? platformID;
 				game.chat.addChat({
-					text: \`[Impact IRC] \${author} via \${readable}: \${message}\`
+					text: `[Impact IRC] ${author} via ${readable}: ${message}`
 				});
 			}
 			function startIRC() {
@@ -1524,7 +1627,7 @@ async function waitUntilReady() {
 			}
 
 			new Module("Sprint", function() {}, "Movement");
-			const velocity = new Module("Velocity", function() {}, "Combat", () => \`\${velocityhori[1]}% \${velocityvert[1]}%\`);
+			const velocity = new Module("Velocity", function() {}, "Combat", () => `${velocityhori[1]}% ${velocityvert[1]}%`);
 			velocityhori = velocity.addoption("Horizontal", Number, 0);
 			velocityvert = velocity.addoption("Vertical", Number, 0);
    
@@ -1890,7 +1993,7 @@ async function waitUntilReady() {
 								const health = target.getHealth();
 								const maxHealth = 20;
 								// Remove rich text formatting
-								const cleanName = target.name.replace(/\\\\[a-z]+\\\\/g, '');
+								const cleanName = target.name.replace(/\\[a-z]+\\/g, '');
 								
 								dynamicIsland.show({
 									duration: 0,
@@ -1946,7 +2049,7 @@ async function waitUntilReady() {
 						killauraShowingDI = false;
 					}
 				}
-			}, "Combat", () => \`\${killaurarange[1]} block\${killaurarange[1] == 1 ? "" : "s"} \${killaurablock[1] ? "Auto Block" : ""}\`);
+			}, "Combat", () => `${killaurarange[1]} block${killaurarange[1] == 1 ? "" : "s"} ${killaurablock[1] ? "Auto Block" : ""}`);
 			killaurarange = killaura.addoption("Range", Number, 6);
 			killauraangle = killaura.addoption("Angle", Number, 360);
 			killaurablock = killaura.addoption("AutoBlock", Boolean, true);
@@ -2001,9 +2104,9 @@ async function waitUntilReady() {
 				if (callback) {
 					if (!warned) {
 						game.chat.addChat({text:
-							\`Infinite Fly only works on servers using the old ac
+							`Infinite Fly only works on servers using the old ac
 (KitPvP, Skywars, Eggwars, Bridge Duels,
-Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
+Classic PvP, and OITQ use the new ac, everything else is using the old ac)`});
 						warned = true;
 					}
 					let ticks = 0;
@@ -2041,7 +2144,7 @@ Classic PvP, and OITQ use the new ac, everything else is using the old ac)\`});
 						}
 					}
 				}
-			}, "Movement",  () => \`V \${infiniteFlyVert[1]} \${infiniteFlyLessGlide[1] ? "LessGlide" : "MoreGlide"}\`);
+			}, "Movement",  () => `V ${infiniteFlyVert[1]} ${infiniteFlyLessGlide[1] ? "LessGlide" : "MoreGlide"}`);
 			infiniteFlyVert = infiniteFly.addoption("Vertical", Number, 0.12);
 			infiniteFlyLessGlide = infiniteFly.addoption("LessGlide", Boolean, true);
 
@@ -2082,7 +2185,7 @@ const speed = new Module("Speed", function(callback) {
 				: player.motion.y;
 		}
 	};
-}, "Movement", () => \`V \${speedvalue[1]} J \${speedjump[1]} \${speedauto[1] ? "A" : "M"}\`);
+}, "Movement", () => `V ${speedvalue[1]} J ${speedjump[1]} ${speedauto[1] ? "A" : "M"}`);
 
 // Options
 speedbypass = speed.addoption("Bypass", Boolean, true);
@@ -2090,7 +2193,7 @@ speedvalue = speed.addoption("Speed", Number, 0.2);
 speedjump = speed.addoption("JumpHeight", Number, 0.25);
 speedauto = speed.addoption("AutoJump", Boolean, true);
 
-			const step = new Module("Step", function() {}, "Player", () => \`\${stepheight[1]}\`);
+			const step = new Module("Step", function() {}, "Player", () => `${stepheight[1]}`);
 			stepheight = step.addoption("Height", Number, 0.18);
 
 
@@ -2121,7 +2224,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					// Create DOM element
 					dynamicIslandElement = document.createElement("div");
 					dynamicIslandElement.id = "dynamic-island";
-					dynamicIslandElement.style.cssText = \`
+					dynamicIslandElement.style.cssText = `
 						position: fixed;
 						top: 15px;
 						left: 50%;
@@ -2135,15 +2238,15 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 						width: 200px;
 						height: 40px;
 						backdrop-filter: blur(20px);
-					\`;
+					`;
 
 					dynamicIslandContent = document.createElement("div");
-					dynamicIslandContent.style.cssText = \`
+					dynamicIslandContent.style.cssText = `
 						position: relative;
 						width: 100%;
 						height: 100%;
 						transition: opacity 0.1s cubic-bezier(0.4, 0, 0.2, 1);
-					\`;
+					`;
 
 					dynamicIslandElement.appendChild(dynamicIslandContent);
 					document.body.appendChild(dynamicIslandElement);
@@ -2171,10 +2274,10 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 						const minutes = Math.floor((sessionTime % 3600) / 60);
 						const seconds = sessionTime % 60;
 						const timeStr = hours > 0
-							? \`\${hours}h \${minutes}m\`
+							? `${hours}h ${minutes}m`
 							: minutes > 0
-								? \`\${minutes}m \${seconds}s\`
-								: \`\${seconds}s\`;
+								? `${minutes}m ${seconds}s`
+								: `${seconds}s`;
 
 						// Pill-shaped horizontal layout with even spacing
 						if (inGame) {
@@ -2182,8 +2285,8 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 							// do NOT use instantPing, it is never updated. use filteredPing instead.
 							const ping = Math.floor(game.resourceMonitor.filteredPing);
 							const imgWidth = 47;
-							const fpsLbl = \`\${fps} FPS\`;
-							const pingLbl = \`\${ping} Ping\`;
+							const fpsLbl = `${fps} FPS`;
+							const pingLbl = `${ping} Ping`;
 							const baseWidth = 267;
 							const estimatedFPSLen = getStringWidth(fpsLbl, 18);
 							const estimatedPingLen = getStringWidth(pingLbl, 12);
@@ -2297,7 +2400,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 				if (scriptManagerUI) return;
 				
 				const modal = document.createElement("div");
-				modal.style.cssText = \`
+				modal.style.cssText = `
 					position: fixed;
 					top: 0;
 					left: 0;
@@ -2308,10 +2411,10 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					align-items: center;
 					justify-content: center;
 					z-index: 10000;
-				\`;
+				`;
 				
 				const container = document.createElement("div");
-				container.style.cssText = \`
+				container.style.cssText = `
 					background: #1a1a2e;
 					border-radius: 8px;
 					padding: 24px;
@@ -2322,23 +2425,23 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					border: 2px solid #2a2a3e;
 					display: flex;
 					flex-direction: column;
-				\`;
+				`;
 				
 				const title = document.createElement("h2");
 				title.textContent = "Script Manager";
-				title.style.cssText = \`
+				title.style.cssText = `
 					margin: 0 0 20px 0;
 					color: #fff;
 					font-size: 22px;
 					font-weight: 600;
-				\`;
+				`;
 				
 				const addButtonsContainer = document.createElement("div");
-				addButtonsContainer.style.cssText = \`
+				addButtonsContainer.style.cssText = `
 					display: flex;
 					gap: 8px;
 					margin-bottom: 16px;
-				\`;
+				`;
 				
 				const addFileBtn = createButton("📁 Load File", () => {
 					const input = document.createElement("input");
@@ -2357,7 +2460,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 									}
 									refreshScriptList();
 								} else {
-									alert("Failed to load script: " + name + "\\nCheck console for errors.");
+									alert("Failed to load script: " + name + "\nCheck console for errors.");
 								}
 							};
 							reader.readAsText(file);
@@ -2380,7 +2483,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 									}
 									refreshScriptList();
 								} else {
-									alert("Failed to load script: " + name + "\\nCheck console for errors.");
+									alert("Failed to load script: " + name + "\nCheck console for errors.");
 								}
 							})
 							.catch(e => {
@@ -2398,7 +2501,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 				addButtonsContainer.appendChild(addCodeBtn);
 				
 				const scriptList = document.createElement("div");
-				scriptList.style.cssText = \`
+				scriptList.style.cssText = `
 					flex: 1;
 					overflow-y: auto;
 					margin-bottom: 16px;
@@ -2406,19 +2509,19 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					border-radius: 6px;
 					padding: 8px;
 					background: #252538;
-				\`;
+				`;
 				
 				function refreshScriptList() {
 					scriptList.innerHTML = "";
 					
 					// Update Scripts category in ClickGUI
-					if (typeof globalThis.${storeName}.updateScriptsCategory === 'function') {
-						globalThis.${storeName}.updateScriptsCategory();
+					if (typeof globalThis[storeName].updateScriptsCategory === 'function') {
+						globalThis[storeName].updateScriptsCategory();
 					}
 					
 					Object.entries(customScripts).forEach(([name, data]) => {
 						const item = document.createElement("div");
-						item.style.cssText = \`
+						item.style.cssText = `
 							background: #2a2a3e;
 							border: 2px solid #3a3a4e;
 							border-radius: 6px;
@@ -2427,7 +2530,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 							display: flex;
 							justify-content: space-between;
 							align-items: center;
-						\`;
+						`;
 						
 						const info = document.createElement("div");
 						info.style.cssText = "flex: 1;";
@@ -2511,7 +2614,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			
 			function openCodeEditor(editName = null, editCode = "") {
 				const modal = document.createElement("div");
-				modal.style.cssText = \`
+				modal.style.cssText = `
 					position: fixed;
 					top: 0;
 					left: 0;
@@ -2522,10 +2625,10 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					align-items: center;
 					justify-content: center;
 					z-index: 10001;
-				\`;
+				`;
 				
 				const editor = document.createElement("div");
-				editor.style.cssText = \`
+				editor.style.cssText = `
 					background: #1a1a2e;
 					border-radius: 8px;
 					padding: 24px;
@@ -2536,7 +2639,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					border: 2px solid #2a2a3e;
 					display: flex;
 					flex-direction: column;
-				\`;
+				`;
 				
 				const editorTitle = document.createElement("h3");
 				editorTitle.textContent = editName ? "Edit Script" : "New Script";
@@ -2546,7 +2649,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 				nameInput.type = "text";
 				nameInput.placeholder = "Script name";
 				nameInput.value = editName || "";
-				nameInput.style.cssText = \`
+				nameInput.style.cssText = `
 					width: 100%;
 					padding: 10px 12px;
 					margin-bottom: 12px;
@@ -2557,12 +2660,12 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					font-size: 14px;
 					box-sizing: border-box;
 					outline: none;
-				\`;
+				`;
 				
 				const codeArea = document.createElement("textarea");
-				codeArea.placeholder = "// Write your script here\\n// Example:\\nnew Module('MyModule', function(enabled) {\\n  if (enabled) {\\n    tickLoop['MyModule'] = function() {\\n      // Your code here\\n      console.log(player.pos);\\n    };\\n  } else {\\n    delete tickLoop['MyModule'];\\n  }\\n});";
+				codeArea.placeholder = "// Write your script here\n// Example:\nnew Module('MyModule', function(enabled) {\n  if (enabled) {\n    tickLoop['MyModule'] = function() {\n      // Your code here\n      console.log(player.pos);\n    };\n  } else {\n    delete tickLoop['MyModule'];\n  }\n});";
 				codeArea.value = editCode;
-				codeArea.style.cssText = \`
+				codeArea.style.cssText = `
 					width: 100%;
 					height: 400px;
 					padding: 12px;
@@ -2576,7 +2679,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					resize: vertical;
 					box-sizing: border-box;
 					outline: none;
-				\`;
+				`;
 				
 				const btnContainer = document.createElement("div");
 				btnContainer.style.cssText = "display: flex; gap: 10px; justify-content: flex-end;";
@@ -2605,7 +2708,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 							setTimeout(() => modules["ScriptManager"].toggleSilently(), 100);
 						}
 					} else {
-						alert("Failed to load script: " + name + "\\nCheck console for errors.");
+						alert("Failed to load script: " + name + "\nCheck console for errors.");
 					}
 				});
 				saveBtn.style.background = "#0FB3A0";
@@ -2630,7 +2733,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			function createButton(text, onclick) {
 				const btn = document.createElement("button");
 				btn.textContent = text;
-				btn.style.cssText = \`
+				btn.style.cssText = `
 					padding: 10px 16px;
 					background: #2a2a3e;
 					border: 2px solid #3a3a4e;
@@ -2640,7 +2743,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					font-size: 14px;
 					font-weight: 600;
 					outline: none;
-				\`;
+				`;
 				btn.onmouseover = () => btn.style.background = "#353548";
 				btn.onmouseout = () => btn.style.background = "#2a2a3e";
 				btn.onclick = onclick;
@@ -2650,7 +2753,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 			function createSmallButton(text, onclick) {
 				const btn = document.createElement("button");
 				btn.textContent = text;
-				btn.style.cssText = \`
+				btn.style.cssText = `
 					padding: 6px 10px;
 					background: #2a2a3e;
 					border: 2px solid #3a3a4e;
@@ -2659,7 +2762,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					cursor: pointer;
 					font-size: 14px;
 					outline: none;
-				\`;
+				`;
 				btn.onmouseover = () => btn.style.background = "#353548";
 				btn.onmouseout = () => btn.style.background = "#2a2a3e";
 				btn.onclick = onclick;
@@ -2717,7 +2820,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 							if (typeof BlockDragonEgg === "function" && b instanceof BlockDragonEgg) {
 								// Show notification on break
 								if (enabledModules["DynamicIsland"]) {
-									const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+									const dynamicIsland = globalThis[storeName].dynamicIsland;
 									dynamicIsland.show({
 										duration: 1500,
 										width: 220,
@@ -2735,7 +2838,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					}
 				}
 				else delete tickLoop["Breaker"];
-			}, "Minigames", () => \`\${breakerrange[1]} block\${breakerrange[1] == 1 ? "" : "s"}\`);
+			}, "Minigames", () => `${breakerrange[1]} block${breakerrange[1] == 1 ? "" : "s"}`);
 			breakerrange = breaker.addoption("Range", Number, 10);
 
 			// Nuker
@@ -2754,7 +2857,7 @@ speedauto = speed.addoption("AutoJump", Boolean, true);
 					}
 				}
 				else delete tickLoop["Nuker"];
-			}, "World", () => \`\${nukerRange[1]} block\${nukerRange[1] == 1 ? "" : "s"}\`);
+			}, "World", () => `${nukerRange[1]} block${nukerRange[1] == 1 ? "" : "s"}`);
 			nukerRange = nuker.addoption("Range", Number, 3);
 			nukerDelay = nuker.addoption("Delay", Number, 1);
 
@@ -3379,7 +3482,7 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 			let timervalue;
 			const timer = new Module("Timer", function(callback) {
 				reloadTickLoop(callback ? 50 / timervalue[1] : 50);
-			}, "World", () => \`\${timervalue[1]} MSPT\`);
+			}, "World", () => `${timervalue[1]} MSPT`);
 			timervalue = timer.addoption("Value", Number, 1);
 			new Module("Phase", function() {}, "World");
 
@@ -3392,7 +3495,7 @@ scaffoldSameY = scaffold.addoption("SameY", Boolean, false);
 			new Module("AutoVote", function() {}, "Minigames");
 			const chatdisabler = new Module("ChatDisabler", function() {}, "Misc", () => "Spam");
 			chatdisablermsg = chatdisabler.addoption("Message", String, "Vector not gonna bypass this one 🗣️"); // V stands for Value Patch
-			new Module("FilterBypass", function() {}, "Exploit", () => "\\\\");
+			new Module("FilterBypass", function() {}, "Exploit", () => "\\");
    
     // InvManager
     let invmanagerLayout, invmanagerDelay, invmanagerDropJunk, invmanagerAutoArmor;
@@ -3920,7 +4023,7 @@ const longjump = new Module("LongJump", function(callback) {
             
             // Show initial notification
             if (enabledModules["DynamicIsland"]) {
-                const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+                const dynamicIsland = globalThis[storeName].dynamicIsland;
                 dynamicIsland.show({
                     duration: 0,
                     width: 240,
@@ -3941,7 +4044,7 @@ const longjump = new Module("LongJump", function(callback) {
 
             // Update Dynamic Island with progress
             if (enabledModules["DynamicIsland"] && boostTicks > 0) {
-                const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+                const dynamicIsland = globalThis[storeName].dynamicIsland;
                 const progress = boostTicks / maxBoostTicks;
                 dynamicIsland.show({
                     duration: 0,
@@ -3960,7 +4063,7 @@ const longjump = new Module("LongJump", function(callback) {
                 jumping = false;
                 // Hide Dynamic Island when done
                 if (enabledModules["DynamicIsland"]) {
-                    const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+                    const dynamicIsland = globalThis[storeName].dynamicIsland;
                     dynamicIsland.hide();
                 }
             }
@@ -3980,7 +4083,7 @@ const survival = new Module("SurvivalMode", function(callback) {
 					
 					// Dynamic Island notification
 					if (enabledModules["DynamicIsland"]) {
-						const dynamicIsland = globalThis.${storeName}.dynamicIsland;
+						const dynamicIsland = globalThis[storeName].dynamicIsland;
 						dynamicIsland.show({
 							duration: 2000,
 							width: 280,
@@ -3996,15 +4099,14 @@ const survival = new Module("SurvivalMode", function(callback) {
 				}
 			}, "Misc", () => "Spoof");
 
-			globalThis.${storeName}.modules = modules;
-			globalThis.${storeName}.profile = "default";
-			globalThis.${storeName}.dynamicIsland = dynamicIsland;
+			globalThis[storeName].modules = modules;
+			globalThis[storeName].profile = "default";
+			globalThis[storeName].dynamicIsland = dynamicIsland;
 
 			window.dynamicIsland = dynamicIsland;
 		})();
-	`;
+	
 
-	const CHEAT_PART3 = `
 ;
 // PART3: unpatched wiring. Replaces every inline patch anchor with event
 // subscriptions + proxies. Runs in the same eval scope as PART1/PART2,
@@ -4226,7 +4328,7 @@ function __handleCommandPacket(w, pkt) {
 			if (enabledModules["FilterBypass"]) {
 				const words = text.split(" ");
 				const out = [];
-				for (const word of words) out.push(word.charAt(0) + "\\\\" + word.slice(1));
+				for (const word of words) out.push(word.charAt(0) + "\\" + word.slice(1));
 				pkt.text = out.join(" ");
 			}
 		} catch (e) { /* noop */ }
@@ -4266,7 +4368,7 @@ function __handleCommandPacket(w, pkt) {
 			}
 			break;
 		case ".modules":
-			chatString = "Module List\\n";
+			chatString = "Module List\n";
 			{
 				const byCat = {};
 				for (const entry of Object.entries(modules)) {
@@ -4275,15 +4377,15 @@ function __handleCommandPacket(w, pkt) {
 					byCat[md.category].push(nm);
 				}
 				for (const entry of Object.entries(byCat)) {
-					chatString += "\\n\\n" + entry[0] + ":";
-					for (const n of entry[1]) chatString += "\\n" + n;
+					chatString += "\n\n" + entry[0] + ":";
+					for (const n of entry[1]) chatString += "\n" + n;
 				}
 			}
 			game.chat.addChat({ text: chatString });
 			break;
 		case ".binds":
-			chatString = "Bind List\\n";
-			for (const entry of Object.entries(modules)) chatString += "\\n" + entry[0] + " : " + (entry[1].bind != "" ? entry[1].bind : "none");
+			chatString = "Bind List\n";
+			for (const entry of Object.entries(modules)) chatString += "\n" + entry[0] + " : " + (entry[1].bind != "" ? entry[1].bind : "none");
 			game.chat.addChat({ text: chatString });
 			break;
 		case ".setoption":
@@ -4293,7 +4395,7 @@ function __handleCommandPacket(w, pkt) {
 			if (module) {
 				if (args.length < 3) {
 					chatString = module.name + " Options";
-					for (const entry of Object.entries(module.options)) chatString += "\\n" + entry[0] + " : " + entry[1][0].name + " : " + entry[1][1];
+					for (const entry of Object.entries(module.options)) chatString += "\n" + entry[0] + " : " + entry[1][0].name + " : " + entry[1][1];
 					game.chat.addChat({ text: chatString });
 					break;
 				}
@@ -4382,7 +4484,7 @@ function __handleCommandPacket(w, pkt) {
 			const body = window.prompt("Issue description:", "") || "No description provided.";
 			const url = "https://github.com/ProgMEM-CC/miniblox.impact.client.updatedv2/issues/new?labels=bug&title="
 				+ encodeURIComponent("[Bug] " + title) + "&body="
-				+ encodeURIComponent(body + "\\n\\n---\\n**Version:** " + VERSION + "\\n**User Agent:** " + navigator.userAgent);
+				+ encodeURIComponent(body + "\n\n---\n**Version:** " + VERSION + "\n**User Agent:** " + navigator.userAgent);
 			window.open(url, "_blank");
 			break;
 		}
@@ -4515,11 +4617,11 @@ Bus.on("receivePacket", function (w) {
 				chatDelay = Date.now() + 1000;
 				setTimeout(function () {
 					try {
-						if (SPacketMessage) ClientSocket.sendPacket(new SPacketMessage({ text: Math.random() + ("\\n" + chatdisablermsg[1]).repeat(20) }));
+						if (SPacketMessage) ClientSocket.sendPacket(new SPacketMessage({ text: Math.random() + ("\n" + chatdisablermsg[1]).repeat(20) }));
 					} catch (e) { /* noop */ }
 				}, 50);
 			}
-			if (h.text && h.text.startsWith("\\\\bold\\\\How to play:")) {
+			if (h.text && h.text.startsWith("\\bold\\How to play:")) {
 				breakStart = Date.now() + 25000;
 			}
 			if (h.text && h.text.indexOf("Poll started") != -1 && h.id == undefined && enabledModules["AutoVote"]) {
@@ -4547,7 +4649,7 @@ Bus.on("receivePacket", function (w) {
 		if (name === "CPacketUpdateStatus") {
 			try {
 				if (h.rank && h.rank != "" && RANK && RANK.LEVEL && RANK.LEVEL[h.rank] && RANK.LEVEL[h.rank].permLevel > 2) {
-					game.chat.addChat({ text: "STAFF DETECTED : " + h.rank + "\\n".repeat(10), color: "red" });
+					game.chat.addChat({ text: "STAFF DETECTED : " + h.rank + "\n".repeat(10), color: "red" });
 				}
 			} catch (e) { /* noop */ }
 			return;
@@ -4798,109 +4900,7 @@ Bus.on("render", function () {
 		} catch (e) { /* noop */ }
 	} catch (e) { /* noop */ }
 });
-`;
 
-	async function initCheat() {
-		await waitUntilReady();
-		game = Miniblox.game;
-		player = Miniblox.player;
-		world = Miniblox.world;
-		chat = Miniblox.chat;
-		controls = Miniblox.controls;
-		hud3D = Miniblox.hud3D;
-		ClientSocket = Miniblox.ClientSocket;
-		playerControllerMP = Miniblox.playerControllerMP;
-		playerControllerDump = Miniblox.playerController;
-		Items = Miniblox.Items; Blocks = Miniblox.Blocks; Materials = Miniblox.Materials;
-		Enchantments = Miniblox.Enchantments; Potions = Miniblox.Potions; Options = Miniblox.Options;
-		RANK = Miniblox.RANK; GameMode = Miniblox.GameMode; Game = Miniblox.Game;
-		textureManager = Miniblox.textureManager; skinManager = Miniblox.skinManager;
-		ItemSword = Miniblox.ItemSword; ItemArmor = Miniblox.ItemArmor;
-		ItemBow = Miniblox.ItemBow; ItemBlock = Miniblox.ItemBlock; ItemStack = Miniblox.ItemStack;
-		try {
-			if (Items) {
-				if (Items.iron_pickaxe) ItemPickaxe = Items.iron_pickaxe.constructor;
-				if (Items.iron_axe) ItemAxe = Items.iron_axe.constructor;
-				if (Items.iron_shovel) ItemSpade = Items.iron_shovel.constructor;
-				if (Items.iron_hoe) ItemHoe = Items.iron_hoe.constructor;
-				if (Items.apple) ItemFood = Items.apple.constructor;
-				if (Items.golden_apple) ItemAppleGold = Items.golden_apple.constructor;
-				try { ItemTool = (ItemPickaxe && Object.getPrototypeOf(ItemPickaxe)) || ItemPickaxe; } catch (e) { ItemTool = ItemPickaxe; }
-			}
-		} catch (e) { /* noop */ }
-		try {
-			if (Blocks) {
-				if (Blocks.air) BlockAir = Blocks.air.constructor || Blocks.air;
-				if (Blocks.dragon_egg) BlockDragonEgg = Blocks.dragon_egg.constructor || Blocks.dragon_egg;
-			}
-		} catch (e) { /* noop */ }
-		try {
-			ContainerChest = findExport(function (x) {
-				return typeof x === "function" && x.prototype && ("numRows" in x.prototype);
-			});
-		} catch (e) { ContainerChest = undefined; }
-		try { EntityPlayer = undefined; } catch (e) { /* noop */ }
-		// instanceof-against-undefined throws, so backstop every class ref
-		// that minification/chunk-splitting may have taken away. A dummy
-		// class simply never matches (safe degradation, caught per-tick).
-		function __dummyIfMissing(v) { return (typeof v === "function") ? v : (class {}); }
-		ItemSword = __dummyIfMissing(ItemSword);
-		ItemArmor = __dummyIfMissing(ItemArmor);
-		ItemBow = __dummyIfMissing(ItemBow);
-		ItemBlock = __dummyIfMissing(ItemBlock);
-		ItemStack = __dummyIfMissing(ItemStack);
-		ItemTool = __dummyIfMissing(ItemTool);
-		ItemPickaxe = __dummyIfMissing(ItemPickaxe);
-		ItemAxe = __dummyIfMissing(ItemAxe);
-		ItemSpade = __dummyIfMissing(ItemSpade);
-		ItemHoe = __dummyIfMissing(ItemHoe);
-		ItemFood = __dummyIfMissing(ItemFood);
-		ItemAppleGold = __dummyIfMissing(ItemAppleGold);
-		BlockAir = __dummyIfMissing(BlockAir);
-		BlockDragonEgg = __dummyIfMissing(BlockDragonEgg);
-		ContainerChest = __dummyIfMissing(ContainerChest);
-		BlockPos = Miniblox.BlockPos;
-		EnumFacing = Miniblox.EnumFacing;
-		try {
-			Equipment_Slot = findExport(function (x) {
-				return x && typeof x === "object" && ("MAIN_HAND" in x);
-			});
-		} catch (e) { Equipment_Slot = undefined; }
-		Vector3$1 = (THREE && THREE.Vec3) || (player && player.pos && player.pos.constructor) || undefined;
-		Mesh = (THREE && THREE.Mesh) || undefined;
-		boxGeometryDump = (THREE && THREE.BoxGeometry) || undefined;
-		SPacketUseEntity = getPacket("SPacketUseEntity");
-		SPacketClick = getPacket("SPacketClick");
-		SPacketUseItem = getPacket("SPacketUseItem");
-		SPacketPlayerAction = getPacket("SPacketPlayerAction");
-		SPacketPlayerPosLook = getPacket("SPacketPlayerPosLook");
-		SPacketPlayerInput = getPacket("SPacketPlayerInput");
-		SPacketMessage = getPacket("SPacketMessage");
-		SPacketTabComplete = getPacket("SPacketTabComplete");
-		SPacketRequestChunk = getPacket("SPacketRequestChunk");
-		SPacketBreakBlock = getPacket("SPacketBreakBlock");
-		SPacketCraftItem = getPacket("SPacketCraftItem");
-		SPacketRespawn = getPacket("SPacketRespawn");
-		SPacketOpenShop = getPacket("SPacketOpenShop");
-		SPacketLoginStart = getPacket("SPacketLoginStart");
-		toast = function (o) {
-			try {
-				const t = (o && o.title) || (o && o.description) || "toast";
-				if (game && game.chat) game.chat.addChat({ text: String(t), color: "yellow" });
-			} catch (e) { /* noop */ }
-		};
-		// vape logo texture (replaces glintTexture/loadVape/loadSpritesheet anchors)
-		try {
-			if (textureManager && textureManager.loader && !textureManager.vapeTexture) {
-				textureManager.loader.loadAsync("https://raw.githubusercontent.com/ProgMEM-CC/miniblox.impact.client.updatedv2/refs/heads/main/favicon.png").then(function (t) {
-					textureManager.vapeTexture = t;
-				}).catch(function () { /* noop */ });
-			}
-		} catch (e) { /* noop */ }
-		installCoreHooks();
-		// NOTE: cheat bodies below were previously string-patched into the
-		// game bundle. They now run here, in our own scope, against refs.
-		eval(CHEAT_PART1 + "\n" + CHEAT_PART2 + "\n" + CHEAT_PART3);
 		await new Promise(function (resolve) {
 			const loop = setInterval(function () {
 				try {

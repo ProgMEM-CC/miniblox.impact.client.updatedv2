@@ -12,6 +12,7 @@ Check out [Vape Rewrite]!
   - The reference remap proxy maps readable names to minified fields (`Mappings` + `aliasRemap`, so legacy `*Dump` names keep working).
   - Ticks/packets/connect/render go through an event bus + method proxies instead of inline patches (Killaura, Velocity, Sprint, Step, ESP, TextGUI overlay, commands, login bypass, desync/silent-yaw, …).
   - Cannot-be-proxied inline patches are documented TODOs, same as upstream: Phase X/Y/Z collision scaling, 1.7 viewmodel animation, swing-cancel check, server-correction removal.
+  - No `eval` of game/cheat code anymore: the migrated bodies are plain inlined code (the only remaining `eval` is the pre-existing custom user-script loader).
   - `.report` uses a prompt + GitHub link instead of the old modal; `.chat`/commands no longer lowercase message bodies.
 
 ## v9-FINAL4 (2026-06-14)
