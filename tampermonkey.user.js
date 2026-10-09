@@ -14,7 +14,7 @@
 // @grant        unsafeWindow
 // @require      https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/vav4inject.js
 // @require      https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/refs/heads/main/unlocker.js
-// @run-at       document-start
+// @run-at       document-idle
 // @updateURL    https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/main/tampermonkey.user.js
 // @downloadURL  https://raw.githubusercontent.com/progmem-cc/miniblox.impact.client.updatedv2/main/tampermonkey.user.js
 // @license      AGPL-3.0-only
