@@ -4431,18 +4431,24 @@ function __handleCommandPacket(w, pkt) {
 		case ".config":
 		case ".profile":
 			if (args.length > 1) {
+				const __cfg = function (p) {
+					try {
+						const r = p && typeof p.catch === "function" ? p.catch(function (e) { console.error("[Impact] config failed:", e); }) : p;
+						return r;
+					} catch (e) { console.error("[Impact] config failed:", e); }
+				};
 				if (args[1] == "save") {
-					gstore.saveVapeConfig(args[2]);
+					__cfg(gstore.saveVapeConfig(args[2]));
 					game.chat.addChat({ text: "Saved config " + args[2] });
 				} else if (args[1] == "load") {
-					gstore.saveVapeConfig();
-					gstore.loadVapeConfig(args[2]);
+					__cfg(gstore.saveVapeConfig());
+					__cfg(gstore.loadVapeConfig(args[2]));
 					game.chat.addChat({ text: "Loaded config " + args[2] });
 				} else if (args[1] == "import") {
-					gstore.importVapeConfig(args[2]);
+					__cfg(gstore.importVapeConfig(args[2]));
 					game.chat.addChat({ text: "Imported config" });
 				} else if (args[1] == "export") {
-					gstore.exportVapeConfig();
+					__cfg(gstore.exportVapeConfig());
 					game.chat.addChat({ text: "Config set to clipboard!" });
 				}
 			}
@@ -4915,7 +4921,7 @@ Bus.on("render", function () {
 		globalThis[storeName].loadVapeConfig = loadVapeConfig;
 		globalThis[storeName].exportVapeConfig = exportVapeConfig;
 		globalThis[storeName].importVapeConfig = importVapeConfig;
-		loadVapeConfig();
+		await loadVapeConfig().catch(function (e) { console.error("[Impact] loadVapeConfig failed:", e); });
 		setInterval(function () {
 			saveVapeConfig();
 		}, 10000);
@@ -4925,28 +4931,30 @@ Bus.on("render", function () {
 	async function saveVapeConfig(profile) {
 		if (!loadedConfig) return;
 		let saveList = {};
-		for (const [name, module] of Object.entries(unsafeWindow.globalThis[storeName].modules)) {
+		for (const [name, module] of Object.entries(globalThis[storeName].modules)) {
 			saveList[name] = { enabled: module.enabled, bind: module.bind, options: {} };
 			for (const [option, setting] of Object.entries(module.options)) {
 				saveList[name].options[option] = setting[1];
 			}
 		}
-		GM_setValue("vapeConfig" + (profile ?? unsafeWindow.globalThis[storeName].profile), JSON.stringify(saveList));
-		GM_setValue("mainVapeConfig", JSON.stringify({ profile: unsafeWindow.globalThis[storeName].profile }));
+		GM_setValue("vapeConfig" + (profile ?? globalThis[storeName].profile), JSON.stringify(saveList));
+		GM_setValue("mainVapeConfig", JSON.stringify({ profile: globalThis[storeName].profile }));
 	};
 
 	async function loadVapeConfig(switched) {
 		loadedConfig = false;
+		const S = globalThis[storeName];
+		if (!S) throw new Error("[Impact] store missing in loadVapeConfig");
 		const loadedMain = JSON.parse(await GM_getValue("mainVapeConfig", "{}")) ?? { profile: "default" };
-		unsafeWindow.globalThis[storeName].profile = switched ?? loadedMain.profile;
-		const loaded = JSON.parse(await GM_getValue("vapeConfig" + unsafeWindow.globalThis[storeName].profile, "{}"));
+		S.profile = switched ?? loadedMain.profile;
+		const loaded = JSON.parse(await GM_getValue("vapeConfig" + S.profile, "{}"));
 		if (!loaded) {
 			loadedConfig = true;
 			return;
 		}
 
 		for (const [name, module] of Object.entries(loaded)) {
-			const realModule = unsafeWindow.globalThis[storeName].modules[name];
+			const realModule = S.modules[name];
 			if (!realModule) continue;
 			if (realModule.enabled != module.enabled) realModule.toggleSilently();
 			if (realModule.bind != module.bind) realModule.setbind(module.bind);
@@ -4962,20 +4970,22 @@ Bus.on("render", function () {
 	};
 
 	async function exportVapeConfig() {
-		navigator.clipboard.writeText(await GM_getValue("vapeConfig" + unsafeWindow.globalThis[storeName].profile, "{}"));
+		navigator.clipboard.writeText(await GM_getValue("vapeConfig" + globalThis[storeName].profile, "{}"));
 	};
 
 	async function importVapeConfig() {
 		const arg = await navigator.clipboard.readText();
 		if (!arg) return;
-		GM_setValue("vapeConfig" + unsafeWindow.globalThis[storeName].profile, arg);
-		loadVapeConfig();
+		GM_setValue("vapeConfig" + globalThis[storeName].profile, arg);
+		await loadVapeConfig().catch(function (e) { console.error("[Impact] loadVapeConfig failed:", e); });
 	};
 
 
 	let loadedConfig = false;
 	async function execute() {
-		Object.defineProperty(globalThis, storeName, { value: {}, enumerable: false, configurable: true });
+		if (!globalThis[storeName]) {
+			Object.defineProperty(globalThis, storeName, { value: {}, enumerable: false, configurable: true });
+		}
 		await initCheat();
 	}
 	// No bundle blocking anymore: the game script runs untouched. We only
@@ -4999,14 +5009,14 @@ Bus.on("render", function () {
 
 		await new Promise((resolve) => {
 			const loop = setInterval(() => {
-				if (unsafeWindow?.globalThis?.[storeName]?.modules) {
+				if (globalThis[storeName]?.modules) {
 					clearInterval(loop);
 					resolve();
 				}
 			}, 20);
 		});
 
-		injectGUI(unsafeWindow.globalThis[storeName]);
+		injectGUI(globalThis[storeName]);
 	} catch (err) {
 		console.error("[Clickgui] Init failed:", err);
 	}
